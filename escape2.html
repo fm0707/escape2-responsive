@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廃墟からの脱出ゲーム</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            color: #f4f1e8;
+        }
+
+        .game-container {
+            width: 100vw;
+            max-width: 1408px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .room-view {
+            aspect-ratio: 1/1;           /* ←正方形 */
+            width: 90vw;                 /* 画面幅の90% */
+            max-width: 640px;            /* PC時最大サイズ */
+            max-height: 90vw;       
+            background-size: cover;      
+            background-repeat: no-repeat;
+            background-position: center center;
+            position: relative;
+            margin: 0 auto;
+            cursor: crosshair;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        #roomImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;    /* 画像全体を表示 */
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 0;
+            pointer-events: none;   /* 画像上でもクリックイベントが通るように */
+        }
+
+        .clickable-area {
+            position: absolute;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            z-index: 2;
+            pointer-events: auto;
+
+        }
+
+        .clickable-area:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .ui-panel {
+            flex-wrap: wrap;
+            width: 100vw;
+            max-width: 1048px;
+            min-height: 120px;
+            background: #2c1810;
+            box-sizing: border-box;
+            display: flex;
+        }
+
+        .inventory {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            padding: 0 20px;
+            width:100%;
+        }
+
+        .inventory-slot {
+            width: 14vw; 
+            height: 14vw; 
+            max-width: 80px; 
+            max-height: 80px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .inventory-slot.selected {
+            border: 3px solid #9f2b02;   /* 金色・太め推奨 */
+            box-shadow: 0 0 12px #ff8c0099;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .inventory-slot img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+
+        .info-panel {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            height:80px;
+            min-height: 40px;
+            border: 1px solid #d4af37;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #d4af37;
+            max-width: calc(100vw - 60px);
+            text-align: center;
+        }
+
+        .modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .puzzle-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #d4af37;
+            background: rgba(244, 241, 232, 0.9);
+            color: #1a0f08;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border: 2px solid #d4af37;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        /* 画像プレースホルダー用のスタイル */
+        .image-placeholder {
+            background: linear-gradient(135deg, #444, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .notice {
+            text-overflow: clip;
+        }
+        .save-area {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 18px 0 4px 0;
+            width: 40%;
+        }
+
+        @media (max-width: 600px) {
+            .save-area {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-top: 8px;
+                gap: 16px;
+            }
+        }
+
+        .save-area .nav-btn {
+            min-width: 80px;
+            padding: 10px 18px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+            border-radius: 8px;
+            border: none;
+            color: #1a0f08;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .save-area .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 12px #d4af3740;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="title">謎の洋館から脱出せよ</div>
+        
+        <div class="room-view" id="roomView">
+            <!-- クリック可能エリアは動的に生成 -->
+              <img id="roomImage" src="">
+        </div>
+
+        <div class="ui-panel">
+            <div class="info-panel">
+                <div class="message-area" id="messageArea">
+                    気が付くとあなたは古い洋館に立っていました。玄関ドアはカギがかかっていて出られません
+                </div>
+                <!-- <div class="navigation">
+                    <button class="nav-btn" onclick="changeRoom('genkan')">玄関</button>
+                    <button class="nav-btn" onclick="changeRoom('living')">居間</button>
+                    <button class="nav-btn" onclick="changeRoom('bedroom')">寝室</button>
+                    <button class="nav-btn" onclick="changeRoom('study')">書斎</button>
+                </div> -->
+            </div>
+            <div class="inventory" id="inventory">
+                <div class="inventory-slot" onclick="useItem(0)"></div>
+                <div class="inventory-slot" onclick="useItem(1)"></div>
+                <div class="inventory-slot" onclick="useItem(2)"></div>
+                <div class="inventory-slot" onclick="useItem(3)"></div>
+                <div class="inventory-slot" onclick="useItem(4)"></div>
+            </div>
+            <button id="bgm-toggle" onclick="toggleBGM()" style="position:absolute;top:20px;right:20px;z-index:1000;">
+            🔊 BGM
+            </button> 
+            <div class="save-area">
+                <button class="nav-btn" onclick="saveGame()">セーブ</button>
+                <button class="nav-btn" onclick="loadGame()">ロード</button>
+            </div>
+        </div>
+        <div class="notice">当サイトはOtoLogicの素材を使用しています 作者:スラセブン</div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- モーダルの内容は動的に生成 -->
+        </div>
+    </div>
+    <audio id="bgm" src="sounds/sinpi no kyuuden.mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-tv" src="sounds/TV-Hardware02-01(Button).mp3"></audio>
+    <audio id="se-skeleton" src="sounds/Motion-Tremble02-1(Short).mp3"></audio>
+    <audio id="se-metal" src="sounds/Horror_Accent13-1(Short).mp3"></audio>
+    <audio id="se-subclear" src="sounds/Quiz-Ding_Dong01-1(Short).mp3"></audio>
+    <audio id="se-clear" src="sounds/Angel01-1.mp3"></audio>
+    <audio id="se-parin" src="sounds/Onoma-Impact04-1(High).mp3"></audio>
+    <script>
+        // ゲーム設定 - 画像パスをここで管理
+        let IMAGES = {
+            rooms: {
+                genkan: 'images/genkan.jpg',        
+                corridor: 'images/corridor.jpg',       
+                dining: 'images/dining.jpg',      
+                living: 'images/living.jpg',
+                end: 'images/end.jpg',
+                trueEnd: 'images/trueEnd.jpg'      
+            },
+            items: {
+                key: 'images/key.jpg',              // 鍵の画像
+                drawerKey: 'images/drawerKey.jpg',
+                coin: 'images/coin.jpg',
+                pin: 'images/pin.jpg',
+                oil: 'images/oil.jpg',
+                jam: 'images/jam.jpg',
+                scroll: 'images/scroll.jpg',        // 巻物の画像
+                mirror: 'images/mirror.jpg',        // 鏡の画像
+                box: 'images/box.jpg',              // 箱の画像
+                treasure: 'images/treasure.jpg',    // 家宝の画像
+                futonbo: 'images/futonbo.jpg',      // 布団たたきの画像
+                smallKey: 'images/smallKey.jpg',    // 小さい鍵の画像
+                book: 'images/book.jpg',            // 絵本の画像
+            }
+        };
+
+        // ゲーム状態
+        let gameState = {
+            currentRoom: 'genkan',
+            inventory: [],
+            genkan: {
+                flags: {
+                    talkTo: {
+                        skeleton:0
+                    },
+                    watchedPaper: false,
+                    foundPin: false,
+                }
+            },
+            corridor: {
+                flags: {
+                    foundDrawerKey: false,
+                    talkTo: {
+                        skeleton:0,
+                        pic_left:0,
+                        pic_center:0,
+                        pic_right:0
+                    },
+                    talkToLeft:false,
+                    talkToCenter:false,
+                    talkToRight: false,
+                }
+            },
+            dining: {
+                flags: {
+                    foundOil: false,
+                    foundJam: false,
+                    useOilToSkeleton: false,
+                }
+            },
+            living: {
+                flags: {
+                    readMemo: false,
+                }
+            },
+            flags: {
+                skeletonFavor :0,
+                foundKey: false,
+                foundMirror: false,
+                readScroll: false,
+                solvedPuzzle: false,
+                foundTreasure: false,
+                foundSmallKey: false,
+                foundFutonbo: false,
+                foundBear: false,
+                happyBear: false,
+                foundBook:false,
+                
+            },
+            selectedItem: null
+        };
+
+        // 部屋データ
+        let rooms = {
+            genkan: {
+                name: '玄関',
+                description: '豪華な洋館の玄関ホールだ',
+                clickableAreas: [
+                    {
+                        x: 68, y: 37, width: 6, height: 9,
+                        action: 'examine_genkan_paper',
+                        description: 'ドアには張り紙',
+                        zIndex:5
+                    },
+                    {
+                        x: 77, y: 54, width: 3, height: 6,
+                        action: 'examine_genkan_key',
+                        description: '鍵がかかっている',
+                        zIndex:5
+                    },
+                    {
+                        x: 58, y: 28, width: 23, height: 45,
+                        action: 'examine_genkan_door',
+                        description: '玄関ドア'
+                    },
+                    {
+                        x: 31, y: 54, width: 16, height: 19,
+                        action: 'examine_genkan_chair',
+                        description: '豪華な椅子'
+                    },
+                    {
+                        x: 12, y: 26, width: 12, height: 48,
+                        action: 'examine_genkan_left_door',
+                        description: '立派な木製のドア'
+                    },
+                    {
+                        x: 39, y: 33, width: 10, height: 13,
+                        action: 'examine_genkan_picture',
+                        description: '女性の肖像画'
+                    },
+                    {
+                        x: 90, y: 43, width: 8, height: 8,
+                        action: 'examine_genkan_spidernet',
+                        description: 'クモの巣'
+                    },
+                    {
+                        x: 90, y: 88, width: 9, height: 4,
+                        action: 'examine_genkan_memo',
+                        description: 'メモ'
+                    },
+                    {
+                        x: 96.7, y: 74, width: 2.7, height: 2.6,
+                        action: 'examine_genkan_pin',
+                        description: '?'
+                    },
+                    {
+                        x: 83, y: 54, width: 12, height: 22,
+                        action: 'examine_genkan_skeleton',
+                        description: '骸骨'
+                    }
+                ]
+            },
+            living: {
+                name: '居間',
+                description: '荒廃したリビングだ。壁に写真がたくさん飾られている。テーブルの上に鍵がかかった小箱がある',
+                clickableAreas: [
+                    {
+                        x: 9, y: 25, width: 5, height: 8,
+                        action: 'examine_living_pic1',
+                        description: '古い写真'
+                    },
+                    {
+                        x: 17, y: 31, width: 4, height: 10.6,
+                        action: 'examine_living_pic2',
+                        description: '古い写真'
+                    },
+                    {
+                        x: 3.7, y: 40.8, width: 4.7, height: 8,
+                        action: 'examine_living_pic3',
+                        description: '古い写真'
+                    },
+                    {
+                        x: 10.5, y: 43.5, width: 4.7, height: 5,
+                        action: 'examine_living_pic4',
+                        description: '古い写真'
+                    },
+                    {
+                        x: 15.5, y: 49.4, width: 5.2, height: 4.2,
+                        action: 'examine_living_pic5',
+                        description: '古い写真'
+                    },
+                    {
+                        x: 37, y: 69, width: 7.5, height: 5.4,
+                        action: 'examine_living_box',
+                        description: '鍵がかかった小箱'
+                    },
+                    {
+                        x: 26.3, y: 40.7, width: 17.2, height: 5.3,
+                        action: 'examine_living_books1',
+                        description: '本棚'
+                    },
+                    {
+                        x: 26.4, y: 49, width: 16.6, height: 5.3,
+                        action: 'examine_living_books2',
+                        description: '本棚'
+                    },
+                    {
+                        x: 45.4, y: 72, width: 8, height: 2.4,
+                        action: 'examine_living_books3',
+                        description: 'テーブルの上の本'
+                    },
+                    {
+                        x: 81.4, y: 43.5, width: 13.2, height: 39,
+                        action: 'examine_living_skeleton',
+                        description: '骸骨'
+                    },
+                    {
+                        x: 3.6, y: 56.6, width: 21.7, height: 23.3,
+                        action: 'examine_living_sofa',
+                        description: 'ソファ'
+                    },
+                    {
+                        x: 29, y: 75, width: 26, height: 12,
+                        action: 'examine_living_table',
+                        description: 'テーブル'
+                    },
+                    {
+                        x: 90.2, y: 61.4, width: 1.7, height: 1.4,
+                        action: 'examine_living_lapel',
+                        description: '？'
+                    }
+                ]
+            },
+            corridor: {
+                name: '廊下',
+                description: '豪華だが荒廃した廊下',
+                clickableAreas: [
+                    {
+                        x: 43, y: 37, width: 18, height: 40,
+                        action: 'examine_corridor_door',
+                        description: '奥のドア'
+                    },
+                    {
+                        x: 73, y: 38, width: 12, height: 34,
+                        action: 'examine_corridor_skeleton',
+                        description: '骸骨'
+                    },
+                    {
+                        x: 91, y: 10, width: 8, height: 36,
+                        action: 'examine_corridor_picture_right',
+                        description: '女性の肖像画'
+                    },
+                    {
+                        x: 28, y: 41.5, width: 9, height: 14,
+                        action: 'examine_corridor_picture_center',
+                        description: '若い男性の肖像画'
+                    },
+                    {
+                        x: 4.3, y: 14.6, width: 6.4, height: 33.6,
+                        action: 'examine_corridor_picture_left',
+                        description: '中年女性の肖像画'
+                    },
+                    {
+                        x: 45, y: 10, width: 17, height: 13,
+                        action: 'examine_corridor_light',
+                        description: 'シャンデリア'
+                    },
+                    {
+                        x: 2, y: 52, width: 17, height: 36,
+                        action: 'examine_corridor_chair',
+                        description: '古びた豪華な椅子'
+                    },
+                    {
+                        x: 18.6, y: 62, width: 4.6, height: 3,
+                        action: 'examine_corridor_drawer1',
+                        description: '引き出し',
+                        zIndex:5
+                    },
+                    {
+                        x: 18.2, y: 69, width: 5, height: 3,
+                        action: 'examine_corridor_drawer2',
+                        description: '引き出し',
+                        zIndex:5
+                    }
+                ]
+            },
+            dining: {
+                name: '食堂',
+                description: '食堂',
+                clickableAreas: [
+                    {
+                        x: 10, y: 27, width: 14.5, height: 42,
+                        action: 'examine_dining_skeleton',
+                        description: '骸骨'
+                    },
+                    {
+                        x: 52.5, y: 42, width: 8.5, height: 7,
+                        action: 'examine_kannuki',
+                        description: 'さび付いたかんぬき',
+                        zIndex:5
+                    },
+                    {
+                        x: 85.4, y: 20, width: 11, height: 10,
+                        action: 'examine_dining_right_dish1',
+                        description: '飾り皿'
+                    },
+                    {
+                        x: 87, y: 36, width: 8.7, height: 7,
+                        action: 'examine_dining_right_dish2',
+                        description: '飾り皿'
+                    },
+                    {
+                        x: 60, y: 70, width: 13, height: 8,
+                        action: 'examine_dining_under_table',
+                        description: 'テーブルの下'
+                    },
+                    {
+                        x: 56, y: 51, width: 4, height: 9,
+                        action: 'examine_pot',
+                        description: 'テーブルの上のポット'
+                    }
+                ]
+            },
+            end: {
+                name: '外の世界へルート',
+                description: 'あなたは無事脱出できました。おめでとうございます',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end',
+                        description: '外の世界'
+                    },
+                ]
+            },
+            trueEnd: {
+                name: '夢の世界へルート',
+                description: 'あなたは骸骨執事とともに、夢の世界へ旅立った',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_true_end',
+                        description: '夢の世界'
+                    },
+                ]
+            },
+        };
+
+        const hintMessages = {
+            genkan: {
+                skeleton: [
+                "これは、珍しいお客さんですな",
+                "お困りなら張り紙を見ると良いかもしれません。",
+                "それ以上ヒントは…骨が折れます。"
+                ]
+            },
+            corridor: {
+                skeleton: [
+                "代々のご家族の肖像画ですぞ",
+                "お困りなら調べてみるのも良いもしれませんな",
+                "それにしても寒さが骨身にしみますな…"
+                ],
+                pic_center: [
+                    "やあ、私はジェイムズ。この家の三代目さ。",
+                    "子どもの頃は、ドロシーおばさんによく遊んでもらったなあ。",
+                    "キャロットケーキ、美味しかったなあ。",
+                ],
+                pic_left: [
+                    "まあ、ごきげんよう。わたくしはアメリアよ。",
+                    "最近は、お屋敷も寂れてきてしまったわね。",
+                    "子どもの頃、母から『この家はかつて栄えていたのよ』と聞かされたものよ。",
+                ],
+                pic_right: [
+                    "ハイ、私はドロシーよ。",
+                    "私の時代は、舞踏会も開かれていたのよ。",
+                    "そういえば請求書が引き出しに…",
+                ]
+            },
+            dining: {
+                skeleton: [
+                "にぎやかな食卓が懐かしいですね",
+                "お皿をよく見るのが、この家のルールです。",
+                "ジャム派かオイル派か、ここは分かれ道ですね…"
+                ]
+            },
+            living: {
+                skeleton : [
+                    "ダーツがお好きだったのは、はて、どなただったか…",
+                    "なぜか、「先代たちの名を並べよ」という言葉が繰り返し頭に浮かぶのです",
+                    "私は何が好きだったのでしょう…思い出せません",
+                ]
+            }
+            // 必要なら他の部屋やキャラも追加
+        };
+
+        // ゲーム初期化
+        function initGame() {
+            changeRoom('genkan');
+            updateMessage('気が付くとあなたは古い洋館に立っていました。玄関ドアはカギがかかっていて出られません');
+        }
+
+        // 部屋を変更
+        function changeRoom(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+            
+            // 背景画像を設定（画像がない場合はプレースホルダー）
+            const roomView = document.getElementById('roomView');
+            roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
+            
+            // クリック可能エリアを生成
+            generateClickableAreas(room);
+            
+            updateMessage(`${room.name}に入りました。${room.description}`);
+        }
+
+        // 背景画像を差し替え
+        function changeRoomImage(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+            
+            // 背景画像を設定（画像がない場合はプレースホルダー）
+            const roomView = document.getElementById('roomView');
+            roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
+            generateClickableAreas(room);
+        }
+
+        // クリック可能エリアを生成
+        // 
+        function generateClickableAreas(room) {
+            const roomView = document.getElementById('roomView');
+
+            roomView.innerHTML = '<img id="roomImage" src="'+IMAGES.rooms[gameState.currentRoom]+'" style="width:100%;height:100%;object-fit:contain;position:absolute;left:0;top:0;">';
+
+            // 画像のロード後に配置
+            const img = roomView.querySelector('#roomImage');
+            img.onload = function() {
+
+                room.clickableAreas.forEach(area => {
+                    const clickableDiv = document.createElement('div');
+                    clickableDiv.className = 'clickable-area';
+                    clickableDiv.style.left   = (area.x) + '%';
+                    clickableDiv.style.top    = (area.y) + '%';
+                    clickableDiv.style.width  = (area.width) + '%';
+                    clickableDiv.style.height = (area.height) + '%';
+                    clickableDiv.style.position = 'absolute';
+                    clickableDiv.style.zIndex = area.zIndex || 1;
+                    clickableDiv.onclick = () => handleAreaClick(area.action);
+                    clickableDiv.title = area.description;
+
+                    roomView.appendChild(clickableDiv);
+                });
+            };
+            img.src = IMAGES.rooms[gameState.currentRoom]; // 必ず画像セット
+        }
+
+        // エリアクリック処理
+        function handleAreaClick(action) {
+            switch(action) {
+                case 'examine_genkan_door':
+                    if (gameState.flags.foundGenkanKey) {
+                        updateMessage('ゲームクリア');
+                    } else {
+                         updateMessage('玄関ドアには鍵がかかっている');
+                    }
+                     break;
+                case 'examine_genkan_key':
+                    updateMessage('開けられそうにない');
+                    break;
+                case 'examine_genkan_paper':
+                    updateMessage('娘の誕生日、と書いてある');
+                    gameState.genkan.flags.watchedPaper = true;
+                    break;
+                case 'examine_genkan_chair':
+                    updateMessage('椅子に座ってみた。何かがきしむような音がする…');
+                    playSE('se-metal');
+                    break;
+                case 'examine_genkan_left_door':
+                    updateMessage('番号式のカギがかかっている');
+                    showGenkanPuzzle();
+                    break;
+                case 'examine_genkan_picture':
+                    if (gameState.genkan.flags.watchedPaper) {
+                        updateMessage('これが娘だろうか？18歳記念の肖像画のようだ。製作年は2006と書いてある');
+                        
+                    } else {
+                        updateMessage('若い女性の肖像画だ');
+                    }
+                    
+                    break;  
+                case 'examine_genkan_memo':
+                    updateMessage('何かのメモのようだ。「8/1　明後日は娘の誕生日だ。街の洋菓子店で特製チーズケーキを予約しなくては」');
+                    break; 
+                case 'examine_genkan_spidernet':
+                    updateMessage('クモの巣が張っている…');
+                    break; 
+                case 'examine_genkan_pin':
+                    if (!gameState.genkan.flags.foundPin) {
+                        updateMessage('古びたピンブローチだ');
+                        showModal(
+                            '家具の下に何か落ちている…<br>小さなピンブローチだ',
+                            '<img src="images/pin.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                        addItem('pin'); 
+                    } else {
+                        updateMessage('何もない');
+                    }
+                    
+                    break;  
+                case 'examine_genkan_skeleton':
+                    talkToHintCharacter('genkan','skeleton');
+                    playSE('se-skeleton');
+                    break; 
+                // living
+                case 'examine_living_skeleton':
+                    talkToHintCharacter('living','skeleton');
+                    playSE('se-skeleton');
+                    break; 
+                
+                case 'examine_living_pic1':
+                    updateMessage('男性の写真だ。ダーツの矢を構えている。「Martin　マーティン」');
+                    break;
+                case 'examine_living_pic2':
+                    updateMessage('中年の女性の写真だ。「DOROTHY　ドロシー」');
+                    break;
+                case 'examine_living_pic3':
+                    updateMessage('若い女性の写真だ。バラの花を持っている。「Amelia　アメリア」');
+                    break;
+                case 'examine_living_pic4':
+                    updateMessage('壮年男性の写真だ。「Edward　エドワード」');
+                    break;
+                case 'examine_living_pic5':
+                    updateMessage('若い女性の写真だ。帽子をかぶっている。「Rachel　レイチェル」');
+                    break;
+                case 'examine_living_books1':
+                    updateMessage('古い日記を見つけた。「2001年7月3日　ダーツの大会で準優勝。練習したかいがあった！」');
+                    break;  
+                case 'examine_living_books2':
+                    showModal(
+                        'メモが挟まっている。',
+                        '<img src="images/living_memo1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );
+                    break;   
+                case 'examine_living_books3':
+                    updateMessage('テーブルの上には1冊の本がある。「詳説：ホームメードスイーツの作り方」ドロシーとサインが入っている');
+                    break;  
+                case 'examine_living_table':
+                    showModal(
+                        '立派なテーブルの下にメモが落ちていた。',
+                        '<img src="images/living_memo2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );
+                    break; 
+                case 'examine_living_sofa':
+                    updateMessage('「どうぞどうぞ、おかけください。夢のような座り心地ですよ」');
+                    playSE('se-skeleton');
+                    break; 
+                case 'examine_living_lapel':
+                    if (gameState.selectedItem=='pin') {
+                        updateMessage('「なんと、私に下さるのですか？ありがとうございます。」');
+                        playSE('se-skeleton');
+                        showModal(
+                            '「なんと、私に下さるのですか？ありがとうございます」',
+                            '<img src="images/skeleton-favor.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        removeItem('pin');
+                        gameState.flags.skeletonFavor++;
+                    } else {
+                        updateMessage('「どうかしましたかな？」');
+                    }
+                    break; 
+                // corridor
+                case 'examine_corridor_door':
+                    if (gameState.corridor.flags.talkToLeft && gameState.corridor.flags.talkToCenter && gameState.corridor.flags.talkToRight) {
+                        showCorridorPuzzle();
+                    }
+                    else {
+                        updateMessage('ドアには鍵がかかっている');
+                    }
+                    break;
+                case 'examine_corridor_skeleton':
+                    talkToHintCharacter('corridor','skeleton');
+                    playSE('se-skeleton');
+                    break; 
+                case 'examine_corridor_picture_left':
+                    talkToHintCharacter('corridor','pic_left');
+                    playSE('se-skeleton');
+                    gameState.corridor.flags.talkToLeft = true;
+                    break;  
+                case 'examine_corridor_picture_center':
+                    talkToHintCharacter('corridor','pic_center');
+                    gameState.corridor.flags.talkToCenter = true;
+                    playSE('se-skeleton');
+                    break;  
+                case 'examine_corridor_picture_right':
+                    talkToHintCharacter('corridor','pic_right');
+                    gameState.corridor.flags.talkToRight = true;
+                    playSE('se-skeleton');
+                    break;    
+                case 'examine_corridor_light':
+                    updateMessage('古びた照明だ。高価そうな雰囲気だ');
+                    break;
+                case 'examine_corridor_drawer1':
+                    updateMessage('請求書がある。「1967/3/4　ホロン家のドロシー様。服飾代として5900ゴールドを請求いたします」');
+                    break;  
+                case 'examine_corridor_drawer2':
+                    if (gameState.selectedItem=='drawerKey' && !hasItem('coin')) {
+                        updateMessage('コインをみつけた');
+                        addItem('coin');
+                        removeItem('drawerKey');
+                        gameState.corridor.flags.useDrawerKey = true;
+                    } else if(gameState.corridor.flags.useDrawerKey) {
+                        updateMessage('写真がある。裏には「2000/10/21 アメリアとリチャード」と書いてある');
+                    } else {
+                        updateMessage('鍵がかかっていて開かない');
+                    }
+                    break;  
+                case 'examine_corridor_chair': 
+                    if(!gameState.corridor.flags.foundDrawerKey) {
+                        updateMessage('ふかふかとした椅子だ');  
+                        showModal(
+                            '座ってみるとお尻に固いものが当たる…<br>張り地の破れ目から指を入れると何かがある。<br>小さな鍵を手に入れた。',
+                            '<img src="images/drawerKey.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                        addItem('drawerKey');
+                        gameState.corridor.flags.foundDrawerKey = true;
+                    } else {
+                        updateMessage('ふかふかとした椅子だ');   
+                    }
+                    
+                    break;  
+                // dining
+                case 'examine_dining_skeleton':
+                    if (gameState.selectedItem=='oil') {
+                        updateMessage('「これはこれは！骨に良さそうなオイルですな。ありがたくいただきます」'); 
+                        playSE('se-skeleton');
+                        removeItem('oil');
+                        gameState.flags.skeletonFavor++;
+                    } else {
+                        talkToHintCharacter('dining','skeleton');
+                        playSE('se-skeleton');
+                    }
+                    
+                    break; 
+                case 'examine_dining_under_table': 
+                    if(!gameState.dining.flags.foundJam) {
+                        updateMessage('テーブルの下にジャムの瓶が落ちていた。未開封だ。果実の香りがほのかにする。使い道は…パン以外にも？');    
+                        showModal(
+                            'ジャムの瓶（中身入り）を手に入れた。',
+                            '<img src="images/jam.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                        addItem('jam');
+                        gameState.dining.flags.foundJam = true;
+                    } else {
+                        updateMessage('何もない');   
+                    }
+                    
+                    break;  
+                case 'examine_pot': 
+                    if(!hasItem('oil')) {
+                        updateMessage('ポットの中身はなにかのオイルのようだ。なんだか骨にツヤが出そうなオイルだ');   
+                        showModal(
+                            'コップにオイルを入れた',
+                            '<img src="images/oil.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );   
+                        addItem('oil');
+                        gameState.corridor.flags.foundOil = true;
+                    } else {
+                        updateMessage('ポットの中には油のような液体が入っている');   
+                    }
+                    
+                    break;  
+                case 'examine_dining_right_dish1':
+                    if (gameState.selectedItem=='coin') {
+                        // バッドエンド演出
+                        showModal(
+                            'バッドエンド',
+                            '<img src="images/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
+                            '<br>あなたはクマの妖精のお皿を割ってしまった…<br><b>大事なものだったようだ。</b><br>あなたは怒った骸骨により小部屋に監禁された。<span style="color:#f00;">【バッドエンド】</span>',
+                            [{text: '最初から', action: 'restart'}]
+                        );
+                        playSE('se-parin');
+                        break;
+                    } else {
+                        updateMessage('古そうなお皿が飾られている。クマの妖精の絵が書かれており、少しひびが入っている');
+                    }
+                    break; 
+                case 'examine_dining_right_dish2':
+                    updateMessage('古そうなお皿が飾られている。1985と年号が書かれており、掛け金がゆるんでいる');
+                    break; 
+                case 'examine_kannuki':
+                    if (gameState.selectedItem=='oil') {
+                        updateMessage('オイルでかんぬきが動くようになった！');
+                        playSE('se-subclear');
+                        showModal(
+                            'オイルでかんぬきが動くようになった！',
+                            '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        removeItem('oil');
+                        changeRoom('living');
+                    } else if (gameState.selectedItem=='jam') {
+                        updateMessage('ジャムを塗ってみると、かんぬきが動くようになった！');
+                        playSE('se-subclear');
+                        showModal(
+                            'ジャムを塗ってみると、かんぬきが動くようになった！',
+                            '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        removeItem('jam');
+                        changeRoom('living');
+                    } else {
+                        updateMessage('かんぬきがさび付いて動かない');
+                    }
+                    break;
+                case 'examine_insect':
+                    updateMessage('ゴキブリの死骸が落ちている。');
+                    break;    
+                case 'examine_living_box':
+                    showFinalPuzzle();
+                    break;
+                
+                case 'examine_end':
+                    updateMessage('あなたは外へと足を踏み出しました。（ノーマルエンド）');
+                    break; 
+                case 'examine_true_end':
+                    updateMessage('あなたは夢の世界で幸せに暮らしました。（トゥルーエンド）');
+                    break; 
+            }
+            gameState.selectedItem = null;
+            gameState.selectedItemSlot = null;
+
+            playSE('se-click');
+            updateInventoryDisplay();
+        }
+
+        function talkToHintCharacter(roomId, charId) {
+            // flags取得
+            let flags = gameState[roomId].flags;
+            // まだカウント無ければ初期化
+            if (!flags.talkTo) flags.talkTo = {};
+            if (!flags.talkTo[charId]) flags.talkTo[charId] = 0;
+
+            // カウントアップ
+            flags.talkTo[charId]++;
+
+            // セリフリスト取得
+            const messages = hintMessages[roomId][charId];
+            // 範囲外なら最後のメッセージ
+            const idx = (flags.talkTo[charId] - 1) % messages.length;
+
+            // 表示
+            updateMessage(messages[idx]);
+        }
+
+        // 玄関パズルを表示
+        function showGenkanPuzzle() {
+            const modalContent = `
+                <h3>入力パネル</h3>
+                <p>娘の誕生日は？</p>
+                <input type="text" class="puzzle-input" id="genkanInput" placeholder="数字を入力（例:19990101）">
+                <br>
+                <button onclick="checkGenkanPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 玄関パズルの答えをチェック
+        function checkGenkanPuzzle() {
+            const input = document.getElementById('genkanInput').value;
+            if (input === '１９８８０８０３' || input === '19880803') {
+                closeModal();
+                updateMessage('正解です！ドアが開きました！');
+                playSE('se-subclear');
+                showModal(
+                    '次の部屋へのドアが開いた！',
+                    '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                changeRoom('corridor');
+
+            } else {
+                playSE('se-error');
+                updateMessage('違います。もう一度考えてみてください。');
+            }
+        }
+
+        // 廊下クイズを表示
+        function showCorridorPuzzle() {
+            const modalContent = `
+                <h3>謎の声が響く…</h3>
+                <p>一番の古株の名は？</p>
+                <input type="text" class="puzzle-input" id="corridorInput" placeholder="アメリアorジェイムズorドロシー">
+                <br>
+                <button onclick="checkCorridorPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 廊下クイズの答えをチェック
+        function checkCorridorPuzzle() {
+            const input = document.getElementById('corridorInput').value;
+            if (input === 'ドロシー') {
+                closeModal();
+                updateMessage('正解です！不思議な力で鍵が開きました！');
+                playSE('se-subclear');
+                showModal(
+                    '次の部屋へのドアが開いた！',
+                    '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                changeRoom('dining');
+                updateMessage('ダイニングのようだ');
+
+            } else {
+                playSE('se-error');
+                updateMessage('違います。もう一度考えてみてください。');
+            }
+        }
+
+        // 最終クイズを表示
+        function showFinalPuzzle() {
+            const modalContent = `
+                <h3>答えを入力</h3>
+                <p>先祖の名を並べよ</p>
+                <input type="text" class="puzzle-input" id="finalInput" placeholder="アルファベットで">
+                <br>
+                <button onclick="checkFinalPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 最終クイズの答えをチェック
+        function checkFinalPuzzle() {
+            const input = document.getElementById('finalInput').value;
+            if (input === 'dream' || input === 'DREAM') {
+                closeModal();
+                
+                playSE('se-clear');
+                if (gameState.flags.skeletonFavor>0) {
+                    showModal(
+                        '……ああ、思い出しました。私の名はマーティン。<br>あなたのおかげで、私もやっと心残りから解放されます。<br>さあ、ともに夢の世界へ…',
+                        '<img src="images/true_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );
+                    changeRoom('trueEnd');
+
+                } else {
+                    showModal(
+                        '……ああ、思い出しました。私の名はマーティン。<br>この屋敷に“夢（DREAM）”を託してくださって、<br>心より感謝申し上げます',
+                        '<img src="images/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );
+                    changeRoom('end');
+                }
+                
+
+            } else {
+                playSE('se-error');
+                updateMessage('違います。もう一度考えてみてください。');
+            }
+        }
+
+
+        // アイテム管理
+        function addItem(itemId) {
+            playSE('se-item');
+            if (gameState.inventory.length < 5) {
+                gameState.inventory.push(itemId);
+                updateInventoryDisplay();
+            }
+        }
+
+        function removeItem(itemId) {
+            const index = gameState.inventory.indexOf(itemId);
+            if (index !== -1) {
+                gameState.inventory.splice(index, 1);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+            
+        }
+
+        function hasItem(itemId) {
+            return gameState.inventory.includes(itemId);
+        }
+
+        function useItem(slotIndex) {
+            if (gameState.inventory[slotIndex]) {
+                const item = gameState.inventory[slotIndex];
+                updateMessage(`${getItemName(item)}を選択しました。使用したい場所をクリックしてください。`);
+                gameState.selectedItem = item;
+                gameState.selectedItemSlot = slotIndex;
+                updateInventoryDisplay(); 
+            }
+        }
+
+        function getItemName(itemId) {
+            const names = {
+                key: '鍵',
+                drawerKey: 'ちいさな鍵',
+                oil: 'コップに入ったオイル',
+                jam: 'ジャムが入った瓶',
+                coin: '古いコイン',
+                book: 'コグマの大冒険の絵本',
+                pin: '古びたピンブローチ'
+            };
+            return names[itemId] || itemId;
+        }
+
+        // インベントリ表示更新
+        function updateInventoryDisplay() {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                if (gameState.inventory[index]) {
+                    const img = document.createElement('img');
+                    img.src = IMAGES.items[gameState.inventory[index]];
+                    img.onerror = function() {
+                        // 画像が読み込めない場合はプレースホルダーを表示
+                        this.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder';
+                        placeholder.textContent = getItemName(gameState.inventory[index]);
+                        placeholder.style.width = '60px';
+                        placeholder.style.height = '60px';
+                        slot.appendChild(placeholder);
+                    };
+                    slot.appendChild(img);
+                }
+                // ★選択中ならselectedクラス追加
+                if (gameState.selectedItemSlot === index) {
+                    slot.classList.add('selected');
+                } else {
+                    slot.classList.remove('selected');
+                }
+            });
+        }
+
+        // メッセージ更新
+        function updateMessage(message) {
+            document.getElementById('messageArea').innerHTML = message;
+        }
+
+        // モーダル表示
+        function showModal(title, content, buttons) {
+            let modalHtml = `<h3>${title}</h3><p>${content}</p>`;
+            buttons.forEach(button => {
+                modalHtml += `<button onclick="${button.action === 'close' ? 'closeModal' : button.action === 'restart' ? 'restartGame()' : button.action}()">${button.text}</button>`;
+            });
+            
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // モーダルを閉じる
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // ゲームリスタート
+        function restartGame() {
+            gameState = {
+                currentRoom: 'genkan',
+                inventory: [],
+                genkan: {
+                    flags: {
+                        talkTo: {
+                            skeleton:0
+                        },
+                        watchedPaper: false,
+                        foundPin: false,
+                    }
+                },
+                corridor: {
+                    flags: {
+                        foundDrawerKey: false,
+                        talkTo: {
+                            skeleton:0,
+                            pic_left:0,
+                            pic_center:0,
+                            pic_right:0
+                        },
+                        talkToLeft:false,
+                        talkToCenter:false,
+                        talkToRight: false,
+                    }
+                },
+                dining: {
+                    flags: {
+                        foundOil: false,
+                        foundJam: false,
+                        useOilToSkeleton: false,
+                    }
+                },
+                living: {
+                    flags: {
+                        readMemo: false,
+                    }
+                },
+                flags: {
+                    skeletonFavor :0,
+                    foundFutonbo: false,
+                    foundBear: false,
+                    happyBear: false,
+                    foundBook:false,
+                },
+                selectedItem: null,
+                selectedItemSlot: null,
+            };
+            closeModal();
+            initGame();
+            updateInventoryDisplay();
+        }
+
+        let isBGMPlaying = false;   // ←デフォルトは再生してない
+        let isBGMInitialized = false; // 初回クリック判定用
+
+        // 初回クリック時にだけBGMを再生
+        function initBGMOnce() {
+        if (!isBGMInitialized) {
+            const bgm = document.getElementById('bgm');
+            bgm.volume = 0.3;
+            bgm.play();
+            isBGMPlaying = true;
+            isBGMInitialized = true;
+            document.getElementById('bgm-toggle').textContent = "🔊 BGM";
+        }
+        }
+        window.addEventListener('click', initBGMOnce, { once: true });
+
+        function toggleBGM() {
+        const bgm = document.getElementById('bgm');
+        const btn = document.getElementById('bgm-toggle');
+        if (!isBGMPlaying) {
+            bgm.play();
+            isBGMPlaying = true;
+            btn.textContent = "🔊 BGM";
+        } else {
+            bgm.pause();
+            isBGMPlaying = false;
+            btn.textContent = "🔇 BGM";
+        }
+        }
+
+        function playSE(id) {
+            const se = document.getElementById(id);
+            se.currentTime = 0;
+            se.play();
+        }
+
+        function saveGame() {
+            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            const oldMsg = document.getElementById('messageArea').innerHTML;
+            updateMessage('セーブしました！');
+            setTimeout(() => {
+                updateMessage(oldMsg);
+            }, 1500);
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('escapeGameState');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                // UIや画面をstateに合わせて復元する
+                changeRoom(gameState.currentRoom);
+                updateInventoryDisplay();
+                updateMessage('ロードしました！');
+            } else {
+                updateMessage('セーブデータがありません');
+            }
+        }
+
+        // ゲーム開始
+        initGame();
+    </script>
+</body>
+</html>
