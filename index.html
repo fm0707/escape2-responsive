@@ -89,6 +89,9 @@
       background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
       color: #fff;
     }
+    .ohuse-area {
+        flex: 1;
+    }
     @media (max-width: 700px) {
       .games-list {
         flex-direction: column;
@@ -129,6 +132,17 @@
       <a class="game-link" href="escape2.html" target="_blank">プレイする</a>
     </div>
     <!-- ここに新作をどんどん追加！ -->
+     <div class="ohuse-area" style="display: flex; flex-direction: column; align-items: center; margin: 32px 0 18px 0;">
+        <a data-ofuse-widget-button href="https://ofuse.me/o?uid=101365"
+            data-ofuse-id="101365" data-ofuse-size="large"
+            data-ofuse-color="dark" data-ofuse-style="rectangle">
+            OFUSEで応援を送る
+        </a>
+        <div class="ohuse-message" style="margin-top: 10px; font-size: 1.1rem; color: #5a4c33;">
+            感想や応援メッセージだけでも、お気軽にどうぞ！
+        </div>
+        </div>
+        <script async src="https://ofuse.me/assets/platform/widget.js" charset="utf-8"></script>
   </div>
 </body>
 </html>
