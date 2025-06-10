@@ -1393,6 +1393,18 @@
             se.play();
         }
 
+        // どこかで最初に一度だけ呼ぶ
+        function preloadImages() {
+            Object.values(IMAGES.rooms).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+            Object.values(IMAGES.items).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+
         function saveGame() {
             localStorage.setItem('escapeGameState', JSON.stringify(gameState));
             const oldMsg = document.getElementById('messageArea').innerHTML;
@@ -1416,6 +1428,7 @@
         }
 
         // ゲーム開始
+        preloadImages();
         initGame();
     </script>
 </body>
