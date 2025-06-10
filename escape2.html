@@ -17,10 +17,12 @@
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #2c1810, #1a0f08);
             color: #f4f1e8;
+            width: 100%;
+            overflow-x: hidden;  /* ←これ重要 */
         }
 
         .game-container {
-            width: 100vw;
+            width: 100%;
             max-width: 1408px;
             margin: 0 auto;
             display: flex;
@@ -70,7 +72,7 @@
 
         .ui-panel {
             flex-wrap: wrap;
-            width: 100vw;
+            width: 100%;
             max-width: 1048px;
             min-height: 120px;
             background: #2c1810;
