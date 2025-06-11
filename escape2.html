@@ -353,6 +353,7 @@
     <audio id="se-clear" src="sounds/Angel01-1.mp3"></audio>
     <audio id="se-parin" src="sounds/Onoma-Impact04-1(High).mp3"></audio>
     <audio id="se-box" src="sounds/Retro_Anime-Switch02-1(Mid).mp3"></audio>
+    <audio id="se-person" src="sounds/Short_Accent04-1(Single).mp3"></audio>
     <script>
         window._nextModal = null;
         // ゲーム設定 - 画像パスをここで管理
@@ -951,18 +952,18 @@
                     break; 
                 case 'examine_corridor_picture_left':
                     talkToHintCharacter('corridor','pic_left');
-                    playSE('se-skeleton');
+                    playSE('se-person');
                     gameState.corridor.flags.talkToLeft = true;
                     break;  
                 case 'examine_corridor_picture_center':
                     talkToHintCharacter('corridor','pic_center');
                     gameState.corridor.flags.talkToCenter = true;
-                    playSE('se-skeleton');
+                    playSE('se-person');
                     break;  
                 case 'examine_corridor_picture_right':
                     talkToHintCharacter('corridor','pic_right');
                     gameState.corridor.flags.talkToRight = true;
-                    playSE('se-skeleton');
+                    playSE('se-person');
                     break;    
                 case 'examine_corridor_light':
                     updateMessage('古びた照明だ。高価そうな雰囲気だ');
