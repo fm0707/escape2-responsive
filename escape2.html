@@ -757,6 +757,12 @@
                 "……ここに来る者がいるとは、久しぶりです。",
                 "私もこの屋敷に、長いこと“縛られて”おりまして。",
                 "もしお困りでしたら、張り紙をご覧ください。もっとお手伝いしたいのですが……これ以上は、骨身にこたえますので。"
+                ],
+                spidernet: [
+                    "クモの巣が張っている…",
+                    "小さな羽虫が引っかかっている",
+                    "クモの姿はない",
+                    "そんなにクモの巣が気になりますか？",
                 ]
             },
             corridor: {
@@ -899,7 +905,7 @@
                     gameState.genkan.flags.watchedPaper = true;
                     break;
                 case 'examine_genkan_chair':
-                    if (gameState.genkan.flags.chairSitCount<2) {
+                    if (gameState.genkan.flags.chairSitCount<7) {
                         updateMessage('椅子に座ってみた。何かがきしむような音がする…');
                         playSE('se-metal');
                         gameState.genkan.flags.chairSitCount++;
@@ -929,10 +935,11 @@
                     
                     break;  
                 case 'examine_genkan_memo':
-                    updateMessage('何かのメモのようだ。「8/1　明後日は娘の誕生日だ。街の洋菓子店で特製チーズケーキを予約しなくては」');
+                    updateMessage('何かのメモのようだ。「8/1　明後日は娘の誕生日だ。残タスク：街の洋菓子店で特製チーズケーキを予約」');
                     break; 
                 case 'examine_genkan_spidernet':
-                    updateMessage('クモの巣が張っている…');
+                    // updateMessage('クモの巣が張っている…');
+                    talkToHintCharacter('genkan','spidernet');
                     break; 
                 case 'examine_genkan_pin':
                     if (!gameState.genkan.flags.foundPin) {
@@ -1474,8 +1481,8 @@
                 jam: 'ジャムが入った瓶',
                 coin: '古いコイン',
                 book: 'コグマの大冒険の絵本',
-                pin: '古びたピンブローチ',
-                picture: '古びた写真'
+                pin: '古びたピンブローチ「Mのイニシャル付き」',
+                picture: '古びた写真「イングリッドの誕生日」'
             };
             return names[itemId] || itemId;
         }
