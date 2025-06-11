@@ -288,9 +288,19 @@
             transform: translateY(-2px) scale(1.05);
             box-shadow: 0 0 12px #d4af3740;
         }
+        #roomEffectOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
+    <div id="roomEffectOverlay"></div>
     <div class="game-container">
         <div class="title">謎の洋館から脱出せよ</div>
         
@@ -304,12 +314,9 @@
                 <div class="message-area" id="messageArea">
                     気が付くとあなたは古い洋館に立っていました。玄関ドアはカギがかかっていて出られません
                 </div>
-                <!-- <div class="navigation">
-                    <button class="nav-btn" onclick="changeRoom('genkan')">玄関</button>
-                    <button class="nav-btn" onclick="changeRoom('living')">居間</button>
-                    <button class="nav-btn" onclick="changeRoom('bedroom')">寝室</button>
-                    <button class="nav-btn" onclick="changeRoom('study')">書斎</button>
-                </div> -->
+                <div class="navigation">
+                    
+                </div> 
             </div>
             <div class="inventory" id="inventory">
                 <div class="inventory-slot" onclick="useItem(0)"></div>
@@ -345,7 +352,9 @@
     <audio id="se-subclear" src="sounds/Quiz-Ding_Dong01-1(Short).mp3"></audio>
     <audio id="se-clear" src="sounds/Angel01-1.mp3"></audio>
     <audio id="se-parin" src="sounds/Onoma-Impact04-1(High).mp3"></audio>
+    <audio id="se-box" src="sounds/Retro_Anime-Switch02-1(Mid).mp3"></audio>
     <script>
+        window._nextModal = null;
         // ゲーム設定 - 画像パスをここで管理
         let IMAGES = {
             rooms: {
@@ -354,28 +363,23 @@
                 dining: 'images/dining.jpg',      
                 living: 'images/living.jpg',
                 end: 'images/end.jpg',
+                dreamEnd: 'images/dreamEnd.jpg',
                 trueEnd: 'images/trueEnd.jpg'      
             },
             items: {
-                key: 'images/key.jpg',              // 鍵の画像
                 drawerKey: 'images/drawerKey.jpg',
                 coin: 'images/coin.jpg',
                 pin: 'images/pin.jpg',
                 oil: 'images/oil.jpg',
                 jam: 'images/jam.jpg',
-                scroll: 'images/scroll.jpg',        // 巻物の画像
-                mirror: 'images/mirror.jpg',        // 鏡の画像
-                box: 'images/box.jpg',              // 箱の画像
-                treasure: 'images/treasure.jpg',    // 家宝の画像
-                futonbo: 'images/futonbo.jpg',      // 布団たたきの画像
-                smallKey: 'images/smallKey.jpg',    // 小さい鍵の画像
-                book: 'images/book.jpg',            // 絵本の画像
+                picture: 'images/picture.jpg',
             }
         };
 
         // ゲーム状態
         let gameState = {
             currentRoom: 'genkan',
+            openRooms: ['genkan'], 
             inventory: [],
             genkan: {
                 flags: {
@@ -389,6 +393,7 @@
             corridor: {
                 flags: {
                     foundDrawerKey: false,
+                    foundPicture: false,
                     talkTo: {
                         skeleton:0,
                         pic_left:0,
@@ -416,6 +421,9 @@
                 skeletonFavor :0,
                 foundKey: false,
                 foundMirror: false,
+                genkanPuzzleSolved: false,
+                corridorPuzzleSolved: false,
+                diningPuzzleSolved: false,
                 readScroll: false,
                 solvedPuzzle: false,
                 foundTreasure: false,
@@ -562,7 +570,7 @@
             },
             corridor: {
                 name: '廊下',
-                description: '豪華だが荒廃した廊下',
+                description: '豪華だが荒廃した廊下だ。肖像画がいくつかかかっている',
                 clickableAreas: [
                     {
                         x: 43, y: 37, width: 18, height: 40,
@@ -615,7 +623,7 @@
             },
             dining: {
                 name: '食堂',
-                description: '食堂',
+                description: 'ダイニングセットが置いてある。クモの巣が目立つ…',
                 clickableAreas: [
                     {
                         x: 10, y: 27, width: 14.5, height: 42,
@@ -637,6 +645,11 @@
                         x: 87, y: 36, width: 8.7, height: 7,
                         action: 'examine_dining_right_dish2',
                         description: '飾り皿'
+                    },
+                    {
+                        x: 47, y: 57, width: 9, height: 3,
+                        action: 'examine_dining_center_dish',
+                        description: 'お皿'
                     },
                     {
                         x: 60, y: 70, width: 13, height: 8,
@@ -661,52 +674,64 @@
                     },
                 ]
             },
-            trueEnd: {
+            dreamEnd: {
                 name: '夢の世界へルート',
                 description: 'あなたは骸骨執事とともに、夢の世界へ旅立った',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
-                        action: 'examine_true_end',
+                        action: 'examine_dream_end',
                         description: '夢の世界'
                     },
                 ]
             },
+            trueEnd: {
+                name: '解放ルート',
+                description: 'あなたは骸骨執事とその家族を解放した',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_true_end',
+                        description: '解放'
+                    },
+                ]
+            }
         };
 
         const hintMessages = {
             genkan: {
                 skeleton: [
-                "これは、珍しいお客さんですな",
-                "お困りなら張り紙を見ると良いかもしれません。",
-                "それ以上ヒントは…骨が折れます。"
+                "……ここに来る者がいるとは、久しぶりです。",
+                "私もこの屋敷に、長いこと“縛られて”おりまして。",
+                "もしお困りでしたら、張り紙をご覧ください。もっとお手伝いしたいのですが……これ以上は、骨身にこたえますので。"
                 ]
             },
             corridor: {
                 skeleton: [
                 "代々のご家族の肖像画ですぞ",
                 "お困りなら調べてみるのも良いもしれませんな",
-                "それにしても寒さが骨身にしみますな…"
+                "え？大きくなっていないかですと？気のせいでございましょう"
                 ],
                 pic_center: [
-                    "やあ、私はジェイムズ。この家の三代目さ。",
+                    "やあ、僕はネルソン。この家の三代目さ。",
                     "子どもの頃は、ドロシーおばさんによく遊んでもらったなあ。",
-                    "キャロットケーキ、美味しかったなあ。",
+                    "キャロットケーキ、美味しかったなあ。いつも残さずペロリだった。",
+                    "思い出だけが、今もこの家に残ってる気がするよ。"
                 ],
                 pic_left: [
                     "まあ、ごきげんよう。わたくしはアメリアよ。",
                     "最近は、お屋敷も寂れてきてしまったわね。",
-                    "子どもの頃、母から『この家はかつて栄えていたのよ』と聞かされたものよ。",
+                    "私の大好きなバラ園も、手入れをする庭師が雇えないわ…",
                 ],
                 pic_right: [
                     "ハイ、私はドロシーよ。",
                     "私の時代は、舞踏会も開かれていたのよ。",
-                    "そういえば請求書が引き出しに…",
+                    "そういえば請求書が引き出しに残っているかも。",
                 ]
             },
             dining: {
                 skeleton: [
-                "にぎやかな食卓が懐かしいですね",
+                "余計なお世話ですが、ここでセーブをお勧めしますぞ",
                 "お皿をよく見るのが、この家のルールです。",
                 "ジャム派かオイル派か、ここは分かれ道ですね…"
                 ]
@@ -714,11 +739,11 @@
             living: {
                 skeleton : [
                     "ダーツがお好きだったのは、はて、どなただったか…",
-                    "なぜか、「先代たちの名を並べよ」という言葉が繰り返し頭に浮かぶのです",
+                    "なぜか、「先代たちの名を並べよ」という言葉が頭にこびりついたように残っているのです。",
                     "私は何が好きだったのでしょう…思い出せません",
+                    "玄関のカギは、テーブルの上の小箱の中にありますぞ",
                 ]
             }
-            // 必要なら他の部屋やキャラも追加
         };
 
         // ゲーム初期化
@@ -732,13 +757,11 @@
             gameState.currentRoom = roomId;
             const room = rooms[roomId];
             
-            // 背景画像を設定（画像がない場合はプレースホルダー）
             const roomView = document.getElementById('roomView');
             roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
             
             // クリック可能エリアを生成
             generateClickableAreas(room);
-            
             updateMessage(`${room.name}に入りました。${room.description}`);
         }
 
@@ -751,6 +774,11 @@
             const roomView = document.getElementById('roomView');
             roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
             generateClickableAreas(room);
+        }
+
+        function unlockRoom(roomId) {
+            if (!gameState.openRooms.includes(roomId)) gameState.openRooms.push(roomId);
+            renderNavigation();
         }
 
         // クリック可能エリアを生成
@@ -805,12 +833,18 @@
                     break;
                 case 'examine_genkan_left_door':
                     updateMessage('番号式のカギがかかっている');
-                    showGenkanPuzzle();
+                    if (!gameState.flags.genkanPuzzleSolved) {
+                        showGenkanPuzzle();
+                    } else {
+                        changeRoom('corridor');
+                    }
                     break;
                 case 'examine_genkan_picture':
-                    if (gameState.genkan.flags.watchedPaper) {
+                    if (gameState.genkan.flags.watchedPaper && (!gameState.selectedItem=='picture'||gameState.selectedItem==null)) {
                         updateMessage('これが娘だろうか？18歳記念の肖像画のようだ。製作年は2006と書いてある');
                         
+                    } else if(gameState.selectedItem=='picture') {
+                        updateMessage('肖像画が少し微笑んだ！…ような気がした');
                     } else {
                         updateMessage('若い女性の肖像画だ');
                     }
@@ -853,7 +887,7 @@
                     updateMessage('中年の女性の写真だ。「DOROTHY　ドロシー」');
                     break;
                 case 'examine_living_pic3':
-                    updateMessage('若い女性の写真だ。バラの花を持っている。「Amelia　アメリア」');
+                    updateMessage('若い女性の写真だ。「Amelia　アメリア」');
                     break;
                 case 'examine_living_pic4':
                     updateMessage('壮年男性の写真だ。「Edward　エドワード」');
@@ -877,7 +911,7 @@
                 case 'examine_living_table':
                     showModal(
                         '立派なテーブルの下にメモが落ちていた。',
-                        '<img src="images/living_memo2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        'マーティンのブローチ、勝手に借りた上に無くしちゃった…<br>私に残された選択肢は？　イングリッド',
                         [{text: '閉じる', action: 'close'}]
                     );
                     break; 
@@ -902,11 +936,13 @@
                     break; 
                 // corridor
                 case 'examine_corridor_door':
-                    if (gameState.corridor.flags.talkToLeft && gameState.corridor.flags.talkToCenter && gameState.corridor.flags.talkToRight) {
+                    if (gameState.corridor.flags.talkToLeft && gameState.corridor.flags.talkToCenter && gameState.corridor.flags.talkToRight && !gameState.flags.corridorPuzzleSolved) {
                         showCorridorPuzzle();
                     }
-                    else {
+                    else if(!gameState.flags.corridorPuzzleSolved){
                         updateMessage('ドアには鍵がかかっている');
+                    } else {
+                        changeRoom('dining');
                     }
                     break;
                 case 'examine_corridor_skeleton':
@@ -937,12 +973,28 @@
                 case 'examine_corridor_drawer2':
                     if (gameState.selectedItem=='drawerKey' && !hasItem('coin')) {
                         updateMessage('コインをみつけた');
+                        showModal(
+                            '古びたコインを見つけた。<br>何かに使えそうだ',
+                            '<img src="images/coin.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
                         addItem('coin');
                         removeItem('drawerKey');
                         gameState.corridor.flags.useDrawerKey = true;
-                    } else if(gameState.corridor.flags.useDrawerKey) {
-                        updateMessage('写真がある。裏には「2000/10/21 アメリアとリチャード」と書いてある');
-                    } else {
+                    } else if(gameState.corridor.flags.useDrawerKey && !gameState.corridor.foundPicture) {
+                        updateMessage('写真を手に入れた');
+                        showModal(
+                            '引き出しの奥に古びた写真がある。<br>裏に「イングリッドの誕生日、<br>ご馳走がたくさん残ってしまったわね」と書いてある',
+                            '<img src="images/picture.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                        addItem('picture');
+                        gameState.corridor.foundPicture = true;
+
+                    } else if (gameState.corridor.flags.useDrawerKey && gameState.corridor.foundPicture) {
+                        updateMessage('引き出しは空っぽだ');
+                    }
+                    else {
                         updateMessage('鍵がかかっていて開かない');
                     }
                     break;  
@@ -963,11 +1015,15 @@
                     break;  
                 // dining
                 case 'examine_dining_skeleton':
-                    if (gameState.selectedItem=='oil') {
+                    if (gameState.selectedItem=='oil' && !gameState.dining.useOilToSkeleton) {
                         updateMessage('「これはこれは！骨に良さそうなオイルですな。ありがたくいただきます」'); 
                         playSE('se-skeleton');
                         removeItem('oil');
                         gameState.flags.skeletonFavor++;
+                        gameState.dining.useOilToSkeleton = true;
+                    } else if (gameState.selectedItem=='oil' && gameState.dining.useOilToSkeleton) {
+                        updateMessage('「今の私はオイルで艶々スケルトンですので、結構ですよ」'); 
+                        playSE('se-skeleton');
                     } else {
                         talkToHintCharacter('dining','skeleton');
                         playSE('se-skeleton');
@@ -993,7 +1049,7 @@
                     if(!hasItem('oil')) {
                         updateMessage('ポットの中身はなにかのオイルのようだ。なんだか骨にツヤが出そうなオイルだ');   
                         showModal(
-                            'コップにオイルを入れた',
+                            'ポットの中には油のような液体が入っている<br>まるでプレイヤーのために用意されたようなグラスを見つけ、オイルを入れた',
                             '<img src="images/oil.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );   
@@ -1005,7 +1061,7 @@
                     
                     break;  
                 case 'examine_dining_right_dish1':
-                    if (gameState.selectedItem=='coin') {
+                    if (gameState.selectedItem=='coin' || gameState.selectedItem=='jam') {
                         // バッドエンド演出
                         showModal(
                             'バッドエンド',
@@ -1022,8 +1078,16 @@
                 case 'examine_dining_right_dish2':
                     updateMessage('古そうなお皿が飾られている。1985と年号が書かれており、掛け金がゆるんでいる');
                     break; 
+                case 'examine_dining_center_dish':
+                    updateMessage('お皿の下にメモがある');
+                    showModal(
+                            'お皿の下にメモがある',
+                            '<img src="images/living_memo2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                    break; 
                 case 'examine_kannuki':
-                    if (gameState.selectedItem=='oil') {
+                    if (gameState.selectedItem=='oil' && !gameState.flags.diningPuzzleSolved) {
                         updateMessage('オイルでかんぬきが動くようになった！');
                         playSE('se-subclear');
                         showModal(
@@ -1032,8 +1096,11 @@
                             [{text: '閉じる', action: 'close'}]
                         );
                         removeItem('oil');
+                        unlockRoom('living');
+                        renderNavigation();
+                        gameState.flags.diningPuzzleSolved = true;
                         changeRoom('living');
-                    } else if (gameState.selectedItem=='jam') {
+                    } else if (gameState.selectedItem=='jam' && !gameState.flags.diningPuzzleSolved) {
                         updateMessage('ジャムを塗ってみると、かんぬきが動くようになった！');
                         playSE('se-subclear');
                         showModal(
@@ -1042,9 +1109,14 @@
                             [{text: '閉じる', action: 'close'}]
                         );
                         removeItem('jam');
+                        unlockRoom('living');
+                        renderNavigation();
+                        gameState.flags.diningPuzzleSolved = true;
                         changeRoom('living');
-                    } else {
+                    } else if(!gameState.flags.diningPuzzleSolved) {
                         updateMessage('かんぬきがさび付いて動かない');
+                    } else {
+                        changeRoom('living');
                     }
                     break;
                 case 'examine_insect':
@@ -1057,8 +1129,11 @@
                 case 'examine_end':
                     updateMessage('あなたは外へと足を踏み出しました。（ノーマルエンド）');
                     break; 
+                case 'examine_dream_end':
+                    updateMessage('あなたは夢の世界で幸せに暮らしました。（ノーマルエンド2）');
+                    break; 
                 case 'examine_true_end':
-                    updateMessage('あなたは夢の世界で幸せに暮らしました。（トゥルーエンド）');
+                    updateMessage('あなたは屋敷に残された謎を開放しました。（トゥルーエンド）');
                     break; 
             }
             gameState.selectedItem = null;
@@ -1114,6 +1189,9 @@
                     '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
+                unlockRoom('corridor');
+                renderNavigation();
+                gameState.flags.genkanPuzzleSolved = true;
                 changeRoom('corridor');
 
             } else {
@@ -1127,7 +1205,7 @@
             const modalContent = `
                 <h3>謎の声が響く…</h3>
                 <p>一番の古株の名は？</p>
-                <input type="text" class="puzzle-input" id="corridorInput" placeholder="アメリアorジェイムズorドロシー">
+                <input type="text" class="puzzle-input" id="corridorInput" placeholder="アメリアorネルソンorドロシー">
                 <br>
                 <button onclick="checkCorridorPuzzle()">確認</button>
                 <button onclick="closeModal()">閉じる</button>
@@ -1149,6 +1227,9 @@
                     '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
+                unlockRoom('dining');
+                renderNavigation();
+                gameState.flags.corridorPuzzleSolved = true;
                 changeRoom('dining');
                 updateMessage('ダイニングのようだ');
 
@@ -1179,25 +1260,58 @@
             if (input === 'dream' || input === 'DREAM') {
                 closeModal();
                 
-                playSE('se-clear');
+                
                 if (gameState.flags.skeletonFavor>1) {
+                    playSE('se-box');
                     showModal(
-                        '……ああ、思い出しました。私の名はマーティン。<br>あなたのおかげで、私もやっと心残りから解放されます。<br>さあ、ともに夢の世界へ…',
-                        '<img src="images/true_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '箱が開いた！',
+                        '<img src="images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
-                    changeRoom('trueEnd');
+                    playSE('se-clear');
+                    window._nextModal = {
+                        before: function() { playSE('se-clear'); },
+                        title: '……ああ、思い出しました。私の名はマーティン。<br>あなたのおかげで、私もやっと心残りから解放されます。<br>さあ、ともに夢の世界へ…',
+                        content: '<img src="images/dream_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        buttons: [{text: '閉じる', action: 'close'}],
+                        after: function() { changeRoom('dreamEnd'); }
+                    };
 
                 } else {
+                    playSE('se-box');
                     showModal(
-                        '……ああ、思い出しました。私の名はマーティン。<br>この屋敷に“夢（DREAM）”を託してくださって、<br>心より感謝申し上げます',
-                        '<img src="images/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '箱が開いた！',
+                        '<img src="images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
-                    changeRoom('end');
+                    playSE('se-clear');
+                    window._nextModal = {
+                        before: function() { playSE('se-clear'); },
+                        title: '……ああ、思い出しました。私の名はマーティン。<br>この屋敷に“夢（DREAM）”を託してくださって、<br>心より感謝申し上げます',
+                        content: '<img src="images/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        buttons: [{text: '閉じる', action: 'close'}],
+                        after: function() { changeRoom('end'); }
+                    };
                 }
                 
 
+            } else if (input === 'remained' || input === 'REMAINED') {
+                playSE('se-box');
+                showModal(
+                        '箱が開いた！',
+                        '<img src="images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );
+                playSE('se-clear');
+                // 次のモーダル情報をセット
+                window._nextModal = {
+                    before: function() { playSE('se-clear'); },
+                    title: '……ああ、すべて思い出しました。私の名はマーティン。<br>この屋敷に残された夢をすべて見つけてくださって<br>家族一同心より感謝申し上げます',
+                    content: '<img src="images/true_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    buttons: [{text: '閉じる', action: 'close'}],
+                    after: function() { changeRoom('trueEnd'); }
+                };
+                
             } else {
                 playSE('se-error');
                 updateMessage('違います。もう一度考えてみてください。');
@@ -1247,9 +1361,22 @@
                 jam: 'ジャムが入った瓶',
                 coin: '古いコイン',
                 book: 'コグマの大冒険の絵本',
-                pin: '古びたピンブローチ'
+                pin: '古びたピンブローチ',
+                picture: '古びた写真'
             };
             return names[itemId] || itemId;
+        }
+
+        function renderNavigation() {
+            const navDiv = document.querySelector('.navigation');
+            navDiv.innerHTML = '';
+            gameState.openRooms.forEach(roomId => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = rooms[roomId].name;
+                btn.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(btn);
+            });
         }
 
         // インベントリ表示更新
@@ -1298,8 +1425,21 @@
         }
 
         // モーダルを閉じる
+        // function closeModal() {
+        //     document.getElementById('modal').style.display = 'none';
+        // }
+
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
+            // 次のモーダルが登録されていれば表示
+            if (window._nextModal) {
+                // 登録内容は {title, content, buttons, after} オブジェクト
+                let modal = window._nextModal;
+                window._nextModal = null; // クリア
+                if (modal.before) modal.before(); // もしplaySEなど事前処理したければ
+                showModal(modal.title, modal.content, modal.buttons);
+                if (modal.after) modal.after(); // もしshowModal直後にやりたいことあれば
+            }
         }
 
         // ゲームリスタート
@@ -1319,6 +1459,7 @@
                 corridor: {
                     flags: {
                         foundDrawerKey: false,
+                        foundPicture: false,
                         talkTo: {
                             skeleton:0,
                             pic_left:0,
@@ -1348,6 +1489,9 @@
                     foundBear: false,
                     happyBear: false,
                     foundBook:false,
+                    genkanPuzzleSolved: false,
+                    corridorPuzzleSolved: false,
+                    diningPuzzleSolved: false,
                 },
                 selectedItem: null,
                 selectedItemSlot: null,
@@ -1421,6 +1565,7 @@
                 // UIや画面をstateに合わせて復元する
                 changeRoom(gameState.currentRoom);
                 updateInventoryDisplay();
+                renderNavigation();
                 updateMessage('ロードしました！');
             } else {
                 updateMessage('セーブデータがありません');
