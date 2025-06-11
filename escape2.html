@@ -55,6 +55,39 @@
             pointer-events: none;   /* 画像上でもクリックイベントが通るように */
         }
 
+        #endingShareArea {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.96);
+            border-radius: 18px;
+            box-shadow: 0 0 24px #fffc;
+            padding: 18px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 99;
+            font-size: 1.2em;
+            gap: 10px;
+            border: 2px solid gold;
+            }
+
+        #endingShareArea button {
+            font-size: 1.1em;
+            padding: 10px 24px;
+            margin: 6px 0;
+            background: gold;
+            color: #333;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #ffdc;
+            cursor: pointer;
+        }
+
+
+
         .clickable-area {
             position: absolute;
             cursor: pointer;
@@ -307,8 +340,14 @@
         <div class="room-view" id="roomView">
             <!-- クリック可能エリアは動的に生成 -->
               <img id="roomImage" src="">
+              
+        </div> 
+        <div id="endingShareArea" style="display:none;">
+            <div style="font-size:1.4em; font-weight:bold; margin-bottom:8px;color:#2c1810;">🎉クリアおめでとう！🎉</div>
+            <button onclick="shareOnTwitter()">Xでシェア</button>
+            <button onclick="copyShareText()">クリア報告をコピー</button>
+            <div style="font-size:0.9em; margin-top:6px; color:#555;">#脱出ゲーム #自作ゲーム</div>
         </div>
-
         <div class="ui-panel">
             <div class="info-panel">
                 <div class="message-area" id="messageArea">
@@ -764,6 +803,22 @@
             // クリック可能エリアを生成
             generateClickableAreas(room);
             updateMessage(`${room.name}に入りました。${room.description}`);
+
+            const shareArea = document.getElementById('endingShareArea');
+            if (shareArea) { 
+                if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd") {
+                    shareArea.style.display = "block";
+                    console.log("シェアUIを表示！roomId:", roomId);
+                } else {
+                    shareArea.style.display = "none";
+                }
+            }
+            // BGM切替
+            if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd") {
+                changeBGM("sounds/egao to namida.mp3");
+            } else {
+                changeBGM("sounds/sinpi no kyuuden.mp3");
+            }
         }
 
         // 背景画像を差し替え
@@ -1519,17 +1574,29 @@
         window.addEventListener('click', initBGMOnce, { once: true });
 
         function toggleBGM() {
-        const bgm = document.getElementById('bgm');
-        const btn = document.getElementById('bgm-toggle');
-        if (!isBGMPlaying) {
-            bgm.play();
-            isBGMPlaying = true;
-            btn.textContent = "🔊 BGM";
-        } else {
-            bgm.pause();
-            isBGMPlaying = false;
-            btn.textContent = "🔇 BGM";
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('bgm-toggle');
+            if (!isBGMPlaying) {
+                bgm.play();
+                isBGMPlaying = true;
+                btn.textContent = "🔊 BGM";
+            } else {
+                bgm.pause();
+                isBGMPlaying = false;
+                btn.textContent = "🔇 BGM";
+            }
         }
+
+        function changeBGM(newSrc) {
+            const bgm = document.getElementById('bgm');
+            if (bgm.src.endsWith(newSrc)) return; // すでにそのBGMなら何もしない
+            const isPlaying = isBGMPlaying;
+            bgm.pause();
+            bgm.src = newSrc;
+            bgm.load();
+            if (isPlaying) {
+                bgm.play();
+            }
         }
 
         function playSE(id) {
@@ -1548,6 +1615,22 @@
                 const img = new Image();
                 img.src = src;
             });
+        }
+
+        function shareOnTwitter(resultType) {
+            // 例：resultType = "true_end" or "normal_end"
+            let url = encodeURIComponent(location.href);
+            let text;
+            if (resultType === "true_end") {
+                text = encodeURIComponent("脱出ゲーム『屋敷に残された夢』で真エンド達成！ #脱出ゲーム");
+            } else {
+                text = encodeURIComponent("脱出ゲーム『屋敷に残された夢』をクリア！ #脱出ゲーム");
+            }
+            window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+        function copyShareText() {
+            let text = "脱出ゲーム『屋敷に残された夢』をクリア！ #脱出ゲーム " + location.href;
+            navigator.clipboard.writeText(text).then(() => alert('コピーしました！'));
         }
 
         function saveGame() {
