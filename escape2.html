@@ -404,7 +404,8 @@
                 living: 'images/living.jpg',
                 end: 'images/end.jpg',
                 dreamEnd: 'images/dreamEnd.jpg',
-                trueEnd: 'images/trueEnd.jpg'      
+                trueEnd: 'images/trueEnd.jpg',
+                extraEnd: 'images/extraEnd.jpg'     
             },
             items: {
                 drawerKey: 'images/drawerKey.jpg',
@@ -428,6 +429,7 @@
                     },
                     watchedPaper: false,
                     foundPin: false,
+                    chairSitCount: 0
                 }
             },
             corridor: {
@@ -705,7 +707,7 @@
             },
             end: {
                 name: '外の世界へルート',
-                description: 'あなたは無事脱出できました。おめでとうございます',
+                description: 'あなたは無事脱出できました。おめでとうございます。【出】口からの脱出',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -716,7 +718,7 @@
             },
             dreamEnd: {
                 name: '夢の世界へルート',
-                description: 'あなたは骸骨執事とともに、夢の世界へ旅立った',
+                description: 'あなたは骸骨執事とともに、夢の世界へ旅立った。【い】っしょに天国へ',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -727,12 +729,23 @@
             },
             trueEnd: {
                 name: '解放ルート',
-                description: 'あなたは骸骨執事とその家族を解放した',
+                description: 'あなたは骸骨執事とその家族を解放した。すべての【お】もいが昇華する',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         action: 'examine_true_end',
                         description: '解放'
+                    },
+                ]
+            },
+            extraEnd: {
+                name: 'EXTRAルート',
+                description: 'あなたはこのゲームをやりこみました',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_extra_end',
+                        description: 'やりこみ勢に拍手！'
                     },
                 ]
             }
@@ -806,7 +819,7 @@
 
             const shareArea = document.getElementById('endingShareArea');
             if (shareArea) { 
-                if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd") {
+                if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd" || roomId === "extraEnd") {
                     shareArea.style.display = "block";
                     console.log("シェアUIを表示！roomId:", roomId);
                 } else {
@@ -816,6 +829,8 @@
             // BGM切替
             if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd") {
                 changeBGM("sounds/egao to namida.mp3");
+            } else if (roomId === "extraEnd") {
+                changeBGM("sounds/hokkori tea time.mp3");
             } else {
                 changeBGM("sounds/sinpi no kyuuden.mp3");
             }
@@ -884,8 +899,15 @@
                     gameState.genkan.flags.watchedPaper = true;
                     break;
                 case 'examine_genkan_chair':
-                    updateMessage('椅子に座ってみた。何かがきしむような音がする…');
-                    playSE('se-metal');
+                    if (gameState.genkan.flags.chairSitCount<2) {
+                        updateMessage('椅子に座ってみた。何かがきしむような音がする…');
+                        playSE('se-metal');
+                        gameState.genkan.flags.chairSitCount++;
+                    } else {
+                        playSE('se-metal');
+                        showExtraPuzzle();
+                    }
+                    
                     break;
                 case 'examine_genkan_left_door':
                     updateMessage('番号式のカギがかかっている');
@@ -1122,7 +1144,7 @@
                         showModal(
                             'バッドエンド',
                             '<img src="images/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
-                            '<br>あなたはクマの妖精のお皿を割ってしまった…<br><b>大事なものだったようだ。</b><br>あなたは怒った骸骨により小部屋に監禁された。<span style="color:#f00;">【バッドエンド】</span>',
+                            '<br>あなたはクマの妖精のお皿を割ってしまった…<br><b>大事なものだったようだ。</b><br>あなたは怒った骸骨により小部屋に監禁された。<span style="color:#f00;">【バッドエンド】</span><br><span style="font-weight:bold;color:#5ef4dc;">も</span>ういやだ',
                             [{text: '最初から', action: 'restart'}]
                         );
                         playSE('se-parin');
@@ -1374,6 +1396,41 @@
             }
         }
 
+        // extraパズルを表示
+        function showExtraPuzzle() {
+            const modalContent = `
+                <h3>謎の声が響く…</h3>
+                <p>合言葉？</p>
+                <input type="text" class="puzzle-input" id="extraInput" placeholder="">
+                <br>
+                <button onclick="checkExtraPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // extraパズルの答えをチェック
+        function checkExtraPuzzle() {
+            const input = document.getElementById('extraInput').value;
+            if (input === 'おもい出') {
+                closeModal();
+                updateMessage('正解です！やりこみがお見事！');
+                playSE('se-clear');
+                showModal(
+                    'お見事！',
+                    '<img src="images/extra_end.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                renderNavigation();
+                changeRoom('extraEnd');
+
+            } else {
+                playSE('se-error');
+                updateMessage('違います。もう一度考えてみてください。');
+            }
+        }
 
         // アイテム管理
         function addItem(itemId) {
@@ -1502,6 +1559,7 @@
         function restartGame() {
             gameState = {
                 currentRoom: 'genkan',
+                openRooms:  ['genkan'], 
                 inventory: [],
                 genkan: {
                     flags: {
@@ -1510,6 +1568,7 @@
                         },
                         watchedPaper: false,
                         foundPin: false,
+                        chairSitCount: 0
                     }
                 },
                 corridor: {
