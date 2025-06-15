@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>リタイアおじさんの脱出</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            color: #f4f1e8;
+            width: 100%;
+            overflow-x: hidden;  /* ←これ重要 */
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1408px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .room-view {
+            aspect-ratio: 1/1;           /* ←正方形 */
+            width: 90vw;                 /* 画面幅の90% */
+            max-width: 640px;            /* PC時最大サイズ */
+            max-height: 90vw;       
+            background-size: cover;      
+            background-repeat: no-repeat;
+            background-position: center center;
+            position: relative;
+            margin: 0 auto;
+            cursor: crosshair;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        #roomImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;    /* 画像全体を表示 */
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 0;
+            pointer-events: none;   /* 画像上でもクリックイベントが通るように */
+        }
+
+        #endingShareArea {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.96);
+            border-radius: 18px;
+            box-shadow: 0 0 24px #fffc;
+            padding: 18px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 99;
+            font-size: 1.2em;
+            gap: 10px;
+            border: 2px solid gold;
+            }
+
+        #endingShareArea button {
+            font-size: 1.1em;
+            padding: 10px 24px;
+            margin: 6px 0;
+            background: gold;
+            color: #333;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #ffdc;
+            cursor: pointer;
+        }
+
+
+
+        .clickable-area {
+            position: absolute;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            z-index: 2;
+            pointer-events: auto;
+
+        }
+
+        .clickable-area:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .ui-panel {
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1048px;
+            min-height: 120px;
+            background: #2c1810;
+            box-sizing: border-box;
+            display: flex;
+        }
+
+        .inventory {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            padding: 0 20px;
+            width:100%;
+        }
+
+        .inventory-slot {
+            width: 14vw; 
+            height: 14vw; 
+            max-width: 80px; 
+            max-height: 80px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .inventory-slot.selected {
+            border: 3px solid #9f2b02;   /* 金色・太め推奨 */
+            box-shadow: 0 0 12px #ff8c0099;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .inventory-slot img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+
+        .info-panel {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            height:80px;
+            min-height: 40px;
+            border: 1px solid #d4af37;
+            position: relative;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #d4af37;
+            max-width: calc(100vw - 60px);
+            text-align: center;
+        }
+
+        .modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .puzzle-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #d4af37;
+            background: rgba(244, 241, 232, 0.9);
+            color: #1a0f08;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border: 2px solid #d4af37;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        /* 画像プレースホルダー用のスタイル */
+        .image-placeholder {
+            background: linear-gradient(135deg, #444, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .notice {
+            text-overflow: clip;
+        }
+        .save-area {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 18px 0 4px 0;
+            width: 40%;
+        }
+
+        @media (max-width: 600px) {
+            .save-area {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-top: 8px;
+                gap: 16px;
+            }
+            .inventory {
+                gap: 16px;
+                align-items: center;
+                padding: 0 2px;
+                width:100%;
+            }
+        }
+
+        .save-area .nav-btn {
+            min-width: 80px;
+            padding: 10px 18px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+            border-radius: 8px;
+            border: none;
+            color: #1a0f08;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .save-area .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 12px #d4af3740;
+        }
+        #roomEffectOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s;
+            z-index: 9999;
+        }
+        #overlayText {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 2em;
+            text-shadow: 0 2px 6px #222;
+            letter-spacing: 0.08em;
+            opacity: 0.93;
+            pointer-events: none;
+        }
+        .calendar-panel {
+            position: absolute;
+            top: 52px;
+            right: 22px;
+            z-index: 200;
+            background: rgba(255,255,255,0.13);
+            border: 2.5px solid #d4af37;
+            border-radius: 18px;
+            font-size: 1.25em;
+            color: #d4af37;
+            font-family: 'Arial', 'メイリオ', sans-serif;
+            padding: 6px 20px 6px 18px;
+            /* min-width: 120px; */
+            text-align: right;
+            box-shadow: 0 2px 10px #2c181055;
+            font-weight: bold;
+            letter-spacing: 0.08em;
+        }
+        @media (max-width: 600px) {
+            .calendar-panel {
+                background: #444;
+                font-size: 1em;
+                right: 8px;
+                top: 50px;
+                /* min-width: 70px; */
+                padding: 3px 10px 3px 10px;
+            }
+        }
+        #actionCounter {
+            position: absolute;
+            top: 102px;
+            right: 12px;
+            z-index: 200;
+            background: rgba(255,255,255,0.13);
+            border: 2.5px solid #d4af37;
+            border-radius: 18px;
+            font-size: 1.25em;
+            color: #d4af37;
+            font-family: 'Arial', 'メイリオ', sans-serif;
+            padding: 6px 20px 6px 18px;
+            /* min-width: 120px; */
+            text-align: right;
+            box-shadow: 0 2px 10px #2c181055;
+            font-weight: bold;
+            letter-spacing: 0.08em;
+        }
+        @media (max-width: 600px) {
+            .actionCounter {
+                background: #444;
+                font-size: 1em;
+                right: 8px;
+                top: 50px;
+                /* min-width: 70px; */
+                padding: 3px 10px 3px 10px;
+            }
+        }
+        #goOutsideBtn {
+            position: absolute;
+            right: 12px;
+            top: 7px;
+            z-index: 9999;  /* ←最前面に */
+            padding: 8px 16px;
+            background: gold;
+            color: #333;
+            font-size: 1em;
+            border-radius: 10px;
+            border: 1px solid #b8941f;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+        #goOutsideBtn:hover {
+            background: #ffe168;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="roomEffectOverlay"><span id="overlayText"></span></div>
+    <div class="game-container">
+        <div class="title">変化がない日常から脱出せよ</div>
+        <div class="calendar-panel" id="calendar">
+        </div>
+        <div id="actionCounter"></div>
+        
+        <div class="room-view" id="roomView">
+            <!-- クリック可能エリアは動的に生成 -->
+              <img id="roomImage" src="">
+              
+        </div> 
+        <div id="endingShareArea" style="display:none;">
+            <div style="font-size:1.4em; font-weight:bold; margin-bottom:8px;color:#2c1810;">🎉クリアおめでとう！🎉</div>
+            <button onclick="shareOnTwitter()">Xでシェア</button>
+            <button onclick="copyShareText()">クリア報告をコピー</button>
+            <div style="font-size:0.9em; margin-top:6px; color:#555;">#脱出ゲーム #自作ゲーム</div>
+        </div>
+        <div class="ui-panel">
+            <div class="info-panel">
+                <div class="message-area" id="messageArea">
+                    <span id="messageText">
+                        朝だ。でも今日も何もやることがない。銀行残高を確認し、買い物リストを眺めるだけの日々。“生きがい”とはなんだったのか…
+                    </span>  
+                <button id="goOutsideBtn" onclick="showGenkanPuzzle()">外へ出よう</button>
+                </div>
+                <div class="navigation">
+                    
+                </div> 
+            </div>
+            <div class="inventory" id="inventory">
+                <div class="inventory-slot" onclick="useItem(0)"></div>
+                <div class="inventory-slot" onclick="useItem(1)"></div>
+                <div class="inventory-slot" onclick="useItem(2)"></div>
+                <div class="inventory-slot" onclick="useItem(3)"></div>
+                <div class="inventory-slot" onclick="useItem(4)"></div>
+            </div>
+            <button id="bgm-toggle" onclick="toggleBGM()" style="position:absolute;top:20px;right:20px;z-index:1000;">
+            🔊 BGM
+            </button> 
+            <div class="save-area">
+                <button class="nav-btn" onclick="saveGame()">セーブ</button>
+                <button class="nav-btn" onclick="loadGame()">ロード</button>
+            </div>
+        </div>
+        <div class="notice">当サイトはOtoLogicの素材を使用しています 作者:<a href="index.html">スラセブン</a></div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- モーダルの内容は動的に生成 -->
+        </div>
+    </div>
+    <audio id="bgm" src="sounds/3/heisarenai.mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-tv" src="sounds/TV-Hardware02-01(Button).mp3"></audio>
+    <audio id="se-skeleton" src="sounds/Motion-Tremble02-1(Short).mp3"></audio>
+    <audio id="se-metal" src="sounds/Horror_Accent13-1(Short).mp3"></audio>
+    <audio id="se-subclear" src="sounds/Quiz-Ding_Dong01-1(Short).mp3"></audio>
+    <audio id="se-clear" src="sounds/Angel01-1.mp3"></audio>
+    <audio id="se-parin" src="sounds/Onoma-Impact04-1(High).mp3"></audio>
+    <audio id="se-box" src="sounds/Retro_Anime-Switch02-1(Mid).mp3"></audio>
+    <audio id="se-person" src="sounds/Short_Accent04-1(Single).mp3"></audio>
+    <audio id="se-warp" src="sounds/3/Scene_Change08-2(Delay-Slow).mp3"></audio>
+    <audio id="se-flash" src="sounds/3/Scene-Flashback06-2(Short).mp3"></audio>
+    <audio id="se-inspiration" src="sounds/3/Inspiration06-2(Mid).mp3"></audio>
+    <audio id="se-siren" src="sounds/3/Warning-Siren04-09(Reverb-Low-Mid).mp3"></audio>
+    <script>
+        window._nextModal = null;
+        // ゲーム設定 - 画像パスをここで管理
+        let IMAGES = {
+            rooms: {
+                room: 'images/3/room.jpg',        
+                road: 'images/3/road.jpg',       
+                park: 'images/3/park.jpg',      
+                supermarket: 'images/3/supermarket.jpg',
+                tvEnd: 'images/3/tvEnd.jpg',
+                roomEnd: 'images/3/roomEnd.jpg',
+                roadEnd: 'images/3/roadEnd.jpg',
+                superEnd: 'images/3/superEnd.jpg',
+                parkEnd: 'images/3/parkEnd.jpg',
+                bokeEnd: 'images/3/bokeEnd.jpg',
+                normalEnd: 'images/3/normalEnd.jpg',
+                normal2End: 'images/3/normalEnd2.jpg',
+                muneEnd: 'images/3/muneEnd.jpg'     
+            },
+            items: {
+                tamago: 'images/3/tamago.jpg',
+                muneniku: 'images/3/muneniku.jpg',
+                shiokoji: 'images/3/shiokoji.jpg',
+                tanpopo: 'images/3/tanpopoItem.jpg',
+                book: 'images/3/book.jpg',
+
+            }
+        };
+
+        let isActionLocked = false;
+
+        // ゲーム開始時にだけ使うテンプレ
+        const tvMessagesByDay = {
+            1: [
+                "「WSテレビです。今朝のニュースをお伝えします」",
+                "「石穴総理は、」",
+                "「全国で発生しているコメ不足問題に対処するため…」",
+                "…まったく、何とかしてほしいもんだ",
+                "コメじゃなくて、何を買うんだっけ。メモを書いたはずだが…",
+                "ため息だけが、上手くなった気がする",
+                "おなじみ“老後2000万問題”。俺にはもう関係ない話だ"
+            ],
+            2: [
+                "WSテレビは昨日と同じニュースをまたやっている…デジャヴか？",
+                "特集：人生100年時代。…長すぎるっての",
+                "通販番組：『これ一本で老後も安心！』…何が安心なんだか",
+                "“節約生活のコツ”ばかり紹介してる。俺も出られそうだな",
+                "また健康食品のCM…昨日も見たぞ、これ",
+                "アナウンサーの声が心なしか疲れて聞こえる",
+                "今日もどこかで誰かが何かをやらかしたらしい。俺には関係ない"
+            ],
+            3: [
+                "今日もまたWSテレビ再放送。何回目だろう",
+                "テレビをつけても、何も頭に入ってこない",
+                "今日もやることが見つからない",
+                "“明日が変わる！”…窓枠リフォームのCMか",
+                "スマホ修理のCM。俺のも壊れたら買う金はないから、お世話になるだろう",
+                "WSテレビのニュースが毎日同じことを言ってる。俺の人生も同じか",
+                "テレビだけが友達…冗談にならないな",
+                "画面の向こうの人が遠い世界の住人みたいだ",
+                "ここから抜け出す方法、あるのか？"
+            ]
+        };
+
+        const selfMessagesByDay = {
+            1: [
+                "今日も特にやることがない…",
+                "年金生活で、生活費はぎりぎりだ",
+                "…",
+                "はぁ…何のために生きてるんだろう。",
+                "誰かと話したのは、いつが最後だったか…",
+                "昔は、忙しかったな。",
+                "今の自分は、あの頃想像した“未来”だったんだろうか。",
+                "…いや、何も考えても仕方ないか。",
+                "少し横になろう。"
+            ],
+            2: [
+                "昨日と同じ一日が始まっただけだ",
+                "今日もやることが見つからない",
+                "“いつも通り”って、意外とつらいもんだな",
+                "自分でも驚くほど、何もしないで一日が過ぎていく",
+                "生きてる実感って、どこで得ればいいんだろう",
+                "ため息だけが、上手くなった気がする",
+                "立ち上がるのもおっくうだ"
+            ],
+            3: [
+                "…何も変わらなかったな",
+                "これが、俺の“新しい生活”だったんだろうか",
+                "ここから抜け出す方法、あるのか？",
+                "なんで生きてるんだろう、なんて考えても仕方ないか",
+                "もし明日が来ても、また同じ気がする",
+                "テレビだけが友達…冗談にならないな",
+                "腹が減ったな…",
+            ]
+        };
+
+        const tumblerMessagesByDay = {
+            1: [
+                "朝入れたお茶がまだ残っている。ぬるい。",
+                "このタンブラー、誰にもらったんだっけ。",
+                "お茶の味も、もうよく分からない。",
+                "温かい飲み物だけが、なんとなく安心させてくれる。",
+                "お茶っ葉、何回使い回しただろう。",
+                "飲み干しても、またすぐに淹れるだけだ。",
+                "今日は新しいお茶っ葉を使おうか…いや、もったいないな。"
+            ],
+            2: [
+                "今日も同じお茶だ。",
+                "味が薄い…まあ、もったいないから仕方ない。",
+                "タンブラーの底に茶渋が残っている。",
+                "何杯飲んでも、特に変わらない。",
+                "昔は緑茶が好きだった気がする。",
+                "安物でも、温かければいい。",
+                "新しいお茶っ葉を買うのも、ちょっと贅沢に感じる。"
+            ],
+            3: [
+                "今日も同じお茶。変わらない味。",
+                "お茶も俺も、そろそろ限界かもしれない。",
+                "もう味もしなくなってきた。",
+                "お茶を飲むのも、ただの習慣になっている。",
+                "タンブラーが手に馴染みすぎている。",
+                "このお茶、何回目だろう…",
+                "ぬるいお茶にため息が混ざる。"
+            ]
+        };
+
+        const spMessagesByDay = {
+            1: [
+                "通知はゼロ。誰も俺を必要としていないらしい。",
+                "年金の振込だけが唯一の連絡…ありがたいんだか、なんだか。",
+                "…買い物リストになんて入れたんだっけ",
+                "SNSを開いてみたが、何も書くことが思いつかない。",
+                "知り合いのアイコンがどんどん減っていく。",
+                "家計簿アプリで支出をチェック…また節約の日々だ。",
+                "ゲームアプリ？…なんだか面倒くさいな。",
+                "銀行アプリの残高を見た。ため息がでた。"
+            ],
+            2: [
+                "新しい通知はやっぱり無い。",
+                "連絡先リストを眺めているだけで時間が過ぎる。",
+                "…買い物リストになんて入れたんだっけ",
+                "検索履歴も、つまらないものばかり。",
+                "ついスマホを手に取るけど、すぐ閉じる。",
+                "誰にもメッセージを送れないまま終わる。",
+                "最近のおすすめ記事、どれも興味が湧かない。"
+            ],
+            3: [
+                "今日もスマホは静かだ。",
+                "誰かからの連絡を期待している自分がいる。",
+                "…なにをしようとしたんだっけ。",
+                "メモアプリには何も書かれていない。",
+                "天気予報すら見なくなってきた。",
+                "バッテリーの減りも遅い。",
+                "ただ手に持っているだけ。"
+            ]
+        };
+
+        const pcMessagesByDay = {
+            1: [
+                "パスワードを思い出すのに時間がかかった。",
+                "メールは迷惑メールばかり。友達からは来ない。",
+                "ネットニュースも全部昨日と同じ話題だ。",
+                "昔はこれで仕事してたのにな…今は何もすることがない。",
+                "たまにPCを立ち上げても、目的がなくて閉じてしまう。",
+                "動作が遅い。まるで俺みたいだ。",
+                "オンライン会議？もう誘われることもない。"
+            ],
+            2: [
+                "PCの電源を入れても、やっぱりやることが無い。",
+                "アップデートの通知ばかり表示される。",
+                "何か作業を始めようとしても、すぐに気力が切れる。",
+                "昔の写真フォルダを開いてみたが、懐かしいだけ。",
+                "ブラウザの履歴もほとんど変わらない。",
+                "閉じるのがどんどん早くなっている。",
+                "起動音だけが無駄に元気だ。"
+            ],
+            3: [
+                "今日もPCはただの置物だ。",
+                "ネットの世界も現実も、遠く感じる。",
+                "作業を始める気力が起きない。",
+                "昔の自分に何か伝えられるなら、なんて思う。",
+                "パスワードを忘れて、入力する気もなくなった。",
+                "電源を入れずに一日が終わる。",
+                "PCの前でぼんやりするだけだった。"
+            ]
+        };
+
+        const defaltActions = 7;
+
+        // ゲーム状態
+        let gameState = {
+            currentRoom: 'room',
+            openRooms: ['room'], 
+            currentDay:1,
+            currentActionCount:0,
+            maxActionsPerDay: defaltActions,
+            puzzleSequence: [],
+            wentOutsideToday: false,
+            canGoOutside: false,
+            tvActionCount: 0,          // 今日テレビ見た回数
+            tvConsecutiveDays: 0,      // テレビだけの日が何日続いたか
+            laptopActionCount: 0,
+            tumblerActionCount: 0,
+            spActionCount: 0,
+            selfActionCount: 0,
+            actionsToday: [],          // 今日やったこと（"tv", "window", ...）
+            memoAppeared: false,
+            genkanPuzzleSolved: false,
+            tanpopoAction: null,
+            keyHolderAction: null,
+            watchBoard: false,
+            watchShodouSchool: false,
+            gotEgg: false,
+            gotMuneRecipe: false,
+            playShogi: false,
+            positiveCount: 0,
+            inventory: [],
+            room: {
+                flags: {
+                    talkTo: {
+                    }, 
+                }
+            },
+            park: {
+                flags: {
+                    talkTo: {
+                        mushokuman:0,
+                        shogiman:0,
+                        child:0,
+                    },
+                }
+            },
+            road: {
+                flags: {
+                    
+                }
+            },
+            supermarket: {
+                flags: { 
+                }
+            },
+            flags: {
+                mushokumanFavor :0,
+                shogimanFavor :0,
+                dayCount:0,   
+            },
+            selectedItem: null
+        };
+
+        // 部屋データ
+        let rooms = {
+            room: {
+                name: '自分の部屋',
+                description: '見慣れた自分の部屋',
+                clickableAreas: [
+                    {
+                        x: 9, y: 44, width: 15, height: 11.3,
+                        action: 'examine_tv',
+                        description: 'テレビ',
+                        zIndex:5
+                    },
+                    {
+                        x: 36, y: 25.6, width: 29, height: 23,
+                        action: 'examine_window',
+                        description: '光が差し込む窓',
+                        zIndex:5
+                    },
+                    {
+                        x: 78, y: 45, width: 10.4, height: 16,
+                        action: 'examine_self',
+                        description: '自分'
+                    },
+                    {
+                        x: 60, y: 63, width: 3.3, height: 4.4,
+                        action: 'examine_tumbler',
+                        description: '保温タンブラー'
+                    },
+                    {
+                        x: 51.2, y: 65.8, width: 4.6, height: 5.2,
+                        action: 'examine_smartphone',
+                        description: 'スマホ'
+                    },
+                    {
+                        x: 31, y: 68, width: 8, height: 2.7,
+                        action: 'examine_book',
+                        description: '本'
+                    },
+                    {
+                        x: 0.4, y: 80, width: 27, height: 17.6,
+                        action: 'examine_pc',
+                        description: 'ノートPC'
+                    },
+                    {
+                        x: 92, y: 31.3, width: 7.8, height: 4.7,
+                        action: 'examine_books1',
+                        description: '本棚'
+                    },
+                    {
+                        x: 92, y: 40, width: 7.8, height: 5,
+                        action: 'examine_books2',
+                        description: '?'
+                    },
+                    {
+                        x: 75, y: 24, width: 8, height: 11,
+                        action: 'examine_wallposter',
+                        description: '掲示物'
+                    },
+                    {
+                        x: 74.6, y: 82, width: 9, height: 3.7,
+                        action: 'examine_memo',
+                        description: 'メモ',
+                        usable: () => !!gameState.flags.memoAppeared
+                    }
+                ]
+            },
+            road: {
+                name: '道',
+                description: '何の変哲もない住宅街の道路だ',
+                clickableAreas: [
+                    {
+                        x: 14.4, y: 67.6, width: 35.6, height: 14.5,
+                        action: 'examine_tanpopo',
+                        description: 'タンポポ'
+                    },
+                    {
+                        x: 84.5, y: 46.2, width: 8.7, height: 8.1,
+                        action: 'examine_board',
+                        description: '掲示板'
+                    },
+                    {
+                        x: 46, y: 75.6, width: 28, height: 12,
+                        action: 'examine_road',
+                        description: '道のひび割れ'
+                    },
+                    {
+                        x: 23.6, y: 37.4, width: 2.6, height: 14.5,
+                        action: 'examine_pole',
+                        description: '電柱'
+                    },
+                    ,
+                    {
+                        x: 63.1, y: 49, width: 4.7, height: 11.3,
+                        action: 'examine_child',
+                        description: '子供',
+                        usable: () => !!hasItem('tamago')
+                    }
+                ]
+            },
+            park: {
+                name: '公園',
+                description: 'のどかな公園だ',
+                clickableAreas: [
+                    {
+                        x: 40.3, y: 32.8, width: 11.5, height: 18.8,
+                        action: 'examine_womens',
+                        description: '女性たち'
+                    },
+                    {
+                        x: 53.2, y: 55.3, width: 32.4, height: 17.6,
+                        action: 'examine_shogiman',
+                        description: '将棋をしている人たち'
+                    },
+                    {
+                        x: 76.6, y: 80, width: 10, height: 8.2,
+                        action: 'examine_watage',
+                        description: 'タンポポの綿毛'
+                    },
+                    {
+                        x: 70.7, y: 28.2, width: 7.8, height: 17,
+                        action: 'examine_mushokuman',
+                        description: 'ひまそうな男性'
+                    },
+                    {
+                        x: 9.2, y: 40, width: 9, height: 13.4,
+                        action: 'examine_kids',
+                        description: '子供たち'
+                    }
+                ]
+            },
+            supermarket: {
+                name: 'スーパー',
+                description: 'なじみのスーパーだ',
+                clickableAreas: [
+                    {
+                        x: 12, y: 30.7, width: 45, height: 22.6,
+                        action: 'examine_super_womens',
+                        description: '談笑している女性たち'
+                    },
+                    {
+                        x: 47.5, y: 75.4, width: 23, height: 21.3,
+                        action: 'examine_muneniku',
+                        description: 'むね肉',
+                        zIndex:5
+                    },
+                    {
+                        x: 88, y: 37, width: 7.6, height: 12.6,
+                        action: 'examine_register',
+                        description: 'セルフレジ'
+                    }
+                ]
+            },
+            tvEnd: {
+                name: 'テレビ鬱エンド',
+                description: '<br>（テレビだけ見ている余生。それでいいのか？いや、良いんだ。これで俺は…）<br>クマ妖精「……おつかれさま、それも人生だよ。」',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_utu',
+                        description: '鬱'
+                    },
+                ]
+            },
+            roomEnd: {
+                name: 'ひきこもりエンド',
+                description: '<br>（結局、部屋から一歩も出ずに3日が終わった。最高の省エネ生活…いや、虚無生活だったな。）<br>クマ妖精「……おつかれさま、また明日も同じ日が来るよ。」',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_room_end',
+                        description: '日常が続いていく…'
+                    },
+                ]
+            },
+            bokeEnd: {
+                name: 'ぼけエンド',
+                description: '<br>（もう何もかもがぼんやりしている…）<br>クマ妖精「……おつかれさま、大丈夫、ぼくが直してあげるよ。」',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_room_end',
+                        description: 'ぼんやりした日常が続いていく…'
+                    },
+                ]
+            },
+            roadEnd: {
+                name: '道端エンド',
+                getDescription: () => {
+                    if (hasItem('tamago')) {
+                        return '<br>（卵を買ったけれど…変わらぬ毎日だな）<br>クマ妖精「…卵を持ったまま終わる人生も悪くないよ。」';
+                    } else {
+                        return '<br>（何かを買いに出たのではなかったか…？）<br>クマ妖精「……おつかれさま、大丈夫、お部屋に帰ろう。」';
+                    }
+                },
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_room_end',
+                        description: 'ぼんやりした日常が続いていく…'
+                    },
+                ]
+            },
+            superEnd: {
+                name: 'スーパーエンド',
+                getDescription: () => {
+                    if (hasItem('tamago')) {
+                        return '<br>（卵を買ったけれど…変わらぬ毎日だな）<br>クマ妖精「…卵を持ったまま終わる人生も悪くないよ。」';
+                    } else {
+                        return '<br>（何かを買いに出たのではなかったか…？）<br>クマ妖精「……おつかれさま、大丈夫、お部屋に帰ろう。」';
+                    }
+                },
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_room_end',
+                        description: 'ぼんやりした日常が続いていく…'
+                    },
+                ]
+            },
+            parkEnd: {
+                name: '公園エンド',
+                getDescription: () => {
+                    if (hasItem('tamago')) {
+                        return '<br>（卵を買ったけれど…変わらぬ毎日だな）<br>クマ妖精「…卵を持ったまま終わる人生も悪くないよ。」';
+                    } else {
+                        return '<br>（何かを買いに出たのではなかったか…？）<br>クマ妖精「……おつかれさま、大丈夫、お部屋に帰ろう。」';
+                    }
+                },
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_room_end',
+                        description: 'ぼんやりした日常が続いていく…'
+                    },
+                ]
+            },
+            muneEnd: {
+                name: '美味しいむね肉エンド',
+                description: 'あなたは教わったレシピを試し、毎日を美味しく過ごすことに成功しました<br>クマ妖精「……ボクにも頂戴。」',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_mune_end',
+                        description: 'むね肉美味しい'
+                    },
+                ]
+            },
+            normalEnd: {
+                name: '少し前向きエンド',
+                description: 'あなたは身近な場所でやりがいを見出し、毎日をすこしだけ明るくできました<br>クマ妖精「……ボクも安心したよ。」',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_normal_end',
+                        description: '少し前向き'
+                    },
+                ]
+            },
+            normal2End: {
+                name: '前向きエンド',
+                description: 'あなたは身近な場所でやりがいを見出し、余生を楽しく過ごせそうです<br>クマ妖精「ハッピー老後だね。」',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_normal2_end',
+                        description: '前向き！'
+                    },
+                ]
+            }
+        };
+    
+        const hintMessages = {
+            room: {  
+                wallposter: [
+                    "毛筆で書いた書道作品だ",
+                    "30年ほど前に書いたものだ",
+                    "もう、このようには書けないだろう…",
+                    "書道の道具はどこへいったのだろう",
+                ],
+                window: [
+                    "カーテンを開けてみる。",
+                    "外は今日も静かだ。",
+                    "遠くで子供の声がする。",
+                    "誰とも目が合わない。"
+                ],
+            },
+        };
+
+        // ゲーム初期化
+        function initGame() {
+            updateCalendar();
+            updateActionCounter();
+            changeRoom('room');
+            updateMessage('朝だ。でも今日も何もやることがない。銀行残高を確認し、買い物リストを眺めるだけの日々。“生きがい”とはなんだったのか…');
+        }
+
+        // 部屋を変更
+        function changeRoom(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+            
+            const roomView = document.getElementById('roomView');
+            roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
+            
+            // クリック可能エリアを生成
+            generateClickableAreas(room);
+
+            let desc = typeof room.getDescription === 'function'
+            ? room.getDescription()
+            : room.description;
+            updateMessage(`${room.name}に入りました。${desc}`);
+            updateActionCounter();
+
+            const shareArea = document.getElementById('endingShareArea');
+            if (shareArea) { 
+                if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd" || roomId === "extraEnd") {
+                    shareArea.style.display = "block";
+                    console.log("シェアUIを表示！roomId:", roomId);
+                } else {
+                    shareArea.style.display = "none";
+                }
+            }
+            // BGM切替
+            if (roomId === "tvEnd" || roomId === "roomEnd" || roomId === "trueEnd" 
+            || roomId === "roadEnd" || roomId === "superEnd"|| roomId === "parkEnd") {
+                changeBGM("sounds/3/Sakura_Sakura-MB02-1(Reverb-Slow).mp3");
+            } else if (roomId === "bokeEnd") {
+                changeBGM("sounds/3/Neko_Funjatta-Xy02-1(Straight).mp3");
+            } else if (roomId === "normalEnd" || roomId === "normalEnd2") {
+                changeBGM("sounds/hokkori tea time.mp3");
+            } else {
+                changeBGM("sounds/3/heisarenai.mp3");
+            }
+
+            if (roomId!='room') {
+                gameState.flags.wentOutsideToday = true;
+            }
+
+        }
+
+        // 背景画像を差し替え
+        function changeRoomImage(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+            
+            // 背景画像を設定（画像がない場合はプレースホルダー）
+            const roomView = document.getElementById('roomView');
+            roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
+            generateClickableAreas(room);
+        }
+
+        function unlockRoom(roomId) {
+            if (!gameState.openRooms.includes(roomId)) gameState.openRooms.push(roomId);
+            renderNavigation();
+        }
+
+        // クリック可能エリアを生成
+        // 
+        function generateClickableAreas(room) {
+            const roomView = document.getElementById('roomView');
+            roomView.innerHTML = '<img id="roomImage" src="'+IMAGES.rooms[gameState.currentRoom]+'" style="width:100%;height:100%;object-fit:contain;position:absolute;left:0;top:0;">';
+
+            // 画像のロード後に配置
+            const img = roomView.querySelector('#roomImage');
+            img.onload = function() {
+
+                room.clickableAreas.forEach(area => {
+                    const clickableDiv = document.createElement('div');
+                    clickableDiv.className = 'clickable-area';
+                    clickableDiv.style.left   = (area.x) + '%';
+                    clickableDiv.style.top    = (area.y) + '%';
+                    clickableDiv.style.width  = (area.width) + '%';
+                    clickableDiv.style.height = (area.height) + '%';
+                    clickableDiv.style.position = 'absolute';
+                    clickableDiv.style.zIndex = area.zIndex || 1;
+                    clickableDiv.style.display = (area.usable === false) ? 'none' : 'block';
+                    clickableDiv.onclick = () => handleAreaClick(area.action);
+                    clickableDiv.title = area.description;
+
+                    roomView.appendChild(clickableDiv);
+                });
+            };
+            showGoOutsideBtn(gameState.canGoOutside && gameState.currentRoom === 'room' && !gameState.flags.genkanPuzzleSolved);
+            img.src = IMAGES.rooms[gameState.currentRoom]; // 必ず画像セット
+        }
+
+        // エリアクリック処理
+        function handleAreaClick(action) {
+            if (isActionLocked) return; // クリックロック
+            isActionLocked = true;
+            if (gameState.currentActionCount >= gameState.maxActionsPerDay && action!='examine_memo') {
+                // エンディング判定（trueならadvanceDay呼ばないでreturn）
+                if (checkDayBehavior()) {
+                    isActionLocked = false; // エンディング遷移で自動リセット
+                    return;
+                }
+                closeModal();
+                advanceDay();
+                setTimeout(() => { isActionLocked = false; }, 500); // ちょい余裕持って解除
+                return;
+            }
+
+            if (action!='examine_memo') {
+                gameState.currentActionCount++;
+            }
+            
+            
+            switch(action) {
+                case 'examine_tv':
+                    const msgs = getTvMessage();
+                    const idx = gameState.tvActionCount % msgs.length;
+                    updateMessage(msgs[idx]);
+                    gameState.tvActionCount++;
+                    gameState.actionsToday.push("tv");
+                    gameState.puzzleSequence.push("tv");
+
+                     break;
+                case 'examine_smartphone':
+                    const spMsgs = getSpMessage();
+                    const idxSp = gameState.spActionCount % spMsgs.length;
+                    updateMessage(spMsgs[idxSp]);
+                    gameState.spActionCount++;
+                    gameState.actionsToday.push("sp");
+                    gameState.puzzleSequence.push("sp");
+                    break;
+                case 'examine_pc':
+                    const pcMsgs = getPcMessage();
+                    const idxLaptop = gameState.laptopActionCount % pcMsgs.length;
+                    updateMessage(pcMsgs[idxLaptop]);
+                    gameState.laptopActionCount++;
+                    gameState.actionsToday.push("laptop");
+                    gameState.puzzleSequence.push("laptop");
+                    break;
+                case 'examine_tumbler':
+                    const tumblerMsgs = getTumblerMessage();
+                    const idxTumbler = gameState.tumblerActionCount % tumblerMsgs.length;
+                    updateMessage(tumblerMsgs[idxTumbler]);
+                    gameState.tumblerActionCount++;
+                    gameState.actionsToday.push("tumbler");
+                    gameState.puzzleSequence.push("tumbler");
+                    break;
+                case 'examine_self':
+                    const selfMsgs = getSelfMessage();
+                    const idxSelf = gameState.selfActionCount % selfMsgs.length;
+                    updateMessage(selfMsgs[idxSelf]);
+                    gameState.selfActionCount++;
+                    gameState.actionsToday.push("self");
+                    gameState.puzzleSequence.push("self");
+                    break;
+                case 'examine_book':
+                    updateMessage('ずいぶん前に買った本。途中で読むのをやめてしまった');
+                    if (!gameState.flags.genkanPuzzleSolved) {
+                     
+                    } else {
+
+                    }
+                    break;
+                case 'examine_books1':
+                    updateMessage('昔好きだった時代小説が並んでいる');
+                    gameState.actionsToday.push("jidaiBook");
+                    gameState.puzzleSequence.push("jidaiBook");
+                    break;  
+                case 'examine_books2':
+                    console.log(gameState.flags.tanpopoAction);
+                    if (gameState.flags.tanpopoAction == "pick") {
+                        showModal(
+                            'そういえば昔も、山でタンポポを見つけて…',
+                            '<img src="images/3/pic_tozan.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        gameState.flags.positiveCount++;
+                    } else {
+                        updateMessage('昔登山をした時のアルバムがある');  
+                    }
+                    gameState.actionsToday.push("tozanBook");
+                    gameState.puzzleSequence.push("tozanBook");
+
+                    break; 
+                case 'examine_wallposter':
+                    talkToHintCharacter('room','wallposter');
+                    gameState.puzzleSequence.push("wallposter");
+                    break; 
+                case 'examine_window':
+                    talkToHintCharacter('room','window');
+                    gameState.puzzleSequence.push("window");
+                    break; 
+                case 'examine_memo':
+                    if (gameState.genkanPuzzleSolved) {
+                        updateMessage('本当に俺が書いたんだっけ…？まあいいか');
+                    } else {
+                        showModal(
+                            'なんだ…このメモ？俺が書いたのか？',
+                            '<img src="images/3/memo.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        gameState.canGoOutside = true;
+                        showGoOutsideBtn(true);
+                    }
+                    break; 
+                // road
+                case 'examine_tanpopo':
+                    if (hasItem('tanpopo')) {
+                        updateMessage('タンポポが咲いている');
+                    } else {
+                        showTanpopoChoice();
+                    }
+                    break; 
+                case 'examine_road':
+                    updateMessage('こんなにひび割れていたんだな');
+                    break;
+                case 'examine_pole':
+                    updateMessage('書道教室か…');
+                    gameState.flags.watchShodouSchool = true;
+                    break;
+                case 'examine_board':
+                    updateMessage('落とし物のお知らせだ。<br>子供が描いた様な絵のアクスタを保管していると書いてある。');
+                    gameState.flags.watchBoard = true;
+                    break;
+                case 'examine_child':
+                    if (gameState.selectedItem=='tamago') {
+                        // バッドエンド演出
+                        showModal(
+                            'バッドエンド',
+                            '<img src="images/3/fushinEnd.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
+                            '<br>「ほら、これ食べな」<br><b>子供「なに？このおじさん！こわいよー」</b><br><span style="color:#f00;">【バッドエンド】</span><br>クマ妖精「…次は自分で食べようね」',
+                            [{text: '最初から', action: 'restart'}]
+                        );
+                        playSE('se-siren');
+                        break;
+                    } else {
+                        updateMessage('子供「おなかがすいたな…」');
+                    }
+                    break; 
+                // supermarket
+                case 'examine_muneniku':
+                    if (gameState.flags.gotMuneRecipe) {
+                        updateMessage('せっかく教わったレシピ、試してみるか。');
+                    } else {
+                        updateMessage('むね肉が安いな…毎日むね肉を買って、毎日むね肉を食べて。これが、老後というものか。');
+                    }
+                    break;
+                case 'examine_super_womens':
+                    talkToSuperWomens();
+                    break; 
+                case 'examine_register':
+                    if (!gameState.flags.gotMuneRecipe) {
+                        if (hasItem('tamago')) {
+                            updateMessage('もう買い物は済んだ');
+                        } else {
+                            updateMessage('卵を買って代金を支払った');
+                            IMAGES.rooms.road = 'images/3/road2.jpg';
+                            addItem('tamago');
+                        }         
+                    } else {
+                        if (hasItem('tamago')) {
+                            updateMessage('もう買い物は済んだ');
+                        } else {
+                            updateMessage('卵とむね肉と塩こうじを買って代金を支払った');
+                            IMAGES.rooms.road = 'images/3/road2.jpg';
+                            addItem('tamago');
+                            addItem('muneniku');
+                            addItem('shiokoji');
+                        }          
+                    } 
+                    gameState.flags.gotEgg = true;
+                    break;  
+                // park
+                case 'examine_kids':
+                    updateMessage('声をかければ不審者。……この歳になると、ただそれだけで壁ができる。');
+                    break;
+                case 'examine_womens':
+                    if (!gameState.flags.gotMuneRecipe) {
+                        updateMessage('ああやって、誰かと他愛ない話をできたのはいつだったか……思い出せない。');
+                    } else {
+                        updateMessage('会話も楽しいもんだよな…');
+                    }
+                    break; 
+                case 'examine_shogiman':
+                    talkToShogiman();
+                    break; 
+                case 'examine_mushokuman':
+                    if (gameState.positiveCount>1 && !gameState.flags.gotMuneRecipe) {
+                        showModal(
+                            '暇そうな男性と目があうと、話しかけられた。<br>…偶然目が合っただけなのに、いつの間にかむね肉談義に花が咲いた。<br>“塩麹につけてみるといいですよ”――ちょっとした発見だった。',
+                            '<img src="images/3/mushokuman1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        gameState.flags.gotMuneRecipe = true;
+                        gameState.maxActionsPerDay += 2;
+                        window._nextModal = {
+                            before: function() { playSE('se-inspiration'); },
+                            title: 'なんだか今日はもう少し動けそうな気がする…<br>（行動回数が増えた！）',
+                            content: '<img src="images/3/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            buttons: [{text: '閉じる', action: 'close'}],
+                            after: null 
+                        };
+                        
+                    } else {
+                        updateMessage('暇そうな男性と目があい、軽く会釈した。');
+                    }  
+                    break; 
+                case 'examine_watage':
+                    updateMessage('綿毛がふわりと宙を舞った');
+                    break;  
+
+                case 'examine_room_end':
+                    updateMessage('あなたは変わらぬ日常を過ごしました。（ノーマルエンド）');
+                    break; 
+                case 'examine_normal_end':
+                    updateMessage('あなたはすこしだけ前向きに暮らしました。（ポジティブエンド1）');
+                    break; 
+                case 'examine_normal2_end':
+                    updateMessage('あなたはいきいきと前向きに暮らしました。（ポジティブエンド2）');
+                    break; 
+                case 'examine_mune_end':
+                    updateMessage('あなたは美味しい日常を過ごしました。（むね肉エンド）');
+                    break; 
+
+            }
+            gameState.selectedItem = null;
+            gameState.selectedItemSlot = null;
+            updateActionCounter();
+
+            playSE('se-click');
+            updateInventoryDisplay();
+
+            if (gameState.currentRoom=='room' && !gameState.flags.memoAppeared) {
+                checkPuzzleSequence();
+            }
+            setTimeout(() => { isActionLocked = false; }, 300); // ちょい余裕持って解除
+        }
+
+        function talkToHintCharacter(roomId, charId) {
+            // flags取得
+            let flags = gameState[roomId].flags;
+            // まだカウント無ければ初期化
+            if (!flags.talkTo) flags.talkTo = {};
+            if (!flags.talkTo[charId]) flags.talkTo[charId] = 0;
+
+            // カウントアップ
+            flags.talkTo[charId]++;
+            const count = flags.talkTo[charId];
+
+            // セリフリスト取得
+            const messages = hintMessages[roomId][charId];
+            // 範囲外なら最後のメッセージ
+            const idx = (flags.talkTo[charId] - 1) % messages.length;
+            const loop = Math.floor((count - 1) / messages.length) + 1;
+
+            // 表示
+            let message = messages[idx];
+            if (loop > 1) {
+                message += "（また同じことを考えている気がする…）";
+            }
+            updateMessage(message);
+            
+        }
+
+        // 玄関パズルを表示
+        function showGenkanPuzzle() {
+            const modalContent = `
+                <h3>入力パネル</h3>
+                <p>何を買うんだっけ？</p>
+                <input type="text" class="puzzle-input" id="genkanInput" placeholder="買うものを入力（例:むね肉）">
+                <br>
+                <button onclick="checkGenkanPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 玄関パズルの答えをチェック
+        function checkGenkanPuzzle() {
+            const input = document.getElementById('genkanInput').value;
+            if (input === 'たまご' || input === '卵' || input === 'タマゴ') {
+                closeModal();
+                updateMessage('そうだ、そうだったな');
+                playSE('se-subclear');
+                showModal(
+                    '外へ出られるようになった。少し気力がわいた。<br>（行動回数アップ！）',
+                    '<img src="images/3/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                unlockRoom('road');
+                unlockRoom('park');
+                unlockRoom('supermarket');
+                renderNavigation();
+                showGoOutsideBtn(false);
+                gameState.flags.genkanPuzzleSolved = true;
+                gameState.maxActionsPerDay += 3;
+                changeRoom('road');
+
+            } else {
+                playSE('se-error');
+                closeModal();
+                showEnding('bokeEnd');
+            }
+        }
+        
+        function showTanpopoChoice() {
+            showModal(
+                '道端に小さなタンポポが咲いている。どうする？',
+                '<img src="images/3/tanpopo.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
+                [
+                    { text: '摘んで持ち帰る', action: 'pickTanpopo' },
+                    { text: 'そのまま眺める', action: 'watchTanpopo' },
+                    { text: '通り過ぎる', action: 'ignoreTanpopo' }
+                ]
+            );
+        }
+
+        function pickTanpopo() {
+            closeModal();
+            updateMessage("タンポポを摘んだ。なんとなく懐かしい気持ちになった。");
+            addItem('tanpopo');
+            gameState.flags.tanpopoAction = "pick";
+        }
+
+        function watchTanpopo() {
+            closeModal();
+            updateMessage("しばらく眺めていたら、誰かに話しかけられた気がした。<br>…いや、気のせいだった。");
+            gameState.flags.tanpopoAction = "watch";
+        }
+
+        function ignoreTanpopo() {
+            closeModal();
+            updateMessage("何もせず通り過ぎた。");
+            gameState.flags.tanpopoAction = "ignore";
+        }
+
+        function talkToSuperWomens() {
+            if (gameState.flags.keyHolderAction==null && gameState.flags.watchBoard) {
+                showModal(
+                    '女性たちが孫の絵をキーホルダーにするのが楽しいと話している。',
+                    '一人、キーホルダーを無くしてしまった人がいるようだ',
+                    // '<img src="images/tanpopo.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
+                    [
+                        { text: '落とし物掲示板のことを伝える', action: 'tellKeyholder' },
+                        { text: '通り過ぎる', action: 'ignoreKeyholder' }
+                    ]
+                );
+            } else {
+                updateMessage("女性たちが孫の話題で盛り上がっている");
+            }    
+        }
+
+        function tellKeyholder() {
+            closeModal();
+            updateMessage("女性「まあ！本当ですか。ありがとうございます。」<br>…悪くない気分だ。");
+            playSE('se-inspiration');
+            gameState.flags.keyHolderAction = "tell";
+            gameState.positiveCount++;
+        }
+
+        function ignoreKeyholder() {
+            closeModal();
+            updateMessage("何もせず通り過ぎた。");
+            gameState.flags.keyHolderAction = "ignore";
+        }
+
+        function talkToShogiman() {
+            if (!gameState.flags.playShogi) {
+                showModal(
+                    '男性に将棋を一緒にしないかと誘われた',
+                     '<img src="images/3/shogiman.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
+                    [
+                        { text: 'ありがたくご一緒する', action: 'playShogi' },
+                        { text: '忙しいので…', action: 'rejectShogi' }
+                    ]
+                );
+            } else {
+                updateMessage("将棋で遊んでいる高齢者たちだ");
+            }    
+        }
+
+        function playShogi() {
+            closeModal();
+            updateMessage("一緒に将棋を楽しんだ。<br>こういうのも悪くないな…");
+            playSE('se-inspiration');
+            gameState.flags.playShogi = true;
+            gameState.positiveCount++;
+        }
+
+        function rejectShogi() {
+            closeModal();
+            updateMessage("立ち去った。");
+            gameState.flags.playShogi = false;
+        }
+
+
+        // アイテム管理
+        function addItem(itemId) {
+            playSE('se-item');
+            if (gameState.inventory.length < 5) {
+                gameState.inventory.push(itemId);
+                updateInventoryDisplay();
+            }
+        }
+
+        function removeItem(itemId) {
+            const index = gameState.inventory.indexOf(itemId);
+            if (index !== -1) {
+                gameState.inventory.splice(index, 1);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+            
+        }
+
+        function hasItem(itemId) {
+            return gameState.inventory.includes(itemId);
+        }
+
+        function useItem(slotIndex) {
+            if (gameState.inventory[slotIndex]) {
+                const item = gameState.inventory[slotIndex];
+                updateMessage(`${getItemName(item)}を選択しました。使用したい場所をクリックしてください。`);
+                gameState.selectedItem = item;
+                gameState.selectedItemSlot = slotIndex;
+                updateInventoryDisplay(); 
+            }
+        }
+
+        function getItemName(itemId) {
+            const names = {
+                key: '鍵',
+                tamago: '卵',
+                muneniku: 'むね肉',
+                shiokoji: '塩こうじ',
+                tanpopo: '一輪のタンポポ',
+                book: 'コグマの大冒険の絵本',
+            };
+            return names[itemId] || itemId;
+        }
+
+        function renderNavigation() {
+            const navDiv = document.querySelector('.navigation');
+            navDiv.innerHTML = '';
+            gameState.openRooms.forEach(roomId => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = rooms[roomId].name;
+                btn.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(btn);
+            });
+        }
+
+        // インベントリ表示更新
+        function updateInventoryDisplay() {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                if (gameState.inventory[index]) {
+                    const img = document.createElement('img');
+                    img.src = IMAGES.items[gameState.inventory[index]];
+                    img.onerror = function() {
+                        // 画像が読み込めない場合はプレースホルダーを表示
+                        this.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder';
+                        placeholder.textContent = getItemName(gameState.inventory[index]);
+                        placeholder.style.width = '60px';
+                        placeholder.style.height = '60px';
+                        slot.appendChild(placeholder);
+                    };
+                    slot.appendChild(img);
+                }
+                // ★選択中ならselectedクラス追加
+                if (gameState.selectedItemSlot === index) {
+                    slot.classList.add('selected');
+                } else {
+                    slot.classList.remove('selected');
+                }
+            });
+        }
+
+        // メッセージ更新
+        function updateMessage(message) {
+            document.getElementById('messageText').innerHTML = message;
+        }
+
+        // モーダル表示
+        function showModal(title, content, buttons) {
+            let modalHtml = `<h3>${title}</h3><p>${content}</p>`;
+            buttons.forEach(button => {
+                modalHtml += `<button onclick="${button.action === 'close' ? 'closeModal' : button.action === 'restart' ? 'restartGame()' : button.action}()">${button.text}</button>`;
+            });
+            
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            // 次のモーダルが登録されていれば表示
+            if (window._nextModal) {
+                // 登録内容は {title, content, buttons, after} オブジェクト
+                let modal = window._nextModal;
+                window._nextModal = null; // クリア
+                if (modal.before) modal.before(); // もしplaySEなど事前処理したければ
+                showModal(modal.title, modal.content, modal.buttons);
+                if (modal.after) modal.after(); // もしshowModal直後にやりたいことあれば
+            }
+        }
+
+        // ゲームリスタート
+        function restartGame() {
+            gameState = {
+                currentRoom: 'room',
+                openRooms: ['room'], 
+                currentDay:1,
+                currentActionCount:0,
+                maxActionsPerDay: defaltActions,
+                puzzleSequence: [],
+                wentOutsideToday: false,
+                canGoOutside: false,
+                tvActionCount: 0,          // 今日テレビ見た回数
+                tvConsecutiveDays: 0,      // テレビだけの日が何日続いたか
+                laptopActionCount: 0,
+                tumblerActionCount: 0,
+                spActionCount: 0,
+                selfActionCount: 0,
+                actionsToday: [],          // 今日やったこと（"tv", "window", ...）
+                memoAppeared: false,
+                genkanPuzzleSolved: false,
+                tanpopoAction: null,
+                keyHolderAction: null,
+                watchBoard: false,
+                watchShodouSchool: false,
+                gotEgg: false,
+                gotMuneRecipe: false,
+                playShogi: false,
+                positiveCount: 0,
+                inventory: [],
+                room: {
+                    flags: {
+                        talkTo: {
+                        }, 
+                    }
+                },
+                park: {
+                    flags: {
+                        talkTo: {
+                            mushokuman:0,
+                            shogiman:0,
+                            child:0,
+                        },
+                    }
+                },
+                road: {
+                    flags: {
+                        
+                    }
+                },
+                supermarket: {
+                    flags: { 
+                    }
+                },
+                flags: {
+                    mushokumanFavor :0,
+                    shogimanFavor :0,
+                    dayCount:0,   
+                },
+                selectedItem: null
+            };
+            closeModal();
+            initGame();
+            updateInventoryDisplay();
+        }
+
+        let isBGMPlaying = false;   // ←デフォルトは再生してない
+        let isBGMInitialized = false; // 初回クリック判定用
+
+        // 初回クリック時にだけBGMを再生
+        function initBGMOnce() {
+        if (!isBGMInitialized) {
+            const bgm = document.getElementById('bgm');
+            bgm.volume = 0.3;
+            bgm.play();
+            isBGMPlaying = true;
+            isBGMInitialized = true;
+            document.getElementById('bgm-toggle').textContent = "🔊 BGM";
+        }
+        }
+        window.addEventListener('click', initBGMOnce, { once: true });
+
+        function toggleBGM() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('bgm-toggle');
+            if (!isBGMPlaying) {
+                bgm.play();
+                isBGMPlaying = true;
+                btn.textContent = "🔊 BGM";
+            } else {
+                bgm.pause();
+                isBGMPlaying = false;
+                btn.textContent = "🔇 BGM";
+            }
+        }
+
+        function changeBGM(newSrc) {
+            const bgm = document.getElementById('bgm');
+            if (bgm.src.endsWith(newSrc)) return; // すでにそのBGMなら何もしない
+            const isPlaying = isBGMPlaying;
+            bgm.pause();
+            bgm.src = newSrc;
+            bgm.load();
+            if (isPlaying) {
+                bgm.play();
+            }
+        }
+
+        function playSE(id) {
+            const se = document.getElementById(id);
+            se.currentTime = 0;
+            se.play();
+        }
+
+        // どこかで最初に一度だけ呼ぶ
+        function preloadImages() {
+            Object.values(IMAGES.rooms).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+            Object.values(IMAGES.items).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+
+        function shareOnTwitter(resultType) {
+            // 例：resultType = "true_end" or "normal_end"
+            let url = encodeURIComponent(location.href);
+            let text;
+            if (resultType === "true_end") {
+                text = encodeURIComponent("脱出ゲーム『リタイアおじさんの脱出』で真エンド達成！ #脱出ゲーム");
+            } else {
+                text = encodeURIComponent("脱出ゲーム『リタイアおじさんの脱出』をクリア！ #脱出ゲーム");
+            }
+            window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+        function copyShareText() {
+            let text = "脱出ゲーム『リタイアおじさんの脱出』をクリア！ #脱出ゲーム " + location.href;
+            navigator.clipboard.writeText(text).then(() => alert('コピーしました！'));
+        }
+
+        let isAdvancingDay = false;
+        function advanceDay() {
+            isActionLocked = true;
+            if (isAdvancingDay) return;
+            isAdvancingDay = true;
+            const overlay = document.getElementById('roomEffectOverlay');
+            const overlayText = document.getElementById('overlayText');
+
+            // 暗転前に一言表示
+            overlay.style.opacity = 0.0;
+            overlayText.textContent = '夜になった…';
+            overlay.style.pointerEvents = "all"; // ブロック
+            overlay.style.opacity = 1;
+            setTimeout(() => {
+                // テキスト消す or 朝用に切り替え
+                overlayText.textContent = 'また一日が始まってしまった';
+                // 日付・カウント進行
+                gameState.currentDay++;
+                gameState.currentActionCount = 0;
+
+                gameState.tvActionCount = 0;
+                gameState.selfActionCount = 0;
+                gameState.tumblerActionCount = 0;
+                gameState.laptopActionCount = 0;
+                gameState.spActionCount = 0;
+                gameState.actionsToday = [];
+                updateCalendar();
+                
+                changeRoom('room');
+
+                // 少し間を空けて暗転解除
+                setTimeout(() => {
+                    overlay.style.opacity = 0;
+                    overlayText.textContent = ''; // 朝テキストも消す
+                    if (!gameState.flags.wentOutsideToday) {
+                        gameState.maxActionsPerDay = Math.max(3, gameState.maxActionsPerDay - 2);
+                        updateMessage("…何もしない日が続くと、【どんどん動けなくなっていく】気がする。");
+                    } else {
+                        gameState.maxActionsPerDay = defaltActions;
+                        updateMessage('また一日が始まってしまった');
+                    }
+                    updateActionCounter();
+                    gameState.flags.wentOutsideToday = false; // 毎日リセット 
+                    overlay.style.pointerEvents = "none";
+                }, 1000);
+
+            }, 900); // 最初の夜テキスト表示＋暗転時間
+            setTimeout(() => { isAdvancingDay = false; isActionLocked = false; }, 300);
+        }
+
+        function updateCalendar() {
+            document.getElementById("calendar").textContent = `第${gameState.currentDay}日`;
+        }
+
+        function updateActionCounter() {
+            const counter = document.getElementById('actionCounter');
+            console.log(counter);
+            if (counter) {
+                if (
+                    gameState.flags.genkanPuzzleSolved)
+                {
+                    counter.innerText = `残：${gameState.maxActionsPerDay - gameState.currentActionCount}回`;
+                    counter.style.display = 'block';
+                } else {
+                    counter.innerText = "";
+                    counter.style.display = 'none';
+                }
+            } 
+        }
+
+        let isEndingShowing = false;
+        function checkDayBehavior() {
+            if (isEndingShowing) return true; // すでにエンド遷移中なら何も処理しない
+            // テレビだけ（actionsTodayが"tv"だけ or tvActionCount === currentActionCount）
+            if (gameState.actionsToday.length > 0 &&
+                gameState.actionsToday.every(action => action === "tv")) {
+                gameState.tvConsecutiveDays++;
+            } else {
+                gameState.tvConsecutiveDays = 0;
+            }
+
+            if (gameState.tvConsecutiveDays >= 3) {
+                isEndingShowing = true;
+                showEnding('tvEnd');
+                playSE('se-warp');
+                return true;
+            // 外に出てない
+            } else if (gameState.currentDay>2 && !gameState.flags.genkanPuzzleSolved) {
+                isEndingShowing = true;
+                showEnding('roomEnd');
+                playSE('se-warp');
+                return true;
+            } else if (gameState.currentDay>2 && gameState.flags.gotMuneRecipe && hasItem('muneniku') 
+            && hasItem('shiokoji')) {
+                isEndingShowing = true;
+                showEnding('muneEnd');
+                playSE('se-warp');
+                return true;
+            } else if (gameState.currentDay>2 && gameState.positiveCount>1) {
+                isEndingShowing = true;
+                showEnding('normal2End');
+                playSE('se-warp');
+                return true;
+            } else if (gameState.currentDay>2 && gameState.positiveCount>0) {
+                isEndingShowing = true;
+                showEnding('normalEnd');
+                playSE('se-warp');
+                return true;
+            } else if (gameState.currentDay>2 && gameState.currentRoom == 'road') {
+                isEndingShowing = true;
+                showEnding('roadEnd');
+                playSE('se-warp');
+                return true;
+            } else if (gameState.currentDay>2 && gameState.currentRoom == 'supermarket') {
+                isEndingShowing = true;
+                showEnding('superEnd');
+                playSE('se-warp');
+                return true;
+            } else if (gameState.currentDay>2 && gameState.currentRoom == 'park') {
+                isEndingShowing = true;
+                showEnding('parkEnd');
+                playSE('se-warp');
+                return true;
+            } 
+            return false;
+        }
+
+        function showEnding(endId) {
+            gameState.currentEndId = endId;
+            if (endId=='bokeEnd') {
+                playSE('se-flash');
+            }
+            endingTransition(() => {
+                
+                
+            });   
+        }
+
+        function endingTransition(callback, text = "") {
+            document.getElementById('roomImage').style.display='none';
+            const overlay = document.getElementById('roomEffectOverlay');
+            overlay.style.background = "white";
+            overlay.style.opacity = "0";
+            overlay.style.transition = "opacity 0.7s";
+            overlay.querySelector("#overlayText").textContent = text;
+            overlay.querySelector("#overlayText").style.color = "#333";
+            overlay.style.display = "block"; 
+            setTimeout(() => {
+                overlay.style.opacity = "1";
+                setTimeout(() => {
+                    overlay.style.opacity = "0";
+                    changeRoom(gameState.currentEndId);
+                    document.getElementById('roomImage').style.display='none';
+                    document.getElementById("calendar").style.display = "none"; 
+                    document.getElementById("actionCounter").style.display = "none"; 
+                    setTimeout(() => {
+                        overlay.style.display = "none";
+                        if (callback) callback(); 
+                    }, 900);
+                }, 750);
+                
+            }, 50);
+        }
+
+        function checkPuzzleSequence() {
+            const correct = ['window', 'sp', 'tv'];
+            if (gameState.puzzleSequence.length >= 3) {
+                const lastThree = gameState.puzzleSequence.slice(-3);
+                if (JSON.stringify(lastThree) === JSON.stringify(correct)) {
+                    gameState.flags.memoAppeared = true;
+                    IMAGES.rooms.room = 'images/3/room2.jpg';
+                    // メモが現れた演出
+                    updateMessage("畳の上に一枚のメモが置かれているのに気づいた。");
+                    changeRoomImage('room');
+                    generateClickableAreas('room');
+                }
+            }
+        }
+
+        function showGoOutsideBtn(show) {
+            console.log('showGoOutsideBtn called. show:', show); // ←確認用
+            const btn = document.getElementById('goOutsideBtn');
+            if (!btn) return;
+            btn.style.display = show ? 'block' : 'none';
+        }
+
+        function getTvMessage() {
+            const day = gameState.currentDay;
+            const messages = tvMessagesByDay[day];
+            if (gameState.positiveCount >= 2) {
+                // ポジティブ回数が2以上なら、明るい/前向きバージョン
+                return [
+                    "今日は同じニュースでも、ちょっと違う気分で見られた。",
+                    "“変わらない毎日”も、悪くないのかもしれない。",
+                    "何かを始めてみようかな、なんて思ってしまう。"
+                ];
+            } else if (gameState.positiveCount === 1) {
+                // ちょっとだけ前向き
+                return [
+                    "ニュースが少しだけ違って聞こえた気がする。",
+                    "今日はなんとなくテレビも悪くない。",
+                ];
+            } else {
+                // 通常パターン
+                return messages;
+            }
+        }
+
+        function getSelfMessage() {
+            const day = gameState.currentDay;
+            const messages = selfMessagesByDay[day];
+            if (gameState.positiveCount >= 2) {
+                return [
+                    "少しだけ前向きな気分だ。",
+                    "今日は何か変わるかもしれない、そんな気がする。"
+                ];
+            } else if (gameState.positiveCount === 1) {
+                // ちょっとだけ前向き
+                return [
+                    "今日は昨日よりも少し体が軽い。",
+                    "散歩でもしてこようか",
+                ];
+            } else {
+                // 通常パターン
+                return messages;
+            }
+            return messages;
+        }
+
+        function getTumblerMessage() {
+            const day = gameState.currentDay;
+            const messages = tumblerMessagesByDay[day];
+            if (gameState.positiveCount >= 2) {
+                return [
+                    "今日のお茶はうまい。",
+                    "飲み干すとさわやかな気分になった"
+                ];
+            } else if (gameState.positiveCount === 1) {
+                // ちょっとだけ前向き
+                return [
+                    "温かいお茶だ",
+                    "保温できるので便利なタンブラーだ",
+                ];
+            } else {
+                // 通常パターン
+                return messages;
+            }
+            return messages;
+        }
+
+        function getSpMessage() {
+            const day = gameState.currentDay;
+            const messages = spMessagesByDay[day];
+            if (gameState.positiveCount >= 2) {
+                return [
+                    "ゲームでもしてみようか",
+                    "昔の知人にメッセージを送ってみるか…"
+                ];
+            } else if (gameState.positiveCount === 1) {
+                // ちょっとだけ前向き
+                return [
+                    "今日の予定はあったかな…",
+                    "天気予報を見てみよう",
+                ];
+            } else {
+                // 通常パターン
+                return messages;
+            }
+            return messages;
+        }
+
+        function getPcMessage() {
+            const day = gameState.currentDay;
+            const messages = pcMessagesByDay[day];
+            if (gameState.positiveCount >= 2) {
+                return [
+                    "料理レシピでも検索してみるか",
+                    "メールが来ているようだ"
+                ];
+            } else if (gameState.positiveCount === 1) {
+                // ちょっとだけ前向き
+                return [
+                    "メールボックスを整理しておこう",
+                    "動画サイトでも見てみるか",
+                ];
+            } else {
+                // 通常パターン
+                return messages;
+            }
+            return messages;
+        }
+
+
+        function saveGame() {
+            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            const oldMsg = document.getElementById('messageText').innerHTML;
+            updateMessage('セーブしました！');
+            setTimeout(() => {
+                updateMessage(oldMsg);
+            }, 1500);
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('escapeGameState');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                // UIや画面をstateに合わせて復元する
+                changeRoom(gameState.currentRoom);
+                updateInventoryDisplay();
+                renderNavigation();
+                updateCalendar();
+                updateActionCounter();
+                updateMessage('ロードしました！');
+            } else {
+                updateMessage('セーブデータがありません');
+            }
+        }
+
+        // ゲーム開始
+        preloadImages();
+        initGame();
+    </script>
+</body>
+</html>
