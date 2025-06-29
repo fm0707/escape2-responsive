@@ -830,15 +830,15 @@
             generateClickableAreas(room);
             updateMessage(`${room.name}に入りました。${room.description}`);
 
-            const shareArea = document.getElementById('endingShareArea');
-            if (shareArea) { 
-                if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd" || roomId === "extraEnd") {
-                    shareArea.style.display = "block";
-                    console.log("シェアUIを表示！roomId:", roomId);
-                } else {
-                    shareArea.style.display = "none";
-                }
-            }
+//            const shareArea = document.getElementById('endingShareArea');
+//            if (shareArea) { 
+//                if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd" || roomId === "extraEnd") {
+//                    shareArea.style.display = "block";
+//                    console.log("シェアUIを表示！roomId:", roomId);
+//                } else {
+//                    shareArea.style.display = "none";
+//                }
+//            }
             // BGM切替
             if (roomId === "end" || roomId === "dreamEnd" || roomId === "trueEnd") {
                 changeBGM("sounds/egao to namida.mp3");
