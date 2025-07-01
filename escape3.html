@@ -1131,6 +1131,7 @@
             if (isActionLocked) return; // クリックロック
             isActionLocked = true;
             if (gameState.currentActionCount >= gameState.maxActionsPerDay && action!='examine_memo') {
+                console.log(`アクションカウント：${gameState.currentActionCount}、マックスカウント：${gameState.maxActionsPerDay}`);
                 // エンディング判定（trueならadvanceDay呼ばないでreturn）
                 if (checkDayBehavior()) {
                     isActionLocked = false; // エンディング遷移で自動リセット
@@ -1646,6 +1647,10 @@
 
         // ゲームリスタート
         function restartGame() {
+            resetEndingTransitionOverlay();
+            isAdvancingDay = false;
+            isEndingShowing = false;
+            isActionLocked = false;
             gameState = {
                 currentRoom: 'room',
                 openRooms: ['room'], 
@@ -1787,6 +1792,9 @@
 
         let isAdvancingDay = false;
         function advanceDay() {
+            console.log(`advanceDay呼ばれた${isAdvancingDay}`);
+            resetEndingTransitionOverlay();
+
             isActionLocked = true;
             if (isAdvancingDay) return;
             isAdvancingDay = true;
@@ -1794,6 +1802,7 @@
             const overlayText = document.getElementById('overlayText');
 
             // 暗転前に一言表示
+            overlay.style.display = 'block';
             overlay.style.opacity = 0.0;
             overlayText.textContent = '夜になった…';
             overlay.style.pointerEvents = "all"; // ブロック
@@ -1949,6 +1958,21 @@
             }, 50);
         }
 
+        function resetEndingTransitionOverlay() {
+            const overlay = document.getElementById('roomEffectOverlay');
+            if (!overlay) return;
+            overlay.style.background = "";         // 必要に応じて
+            overlay.style.opacity = "0";
+            overlay.style.transition = "none";
+            overlay.style.display = "none";
+            const overlayText = overlay.querySelector("#overlayText");
+            if (overlayText) {
+                overlayText.textContent = "";
+                overlayText.style.color = "#fff";
+            }
+        }
+
+
         function checkPuzzleSequence() {
             const correct = ['window', 'sp', 'tv'];
             if (gameState.puzzleSequence.length >= 3) {
@@ -2088,6 +2112,10 @@
         }
 
         function loadGame() {
+            resetEndingTransitionOverlay();
+            isActionLocked = false;
+            isEndingShowing = false;
+            isAdvancingDay = false;
             const saved = localStorage.getItem('escapeGameState');
             if (saved) {
                 gameState = JSON.parse(saved);

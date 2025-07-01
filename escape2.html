@@ -957,6 +957,7 @@
                             [{text: '閉じる', action: 'close'}]
                         );  
                         addItem('pin'); 
+                        gameState.genkan.flags.foundPin = true;
                     } else {
                         updateMessage('何もない');
                     }
