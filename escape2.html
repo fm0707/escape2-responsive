@@ -330,13 +330,23 @@
             transition: opacity 0.6s;
             z-index: 9999;
         }
+        .title-wrapper {
+            display: flex;
+            width:100%;
+        }
     </style>
 </head>
 <body>
     <div id="roomEffectOverlay"></div>
     <div class="game-container">
-        <div class="title">謎の洋館から脱出せよ</div>
-        
+        <div class="title-wrapper">
+            <div class="title">謎の洋館から脱出せよ</div>
+            <div style="margin:12px 0; text-align:center;">
+                <a href="escape2_hint.html" target="_blank" style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
+                    🔍 ヒントを見る
+                </a>
+            </div>
+        </div>
         <div class="room-view" id="roomView">
             <!-- クリック可能エリアは動的に生成 -->
               <img id="roomImage" src="">
