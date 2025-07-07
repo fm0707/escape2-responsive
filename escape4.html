@@ -1107,6 +1107,12 @@
             const saved = localStorage.getItem('escapeGameState');
             if (saved) {
                 gameState = JSON.parse(saved);
+                // ここでIMAGES.rooms.officeを書き換える！
+                if (gameState.flags.foundBear) {
+                    IMAGES.rooms.office = 'images/4/office2.jpg';
+                } else {
+                    IMAGES.rooms.office = 'images/4/office.jpg';
+                }
                 // UIや画面をstateに合わせて復元する
                 changeRoom(gameState.currentRoom);
                 updateInventoryDisplay();
