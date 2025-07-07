@@ -1016,6 +1016,12 @@
             closeModal();
             initGame();
             updateInventoryDisplay();
+            // ここでIMAGES.rooms.officeを書き換える！
+            if (gameState.flags.foundBear) {
+                IMAGES.rooms.office = 'images/4/office2.jpg';
+            } else {
+                IMAGES.rooms.office = 'images/4/office.jpg';
+            }
         }
 
         let isBGMPlaying = false;   // ←デフォルトは再生してない
