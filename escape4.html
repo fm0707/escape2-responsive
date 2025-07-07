@@ -768,8 +768,10 @@
                 case 'examine_bear':
                     if (gameState.selectedItem=='honey') {
                         removeItem('honey');
-                        updateMessage('わーい！いいこと教えてあげる。ボクの秘密のメモがファイルに挟んであるよ。順番どおりがボクは好きなんだ');
+                        updateMessage('わーい！いいこと教えてあげる。ボクの秘密のメモがファイルに挟んであるよ。');
                         gameState.flags.foundMemo = true;
+                    } else if (gameState.flags.foundMemo) {  
+                        updateMessage('順番どおりがボクは好きなんだ');
                     } else {
                         updateMessage('呼んだ？');
                     }  
