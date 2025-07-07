@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>見知らぬオフィスからの脱出ゲーム</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            color: #f4f1e8;
+            width: 100%;
+            overflow-x: hidden;  /* ←これ重要 */
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1408px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .room-view {
+            aspect-ratio: 1/1;           /* ←正方形 */
+            width: 90vw;                 /* 画面幅の90% */
+            max-width: 640px;            /* PC時最大サイズ */
+            max-height: 90vw;       
+            background-size: cover;      
+            background-repeat: no-repeat;
+            background-position: center center;
+            position: relative;
+            margin: 0 auto;
+            cursor: crosshair;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        #roomImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;    /* 画像全体を表示 */
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 0;
+            pointer-events: none;   /* 画像上でもクリックイベントが通るように */
+        }
+
+        #endingShareArea {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.96);
+            border-radius: 18px;
+            box-shadow: 0 0 24px #fffc;
+            padding: 18px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 99;
+            font-size: 1.2em;
+            gap: 10px;
+            border: 2px solid gold;
+            }
+
+        #endingShareArea button {
+            font-size: 1.1em;
+            padding: 10px 24px;
+            margin: 6px 0;
+            background: gold;
+            color: #333;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #ffdc;
+            cursor: pointer;
+        }
+
+
+
+        .clickable-area {
+            position: absolute;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            z-index: 2;
+            pointer-events: auto;
+
+        }
+
+        .clickable-area:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .ui-panel {
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1048px;
+            min-height: 120px;
+            background: #2c1810;
+            box-sizing: border-box;
+            display: flex;
+        }
+
+        .inventory {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            padding: 0 20px;
+            width:100%;
+        }
+
+        .inventory-slot {
+            width: 14vw; 
+            height: 14vw; 
+            max-width: 80px; 
+            max-height: 80px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .inventory-slot.selected {
+            border: 3px solid #9f2b02;   /* 金色・太め推奨 */
+            box-shadow: 0 0 12px #ff8c0099;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .inventory-slot img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+
+        .info-panel {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            height:80px;
+            min-height: 40px;
+            border: 1px solid #d4af37;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #d4af37;
+            max-width: calc(100vw - 60px);
+            text-align: center;
+        }
+
+        .modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .puzzle-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #d4af37;
+            background: rgba(244, 241, 232, 0.9);
+            color: #1a0f08;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border: 2px solid #d4af37;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        /* 画像プレースホルダー用のスタイル */
+        .image-placeholder {
+            background: linear-gradient(135deg, #444, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .notice {
+            text-overflow: clip;
+        }
+        .save-area {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 18px 0 4px 0;
+            width: 40%;
+        }
+
+        @media (max-width: 600px) {
+            .save-area {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-top: 8px;
+                gap: 16px;
+            }
+            .inventory {
+                gap: 16px;
+                align-items: center;
+                padding: 0 2px;
+                width:100%;
+            }
+        }
+
+        .save-area .nav-btn {
+            min-width: 80px;
+            padding: 10px 18px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+            border-radius: 8px;
+            border: none;
+            color: #1a0f08;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .save-area .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 12px #d4af3740;
+        }
+        #roomEffectOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s;
+            z-index: 9999;
+        }
+        .title-wrapper {
+            display: flex;
+            width:100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="roomEffectOverlay"></div>
+    <div class="game-container">
+        <div class="title-wrapper">
+            <div class="title">見知らぬオフィスから脱出せよ</div>
+            <div style="margin:12px 0; text-align:center;">
+                <a href="escape4_hint.html" target="_blank" style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
+                    🔍 ヒントを見る
+                </a>
+            </div>
+        </div>
+        <div class="room-view" id="roomView">
+            <!-- クリック可能エリアは動的に生成 -->
+              <img id="roomImage" src="">
+              
+        </div> 
+        <div id="endingShareArea" style="display:none;">
+            <div style="font-size:1.4em; font-weight:bold; margin-bottom:8px;color:#2c1810;">🎉クリアおめでとう！🎉</div>
+            <button onclick="shareOnTwitter()">Xでシェア</button>
+            <button onclick="copyShareText()">クリア報告をコピー</button>
+            <div style="font-size:0.9em; margin-top:6px; color:#555;">#脱出ゲーム #自作ゲーム</div>
+        </div>
+        <div class="ui-panel">
+            <div class="info-panel">
+                <div class="message-area" id="messageArea">
+                    気が付くとあなたは見知らぬオフィスに立っていました。ドアはカギがかかっていて出られません
+                </div>
+                <div class="navigation">
+                    
+                </div> 
+            </div>
+            <div class="inventory" id="inventory">
+                <div class="inventory-slot" onclick="useItem(0)"></div>
+                <div class="inventory-slot" onclick="useItem(1)"></div>
+                <div class="inventory-slot" onclick="useItem(2)"></div>
+                <div class="inventory-slot" onclick="useItem(3)"></div>
+                <div class="inventory-slot" onclick="useItem(4)"></div>
+            </div>
+            <button id="bgm-toggle" onclick="toggleBGM()" style="position:absolute;top:20px;right:20px;z-index:1000;">
+            🔊 BGM
+            </button> 
+            <div class="save-area">
+                <button class="nav-btn" onclick="saveGame()">セーブ</button>
+                <button class="nav-btn" onclick="loadGame()">ロード</button>
+            </div>
+        </div>
+        <div class="notice">当サイトはOtoLogicの素材を使用しています 作者:<a href="index.html">スラセブン</a></div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- モーダルの内容は動的に生成 -->
+        </div>
+    </div>
+    <audio id="bgm" src="sounds/4/Social Documentary05.mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-tv" src="sounds/TV-Hardware02-01(Button).mp3"></audio>
+
+    <audio id="se-metal" src="sounds/Horror_Accent13-1(Short).mp3"></audio>
+    <audio id="se-subclear" src="sounds/Quiz-Ding_Dong01-1(Short).mp3"></audio>
+    <audio id="se-clear" src="sounds/Angel01-1.mp3"></audio>
+    <audio id="se-parin" src="sounds/Onoma-Impact04-1(High).mp3"></audio>
+    <audio id="se-box" src="sounds/Retro_Anime-Switch02-1(Mid).mp3"></audio>
+    <audio id="se-person" src="sounds/Short_Accent04-1(Single).mp3"></audio>
+    <audio id="se-fanta" src="sounds/4/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
+    <script>
+        window._nextModal = null;
+        // ゲーム設定 - 画像パスをここで管理
+        let IMAGES = {
+            rooms: {
+                office: 'images/4/office.jpg',        
+                end: 'images/4/end.jpg',    
+            },
+            items: {
+                key: 'images/4/key.jpg',
+                honey: 'images/4/honey.jpg'   
+            }
+        };
+
+        // ゲーム状態
+        let gameState = {
+            inventory: [],
+            
+            flags: {
+                foundKey: false, 
+                unlockPc: false,
+                safePuzzleSolved: false,
+                foundBear: false,
+                foundHoney: false,
+            },
+            selectedItem: null
+        };
+
+        // 部屋データ
+        let rooms = {
+            office: {
+                name: 'オフィス',
+                description: '見知らぬオフィスだ',
+                clickableAreas: [
+                    {
+                        x: 21.1, y: 55, width: 10.4, height: 7.6,
+                        action: 'examine_pc',
+                        description: 'PC',
+                        zIndex:5
+                    },
+                    {
+                        x: 45.3, y: 18.3, width: 13.5, height: 11.7,
+                        action: 'examine_clock',
+                        description: '時計がある',
+                        zIndex:5
+                    },
+                    {
+                        x: 33.6, y: 57, width: 5.3, height: 7.8,
+                        action: 'examine_green',
+                        description: '観葉植物'
+                    },
+                    {
+                        x: 41.2, y: 65.7, width: 18.8, height: 21,
+                        action: 'examine_kinko',
+                        description: '金庫'
+                    },
+                    {
+                        x: 5.6, y: 31.2, width: 7.9, height: 2.2,
+                        action: 'examine_paper1',
+                        description: '掲示物だ'
+                    },
+                    {
+                        x: 5.9, y: 37.8, width: 4.5, height: 8.4,
+                        action: 'examine_paper2',
+                        description: 'お知らせだ'
+                    },
+                    {
+                        x: 11.3, y: 35.6, width: 7.3, height: 10.3,
+                        action: 'examine_paper3',
+                        description: '当番表だ'
+                    },
+                    {
+                        x: 24.8, y: 30.4, width: 10.1, height: 11.8,
+                        action: 'examine_paper4',
+                        description: ''
+                    },
+                    {
+                        x: 29.2, y: 43.7, width: 7.3, height: 9.5,
+                        action: 'examine_paper5',
+                        description: ''
+                    },
+                    {
+                        x: 50, y: 37.3, width: 12, height: 16,
+                        action: 'examine_paper6',
+                        description: ''
+                    },
+                    {
+                        x: 69.3, y: 56.8, width: 6.5, height: 7.5,
+                        action: 'examine_door_key',
+                        description: 'ドアには鍵がかかっている'
+                    },
+                    {
+                        x: 72.7, y: 31, width: 20.9, height: 25.1,
+                        action: 'examine_door_window',
+                        description: 'ドアには鍵がかかっている'
+                    },
+                    {
+                        x: 1.4, y: 54.5, width: 4.4, height: 10.5,
+                        action: 'examine_file1',
+                        description: 'ファイルだ'
+                    },
+                    {
+                        x: 44.1, y: 57.7, width: 5.2, height: 7.3,
+                        action: 'examine_nazo',
+                        description: 'これはなんだろう'
+                    },
+                    {
+                        x: 13.5, y: 77.3, width: 16.3, height: 4,
+                        action: 'examine_chair',
+                        description: '座面'
+                    },
+                    {
+                        x: 40.1, y: 47.5, width: 10.3, height: 10.3,
+                        action: 'examine_bear',
+                        description: 'クマ妖精',
+                        zIndex: 5,
+                        usable: () => !!gameState.flags.foundBear,
+                    }
+                ]
+            },
+            end: {
+                name: '外の世界へルート',
+                description: 'あなたは無事脱出できました。おめでとうございます。',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end',
+                        description: '外の世界'
+                    },
+                ]
+            }
+        };
+
+
+        // ゲーム初期化
+        function initGame() {
+            changeRoom('office');
+            updateMessage('気が付くとあなたは見知らぬオフィスに立っていました。ドアはカギがかかっていて出られません');
+        }
+
+        // 部屋を変更
+        function changeRoom(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+            
+            const roomView = document.getElementById('roomView');
+            roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
+            
+            // クリック可能エリアを生成
+            generateClickableAreas(room);
+            updateMessage(`${room.name}に入りました。${room.description}`);
+
+
+            // BGM切替
+            if (roomId === "end") {
+                changeBGM("sounds/egao to namida.mp3");
+            } else if (roomId === "extraEnd") {
+                changeBGM("sounds/hokkori tea time.mp3");
+            } else {
+                changeBGM("sounds/4/Social Documentary05.mp3");
+            }
+        }
+
+        // 背景画像を差し替え
+        function changeRoomImage(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+            
+            // 背景画像を設定（画像がない場合はプレースホルダー）
+            const roomView = document.getElementById('roomView');
+            roomView.style.backgroundImage = `url(${IMAGES.rooms[roomId]})`;
+            generateClickableAreas(room);
+        }
+
+        function unlockRoom(roomId) {
+            if (!gameState.openRooms.includes(roomId)) gameState.openRooms.push(roomId);
+            renderNavigation();
+        }
+
+        // クリック可能エリアを生成
+        // 
+        function generateClickableAreas(room) {
+            const roomView = document.getElementById('roomView');
+
+            roomView.innerHTML = '<img id="roomImage" src="'+IMAGES.rooms[gameState.currentRoom]+'" style="width:100%;height:100%;object-fit:contain;position:absolute;left:0;top:0;">';
+
+            // 画像のロード後に配置
+            const img = roomView.querySelector('#roomImage');
+            img.onload = function() {
+
+                room.clickableAreas.forEach(area => {
+                    const clickableDiv = document.createElement('div');
+                    clickableDiv.className = 'clickable-area';
+                    clickableDiv.style.left   = (area.x) + '%';
+                    clickableDiv.style.top    = (area.y) + '%';
+                    clickableDiv.style.width  = (area.width) + '%';
+                    clickableDiv.style.height = (area.height) + '%';
+                    clickableDiv.style.position = 'absolute';
+                    clickableDiv.style.zIndex = area.zIndex || 1;
+                    console.log(area.action+ ':' + area.usable);
+                    const usable = (typeof area.usable === 'function') ? area.usable() :
+                         (typeof area.usable === 'boolean') ? area.usable : true;
+                    clickableDiv.style.display = usable ? 'block' : 'none';
+
+                    clickableDiv.onclick = () => handleAreaClick(area.action);
+                    clickableDiv.title = area.description;
+
+                    roomView.appendChild(clickableDiv);
+                });
+            };
+            img.src = IMAGES.rooms[gameState.currentRoom]; // 必ず画像セット
+        }
+
+        // エリアクリック処理
+        function handleAreaClick(action) {
+            switch(action) {
+                case 'examine_pc':
+                    if (gameState.flags.unlockPc) {
+                        showModal(
+                        '村田でログインしている',
+                        '<img src="images/4/pc.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    } else {
+                         showPcPuzzle();
+                    }
+                     break;
+                case 'examine_clock':
+                    updateMessage('8時を指している');
+                    break;
+                case 'examine_green':
+                    if (gameState.flags.unlockPc) {
+                        updateMessage('癒される植物だ');
+                        showModal(
+                            '癒される植物だ',
+                            '<img src="images/4/green.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                    } else {
+                        updateMessage('癒される植物だ');
+                    }
+                    
+                    break;
+                case 'examine_kinko':
+                    if (!gameState.flags.safePuzzleSolved) {
+                        showSafePuzzle();
+                    } else {
+                        updateMessage('金庫はからっぽだ');
+                    }   
+                    break;
+                case 'examine_paper1':
+                    updateMessage('社内のお知らせだ');
+                    showModal(
+                        '社員のみなさんへ',
+                        '<img src="images/4/paper1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break;  
+                case 'examine_paper2':
+                    updateMessage('社内のお知らせだ');
+                    showModal(
+                        '何の当番だろう？',
+                        '<img src="images/4/paper2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break;  
+                case 'examine_paper3':
+                    updateMessage('社内のお知らせだ');
+                    showModal(
+                        '社員のみなさんへ',
+                        '<img src="images/4/paper3.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break;  
+                case 'examine_paper4':
+                    updateMessage('社内のお知らせだ');
+                    showModal(
+                        '社員のみなさんへ',
+                        '<img src="images/4/paper4.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break;  
+                case 'examine_paper5':
+                    updateMessage('社内のお知らせだ');
+                    showModal(
+                        '社員のみなさんへ',
+                        '<img src="images/4/paper5.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break;  
+                case 'examine_paper6':
+                    updateMessage('社内のお知らせだ');
+                    showModal(
+                        '社員のみなさんへ',
+                        '<img src="images/4/paper6.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break;  
+                case 'examine_door_key':
+                    if (gameState.selectedItem=='key') {
+                        removeItem('key');
+                        playSE('se-box');
+                        showModal(
+                            '鍵が開いた！',
+                            '<img src="images/4/open.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        playSE('se-clear');
+                        window._nextModal = {
+                            before: function() { playSE('se-clear'); },
+                            title: 'あなたは外へ足を踏み出した',
+                            content: '<img src="images/4/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            buttons: [{text: '閉じる', action: 'close'}],
+                            after: function() { changeRoom('end'); }
+                        };     
+
+                    } else {
+                        updateMessage('鍵がかかっている');
+                    }  
+                    break; 
+                case 'examine_door_window':
+                    updateMessage('外は明るい');
+                    break; 
+                case 'examine_file1':
+                    if (gameState.flags.foundMemo) {
+                        showModal(
+                            'クマ妖精のメモだ',
+                            '<img src="images/4/memo.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                    } else {
+                        updateMessage('ファイルがある');
+                    }
+                    break; 
+                case 'examine_nazo':
+                    if(gameState.flags.foundBear) {
+                        updateMessage('妖精のおうちなのかな？');
+                    } else {
+                        updateMessage('謎の物体だ');
+                    }
+                    
+                    break; 
+                case 'examine_chair':
+                    if(gameState.flags.foundBear) {
+                        if (!gameState.flags.foundHoney) {
+                            addItem('honey');
+                            gameState.flags.foundHoney = true;
+                            updateMessage('ハチミツが落ちていた');
+                            showModal(
+                                'ハチミツが落ちていた',
+                                '<img src="images/4/honey.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{text: '閉じる', action: 'close'}]
+                            );  
+                        } else {
+                            updateMessage('座ってみようかな？');
+                        }
+                    } else {
+                        updateMessage('座ってみようかな？');
+                    }
+                    
+                    break; 
+                case 'examine_bear':
+                    if (gameState.selectedItem=='honey') {
+                        removeItem('honey');
+                        updateMessage('わーい！いいこと教えてあげる。ボクの秘密のメモがファイルに挟んであるよ');
+                        gameState.flags.foundMemo = true;
+                    } else {
+                        updateMessage('呼んだ？');
+                    }  
+                    break; 
+                case 'examine_end':
+                    updateMessage('あなたは外へと足を踏み出しました。（ノーマルエンド）');
+                    break; 
+            }
+            gameState.selectedItem = null;
+            gameState.selectedItemSlot = null;
+
+            playSE('se-click');
+            updateInventoryDisplay();
+        }
+
+        // Pcパズルを表示
+        function showPcPuzzle() {
+            const modalContent = `
+                <h3>入力パネル</h3>
+                <p>ログインパスワード？</p>
+                <input type="text" class="puzzle-input" id="pcInput" placeholder="四字熟語を入力（例:一期一会）">
+                <br>
+                <button onclick="checkPcPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // Pcパズルの答えをチェック
+        function checkPcPuzzle() {
+            const input = document.getElementById('pcInput').value;
+            if (input === '五里霧中' || input === '5里霧中' || input === '５里霧中') {
+                closeModal();
+                updateMessage('ログイン成功');
+                playSE('se-subclear');
+                showModal(
+                    'ログイン成功！',
+                    '<img src="images/4/pc_login.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+
+                gameState.flags.unlockPc = true;
+
+            } else {
+                playSE('se-error');
+                updateMessage('パスワードが間違っています。');
+            }
+        }
+
+        // 金庫クイズを表示
+        function showSafePuzzle() {
+            const modalContent = `
+                <h3>暗証番号を入力</h3>
+                <p>数字で入力しよう</p>
+                <input type="text" class="puzzle-input" id="safeInput" placeholder="1234">
+                <br>
+                <button onclick="checkSafePuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 金庫クイズの答えをチェック
+        function checkSafePuzzle() {
+            const input = document.getElementById('safeInput').value;
+            if (input === '532' || input=== '５３２') {
+                closeModal();
+                updateMessage('金庫の鍵が開いた');
+                playSE('se-box');
+                showModal(
+                    '鍵を手に入れた！',
+                    '<img src="images/4/key.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                addItem('key');
+                gameState.flags.safePuzzleSolved = true;
+                updateMessage('これで外に出られるぞ');
+
+            } else if (input === '52235' || input=== '５２２３５') {
+                closeModal();
+                updateMessage('あなたは金庫に吸い込まれた');
+                playSE('se-fanta');
+                showModal(
+                    'バッドエンド',
+                    '<img src="images/4/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
+                    '<br>あなたはクマの妖精シティに転移してしまった。もう帰ることはできない。',
+                    [{text: '最初から', action: 'restart'}]
+                );          
+
+            } else if (input === '879' || input=== '８７９') {
+                gameState.flags.foundBear = true;
+                IMAGES.rooms.office = 'images/4/office2.jpg';
+                updateMessage("不思議な生き物が現れた。");
+                changeRoomImage('office');
+                generateClickableAreas('office');
+                playSE('se-fanta');
+                showModal(
+                    'なんだろう？',
+                    '<img src="images/4/ex.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+
+            } else {
+                playSE('se-error');
+                updateMessage('違います。');
+            }
+        }
+
+
+        // アイテム管理
+        function addItem(itemId) {
+            playSE('se-item');
+            if (gameState.inventory.length < 5) {
+                gameState.inventory.push(itemId);
+                updateInventoryDisplay();
+            }
+        }
+
+        function removeItem(itemId) {
+            const index = gameState.inventory.indexOf(itemId);
+            if (index !== -1) {
+                gameState.inventory.splice(index, 1);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+            
+        }
+
+        function hasItem(itemId) {
+            return gameState.inventory.includes(itemId);
+        }
+
+        function useItem(slotIndex) {
+            if (gameState.inventory[slotIndex]) {
+                const item = gameState.inventory[slotIndex];
+                updateMessage(`${getItemName(item)}を選択しました。使用したい場所をクリックしてください。`);
+                gameState.selectedItem = item;
+                gameState.selectedItemSlot = slotIndex;
+                updateInventoryDisplay(); 
+            }
+        }
+
+        function getItemName(itemId) {
+            const names = {
+                key: '鍵',
+                honey: 'ハチミツ'
+            };
+            return names[itemId] || itemId;
+        }
+
+        function renderNavigation() {
+            const navDiv = document.querySelector('.navigation');
+            navDiv.innerHTML = '';
+            gameState.openRooms.forEach(roomId => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = rooms[roomId].name;
+                btn.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(btn);
+            });
+        }
+
+        // インベントリ表示更新
+        function updateInventoryDisplay() {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                if (gameState.inventory[index]) {
+                    const img = document.createElement('img');
+                    img.src = IMAGES.items[gameState.inventory[index]];
+                    img.onerror = function() {
+                        // 画像が読み込めない場合はプレースホルダーを表示
+                        this.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder';
+                        placeholder.textContent = getItemName(gameState.inventory[index]);
+                        placeholder.style.width = '60px';
+                        placeholder.style.height = '60px';
+                        slot.appendChild(placeholder);
+                    };
+                    slot.appendChild(img);
+                }
+                // ★選択中ならselectedクラス追加
+                if (gameState.selectedItemSlot === index) {
+                    slot.classList.add('selected');
+                } else {
+                    slot.classList.remove('selected');
+                }
+            });
+        }
+
+        // メッセージ更新
+        function updateMessage(message) {
+            document.getElementById('messageArea').innerHTML = message;
+        }
+
+        // モーダル表示
+        function showModal(title, content, buttons) {
+            let modalHtml = `<h3>${title}</h3><p>${content}</p>`;
+            buttons.forEach(button => {
+                modalHtml += `<button onclick="${button.action === 'close' ? 'closeModal' : button.action === 'restart' ? 'restartGame()' : button.action}()">${button.text}</button>`;
+            });
+            
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // モーダルを閉じる
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            // 次のモーダルが登録されていれば表示
+            if (window._nextModal) {
+                // 登録内容は {title, content, buttons, after} オブジェクト
+                let modal = window._nextModal;
+                window._nextModal = null; // クリア
+                if (modal.before) modal.before(); // もしplaySEなど事前処理したければ
+                showModal(modal.title, modal.content, modal.buttons);
+                if (modal.after) modal.after(); // もしshowModal直後にやりたいことあれば
+            }
+        }
+
+        // ゲームリスタート
+        function restartGame() {
+            gameState = {
+                currentRoom: 'office',
+                openRooms:  ['office'], 
+                inventory: [],
+                flags: {
+                    foundKey: false, 
+                    unlockPc: false,
+                    safePuzzleSolved: false,
+                    foundBear: false,
+                    foundHoney: false
+                    
+                },
+                selectedItem: null,
+                selectedItemSlot: null,
+            };
+            closeModal();
+            initGame();
+            updateInventoryDisplay();
+        }
+
+        let isBGMPlaying = false;   // ←デフォルトは再生してない
+        let isBGMInitialized = false; // 初回クリック判定用
+
+        // 初回クリック時にだけBGMを再生
+        function initBGMOnce() {
+        if (!isBGMInitialized) {
+            const bgm = document.getElementById('bgm');
+            bgm.volume = 0.3;
+            bgm.play();
+            isBGMPlaying = true;
+            isBGMInitialized = true;
+            document.getElementById('bgm-toggle').textContent = "🔊 BGM";
+        }
+        }
+        window.addEventListener('click', initBGMOnce, { once: true });
+
+        function toggleBGM() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('bgm-toggle');
+            if (!isBGMPlaying) {
+                bgm.play();
+                isBGMPlaying = true;
+                btn.textContent = "🔊 BGM";
+            } else {
+                bgm.pause();
+                isBGMPlaying = false;
+                btn.textContent = "🔇 BGM";
+            }
+        }
+
+        function changeBGM(newSrc) {
+            const bgm = document.getElementById('bgm');
+            if (bgm.src.endsWith(newSrc)) return; // すでにそのBGMなら何もしない
+            const isPlaying = isBGMPlaying;
+            bgm.pause();
+            bgm.src = newSrc;
+            bgm.load();
+            if (isPlaying) {
+                bgm.play();
+            }
+        }
+
+        function playSE(id) {
+            const se = document.getElementById(id);
+            se.currentTime = 0;
+            se.play();
+        }
+
+        // どこかで最初に一度だけ呼ぶ
+        function preloadImages() {
+            Object.values(IMAGES.rooms).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+            Object.values(IMAGES.items).forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+
+        function shareOnTwitter(resultType) {
+            // 例：resultType = "true_end" or "normal_end"
+            let url = encodeURIComponent(location.href);
+            let text;
+            if (resultType === "true_end") {
+                text = encodeURIComponent("脱出ゲーム『屋敷に残された夢』で真エンド達成！ #脱出ゲーム");
+            } else {
+                text = encodeURIComponent("脱出ゲーム『屋敷に残された夢』をクリア！ #脱出ゲーム");
+            }
+            window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+        function copyShareText() {
+            let text = "脱出ゲーム『屋敷に残された夢』をクリア！ #脱出ゲーム " + location.href;
+            navigator.clipboard.writeText(text).then(() => alert('コピーしました！'));
+        }
+
+        function saveGame() {
+            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            const oldMsg = document.getElementById('messageArea').innerHTML;
+            updateMessage('セーブしました！');
+            setTimeout(() => {
+                updateMessage(oldMsg);
+            }, 1500);
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('escapeGameState');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                // UIや画面をstateに合わせて復元する
+                changeRoom(gameState.currentRoom);
+                updateInventoryDisplay();
+                renderNavigation();
+                updateMessage('ロードしました！');
+            } else {
+                updateMessage('セーブデータがありません');
+            }
+        }
+
+        // ゲーム開始
+        preloadImages();
+        initGame();
+    </script>
+</body>
+</html>
