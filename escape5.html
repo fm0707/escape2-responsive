@@ -334,6 +334,23 @@
             display: flex;
             width:100%;
         }
+        @keyframes sparkle-pop {
+            0%   { opacity: 0; transform: scale(0.3) rotate(0deg);}
+            10%  { opacity: 1; transform: scale(1.1) rotate(8deg);}
+            70%  { opacity: 1; transform: scale(1.0) rotate(-8deg);}
+            100% { opacity: 0; transform: scale(2.0) rotate(30deg);}
+        }
+        .sparkle-effect {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px; height: 180px;
+            pointer-events: none;
+            z-index: 30;
+            background: url('images/5/kira.png') center/contain no-repeat;
+            opacity: 0;
+            animation: sparkle-pop 0.9s ease-out;
+        }
     </style>
 </head>
 <body>
@@ -414,6 +431,8 @@
                     'images/5/entrance4.png',         // backgroundState = 3
                     'images/5/entrance5.png',         // backgroundState = 4
                     'images/5/entrance6.png',         // backgroundState = 5
+                    'images/5/entrance7.png',         // backgroundState = 6
+                    'images/5/entrance8.png',         // backgroundState = 7
                 ],
                 dining: [
                     'images/5/dining.png',             // backgroundState = 0
@@ -424,7 +443,7 @@
                     'images/5/kitchen3.png',          // backgroundState = 2
                 ],
                 restroom: [
-                'images/5/restroom.png',           // backgroundState = 0
+                    'images/5/restroom.png',           // backgroundState = 0
                     'images/5/restroom2.png',          // backgroundState = 1
                 ],
                 
@@ -586,6 +605,11 @@
                         description: 'クマの妖精',
                         zIndex:5,
                         usable: () => !!gameState.restroom.flags.backgroundState>0,
+                    },
+                    {
+                        x: 23.1, y: 23.4, width: 8.0, height: 7.7,
+                        action: 'examine_restroom_light',
+                        description: '照明',
                     }
                 ]
             },
@@ -618,7 +642,8 @@
                 bear: [
                 "呼んだ？",
                 "昔はここのお料理、ベリーグッドだったんだって",
-                "ボクも食べてみたかったな"
+                "ボクも食べてみたかったな",
+                "ドーピング騒ぎがあって、寂れちゃったんだって"
                 ]
             },
         };
@@ -690,7 +715,7 @@
                 const usable = (typeof area.usable === 'function') ? area.usable() :
                          (typeof area.usable === 'boolean') ? area.usable : true;
                 clickableDiv.style.display = usable ? 'block' : 'none';
-                clickableDiv.onclick = () => handleAreaClick(area.action);
+                clickableDiv.onclick = (event) => handleAreaClick(area.action,event);
                 clickableDiv.title = area.description;
 
                 roomView.appendChild(clickableDiv);
@@ -698,15 +723,15 @@
         }
 
         // エリアクリック処理
-        function handleAreaClick(action) {
+        function handleAreaClick(action, event) {
             switch(action) {
                 case 'examine_entrance_door':
                     console.log(gameState.entrance.flags.backgroundState);
                     console.log(gameState.entrance.flags.entrancePuzzleSolved);
-                    if (gameState.entrance.flags.entrancePuzzleSolved && gameState.entrance.flags.backgroundState==4) {
+                    if (gameState.entrance.flags.entrancePuzzleSolved && gameState.entrance.flags.backgroundState==6) {
                         updateMessage('ゲームクリア');
                         changeRoom('end');
-                    } else if (gameState.entrance.flags.entrancePuzzleSolved && gameState.entrance.flags.backgroundState==5) {
+                    } else if (gameState.entrance.flags.entrancePuzzleSolved && gameState.entrance.flags.backgroundState==7) {
                         updateMessage('ゲームクリア');
                         changeRoom('bearEnd');
                     } else {
@@ -735,7 +760,8 @@
                             gameState.entrance.flags.backgroundState = 2;
                             removeItem('raspberry');
                             changeRoomImage('entrance');
-                            updateMessage('ラズベリーをポスターに追加した');
+                            updateMessage('ラズベリーをポスターに追加した。名物料理を表現していたんだね');
+                            showSparkleEffectAt(event.clientX, event.clientY);
                         } else {
                             updateMessage('豚が描かれたポスターだ');
                         }
@@ -746,6 +772,7 @@
                         updateMessage('ラズベリーに赤色成分が移動して完熟ラズベリーになった。青いワインを手に入れた');
                         removeItem('wine');
                         addItem('wine2');
+                        showSparkleEffectAt(event.clientX, event.clientY);
                     }else {
                         updateMessage('この店の名物料理を表現したポスターだ');
                     }
@@ -757,28 +784,31 @@
                         removeItem('wine2');
                         playSE('se-gasha');
                         updateMessage('観葉植物が真っ青になった！五輪カラーが完成したぞ。どこかで物音がしたようだ');
+                        showSparkleEffectAt(event.clientX, event.clientY);
                     } else if (gameState.entrance.flags.backgroundState==3 && gameState.selectedItem=='bluebear') {
                         gameState.entrance.flags.backgroundState = 5;
                         changeRoomImage('entrance');
                         removeItem('bluebear');
                         playSE('se-gasha');
                         updateMessage('とりあえず五輪カラーが完成したぞ。どこかで物音がしたようだ');
-                    } else if (gameState.entrance.flags.backgroundState==4) {
+                    } else if (gameState.entrance.flags.backgroundState==4 || gameState.entrance.flags.backgroundState==6) {
                         updateMessage('青々とした植物だ');
-                    } else if (gameState.entrance.flags.backgroundState==5) {
+                    } else if (gameState.entrance.flags.backgroundState==5 || gameState.entrance.flags.backgroundState==7) {
                         updateMessage('青いクマ妖精は悲しげな様子のまま動かない');
                     } else {
                         updateMessage('観葉植物は色つやが悪い…');
                     }
                     break;
                 case 'examine_entrance_pc':
-                    if (gameState.kitchen.flags.backgroundState>1 && !gameState.entrance.flags.entrancePuzzleSolved) {
+                    if (gameState.entrance.flags.backgroundState>3 && !gameState.entrance.flags.entrancePuzzleSolved) {
                         updateMessage('使えるようだ');
                         showEntrancePuzzle();
-                    } else if (gameState.kitchen.flags.backgroundState>1 && gameState.entrance.flags.entrancePuzzleSolved) {
-                        updateMessage('もう用はない');
+                    } else if (gameState.entrance.flags.backgroundState>3 && gameState.entrance.flags.entrancePuzzleSolved) {
+                        updateMessage('もう用はないな');
+                    } else if (gameState.kitchen.flags.backgroundState>1 && !gameState.entrance.flags.entrancePuzzleSolved) {
+                        updateMessage('クーポンコードを入力する画面が表示されている');
                     } else {
-                        updateMessage('受付端末は電源が入っていない');
+                        updateMessage('受付端末だ。電源ボタンを押しても反応がない');
                     }
                     break;
                 // living
@@ -842,11 +872,11 @@
                         showRoboPuzzle2();
                     } else {
                         if (gameState.kitchen.getRaspberry) {
-                            updateMessage('ピ…ピ。本体のエナジー90%充填済。現在、本ボディから室内への給電を行っています');
+                            updateMessage('ピ…ピ。本体のエナジー90%充填済。現在、本ボディから各端末への給電を行っています');
                         } else {
                             updateMessage('ピ…ピ。エナジー充填レベル3。これを差し上げます');
                             showModal(
-                                'ラズベリーをもらった。',
+                                'ロボットからラズベリーをもらった。',
                                 '<img src="images/5/raspberry.png" style="width:300px;display:block;margin:0 auto 20px;">',
                                 [{text: '閉じる', action: 'close'}]
                             );  
@@ -875,7 +905,7 @@
                         updateMessage('あなたは酔っ払ったクマの妖精にクマビームを打たれて死んでしまった'); 
                         playSE('se-ban');   
                         showModal(
-                            'あなたは酔っ払ったクマの妖精にクマビームを打たれて死んでしまった【バッドエンド】',
+                            '【バッドエンド】<br>あなたは酔っ払ったクマの妖精にクマビームを打たれて死んでしまった',
                             '<img src="images/5/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'restart'}]
                         );  
@@ -891,13 +921,15 @@
                     } else {
                         talkToHintCharacter('restroom','bear');
                     }
-                    
                     break;  
+                case 'examine_restroom_light':
+                    updateMessage('ぼんやりと寂し気な灯りだ');
+                    break; 
                 case 'examine_end':
                     updateMessage('あなたは外へと足を踏み出しました。（ノーマルエンド）');
                     break; 
                 case 'examine_bear_end':
-                    updateMessage('あなたは視線を感じつつも幸せに暮らしました。（ノーマルエンド2）');
+                    updateMessage('あなたは何かの視線を感じつつも幸せに暮らしました。（ノーマルエンド2）');
                     break; 
             }
             gameState.selectedItem = null;
@@ -944,7 +976,7 @@
         // 玄関パズルの答えをチェック
         function checkEntrancePuzzle() {
             const input = document.getElementById('entranceInput').value;
-            if (input === 'TOGO' || input === 'togo') {
+            if (gameState.entrance.flags.backgroundState==4 && (input === 'TOGO' || input === 'togo')) {
                 closeModal();
                 updateMessage('テイクアウト弁当を手に入れた。ロックが解除されたような音がした');
                 playSE('se-register');
@@ -954,17 +986,21 @@
                     [{text: '閉じる', action: 'close'}]
                 );
                 gameState.entrance.flags.entrancePuzzleSolved = true;
+                gameState.entrance.flags.backgroundState = 6;
+                changeRoomImage('entrance');
 
-            } else if (input === 'DONUTS'|| input === 'donuts') {
+            } else if (gameState.entrance.flags.backgroundState==5 && (input === 'DONUTS'|| input === 'donuts')) {
                 closeModal();
                 updateMessage('テイクアウトを手に入れた。ロックが解除されたような音がした');
                 playSE('se-register');
                 showModal(
-                    '『ご利用ありがとうございます』<br>テイクアウトを手に入れた',
+                    '『ご利用ありがとうございます』<br>テイクアウトBOXを手に入れた',
                     '<img src="images/5/takeout2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 gameState.entrance.flags.entrancePuzzleSolved = true;
+                gameState.entrance.flags.backgroundState = 7;
+                changeRoomImage('entrance');
 
             } else {
                 playSE('se-error');
@@ -1271,6 +1307,47 @@
                 const img = new Image();
                 img.src = src;
             });
+        }
+
+        function showSparkleEffectAt(x, y) {
+            const roomView = document.getElementById('roomView');
+            const rect = roomView.getBoundingClientRect();
+
+            // 絶対位置 → roomView内の相対座標（%でもpxでもOK）
+            const sparkleSize = 180; // .sparkle-effect のwidth/heightと合わせる
+            const left = x - rect.left - sparkleSize / 2;
+            const top = y - rect.top - sparkleSize / 2;
+            // const left = x - rect.left;
+            // const top = y - rect.top;
+
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle-effect';
+            sparkle.style.left = left + "px";
+            sparkle.style.top = top + "px";
+            roomView.appendChild(sparkle);
+
+            setTimeout(() => {
+                sparkle.remove();
+            }, 900);
+        }
+
+        function showSparkleEffectAtPercent(xPercent, yPercent) {
+            const roomView = document.getElementById('roomView');
+            const rect = roomView.getBoundingClientRect();
+            const sparkleSize = 180; // CSSのサイズに合わせて
+            // パーセンテージをピクセル座標に換算
+            const left = rect.width * xPercent / 100 - sparkleSize / 2;
+            const top  = rect.height * yPercent / 100 - sparkleSize / 2;
+
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle-effect';
+            sparkle.style.left = left + "px";
+            sparkle.style.top = top + "px";
+            roomView.appendChild(sparkle);
+
+            setTimeout(() => {
+                sparkle.remove();
+            }, 900);
         }
 
         function shareOnTwitter(resultType) {
