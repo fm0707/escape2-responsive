@@ -1316,6 +1316,24 @@
                 const img = new Image();
                 img.src = src;
             });
+            // モーダル画像 ← 追加
+            [
+                'images/5/picture2.jpg',
+                'images/5/picture3.jpg',
+                'images/5/pic_detail.png',
+                'images/5/wine.png',
+                'images/5/newspaper.png',
+                'images/5/olympic.jpg',
+                'images/5/badend.jpg',
+                'images/5/bearEnd.jpg',
+                'images/5/end.jpg',
+                'images/5/takeout.jpg',
+                'images/5/takeout2.jpg',
+                'images/5/roboenergy.jpg',
+                // ...必要なだけ追加
+            ].forEach(src => {
+                const img = new Image(); img.src = src;
+            });
         }
 
         function showSparkleEffectAt(x, y) {
