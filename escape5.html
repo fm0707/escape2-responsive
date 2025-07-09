@@ -1299,10 +1299,19 @@
 
         // どこかで最初に一度だけ呼ぶ
         function preloadImages() {
-            Object.values(IMAGES.rooms).forEach(src => {
-                const img = new Image();
-                img.src = src;
+            // 部屋画像全部
+            Object.values(IMAGES.rooms).forEach(val => {
+                if (Array.isArray(val)) {
+                    val.forEach(src => {
+                        const img = new Image();
+                        img.src = src;
+                    });
+                } else if (typeof val === "string") {
+                    const img = new Image();
+                    img.src = val;
+                }
             });
+            // アイテム画像
             Object.values(IMAGES.items).forEach(src => {
                 const img = new Image();
                 img.src = src;
@@ -1390,7 +1399,7 @@
         }
 
         // ゲーム開始
-        // preloadImages();
+        preloadImages();
         initGame();
     </script>
 </body>
