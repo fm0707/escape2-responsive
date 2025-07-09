@@ -436,6 +436,7 @@
                 ],
                 dining: [
                     'images/5/dining.png',             // backgroundState = 0
+                    'images/5/dining2.png',            // backgroundState = 1
                 ],
                 kitchen: [
                     'images/5/kitchen.jpg',           // backgroundState = 0
@@ -455,6 +456,8 @@
                 wine2: 'images/5/wine2.png',
                 bluebear: 'images/5/bluebear.png',
                 raspberry: 'images/5/raspberry.png',
+                takeout: 'images/5/takeout.jpg',
+                takeout2: 'images/5/takeout2.jpg',
             }
         };
 
@@ -785,12 +788,14 @@
                         playSE('se-gasha');
                         updateMessage('観葉植物が真っ青になった！五輪カラーが完成したぞ。どこかで物音がしたようだ');
                         showSparkleEffectAt(event.clientX, event.clientY);
+                        gameState.dining.flags.backgroundState = 1;
                     } else if (gameState.entrance.flags.backgroundState==3 && gameState.selectedItem=='bluebear') {
                         gameState.entrance.flags.backgroundState = 5;
                         changeRoomImage('entrance');
                         removeItem('bluebear');
                         playSE('se-gasha');
                         updateMessage('とりあえず五輪カラーが完成したぞ。どこかで物音がしたようだ');
+                        gameState.dining.flags.backgroundState = 1;
                     } else if (gameState.entrance.flags.backgroundState==4 || gameState.entrance.flags.backgroundState==6) {
                         updateMessage('青々とした植物だ');
                     } else if (gameState.entrance.flags.backgroundState==5 || gameState.entrance.flags.backgroundState==7) {
@@ -813,13 +818,13 @@
                     break;
                 // living
                 case 'examine_dining_pic':
-                    if (gameState.entrance.flags.backgroundState==4) {
+                    if (gameState.entrance.flags.backgroundState==4 || gameState.entrance.flags.backgroundState==6) {
                         showModal(
                             '初代オーナーの肖像画のようだ。さっきまでと印象が変わった？',
                             '<img src="images/5/picture2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
-                    } else if (gameState.entrance.flags.backgroundState==5) {
+                    } else if (gameState.entrance.flags.backgroundState==5 || gameState.entrance.flags.backgroundState==7) {
                         showModal(
                             '初代オーナーの肖像画のようだ。さっきまでと印象が変わった？',
                             '<img src="images/5/picture3.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
@@ -918,6 +923,8 @@
                         gameState.restroom.flags.backgroundState=0;
                         changeRoom('restroom');
                         updateMessage('青いクマ妖精を手に入れた');  
+                    } else if (gameState.selectedItem=='takeout') {
+                        updateMessage('…変なクマにやるのは惜しい。家に帰って食べよう'); 
                     } else {
                         talkToHintCharacter('restroom','bear');
                     }
@@ -963,7 +970,7 @@
             const modalContent = `
                 <h3>入力パネル</h3>
                 <p>クーポンコードを入力</p>
-                <input type="text" class="puzzle-input" id="entranceInput">
+                <input type="text" class="puzzle-input" id="entranceInput" placeholder="カッコは不要">
                 <br>
                 <button onclick="checkEntrancePuzzle()">確認</button>
                 <button onclick="closeModal()">閉じる</button>
@@ -979,6 +986,7 @@
             if (gameState.entrance.flags.backgroundState==4 && (input === 'TOGO' || input === 'togo')) {
                 closeModal();
                 updateMessage('テイクアウト弁当を手に入れた。ロックが解除されたような音がした');
+                addItem('takeout');
                 playSE('se-register');
                 showModal(
                     '『ご利用ありがとうございます』<br>テイクアウト弁当を手に入れた',
@@ -992,6 +1000,7 @@
             } else if (gameState.entrance.flags.backgroundState==5 && (input === 'DONUTS'|| input === 'donuts')) {
                 closeModal();
                 updateMessage('テイクアウトを手に入れた。ロックが解除されたような音がした');
+                addItem('takeout2');
                 playSE('se-register');
                 showModal(
                     '『ご利用ありがとうございます』<br>テイクアウトBOXを手に入れた',
@@ -1124,7 +1133,8 @@
                 wine: 'ワイン',
                 wine2: '青いワイン',
                 bluebear: '青いクマ妖精',
-
+                takeout: '名物料理のテイクアウト',
+                takeout2: 'クマドーナツのテイクアウト',
             };
             return names[itemId] || itemId;
         }
