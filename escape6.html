@@ -1369,7 +1369,7 @@
                     } else if (gameState.counter.flags.getMiyage) {                    
                         updateMessage('お土産気に入った？'); 
                     } else if (gameState.counter.flags.numOfCoinToBear==3 && !gameState.counter.flags.getMiyage) {
-                        gameState.counter.flags.getMiyage = true;
+                        
                         showModal(
                         'コインのお礼にお土産をあげる！',
                         '',
@@ -1695,14 +1695,17 @@
                                 // クッキー
                                 addItem('cookie');
                                 updateMessage('クマクッキー缶を手に入れた');
+                                gameState.counter.flags.getMiyage = true;
                             } else if (idx===1) {
                                 // ピンバッジ
                                 addItem('pins');
                                 updateMessage('クマバッジを手に入れた');
+                                gameState.counter.flags.getMiyage = true;
                             } else if (idx===2) {
                                 // アクスタ
                                 addItem('akusuta');
                                 updateMessage('クマのアクスタを手に入れた');
+                                gameState.counter.flags.getMiyage = true;
                             }
                             closeModal();
                         }
