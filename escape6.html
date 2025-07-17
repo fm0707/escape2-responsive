@@ -1358,7 +1358,12 @@
                     break; 
                 case 'examine_counter_bear':
                     if (gameState.counter.flags.counterPuzzleSolved && gameState.selectedItem=='card') {
-                        updateMessage('落とし物かな？ボクが預かるね');
+                        updateMessage('クマ妖精にミンナカードを預けた');
+                        showModal(
+                            '落とし物かな？ボクが預かるね',
+                            '<img src="images/6/bear_card_accept.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
                         removeItem('card');
                     } else if (gameState.counter.flags.getMiyage && gameState.selectedItem=='cookie') {
                         updateMessage('えへへ、美味しそうでしょう');
