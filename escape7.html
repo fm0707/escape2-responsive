@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>夏祭りからの脱出ゲーム</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            color: #f4f1e8;
+            width: 100%;
+            overflow-x: hidden;  /* ←これ重要 */
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1408px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #endingShareArea {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.96);
+            border-radius: 18px;
+            box-shadow: 0 0 24px #fffc;
+            padding: 18px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 99;
+            font-size: 1.2em;
+            gap: 10px;
+            border: 2px solid gold;
+            }
+
+        #endingShareArea button {
+            font-size: 1.1em;
+            padding: 10px 24px;
+            margin: 6px 0;
+            background: gold;
+            color: #333;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #ffdc;
+            cursor: pointer;
+        }
+
+        .ui-panel {
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1048px;
+            min-height: 120px;
+            background: #2c1810;
+            box-sizing: border-box;
+            display: flex;
+        }
+
+        .inventory {
+            /* flex: 1; */
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            padding: 0 12px;
+            /* width:100%; */
+        }
+
+        .inventory-slot {
+            width: 14vw; 
+            height: 14vw; 
+            max-width: 80px; 
+            max-height: 80px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .inventory-slot.selected {
+            border: 3px solid #9f2b02;   /* 金色・太め推奨 */
+            box-shadow: 0 0 12px #ff8c0099;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .inventory-slot img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+        .magnifier-btn {
+            position: absolute;
+            right: 4px; bottom: 4px;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #d4af37;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px #0002;
+            cursor: pointer;
+            z-index: 10;
+            transition: box-shadow .15s;
+            }
+        .magnifier-btn:hover {
+        box-shadow: 0 0 10px #ffd70099;
+        }
+        .magnifier-btn img {
+        width: 16px; height: 16px;
+        pointer-events: none;
+        }
+
+        .info-panel {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            height:65px;
+            min-height: 40px;
+            border: 1px solid #d4af37;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #d4af37;
+            max-width: calc(100vw - 60px);
+            text-align: center;
+        }
+
+        .modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #modalButtons button {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0 10px 10px 0;
+            cursor: pointer;
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            border-radius: 10px;
+        }
+        #modalButtons button img {
+            width: 80px; height: 80px; vertical-align: middle;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+        }
+        #modalButtons button:hover img {
+            filter: brightness(1.08) drop-shadow(0 2px 6px #ffd70050);
+            box-shadow: 0 0 10px #ffd70080;
+            transform: scale(1.05);
+        }
+        #modalButtons button:active img,
+        #modalButtons button.pressed img {
+            filter: brightness(0.95) grayscale(20%);
+            box-shadow: 0 0 8px #3332;
+            transform: scale(0.97);
+        }
+        #modalButtons button:disabled img {
+            filter: grayscale(90%) opacity(0.5);
+            box-shadow: none;
+        }
+        /* テキスト型ボタンも画像ボタン風に */
+        #modalButtons button.text-btn {
+            min-width: 120px;
+            font-size: 1.15em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            margin: 0 10px 10px 0;
+            box-shadow: 0 4px 14px #ffc90022;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        #modalButtons button.text-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+            transform: scale(1.05);
+        }
+        #modalButtons button.text-btn:active {
+            filter: brightness(0.96);
+            transform: scale(0.97);
+        }
+        #modalButtons button.text-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 閉じるボタン */
+        #modalClose .modal-close-btn {
+            display: inline-block;
+            min-width: 160px;
+            font-size: 1.2em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            box-shadow: 0 4px 14px #ffc90022;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s;
+        }
+        #modalClose .modal-close-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+        }
+
+        .puzzle-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #d4af37;
+            background: rgba(244, 241, 232, 0.9);
+            color: #1a0f08;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border: 2px solid #d4af37;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        /* 画像プレースホルダー用のスタイル */
+        .image-placeholder {
+            background: linear-gradient(135deg, #444, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .notice {
+            text-overflow: clip;
+        }
+        .save-area {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 18px 0 4px 0;
+            /* width: 40%; */
+        }
+
+        @media (max-width: 600px) {
+            .save-area {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-top: 8px;
+                gap: 16px;
+            }
+            .inventory {
+                gap: 16px;
+                align-items: center;
+                padding: 0 2px;
+                width:100%;
+            }
+        }
+
+        .save-area .nav-btn {
+            min-width: 80px;
+            padding: 10px 18px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+            border-radius: 8px;
+            border: none;
+            color: #1a0f08;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .save-area .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 12px #d4af3740;
+        }
+        #roomEffectOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s;
+            z-index: 9999;
+        }
+        .title-wrapper {
+            display: flex;
+            width:100%;
+        }
+        @keyframes sparkle-pop {
+            0%   { opacity: 0; transform: scale(0.3) rotate(0deg);}
+            10%  { opacity: 1; transform: scale(1.1) rotate(8deg);}
+            70%  { opacity: 1; transform: scale(1.0) rotate(-8deg);}
+            100% { opacity: 0; transform: scale(2.0) rotate(30deg);}
+        }
+        .sparkle-effect {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px; height: 180px;
+            pointer-events: none;
+            z-index: 30;
+            background: url('images/7/kira.png') center/contain no-repeat;
+            opacity: 0;
+            animation: sparkle-pop 0.9s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="roomEffectOverlay"></div>
+    <div class="game-container">
+        <div class="title-wrapper">
+            <div class="title">夏祭りから脱出せよ</div>
+            <div style="margin:0 0; text-align:center;">
+                <a href="escape7_hint.html" target="_blank" style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
+                    🔍 ヒントを見る
+                </a>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="640" height="640" style="width: 90vw; max-width: 640px;"></canvas>
+
+        <div id="endingShareArea" style="display:none;">
+            <div style="font-size:1.4em; font-weight:bold; margin-bottom:8px;color:#2c1810;">🎉クリアおめでとう！🎉</div>
+            <button onclick="shareOnTwitter()">Xでシェア</button>
+            <button onclick="copyShareText()">クリア報告をコピー</button>
+            <div style="font-size:0.9em; margin-top:6px; color:#555;">#脱出ゲーム #自作ゲーム</div>
+        </div>
+        <div class="ui-panel">
+            <div class="info-panel">
+                <div class="message-area" id="messageArea">
+                    気が付くとあなたは夏祭り会場に居ました。もう遅いし家に帰ろう
+                </div>
+                <div class="navigation">
+                    
+                </div> 
+            </div>
+            <div class="inventory" id="inventory">
+                <div class="inventory-slot" onclick="useItem(0)"></div>
+                <div class="inventory-slot" onclick="useItem(1)"></div>
+                <div class="inventory-slot" onclick="useItem(2)"></div>
+                <div class="inventory-slot" onclick="useItem(3)"></div>
+                <div class="inventory-slot" onclick="useItem(4)"></div>
+                <div class="inventory-slot" onclick="useItem(5)"></div>
+                <div class="inventory-slot" onclick="useItem(6)"></div>
+            </div>
+            <button id="bgm-toggle" onclick="toggleBGM()" style="position:absolute;top:20px;right:20px;z-index:1000;">
+            🔊 BGM
+            </button> 
+            <div class="save-area">
+                <button class="nav-btn" onclick="saveGame()">セーブ</button>
+                <button class="nav-btn" onclick="loadGame()">ロード</button>
+            </div>
+        </div>
+        <div class="notice">当サイトはOtoLogicの素材を使用しています 作者:<a href="index.html">スラセブン</a></div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- モーダルの内容は動的に生成 -->
+        </div>
+    </div>
+    <audio id="bgm" src="sounds/7/Ware_Ha_Umi_No_Ko-Xy02-1(Straight).mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-subclear" src="sounds/6/Washer-Front_Load-Beep01-01(Short).mp3"></audio>
+    <audio id="se-clear" src="sounds/6/Chime-Announce05-1.mp3"></audio>
+    <audio id="se-fire" src="sounds/7/Onoma-Fired_Up03-2(Short).mp3"></audio>
+    <audio id="se-suzu" src="sounds/7/Kagura_Suzu01-4.mp3"></audio>
+    <audio id="se-mosquite" src="sounds/7/Mosquito-Real01-5.mp3"></audio>
+    <audio id="se-down" src="sounds/7/Onoma-Negative02-1(Short).mp3"></audio>
+    <audio id="se-saisen" src="sounds/7/Percussive_Accent06-1(Dry).mp3"></audio>
+    <script>
+        window._nextModal = null;
+        const canvas = document.getElementById('gameCanvas');
+        // ゲーム設定 - 画像パスをここで管理
+        let IMAGES = {
+            rooms: {
+                entrance: [
+                    'images/7/entrance.png',
+                ],
+                yatai: [
+                    'images/7/yatai.png',
+                ],
+                seat: [
+                    'images/7/seat.png',
+                ],
+                jinja: [
+                    'images/7/jinja.png',
+                ],
+                takoyaki: [
+                    'images/7/takoyaki.jpg',
+                ],
+                kingyo: [
+                    'images/7/kingyo.png',
+                ],
+                end: ['images/7/normalEnd.png'],
+                end2: ['images/7/normalEnd2.jpg'],
+                trueEnd: ['images/7/trueEnd.jpg'],
+            },
+            items: {
+                
+                dust: 'images/7/dust.png',
+                coin: 'images/bear_coin.png', 
+                bear: 'images/bear.png',
+                back: 'images/7/back.png',
+                takeoutTakoyaki: 'images/7/takeout_takoyaki.jpg',
+                takeoutYakisoba:' images/7/takeout_yakisoba.jpg',
+                speakerMemo: 'images/7/speaker_memo.png',
+                speakerOn:'images/7/speaker_on.png',
+                speakerOff:'images/7/speaker_off.png',
+                bigGhost:'images/7/big_ghost.png',
+                entranceLight:'images/7/entrance_light.png',
+                takeoutNingyo:'images/7/takeout_ningyo.png',
+                takeoutNingyo2:'images/7/takeout_ningyo_real.jpg',
+                boxOpen:'images/7/box_open.png',
+                boxClose:'images/7/box_close.png',
+                ticketTakoyaki:'images/7/ticket_takoyaki.png',
+                ticketYakisoba:'images/7/ticket_yakisoba.png',
+                kannushi:'images/7/kannushi.png',
+                fatKannushi:'images/7/fat_kannushi.png',
+                ema:'images/7/ema.png',
+                jinjaMemo: 'images/7/jinja_memo.png',
+                jinjaMemo2: 'images/7/jinja_memo2.png',
+                kira: 'images/7/kira.png',
+                megane: 'images/7/saisen2.jpg',
+            }
+        };
+
+        // ゲーム状態
+        let gameState = {
+            currentRoom: 'yatai',
+            openRooms:  ['entrance', 'yatai', 'seat', 'jinja'], 
+            inventory: [],
+            entrance: {
+                flags: {
+                    foundCoin: false,
+                    powerOn: false,
+                    finalPuzzleSolved: false,
+                }
+            },
+            yatai: {
+                flags: {
+                    foundDust: false,
+                    foundCoin: false,
+                    mosquitoCnt: 0,
+                }
+            },
+            seat: {
+                flags: {
+                    boxPazzuleSolved: false,
+                    foundpaper: false,
+                }
+            },
+            jinja: {
+                flags: {
+                    foundGhost: false,
+                    foundBear: false,
+                    foundEma: false,
+                    numOfCoinToBear: 0,
+                    kannushiFavor: 0,
+                    getMiyage: false,
+                    jinjaPuzzleSolved: false,
+                    bearCoinCnt: 0,
+                }
+            },
+            kingyo: {
+                flags: {
+                    foundCoin: false,
+                }
+            },
+            flags: {
+                
+            },
+            selectedItem: null
+        };
+
+        // 部屋データ
+        let rooms = {
+            entrance: {
+                name: '出入口',
+                description: '夏祭り会場の出入り口だ',
+                clickableAreas: [
+                    {
+                        x: 91.2, y: 90, width: 8, height: 5.4,
+                        action: 'examine_entrance_power',
+                        description: '電源',
+                    },
+                    {
+                        x: 74.5, y: 71.5, width: 14.8, height: 23.8,
+                        action: 'examine_entrance_speaker',
+                        description: 'スピーカー'
+                    },
+                    {
+                        x: 85, y: 76.6, width: 4.2, height: 4.6,
+                        action: 'examine_entrance_memo',
+                        description: 'メモ',
+                        zIndex:5,
+                    },
+                    {
+                        x: 29, y: 55.6, width: 41.8, height: 37,
+                        action: 'examine_entrance_ghost',
+                        description: '巨大なお化け',
+                        usable: () => true,
+                        item: {
+                            img: 'bigGhost',   
+                            visible: () => !gameState.entrance.flags.finalPuzzleSolved, 
+                        },
+                    },
+                    {
+                        x: 45.8, y: 92.2, width: 7.7, height: 4.7,
+                        action: 'examine_entrance_ningyo',
+                        description: '?',
+                        zIndex:5,
+                        usable: () => !!(gameState.entrance.flags.finalPuzzleSolved && !gameState.entrance.flags.foundNingyo), 
+                        item: {
+                            img: 'takeoutNingyo',   
+                            visible: () => !!(gameState.entrance.flags.finalPuzzleSolved && !gameState.entrance.flags.foundNingyo), 
+                        },
+                    },
+                    {
+                        x: 94.7, y: 91.4, width: 1.86, height: 0.6,
+                        action: 'examine_entrance_power_light',
+                        description: '電源ライト',
+                        usable: () => false,
+                        item: {
+                            img: 'entranceLight',   
+                            visible: () => !!gameState.entrance.flags.powerOn, 
+                        },
+                    },
+                    {
+                        x: 39.2, y: 42.2, width: 20.6, height: 9.5,
+                        action: 'examine_entrance_sign',
+                        description: '出口の表示',
+                    },
+                    {
+                        x: 4.6, y: 88.4, width: 3.4, height: 3.4,
+                        action: 'examine_entrance_coin',
+                        description: 'コイン',
+                        usable: () => !gameState.entrance.flags.foundCoin,
+                        item: {
+                            img: 'coin',   
+                            visible: () => !gameState.entrance.flags.foundCoin, 
+                        },
+                    },
+                    {
+                        x: 8.9, y: 61.3, width: 7, height: 6.1,
+                        action: 'examine_entrance_cardBox1',
+                        description: '段ボール箱',
+                    },
+                    {
+                        x: 8.7, y: 81.4, width: 7.3, height: 9,
+                        action: 'examine_entrance_cardBox2',
+                        description: '段ボール箱',
+                    },
+                    {
+                        x: 83.7, y: 60.1, width: 6.6, height: 7.5,
+                        action: 'examine_entrance_cardBox3',
+                        description: '段ボール箱',
+                    }
+                ]
+            },
+            yatai: {
+                name: '屋台',
+                description: 'お祭りの屋台だ',
+                clickableAreas: [
+                    {
+                        x: 0.78, y: 49.5, width: 19, height: 7.6,
+                        action: 'examine_yatai_takoyaki',
+                        description: '焼かれているたこ焼き',
+                        zIndex:1, 
+                    },
+                    {
+                        x: 18.1, y: 59.6, width: 9.7, height: 5.3,
+                        action: 'examine_yatai_tray',
+                        description: 'トレイ',
+                        zIndex:1,
+                    },
+                    {
+                        x: 16.9, y: 43, width: 13.7, height: 6.7,
+                        action: 'examine_yatai_yakisoba',
+                        description: '鉄板の焼きそば',
+                    },
+                    {
+                        x: 87.5, y: 75, width: 9.1, height: 3.7,
+                        action: 'examine_yatai_water',
+                        description: 'こぼれた水',
+                        
+                    },
+                    {
+                        x: 90.5, y: 75, width: 4.1, height: 4.1,
+                        action: 'examine_yatai_coin',
+                        description: '?',
+                        usable: () => false,
+                        item: {
+                            img: 'coin',   
+                            visible: () => !gameState.yatai.flags.foundCoin, 
+                        },
+                    },
+                    {
+                        x: 72.1, y: 42, width: 27, height: 19.3,
+                        action: 'examine_yatai_kingyo',
+                        description: '金魚すくい',
+                    },
+                    {
+                        x: 50.2, y: 26.7, width: 22.1, height: 15.1,
+                        action: 'examine_yatai_cardBox',
+                        description: '段ボール箱'
+                    },
+                    {
+                        x: 36.5, y: 77, width: 14.4, height: 10.3,
+                        action: 'examine_yatai_sensu',
+                        description: '扇子'
+                    },
+                    {
+                        x: 33.4, y: 3.6, width: 10.5, height: 15.2,
+                        action: 'examine_yatai_chochin',
+                        description: 'ちょうちん'
+                    }
+                ]
+            },
+            seat: {
+                name: '座席',
+                description: '座って休憩できるコーナーだ',
+                clickableAreas: [
+                    {
+                        x: 40.8, y: 42, width: 20.3, height: 18.7,
+                        action: 'examine_seat_box',
+                        description: '箱',
+                        zIndex:5,
+                        usable: () => !gameState.seat.flags.boxPazzuleSolved,
+                        item: {
+                            img: 'boxClose',   
+                            visible: () => !gameState.seat.flags.boxPazzuleSolved, 
+                        },
+                    },
+                    {
+                        x: 40.8, y: 39, width: 20.3, height: 23.7,
+                        action: 'examine_seat_box_opend',
+                        description: '箱',
+                        usable: () => gameState.seat.flags.boxPazzuleSolved,
+                        item: {
+                            img: 'boxOpen',   
+                            visible: () => gameState.seat.flags.boxPazzuleSolved, 
+                        },
+                    },
+                    {
+                        x: 35, y: 61, width: 10.7, height: 12.6,
+                        action: 'examine_seat_paper',
+                        description: '紙'
+                    },
+                    {
+                        x: 62, y: 31.9, width: 7.1, height: 16.3,
+                        action: 'examine_seat_bottle1',
+                        description: 'ペットボトル'
+                    },
+                    {
+                        x: 40.6, y: 34.5, width: 5, height: 12.6,
+                        action: 'examine_seat_bottle2',
+                        description: 'ペットボトル'
+                    },
+                    {
+                        x: 73.1, y: 40.2, width: 5.8, height: 14,
+                        action: 'examine_seat_bottle3',
+                        description: 'ペットボトル'
+                    }
+                ]
+            },
+            jinja: {
+                name: '神社',
+                description: 'なにか出そうな雰囲気だ…',
+                clickableAreas: [
+                    {
+                        x: 71., y: 32.3, width: 7.1, height: 24.6,
+                        action: 'examine_jinja_suzu',
+                        description: '鈴'
+                    },
+                    {
+                        x: 66.4, y: 59.1, width: 14.3, height: 10,
+                        action: 'examine_jinja_saisen',
+                        description: '賽銭箱',
+                    },
+                    {
+                        x: 53.8, y: 40, width: 16, height: 20,
+                        action: 'examine_jinja_kannushi',
+                        description: '神主',
+                        alpha: 0.7,
+                        usable: () => !!(gameState.jinja.flags.foundGhost && gameState.jinja.flags.kannushiFavor==0),
+                        item: {
+                            img: 'kannushi',   
+                            visible: () => !!(gameState.jinja.flags.foundGhost && gameState.jinja.flags.kannushiFavor==0), 
+                        },
+
+                    },
+                    {
+                        x: 53.8, y: 40, width: 16, height: 20,
+                        action: 'examine_jinja_kannushi_fat',
+                        description: '神主',
+                        alpha: 0.7,
+                        usable: () => gameState.jinja.flags.kannushiFavor>0,
+                        item: {
+                            img: 'fatKannushi',   
+                            visible: () => !!gameState.jinja.flags.kannushiFavor, 
+                        },
+
+                    },
+                    {
+                        x: 22.8, y: 82.5, width: 7.1, height: 10.5,
+                        action: 'examine_jinja_ema',
+                        description: '絵馬',
+                    },
+                    {
+                        x: 85.6, y: 69, width: 7.7, height: 4.8,
+                        action: 'examine_jinja_memo',
+                        description: '落ちてきたメモ',
+                        usable: () => !!gameState.jinja.flags.foundMemo,
+                        item: {
+                            img: 'jinjaMemo',   
+                            visible: () => !!gameState.jinja.flags.foundMemo, 
+                        },
+                    },
+                    {
+                        x: 54.2, y: 36.0, width: 9.7, height: 6.4,
+                        action: 'examine_jinja_poster',
+                        description: 'ポスター',
+                    }
+                ]
+            },
+            takoyaki: {
+                name: 'たこ焼き',
+                description: '美味しそうだ',
+                clickableAreas: [
+                    {
+                        x: 10, y: 11.42, width: 22.3, height: 22.3,
+                        action: 'examine_tako1',
+                        description: 'たこ焼き１'
+                    },
+                    {
+                        x: 37.3, y: 11.42, width: 22.3, height: 22.3,
+                        action: 'examine_tako2',
+                        description: 'たこ焼き2'
+                    },
+                    {
+                        x: 66.8, y: 11.42, width: 22.3, height: 22.3,
+                        action: 'examine_tako3',
+                        description: 'たこ焼き3'
+                    },
+                    {
+                        x: 10, y: 39, width: 22.3, height: 22.3,
+                        action: 'examine_tako4',
+                        description: 'たこ焼き4'
+                    },
+                    {
+                        x: 37.3, y: 39, width: 22.3, height: 22.3,
+                        action: 'examine_tako5',
+                        description: 'たこ焼き5'
+                    },
+                    {
+                        x: 66.8, y: 39, width: 22.3, height: 22.3,
+                        action: 'examine_tako6',
+                        description: 'たこ焼き6'
+                    },
+                    {
+                        x: 10, y: 67.4, width: 22.3, height: 22.3,
+                        action: 'examine_tako7',
+                        description: 'たこ焼き7'
+                    },
+                    {
+                        x: 37.3, y: 67.4, width: 22.3, height: 22.3,
+                        action: 'examine_tako8',
+                        description: 'たこ焼き8'
+                    },
+                    {
+                        x: 66.8, y: 67.4, width: 22.3, height: 22.3,
+                        action: 'examine_tako9',
+                        description: 'たこ焼き9'
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_takoyaki_back',
+                        description: '戻る',
+                        zIndex:5,
+                        item: {
+                            img: 'back',   
+                            visible: () => true, 
+                        },
+                    }
+                ]
+            },
+            kingyo: {
+                name: '金魚',
+                description: 'あかいきんぎょ、しろいきんぎょ、あおいきんぎょ、きんいろきんぎょが泳いでいる',
+                clickableAreas: [
+                    {
+                        x: 27.5, y: 23.6, width: 13.8, height: 10.9,
+                        action: 'examine_kingyo_blue1',
+                        description: '青い金魚１'
+                    },
+                    {
+                        x: 10.9, y: 64.7, width: 16, height: 11.3,
+                        action: 'examine_kingyo_blue2',
+                        description: '青い金魚2'
+                    },
+                    {
+                        x: 86.7, y: 42.8, width: 13, height: 12.7,
+                        action: 'examine_kingyo_blue3',
+                        description: '青い金魚3'
+                    },
+                    {
+                        x: 16, y: 49.7, width: 14.9, height: 9.1,
+                        action: 'examine_kingyo_white1',
+                        description: '白い金魚1'
+                    },
+                    {
+                        x: 77.5, y: 56, width: 13.1, height: 8.6,
+                        action: 'examine_kingyo_white2',
+                        description: '白い金魚2'
+                    },
+                    {
+                        x: 43.4, y: 23.6, width: 16.4, height: 10.7,
+                        action: 'examine_kingyo_red1',
+                        description: '赤い金魚1'
+                    },
+                    {
+                        x: 29, y: 39.5, width: 18.5, height: 8.8,
+                        action: 'examine_kingyo_red2',
+                        description: '赤い金魚2'
+                    },
+                    {
+                        x: 61.2, y: 37.7, width: 16.3, height: 17.4,
+                        action: 'examine_kingyo_gold',
+                        description: '金色金魚'
+                    },
+                    {
+                        x: 61.2, y: 33.7, width: 4.3, height: 4.3,
+                        action: 'examine_kingyo_coin',
+                        description: 'コイン',
+                        usable: () => (gameState.jinja.flags.bearCoinCnt==2 && !gameState.kingyo.flags.foundCoin),
+                        item: {
+                            img: 'coin',   
+                            visible: () => !gameState.kingyo.flags.foundCoin,
+                        },
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_kingyo_back',
+                        description: '戻る',
+                        zIndex:5,
+                        item: {
+                            img: 'back',   
+                            visible: () => true, 
+                        },
+                    }
+                ]
+            },
+            end: {
+                name: 'ノーマル脱出ルート',
+                description: 'あなたは、夏祭り会場の外に出た。人形焼も美味しいことでしょう',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end',
+                        description: '平和な日常'
+                    },
+                ]
+            },
+             end2: {
+                name: 'ノーマル脱出ルート',
+                description: 'あなたは無事、夏祭り会場の外に出た。',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end2',
+                        description: '拾ってあげなかったんですね'
+                    },
+                ]
+            },
+            trueEnd: {
+                name: '焼きそばルート',
+                description: 'あなたは無事、夏祭り会場の外に出た。焼きそばも美味しい！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_true_end',
+                        description: 'クマの加護焼きそば'
+                    },
+                ]
+            }
+        };
+
+        const hintMessages = {
+            jinja: {
+                kannushi: [
+                "うむ、ごちそうさま",
+                "感謝するぞ",
+                "絵馬が読めない？",
+                "困ったときは神頼みじゃ",
+                ]
+            },
+        };
+
+        // ゲーム初期化
+        function initGame() {
+            renderNavigation();
+            changeRoom('yatai');
+            updateMessage('気が付くとあなたは夏祭り会場に立っていました。もう遅いので家に帰ろう');
+        }
+
+        function findHitArea(x, y, clickableAreas, canvas) {
+            // zIndex降順で
+            const sorted = clickableAreas.slice().sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+            for (const area of sorted) {
+                // 必要ならusable判定もここで
+                const usable = area.usable === undefined ? true :
+                    (typeof area.usable === "function" ? area.usable() : area.usable);
+
+                if (!usable) continue; // 使えないエリアは判定しない
+                const ax = area.x / 100 * canvas.width;
+                const ay = area.y / 100 * canvas.height;
+                const aw = area.width / 100 * canvas.width;
+                const ah = area.height / 100 * canvas.height;
+                if (x >= ax && x <= ax + aw && y >= ay && y <= ay + ah) {
+                    return area; // 最初にヒットしたものだけ返す！
+                }
+            }
+            return null;
+        }
+
+        let hoveredAreaIndex = null;  // 今hoverしてるエリア（なければnull）
+        canvas.addEventListener('mousemove', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+            const idx = area ? room.clickableAreas.indexOf(area) : null;
+            if (hoveredAreaIndex !== idx) {
+                hoveredAreaIndex = idx;
+                renderCanvasRoom();
+            }
+        });
+
+        canvas.addEventListener('mouseout', function() {
+            if (hoveredAreaIndex !== null) {
+                hoveredAreaIndex = null;
+                renderCanvasRoom();
+            }
+        });
+
+
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // ★今いる部屋のエリアだけ判定！
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+            if (area) {
+                handleAreaClick(area.action, e);
+            }
+        });
+
+        function changeRoom(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+
+            // 背景＋アイテム＋クリックエリアをcanvasで全部再描画
+            renderCanvasRoom();
+            updateMessage(`${room.name}です。${room.description}`);
+
+            // BGM切替はそのまま
+            if (roomId === "end" || roomId === "end2"|| roomId === "trueEnd") {
+                changeBGM("sounds/6/mizunomati.mp3");
+            } else {
+                changeBGM("sounds/7/yatai.mp3");
+            }
+        }
+
+
+        function renderCanvasRoom() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const roomId = gameState.currentRoom;
+            const room = rooms[roomId];
+            const bgImgSrc = getRoomBackgroundImage(roomId, gameState);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 背景描画
+            const bgImg = loadedImages[bgImgSrc];
+            if (bgImg && bgImg.complete) {
+                ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+            }
+
+            // アイテム描画（未取得のみ）
+            drawRoomItems(ctx, canvas, roomId);
+
+            // ★ ここから重なり優先のhover枠線を描画
+            if (hoveredAreaIndex !== null && hoveredAreaIndex !== undefined) {
+                // zIndex降順でソート
+                const sortedAreas = room.clickableAreas
+                    .map((area, i) => ({...area, __idx: i}))
+                    .filter(area => area.usable === undefined ? true :
+                        (typeof area.usable === "function" ? area.usable() : area.usable)
+                    )
+                    .sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+                // hoveredAreaIndexと一致するエリアをzIndex順で1つだけ枠描画
+                const hoverArea = sortedAreas.find(area => area.__idx === hoveredAreaIndex);
+                if (hoverArea) {
+                    const ax = hoverArea.x / 100 * canvas.width;
+                    const ay = hoverArea.y / 100 * canvas.height;
+                    const aw = hoverArea.width / 100 * canvas.width;
+                    const ah = hoverArea.height / 100 * canvas.height;
+                    ctx.save();
+                    ctx.strokeStyle = 'gold';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(ax, ay, aw, ah);
+                    ctx.restore();
+                }
+            }
+        }
+
+        function drawRoomItems(ctx, canvas, roomId) {
+            const room = rooms[roomId];
+            room.clickableAreas.forEach(area => {
+                if (area.item && area.item.visible && area.item.visible()) {
+                    const img = loadedImages[IMAGES.items[area.item.img]];
+                    if (img && img.complete) {
+                        const alpha = area.alpha?area.alpha:1;
+                        const px = area.x / 100 * canvas.width;
+                        const py = area.y / 100 * canvas.height;
+                        const w  = area.width  / 100 * canvas.width;
+                        const h  = area.height / 100 * canvas.height;
+                        ctx.save();                  
+                        ctx.globalAlpha = alpha;  
+                        ctx.drawImage(img, px, py, w, h);
+                        ctx.restore(); 
+                    }
+                }
+            });
+        }
+        
+
+        function getRoomBackgroundImage(roomId, gameState) {
+            let state = gameState[roomId]?.flags?.backgroundState || 0;
+            let imgList = IMAGES.rooms[roomId];
+            if (Array.isArray(imgList)) {
+                return imgList[state] || imgList[0];
+            } else {
+                return imgList;
+            }
+        }
+
+        // エリアクリック処理
+        function handleAreaClick(action, event) {
+            switch(action) {
+                case 'examine_entrance_door':
+                    
+                     break;
+                case 'examine_entrance_power':
+                    if (gameState.entrance.flags.powerOn) {
+                        updateMessage('電源はONだ');
+                    } else {
+                        showEntrancePuzzle();
+                    }
+                    break;
+                case 'examine_entrance_speaker':
+                    if (gameState.entrance.flags.powerOn && gameState.entrance.flags.finalPuzzleSolved) {
+                        updateMessage('もう使う必要はない');
+                    } else if (gameState.entrance.flags.powerOn && gameState.jinja.flags.foundMemo && !gameState.entrance.flags.finalPuzzleSolved) {
+                        showFinalPuzzle();
+                    } else if (gameState.entrance.flags.powerOn && !gameState.jinja.flags.foundMemo && !gameState.entrance.flags.finalPuzzleSolved) {
+                        updateMessage('何かに使えるかな？');
+                    } else {
+                        showModal(
+                            'スピーカーは電源が入っていない',
+                            '<img src="images/7/speaker_off.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                    }
+                    break;
+                case 'examine_entrance_ghost':
+                    if (gameState.entrance.flags.finalPuzzleSolved) {
+                        if (hasItem('takeoutYakisoba')) {
+                            updateMessage('ゲームクリア');
+                            changeRoom('trueEnd');
+                        } else if (hasItem('takeoutNingyo2')) {
+                            updateMessage('ゲームクリア');
+                            changeRoom('end');
+                        } else if (!hasItem('takeoutNingyo2')) {
+                            updateMessage('ゲームクリア');
+                            changeRoom('end2');
+                        } 
+                        
+                    } else if (gameState.jinja.flags.foundEma) {
+                        updateMessage('除霊の呪文が効くかもしれない');
+                    } else {
+                        updateMessage('大きなお化けが居て通れない');
+                    }
+                    break;
+                case 'examine_entrance_sign':
+                    if (gameState.entrance.flags.finalPuzzleSolved) {
+                        updateMessage('早く家に帰ろう');
+                    } else {
+                        updateMessage('出口はここしかなさそうだ…');
+                    }
+                    break;
+                case 'examine_entrance_memo':
+                    showModal(
+                            'メモが貼ってある',
+                            '<img src="images/7/speaker_memo.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                    break;
+                case 'examine_entrance_coin':
+                    if (gameState.entrance.flags.foundCoin) {
+                        updateMessage('なにもない');
+                    } else {
+                        addItem('coin');
+                        gameState.entrance.flags.foundCoin = true;
+                        renderCanvasRoom();
+                        showModal(
+                            'クマコインを手に入れた',
+                            '<img src="images/bear_coin.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('クマコインを手に入れた');
+                    }
+                    break;
+                case 'examine_entrance_cardBox1':
+                    updateMessage('だんボール箱だ');
+                    break;
+                case 'examine_entrance_cardBox2':
+                    updateMessage('だんボール箱だ。「出口」と書いてある');
+                    break;
+                case 'examine_entrance_cardBox3':
+                    updateMessage('だんボール箱だ。ほかの場所にもあるかもしれない');
+                    break;
+                case 'examine_entrance_ningyo':
+                    if (gameState.entrance.flags.foundNingyo) {
+                        updateMessage('なにもない');
+                    } else {
+                        addItem('takeoutNingyo2');
+                        gameState.entrance.flags.foundNingyo = true;
+                        renderCanvasRoom();
+                        showModal(
+                            '人形焼を手に入れた',
+                            '<img src="images/7/takeout_ningyo_real.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('人形焼を手に入れた');
+                    }
+                    break;
+                // yatai
+                case 'examine_yatai_takoyaki':
+                    changeRoom('takoyaki');
+                    break;
+                case 'examine_yatai_yakisoba':
+                    updateMessage('美味しそうな焼きそばだ。良い匂い…');
+                    break;
+                case 'examine_yatai_sensu':
+                    updateMessage('扇子が落ちている');
+                    break;
+                case 'examine_yatai_tray':
+                    if (gameState.selectedItem=='ticketTakoyaki') {
+                        addItem('takeoutTakoyaki');
+                        removeItem('ticketTakoyaki');
+                        showModal(
+                            'たこ焼きを手に入れた',
+                            '<img src="images/7/takeout_takoyaki.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('たこ焼きを手に入れた');
+
+                    } else if (gameState.selectedItem=='ticketYakisoba') {
+                        addItem('takeoutYakisoba');
+                        removeItem('ticketYakisoba');
+                        showModal(
+                            '焼きそばを手に入れた',
+                            '<img src="images/7/takeout_yakisoba.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('焼きそばを手に入れた');
+                    } else {
+                        updateMessage('チケットを持っていたら置いてみよう');
+                    }
+                    break;
+                case 'examine_yatai_water':
+                    if (gameState.jinja.flags.bearCoinCnt>0 && gameState.yatai.flags.foundCoin) {
+                        updateMessage('水たまりだ');
+                    } else if (gameState.jinja.flags.bearCoinCnt>0 && !gameState.yatai.flags.foundCoin) {
+                        addItem('coin');
+                        gameState.yatai.flags.foundCoin = true;
+                        renderCanvasRoom();
+                        showModal(
+                            'クマコインを手に入れた',
+                            '<img src="images/bear_coin.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('クマコインを手に入れた');
+
+                    } else if (gameState.yatai.flags.mosquitoCnt>1) {
+                        updateMessage('あなたは蚊に刺されすぎて、かゆみで脱出意欲を失った'); 
+                        playSE('se-down');   
+                        showModal(
+                            '【バッドエンド】<br>あなたは蚊に刺されすぎて、かゆみで脱出意欲を失った',
+                            '<img src="images/7/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '最初から', action: 'restart'}]
+                        );  
+                    } else {
+                        playSE('se-mosquite');
+                        showModal(
+                            'ブーン…',
+                            '<img src="images/7/mosquito.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('蚊に刺された。近づくことができない…');
+                        gameState.yatai.flags.mosquitoCnt++;
+                    }  
+                    break; 
+                case 'examine_yatai_kingyo':
+                    changeRoom('kingyo');
+                    updateMessage("あかいきんぎょ、しろいきんぎょ、あおいきんぎょ、きんいろきんぎょが泳いでいる");
+                    break;
+                case 'examine_yatai_cardBox':
+                    updateMessage("だんボールばこだ");
+                    break;
+                case 'examine_yatai_chochin':
+                    updateMessage("ちょうちんだ");
+                    break;
+                case 'examine_yatai_unknown':
+                    updateMessage('なんだろう？');   
+                    break; 
+                // takoyaki
+                case 'examine_takoyaki_back':
+                    changeRoom('yatai');
+                    break;
+                case 'examine_tako1':
+                    updateMessage('たこ焼き「あ」');
+                    break;
+                case 'examine_tako2':
+                    updateMessage('たこ焼き「う」');
+                    break;
+                case 'examine_tako3':
+                    updateMessage('たこ焼き「た」');
+                    break;
+                case 'examine_tako4':
+                    updateMessage('たこ焼き「こ」');
+                    break;
+                case 'examine_tako5':
+                    updateMessage('たこ焼き「へ」');
+                    break;
+                case 'examine_tako6':
+                    updateMessage('たこ焼き「つ」');
+                    break;
+                case 'examine_tako7':
+                    updateMessage('たこ焼き「ん」');
+                    break;
+                case 'examine_tako8':
+                    updateMessage('たこ焼き「ま」');
+                    break;
+                case 'examine_tako9':
+                    updateMessage('たこ焼き「げ」');
+                    break;
+                // kingyo
+                case 'examine_kingyo_back':
+                    changeRoom('yatai');
+                    break;
+                case 'examine_kingyo_blue1':
+                    updateMessage('あおいきんぎょだ');
+                    break;
+                case 'examine_kingyo_blue2':
+                    updateMessage('あおいきんぎょだ');
+                    break;
+                case 'examine_kingyo_blue3':
+                    updateMessage('あおいきんぎょだ');
+                    break;
+                case 'examine_kingyo_white1':
+                    updateMessage('しろいきんぎょだ');
+                    break;
+                case 'examine_kingyo_white2':
+                    updateMessage('しろいきんぎょだ。すこしめずらしい');
+                    break;
+                case 'examine_kingyo_red1':
+                    updateMessage('あかいきんぎょだ。定番の色だ');
+                    break;
+                case 'examine_kingyo_red2':
+                    updateMessage('あかいきんぎょだ');
+                    break;
+                case 'examine_kingyo_gold':
+                    updateMessage('きんいろきんぎょだ。めずらしい');
+                    break;
+                case 'examine_kingyo_coin':
+                    if (gameState.kingyo.foundCoin) {
+                        updateMessage('なにもない');
+                    } else {
+                        gameState.kingyo.flags.foundCoin = true;
+                        addItem('coin');
+                        updateMessage('クマコインを手に入れた');
+                        renderCanvasRoom();
+                    }
+                    break;
+                // jinja
+                case 'examine_jinja_suzu':
+                    if (gameState.jinja.flags.kannushiFavor>0 && !gameState.jinja.flags.foundMemo) {
+                        playSE('se-suzu');
+                        gameState.jinja.flags.foundMemo =  true;
+                        
+                        updateMessage('シャランシャラン…何か落ちてきた');
+                        renderCanvasRoom();
+                    } else if (gameState.jinja.flags.foundGhost) {
+                        playSE('se-suzu');
+                        updateMessage('シャランシャラン…');
+                    } else {
+                        playSE('se-suzu');
+                        gameState.jinja.flags.foundGhost =  true;
+                        updateMessage('シャランシャラン…何か出てきた');
+                        renderCanvasRoom();
+                    }
+                    break;
+                case 'examine_jinja_kannushi':
+                    if (gameState.selectedItem=='takeoutTakoyaki') {
+                        gameState.jinja.flags.kannushiFavor++;
+                        removeItem('takeoutTakoyaki');
+                        updateMessage('たこ焼きは美味かった。感謝するぞ');
+                        showModal(
+                            'おお、たこ焼きか！',
+                            '<img src="images/7/kannushi_takoyaki.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                    } else if (gameState.selectedItem=='takeoutYakisoba') {
+                        updateMessage('焼きそばはいやじゃ');
+                    } else {
+                        updateMessage('お腹が空いたのう…');
+                    }
+                    break;
+                case 'examine_jinja_kannushi_fat':
+                    if (gameState.selectedItem=='takeoutYakisoba') {
+                        gameState.jinja.flags.kannushiFavor++;
+                        updateMessage('おお、焼きそばか！早速いただこう');
+                        showModal(
+                            'おお、焼きそばか！早速いただこう',
+                            '<img src="images/7/kannushi_takoyaki.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                    } else if (gameState.entrance.flags.finalPuzzleSolved) {
+                        updateMessage('除霊が成功した？良かったのう');
+
+                    } else {
+                        talkToHintCharacter('jinja','kannushi');
+                    }
+                    break;
+                case 'examine_jinja_saisen':
+                    if (gameState.selectedItem=='coin'){
+                        playSE('se-saisen');
+                        removeItem('coin');
+                        showSparkleEffectAtPercent(66.4, 59,1);
+                        gameState.jinja.flags.bearCoinCnt++;
+                        if (gameState.jinja.flags.bearCoinCnt==1) {
+                            showModal(
+                                'コインを賽銭箱に入れた。なんと神の加護を得た！',
+                                '<img src="images/7/saisen1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{text: '閉じる', action: 'close'}]
+                            );
+                            updateMessage('蚊に刺されなくなった');
+                        } else if (gameState.jinja.flags.bearCoinCnt==2) {
+                            showModal(
+                                'コインを賽銭箱に入れた。なんと神の加護を得た！',
+                                '<img src="images/7/saisen2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{text: '閉じる', action: 'close'}]
+                            );
+                            addItem('megane');
+                            updateMessage('今まで見えなかったものが見える。メガネを持っているだけで効果があるようだ');
+                        } else if (gameState.jinja.flags.bearCoinCnt==3) {
+                            showModal(
+                                'コインを賽銭箱に入れた。神からの贈り物を手に入れた',
+                                '<img src="images/7/saisen3.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{text: '閉じる', action: 'close'}]
+                            );
+                            addItem('ticketYakisoba');
+                            updateMessage('焼きそばチケットを手に入れた');
+                        } 
+                    } else {
+                        updateMessage('賽銭箱だ。クマがデザインされている');
+                    }
+                    break; 
+                case 'examine_jinja_ema':
+                    updateMessage('絵馬だ');
+                    if (!gameState.jinja.flags.foundEma)gameState.jinja.flags.foundEma = true;
+                    showModal(
+                        '絵馬だ。除霊の呪文のようだ',
+                        '<img src="images/7/ema.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break; 
+                case 'examine_jinja_memo':
+                    updateMessage('落ちてきたメモだ');
+                    showModal(
+                        '落ちてきたメモだ',
+                        '<img src="images/7/jinja_memo2.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break; 
+                // seat
+                case 'examine_seat_box':
+                    if (gameState.seat.flags.boxPazzuleSolved) {
+                        updateMessage('');
+                    } else {
+                        showBoxPuzzle();
+                    }
+                    break;
+                case 'examine_seat_box_opend':
+                    if (gameState.seat.flags.boxPazzuleSolved) {
+                        updateMessage('何も入っていない');
+                    } else {
+                        
+                    }
+                    break;
+                case 'examine_seat_paper':
+                    showModal(
+                        '何かのメモだ',
+                        '<img src="images/7/seat_memo.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );      
+                    break; 
+                case 'examine_seat_bottle1':
+                    updateMessage('「ペットボトル」だ');
+                    break; 
+                case 'examine_seat_bottle2':
+                    updateMessage('「ペットボトル」だ');
+                    break; 
+                case 'examine_seat_bottle3':
+                    updateMessage('「ペットボトル」だ');
+                    break; 
+                case 'examine_seat_prapiece': 
+                    if (gameState.seat.flags.foundPra) {
+                        updateMessage('なにもない'); 
+                    } else {
+                        updateMessage('何かの破片を手に入れた');
+                        addItem('praPiece');
+                        gameState.seat.flags.foundPra = true;
+                        showModal(
+                            '何かの破片を手に入れた。',
+                            '<img src="images/7/pra_piece.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                    }
+                    break;  
+                case 'examine_end':
+                    updateMessage('あなたは不思議な夏祭りから日常に戻りました。（ノーマルエンド）');
+                    break; 
+                case 'examine_end2':
+                    updateMessage('あなたは不思議な夏祭りから日常に戻りました。（ノーマルエンド2）');
+                    break; 
+                case 'examine_true_end':
+                    updateMessage('あなたは夏祭りを出て心置きなく日常に戻りました。焼きそばも美味しそうですね（トゥルーエンド）');
+                    break; 
+            }
+            gameState.selectedItem = null;
+            gameState.selectedItemSlot = null;
+
+            playSE('se-click');
+            updateInventoryDisplay();
+        }
+
+        function talkToHintCharacter(roomId, charId) {
+            // flags取得
+            let flags = gameState[roomId].flags;
+            // まだカウント無ければ初期化
+            if (!flags.talkTo) flags.talkTo = {};
+            if (!flags.talkTo[charId]) flags.talkTo[charId] = 0;
+
+            // カウントアップ
+            flags.talkTo[charId]++;
+
+            // セリフリスト取得
+            const messages = hintMessages[roomId][charId];
+            // 範囲外なら最後のメッセージ
+            const idx = (flags.talkTo[charId] - 1) % messages.length;
+
+            // 表示
+            updateMessage(messages[idx]);
+        }
+
+        // 玄関パズルを表示
+        function showEntrancePuzzle() {
+            const modalContent = `
+                <h3>起動コード？</h3>
+                <p>電源を入れるのにコードが必要だ</p>
+                <input type="text" class="puzzle-input" id="entranceInput" placeholder="数字で入力">
+                <br>
+                <button onclick="checkEntrancePuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 玄関パズルの答えをチェック
+        function checkEntrancePuzzle() {
+            const input = document.getElementById('entranceInput').value;
+            if (input === '１５３'||input === '153') {
+                closeModal();
+                updateMessage('電源をONにした');
+                gameState.entrance.flags.powerOn = true;
+                showModal(
+                    'スピーカーが使えるようになった',
+                    '<img src="images/7/speaker_on.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                playSE('se-clear');
+                renderCanvasRoom();
+
+            } else {
+                playSE('se-error');
+                updateMessage('コードが違うみたいだ');
+            }
+        }
+
+        // 箱パズルを表示
+        function showBoxPuzzle() {
+            const modalContent = `
+                <h3>箱を開けよう</h3>
+                <p>3文字のパスワードが必要だ</p>
+                <input type="text" class="puzzle-input" id="boxInput" placeholder="日本語で入力">
+                <br>
+                <button onclick="checkBoxPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 箱パズルの答えをチェック
+        function checkBoxPuzzle() {
+            const input = document.getElementById('boxInput').value;
+            if (input === 'いーと'||input === 'イート') {
+                closeModal();
+                updateMessage('たこ焼きチケットを手に入れた');
+                addItem('ticketTakoyaki');
+                gameState.seat.flags.boxPazzuleSolved = true;
+                showModal(
+                    '箱が開いた。たこ焼きチケットを手に入れた',
+                    '<img src="images/7/ticket_takoyaki.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                playSE('se-clear');
+                renderCanvasRoom();
+
+            } else {
+                playSE('se-error');
+                updateMessage('コードが違うみたいだ');
+            }
+        }
+
+        // 最終パズルを表示
+        function showFinalPuzzle() {
+            const modalContent = `
+                <h3>除霊の呪文を唱えよう</h3>
+                <p></p>
+                <input type="text" class="puzzle-input" id="finalInput" placeholder="ひらがなで入力">
+                <br>
+                <button onclick="checkFinalPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // 最終パズルの答えをチェック
+        function checkFinalPuzzle() {
+            const input = document.getElementById('finalInput').value;
+            if (input === 'こげたまえ'||input === 'こげたまへ') {
+                closeModal();
+                updateMessage('巨大なお化けは成仏したみたいだ');
+                gameState.entrance.flags.finalPuzzleSolved = true;
+                showModal(
+                    '巨大なお化けが…！',
+                    '<img src="images/7/ghost_shocked.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    [{text: '閉じる', action: 'close'}]
+                );
+                playSE('se-fire');
+                renderCanvasRoom();
+
+            } else {
+                playSE('se-error');
+                updateMessage('何も起こらない…');
+            }
+        }
+
+        // アイテム管理
+        function addItem(itemId) {
+            playSE('se-item');
+            if (gameState.inventory.length < 8) {
+                gameState.inventory.push(itemId);
+                updateInventoryDisplay();
+            }
+        }
+
+        function removeItem(itemId) {
+            const index = gameState.inventory.indexOf(itemId);
+            if (index !== -1) {
+                gameState.inventory.splice(index, 1);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+            
+        }
+
+        function hasItem(itemId) {
+            return gameState.inventory.includes(itemId);
+        }
+
+        function useItem(slotIndex) {
+            if (gameState.inventory[slotIndex]) {
+                const item = gameState.inventory[slotIndex];
+                updateMessage(`${getItemName(item)}を選択しました。使用したい場所をクリックしてください。`);
+                gameState.selectedItem = item;
+                gameState.selectedItemSlot = slotIndex;
+                updateInventoryDisplay(); 
+            }
+        }
+
+        function getItemName(itemId) {
+            const names = {
+                dust: 'ゴミ',
+                coin: 'クマコイン',
+                megane: '良く見えるメガネ',
+                takeoutTakoyaki: 'たこ焼き',
+                takeoutYakisoba: '焼きそば',
+                takeoutNingyo2: '人形焼',
+                ticketTakoyaki: 'たこ焼きチケット',
+                ticketYakisoba: '焼きそばチケット',
+                
+            };
+            return names[itemId] || itemId;
+        }
+
+        function renderNavigation() {
+            const navDiv = document.querySelector('.navigation');
+            navDiv.innerHTML = '';
+            gameState.openRooms.forEach(roomId => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = rooms[roomId].name;
+                btn.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(btn);
+            });
+        }
+
+        // インベントリ表示更新
+        function updateInventoryDisplay() {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                if (gameState.inventory[index]) {
+                    const img = document.createElement('img');
+                    img.src = IMAGES.items[gameState.inventory[index]];
+                    img.onerror = function() {
+                        // 画像が読み込めない場合はプレースホルダーを表示
+                        this.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder';
+                        placeholder.textContent = getItemName(gameState.inventory[index]);
+                        placeholder.style.width = '60px';
+                        placeholder.style.height = '60px';
+                        slot.appendChild(placeholder);
+                    };
+                    slot.appendChild(img);
+                    const magBtn = document.createElement('div');
+                    magBtn.className = 'magnifier-btn';
+                    magBtn.title = '拡大表示';
+                    magBtn.innerHTML = '<img src="images/magnifier.png" alt="拡大">';
+                    magBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        showModal(
+                        getItemName(gameState.inventory[index]), 
+                        `<img src="${img.src}" style="width:340px;display:block;margin:0 auto 16px;">`, 
+                        [{ text: '閉じる', action: 'close' }]
+                        );
+                    };
+                    slot.appendChild(magBtn);
+                }
+                // ★選択中ならselectedクラス追加
+                if (gameState.selectedItemSlot === index) {
+                    slot.classList.add('selected');
+                } else {
+                    slot.classList.remove('selected');
+                }
+            });
+        }
+
+        // メッセージ更新
+        function updateMessage(message) {
+            document.getElementById('messageArea').innerHTML = message;
+        }
+
+        // モーダル表示
+        function showModal(title, content, buttons, onSequenceSuccess) {
+            let modalHtml = `<h3>${title}</h3><p>${content}</p>`;
+            if (buttons && buttons.length > 0) {
+                modalHtml += `<div id="modalButtons" style="text-align:center;"></div>`;
+                modalHtml += `<div id="modalClose" style="margin-top:25px;text-align:center;"></div>`;
+            }
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modal').style.display = 'flex';
+
+            if (!buttons || buttons.length === 0) return;
+
+            let pressed = [];
+            let heartCnt = 0;
+            let checkCnt = 0;
+            let houseCnt = 0;
+
+            // 画像/通常ボタンとcloseボタンで分ける
+            const modalButtons = document.getElementById('modalButtons');
+            const modalClose = document.getElementById('modalClose');
+
+            buttons.forEach((button, idx) => {
+                // 閉じるボタンは下へ
+                if (button.action === 'close') {
+                    const btn = document.createElement('button');
+                    btn.textContent = button.text || '閉じる';
+                    btn.className = 'modal-close-btn';
+                    btn.onclick = closeModal;
+                    modalClose.appendChild(btn);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.style.margin = "0 10px 10px 0";
+                    if (button.img) {
+                        btn.innerHTML = `<img src="${button.img}" alt="${button.text || ''}" style="width:80px;height:80px;vertical-align:middle;">`;
+                    } else {
+                        btn.textContent = button.text;
+                        btn.className = 'text-btn'; 
+                    }
+                    btn.onclick = function () {
+                        if (button.action === 'restart') {
+                            restartGame();
+                            console.log('restart');
+                        } else if (button.action === 'sequence') {
+                            pressed.push(idx);
+                            // btn.disabled = true;
+                            const correct = [2,1,0,1];
+                            const seqLen = correct.length;
+                            if (pressed.length >= seqLen) {
+                                const lastSeq = pressed.slice(-seqLen);
+                                const isCorrect = lastSeq.every((v, i) => v === correct[i]);
+                                if (isCorrect) {
+                                    if (onSequenceSuccess) onSequenceSuccess();
+                                    closeModal();
+                                } else {
+                                    alert("順番が違います！");
+                                    closeModal();
+                                }
+                            }
+                        } else if (button.action === 'sequence2') {
+                            pressed.push(idx);
+                            if (idx===0) heartCnt++;
+                            if (idx===1) checkCnt++;
+                            if (idx===2) houseCnt++;
+                            // btn.disabled = true;
+                            let correct = heartCnt===6 && checkCnt===2 && houseCnt===4;
+                            if (correct) {
+                                if (onSequenceSuccess) onSequenceSuccess();
+                                closeModal();
+                            } else {
+                                
+                            }
+                        } else if (typeof button.action === "function") {
+                            button.action();
+                        } else if (button.action === 'prize') {
+                            if (idx===0) {
+                                // クッキー
+                                addItem('cookie');
+                                updateMessage('クマクッキー缶を手に入れた');
+                                gameState.jinja.flags.getMiyage = true;
+                            } else if (idx===1) {
+                                // ピンバッジ
+                                addItem('pins');
+                                updateMessage('クマバッジを手に入れた');
+                                gameState.jinja.flags.getMiyage = true;
+                            } else if (idx===2) {
+                                // アクスタ
+                                addItem('akusuta');
+                                updateMessage('クマのアクスタを手に入れた');
+                                gameState.jinja.flags.getMiyage = true;
+                            }
+                            closeModal();
+                        }
+                    };
+                    modalButtons.appendChild(btn);
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            // 次のモーダルが登録されていれば表示
+            if (window._nextModal) {
+                // 登録内容は {title, content, buttons, after} オブジェクト
+                let modal = window._nextModal;
+                window._nextModal = null; // クリア
+                if (modal.before) modal.before(); // もしplaySEなど事前処理したければ
+                showModal(modal.title, modal.content, modal.buttons);
+                if (modal.after) modal.after(); // もしshowModal直後にやりたいことあれば
+            }
+        }
+
+        // ゲームリスタート
+        function restartGame() {
+            gameState = {
+                currentRoom: 'yatai',
+                openRooms:  ['entrance', 'yatai', 'seat', 'jinja'], 
+                inventory: [],
+                entrance: {
+                    flags: {
+                        foundCoin: false,
+                    }
+                },
+                yatai: {
+                    flags: {
+                        foundDust: false,
+                        foundCoin: false,
+                        mosquitoCnt: 0,
+                    }
+                },
+                seat: {
+                    flags: {
+                        foundpaper: false,
+                        foundPra: false,
+                    }
+                },
+                jinja: {
+                    flags: {
+                        foundGhost: false,
+                        foundBear: false,
+                        numOfCoinToBear: 0,
+                        getMiyage: false,
+                        jinjaPuzzleSolved: false,
+                    }
+                },
+                flags: {
+                    
+                },
+                selectedItem: null
+            };
+            closeModal();
+            initGame();
+            updateInventoryDisplay();
+        }
+
+        let isBGMPlaying = false;   // ←デフォルトは再生してない
+        let isBGMInitialized = false; // 初回クリック判定用
+
+        // 初回クリック時にだけBGMを再生
+        function initBGMOnce() {
+        if (!isBGMInitialized) {
+            const bgm = document.getElementById('bgm');
+            bgm.volume = 0.3;
+            bgm.play();
+            isBGMPlaying = true;
+            isBGMInitialized = true;
+            document.getElementById('bgm-toggle').textContent = "🔊 BGM";
+        }
+        }
+        window.addEventListener('click', initBGMOnce, { once: true });
+
+        function toggleBGM() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('bgm-toggle');
+            if (!isBGMPlaying) {
+                bgm.play();
+                isBGMPlaying = true;
+                btn.textContent = "🔊 BGM";
+            } else {
+                bgm.pause();
+                isBGMPlaying = false;
+                btn.textContent = "🔇 BGM";
+            }
+        }
+
+        function changeBGM(newSrc) {
+            const bgm = document.getElementById('bgm');
+            // ファイル名のみで比較
+            const current = bgm.src.split('/').pop();
+            const next = newSrc.split('/').pop();
+            console.log(current + ":" + next);
+            if (current === next) return; // すでにそのBGMなら何もしない
+
+            const isPlaying = isBGMPlaying;
+            bgm.pause();
+            bgm.src = newSrc;
+            bgm.load();
+            if (isPlaying) {
+                bgm.play();
+            }
+        }
+
+        function playSE(id) {
+            const se = document.getElementById(id);
+            se.currentTime = 0;
+            se.play();
+        }
+
+        // どこかで最初に一度だけ呼ぶ
+        let loadedImages = {};
+        function preloadImages() {
+            // 部屋画像
+            Object.values(IMAGES.rooms).forEach(val => {
+                if (Array.isArray(val)) {
+                    val.forEach(src => {
+                        if (!loadedImages[src]) {
+                            const img = new Image();
+                            img.src = src;
+                            loadedImages[src] = img;
+                        }
+                    });
+                } else if (typeof val === "string") {
+                    if (!loadedImages[val]) {
+                        const img = new Image();
+                        img.src = val;
+                        loadedImages[val] = img;
+                    }
+                }
+            });
+            // アイテム画像
+            Object.values(IMAGES.items).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+        }
+
+        // --- 1. グローバルにエフェクトリスト ---
+        let sparkleEffects = [];
+
+        // --- 2. キラキラ発生関数（canvas対応） ---
+        function showSparkleEffectAtPercent(xPercent, yPercent) {
+            // canvasサイズ取得
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+
+            // エフェクト画像の中心座標（ピクセル）
+            const cx = w * xPercent / 100;
+            const cy = h * yPercent / 100;
+
+            // エフェクト追加（startTimeでアニメ管理）
+            sparkleEffects.push({
+                x: cx,
+                y: cy,
+                startTime: performance.now(),
+                duration: 900
+            });
+
+            // もしまだアニメが回ってなければ起動
+            if (!showSparkleEffectAtPercent._animating) {
+                showSparkleEffectAtPercent._animating = true;
+                requestAnimationFrame(animateSparkleEffects);
+            }
+        }
+
+        // --- 3. エフェクト描画＆アニメ管理 ---
+        function animateSparkleEffects() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const now = performance.now();
+
+            // ★背景や他のものを再描画（renderCanvasRoom関数呼ぶ）
+            renderCanvasRoom();
+
+            // キラキラ画像取得（事前にimg読み込み済み前提）
+            const sparkleImg = loadedImages['images/7/kira.png']; // ここは画像パス合わせて
+
+            sparkleEffects = sparkleEffects.filter(effect => {
+                const t = now - effect.startTime;
+                if (t > effect.duration) return false; // 終了
+
+                // --- キラキラのアニメ：大きさ・透明度・回転 ---
+                const progress = t / effect.duration;
+                const alpha = 1 - progress;
+                const size = 180 * (0.3 + 1.7 * progress); // 180px→2倍へ
+                const rotate = 30 * progress * Math.PI / 180; // 0→30度
+
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.translate(effect.x, effect.y);
+                ctx.rotate(rotate);
+                ctx.drawImage(sparkleImg, -size/2, -size/2, size, size);
+                ctx.restore();
+
+                return true; // 継続
+            });
+
+            // ★まだエフェクトがあれば次フレーム
+            if (sparkleEffects.length > 0) {
+                requestAnimationFrame(animateSparkleEffects);
+            } else {
+                showSparkleEffectAtPercent._animating = false;
+            }
+        }
+
+
+        function shareOnTwitter(resultType) {
+            // 例：resultType = "true_end" or "normal_end"
+            let url = encodeURIComponent(location.href);
+            let text;
+            if (resultType === "true_end") {
+                text = encodeURIComponent("脱出ゲーム『屋敷に残された夢』で真エンド達成！ #脱出ゲーム");
+            } else {
+                text = encodeURIComponent("脱出ゲーム『屋敷に残された夢』をクリア！ #脱出ゲーム");
+            }
+            window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+        function copyShareText() {
+            let text = "脱出ゲーム『屋敷に残された夢』をクリア！ #脱出ゲーム " + location.href;
+            navigator.clipboard.writeText(text).then(() => alert('コピーしました！'));
+        }
+
+        function saveGame() {
+            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            const oldMsg = document.getElementById('messageArea').innerHTML;
+            updateMessage('セーブしました！');
+            setTimeout(() => {
+                updateMessage(oldMsg);
+            }, 1500);
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('escapeGameState');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                // UIや画面をstateに合わせて復元する
+                changeRoom(gameState.currentRoom);
+                updateInventoryDisplay();
+                renderNavigation();
+                updateMessage('ロードしました！');
+            } else {
+                updateMessage('セーブデータがありません');
+            }
+        }
+
+        // ゲーム開始
+        preloadImages();
+        initGame();
+    </script>
+</body>
+</html>
