@@ -1454,13 +1454,8 @@
                     break;
                 case 'examine_jinja_kannushi_fat':
                     if (gameState.selectedItem=='takeoutYakisoba') {
-                        gameState.jinja.flags.kannushiFavor++;
-                        updateMessage('おお、焼きそばか！早速いただこう');
-                        showModal(
-                            'おお、焼きそばか！早速いただこう',
-                            '<img src="images/7/kannushi_takoyaki.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
-                            [{text: '閉じる', action: 'close'}]
-                        );
+                        updateMessage('焼きそばはいやじゃ');
+                        
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
                         updateMessage('除霊が成功した？良かったのう');
 
