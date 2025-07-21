@@ -1747,32 +1747,38 @@
 
         // ゲームリスタート
         function restartGame() {
-            gameState = {
+                gameState = {
                 currentRoom: 'entrance',
-                openRooms:  ['entrance', 'dining', 'kitchen', 'restroom'], 
+                openRooms:  ['entrance', 'waiting', 'seat', 'counter'], 
                 inventory: [],
                 entrance: {
                     flags: {
                         backgroundState:0,
-                        entrancePuzzleSolved: false,
+                        foundCoin: false,
+                        switchPowerOn: false,
                     }
                 },
-                dining: {
+                waiting: {
                     flags: {
-                        foundWine: false,
-                        watchNewspaper: false,  
-                        backgroundState:0,
+                        foundDust: false,
+                        foundCoin: false,
+                        dustBoxUsable: false,
+                        foundGhost: false,
                     }
                 },
-                kitchen: {
+                seat: {
                     flags: {
-                        backgroundState: 0,
-                        getRaspberry: false,
+                        foundpaper: false,
+                        foundPra: false,
                     }
                 },
-                restroom: {
+                counter: {
                     flags: {
-                        backgroundState:0,
+                        foundBear: false,
+                        fountBranch: false,
+                        numOfCoinToBear: 0,
+                        getMiyage: false,
+                        counterPuzzleSolved: false,
                     }
                 },
                 flags: {
