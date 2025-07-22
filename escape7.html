@@ -482,6 +482,8 @@
     <audio id="se-mosquite" src="sounds/7/Mosquito-Real01-5.mp3"></audio>
     <audio id="se-down" src="sounds/7/Onoma-Negative02-1(Short).mp3"></audio>
     <audio id="se-saisen" src="sounds/7/Percussive_Accent06-1(Dry).mp3"></audio>
+    <audio id="se-box" src="sounds/7/Retro_Anime-Switch02-1(Mid).mp3"></audio>
+    <audio id="se-tenkai" src="sounds/7/Scene_Change01-1(Up).mp3"></audio>
     <script>
         window._nextModal = null;
         const canvas = document.getElementById('gameCanvas');
@@ -546,7 +548,7 @@
                 ami: 'images/7/ami.png',
                 amiParts: 'images/7/ami_parts.png',
                 takeoutSpecial: 'images/7/takeout_special.jpg',
-
+                kannushiTojo: 'images/7/kannushi_tojo.jpg',
             }
         };
 
@@ -827,7 +829,7 @@
                     {
                         x: 53.8, y: 40, width: 16, height: 20,
                         action: 'examine_jinja_kannushi',
-                        description: '神主',
+                        description: '神主？',
                         alpha: 0.7,
                         usable: () => !!(gameState.jinja.flags.foundGhost && gameState.jinja.flags.kannushiFavor==0),
                         item: {
@@ -839,7 +841,7 @@
                     {
                         x: 53.8, y: 40, width: 16, height: 20,
                         action: 'examine_jinja_kannushi_fat',
-                        description: '神主',
+                        description: '神主？',
                         alpha: 0.7,
                         usable: () => gameState.jinja.flags.kannushiFavor==1,
                         item: {
@@ -851,7 +853,7 @@
                     {
                         x: 42.8, y: 54, width: 24, height: 22,
                         action: 'examine_jinja_kannushi_fat_slept',
-                        description: '神主',
+                        description: '神主？',
                         alpha: 0.7,
                         usable: () =>  (gameState.jinja.flags.kannushiFavor==2 && !hasItem('kannushiAmi') && !gameState.entrance.flags.ghostSaikai),
                         item: {
@@ -874,11 +876,6 @@
                             img: 'jinjaMemo',   
                             visible: () => !!gameState.jinja.flags.foundMemo, 
                         },
-                    },
-                    {
-                        x: 54.2, y: 36.0, width: 9.7, height: 6.4,
-                        action: 'examine_jinja_poster',
-                        description: 'ポスター',
                     }
                 ]
             },
@@ -1293,13 +1290,21 @@
                         removeItem('megane');
                     } else if (!gameState.entrance.flags.finalPuzzleSolved && gameState.selectedItem=='kannushiAmi') {
                         removeItem('kannushiAmi');
+                        playSE('se-tenkai');
                         showModal(
-                            '巨大お化けに神主を渡した',
+                            '巨大お化けに神主？を渡した',
                             '<img src="images/7/ghost_saikai.png" style="width:300px;display:block;margin:0 auto 20px;">',
-                            [{text: '閉じる', action: 'close'}]
+                            [{text: '閉じる', action: 'close'}],
+                            () => { 
+                                showModal(
+                                    '巨大お化けは神主？を連れて去っていった。',
+                                    '<img src="images/7/kannushi_turesari.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                                    [{text: '閉じる', action: 'close'}]
+                                );  
+                            }
                         );  
                         gameState.entrance.flags.ghostSaikai = true;
-                        updateMessage('巨大お化けは神主を連れて去っていった。お礼にクマコインをもらった');
+                        updateMessage('巨大お化けは神主？を連れて去っていった。お礼にクマコインをもらった');
                         addItem('coin');
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
                         if (hasItem('takeoutYakisoba') && hasItem('takeoutNingyo2')) {
@@ -1559,7 +1564,12 @@
                     } else {
                         playSE('se-suzu');
                         gameState.jinja.flags.foundGhost =  true;
-                        updateMessage('シャランシャラン…何か出てきた');
+                        updateMessage('お化けが神主のコスプレ？をしている…');
+                        showModal(
+                            'シャランシャラン…何か出てきた',
+                            '<img src="images/7/kannushi_tojo.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
                         renderCanvasRoom();
                     }
                     break;
@@ -1594,7 +1604,7 @@
                     } else if (gameState.selectedItem=='takeoutNingyo2') {
                         updateMessage('これは…？');
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
-                        updateMessage('除霊が成功した？良かったのう');
+                        updateMessage('除霊が成功した？…そうか');
 
                     } else {
                         talkToHintCharacter('jinja','kannushi');
@@ -1602,7 +1612,7 @@
                     break;
                 case 'examine_jinja_kannushi_fat_slept': 
                     if (!gameState.entrance.flags.finalPuzzleSolved && gameState.selectedItem=='ami') {
-                        updateMessage('神主を手に入れた');
+                        updateMessage('神主？を手に入れた');
                         addItem('kannushiAmi');
                         removeItem('ami');
                         renderCanvasRoom();
@@ -1786,7 +1796,7 @@
                     '<img src="images/7/speaker_on.png" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
-                playSE('se-clear');
+                playSE('se-subclear');
                 renderCanvasRoom();
 
             } else {
@@ -1915,7 +1925,7 @@
                 ticketYakisoba: '焼きそばチケット',
                 ticketSpecial: 'スペシャルチケット',
                 ami: '虫取り網',
-                kannushiAmi: '神主',
+                kannushiAmi: '神主？',
                 
             };
             return names[itemId] || itemId;
@@ -2007,7 +2017,12 @@
                     const btn = document.createElement('button');
                     btn.textContent = button.text || '閉じる';
                     btn.className = 'modal-close-btn';
-                    btn.onclick = closeModal;
+                    btn.onclick = function() {
+                        closeModal();
+                        if (typeof onSequenceSuccess === "function") {
+                            onSequenceSuccess();
+                        }
+                    };
                     modalClose.appendChild(btn);
                 } else {
                     const btn = document.createElement('button');
@@ -2021,57 +2036,9 @@
                     btn.onclick = function () {
                         if (button.action === 'restart') {
                             restartGame();
-                            console.log('restart');
-                        } else if (button.action === 'sequence') {
-                            pressed.push(idx);
-                            // btn.disabled = true;
-                            const correct = [2,1,0,1];
-                            const seqLen = correct.length;
-                            if (pressed.length >= seqLen) {
-                                const lastSeq = pressed.slice(-seqLen);
-                                const isCorrect = lastSeq.every((v, i) => v === correct[i]);
-                                if (isCorrect) {
-                                    if (onSequenceSuccess) onSequenceSuccess();
-                                    closeModal();
-                                } else {
-                                    alert("順番が違います！");
-                                    closeModal();
-                                }
-                            }
-                        } else if (button.action === 'sequence2') {
-                            pressed.push(idx);
-                            if (idx===0) heartCnt++;
-                            if (idx===1) checkCnt++;
-                            if (idx===2) houseCnt++;
-                            // btn.disabled = true;
-                            let correct = heartCnt===6 && checkCnt===2 && houseCnt===4;
-                            if (correct) {
-                                if (onSequenceSuccess) onSequenceSuccess();
-                                closeModal();
-                            } else {
-                                
-                            }
                         } else if (typeof button.action === "function") {
                             button.action();
-                        } else if (button.action === 'prize') {
-                            if (idx===0) {
-                                // クッキー
-                                addItem('cookie');
-                                updateMessage('クマクッキー缶を手に入れた');
-                                gameState.jinja.flags.getMiyage = true;
-                            } else if (idx===1) {
-                                // ピンバッジ
-                                addItem('pins');
-                                updateMessage('クマバッジを手に入れた');
-                                gameState.jinja.flags.getMiyage = true;
-                            } else if (idx===2) {
-                                // アクスタ
-                                addItem('akusuta');
-                                updateMessage('クマのアクスタを手に入れた');
-                                gameState.jinja.flags.getMiyage = true;
-                            }
-                            closeModal();
-                        }
+                        } 
                     };
                     modalButtons.appendChild(btn);
                 }
