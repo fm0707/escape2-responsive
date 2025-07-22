@@ -508,7 +508,9 @@
                 ],
                 end: ['images/7/normalEnd.png'],
                 end2: ['images/7/normalEnd2.jpg'],
-                trueEnd: ['images/7/trueEnd.jpg'],
+                yakisobaEnd: ['images/7/yakisobaEnd.jpg'],
+                yakisobaEnd2: ['images/7/yakisobaEnd2.jpg'],
+                trueEnd: ['images/7/trueEnd.png'],
             },
             items: {
                 
@@ -522,6 +524,7 @@
                 speakerOn:'images/7/speaker_on.png',
                 speakerOff:'images/7/speaker_off.png',
                 bigGhost:'images/7/big_ghost.png',
+                bigGhost2:'images/7/big_ghost2.png',
                 entranceLight:'images/7/entrance_light.png',
                 takeoutNingyo:'images/7/takeout_ningyo.png',
                 takeoutNingyo2:'images/7/takeout_ningyo_real.jpg',
@@ -531,11 +534,15 @@
                 ticketYakisoba:'images/7/ticket_yakisoba.png',
                 kannushi:'images/7/kannushi.png',
                 fatKannushi:'images/7/fat_kannushi.png',
+                fatKannushiSlept:'images/7/fat_kannushi_slept.png',
+                kannushiAmi:'images/7/fat_kannushi_ami.png',
                 ema:'images/7/ema.png',
                 jinjaMemo: 'images/7/jinja_memo.png',
                 jinjaMemo2: 'images/7/jinja_memo2.png',
                 kira: 'images/7/kira.png',
                 megane: 'images/7/saisen2.jpg',
+                ami: 'images/7/ami.png',
+                amiParts: 'images/7/ami_parts.png',
             }
         };
 
@@ -562,6 +569,7 @@
                 flags: {
                     boxPazzuleSolved: false,
                     foundpaper: false,
+                    foundAmi: false,
                 }
             },
             jinja: {
@@ -616,7 +624,17 @@
                         usable: () => true,
                         item: {
                             img: 'bigGhost',   
-                            visible: () => !gameState.entrance.flags.finalPuzzleSolved, 
+                            visible: () => (!gameState.entrance.flags.finalPuzzleSolved && gameState.jinja.flags.bearCoinCnt<=1) , 
+                        },
+                    },
+                    {
+                        x: 29, y: 55.6, width: 41.8, height: 37,
+                        action: 'examine_entrance_ghost',
+                        description: '巨大なお化け',
+                        usable: () => true,
+                        item: {
+                            img: 'bigGhost2',   
+                            visible: () => (!gameState.entrance.flags.finalPuzzleSolved && gameState.jinja.flags.bearCoinCnt>1 && !gameState.entrance.flags.ghostSaikai), 
                         },
                     },
                     {
@@ -775,7 +793,17 @@
                         x: 73.1, y: 40.2, width: 5.8, height: 14,
                         action: 'examine_seat_bottle3',
                         description: 'ペットボトル'
-                    }
+                    },
+                    {
+                        x: 60.7, y: 77.4, width: 12.2, height: 22.6,
+                        action: 'examine_seat_ami',
+                        description: '?',
+                        usable: () => (gameState.jinja.flags.bearCoinCnt>1 && !gameState.seat.flags.foundAmi),
+                        item: {
+                            img: 'amiParts',   
+                            visible: () => (gameState.jinja.flags.bearCoinCnt>1 && !gameState.seat.flags.foundAmi),
+                        },
+                    },
                 ]
             },
             jinja: {
@@ -809,10 +837,22 @@
                         action: 'examine_jinja_kannushi_fat',
                         description: '神主',
                         alpha: 0.7,
-                        usable: () => gameState.jinja.flags.kannushiFavor>0,
+                        usable: () => gameState.jinja.flags.kannushiFavor==1,
                         item: {
                             img: 'fatKannushi',   
-                            visible: () => !!gameState.jinja.flags.kannushiFavor, 
+                            visible: () => gameState.jinja.flags.kannushiFavor==1, 
+                        },
+
+                    },
+                    {
+                        x: 42.8, y: 54, width: 24, height: 22,
+                        action: 'examine_jinja_kannushi_fat_slept',
+                        description: '神主',
+                        alpha: 0.7,
+                        usable: () =>  (gameState.jinja.flags.kannushiFavor==2 && !hasItem('kannushiAmi') && !gameState.entrance.flags.ghostSaikai),
+                        item: {
+                            img: 'fatKannushiSlept',   
+                            visible: () => (gameState.jinja.flags.kannushiFavor==2 && !hasItem('kannushiAmi') && !gameState.entrance.flags.ghostSaikai), 
                         },
 
                     },
@@ -950,7 +990,7 @@
                         usable: () => (gameState.jinja.flags.bearCoinCnt==2 && !gameState.kingyo.flags.foundCoin),
                         item: {
                             img: 'coin',   
-                            visible: () => !gameState.kingyo.flags.foundCoin,
+                            visible: () => (gameState.jinja.flags.bearCoinCnt==2 && !gameState.kingyo.flags.foundCoin),
                         },
                     },
                     {
@@ -987,14 +1027,36 @@
                     },
                 ]
             },
-            trueEnd: {
+            yakisobaEnd: {
                 name: '焼きそばルート',
                 description: 'あなたは無事、夏祭り会場の外に出た。焼きそばも美味しい！',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
-                        action: 'examine_true_end',
+                        action: 'examine_yakisoba_end',
                         description: 'クマの加護焼きそば'
+                    },
+                ]
+            },
+            yakisobaEnd2: {
+                name: '焼きそばルート',
+                description: 'あなたは無事、夏祭り会場の外に出た。焼きそばも美味しい！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_yakisoba_end2',
+                        description: 'クマの加護焼きそば'
+                    },
+                ]
+            },
+            trueEnd: {
+                name: '平和に解決ルート',
+                description: 'あなたはお化けの困りごとを解決し、外に出た。お化け界も幸せです',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_true_end',
+                        description: 'トゥルーエンド'
                     },
                 ]
             }
@@ -1172,18 +1234,23 @@
         // エリアクリック処理
         function handleAreaClick(action, event) {
             switch(action) {
-                case 'examine_entrance_door':
-                    
-                     break;
                 case 'examine_entrance_power':
                     if (gameState.entrance.flags.powerOn) {
                         updateMessage('電源はONだ');
-                    } else {
+                    } else if (hasItem('kannushiAmi')) {
+                        updateMessage('電源よりも、せっかく失せ人を捕まえたんだから、お化けに渡してあげよう');
+                    } else if (gameState.entrance.flags.ghostSaikai) {
+                        updateMessage('もう外に出よう');
+                    }else {
                         showEntrancePuzzle();
                     }
                     break;
                 case 'examine_entrance_speaker':
-                    if (gameState.entrance.flags.powerOn && gameState.entrance.flags.finalPuzzleSolved) {
+                    if (gameState.entrance.flags.ghostSaikai) {
+                        updateMessage('使わなかったな…');
+                    } else if (hasItem('kannushiAmi')) {
+                        updateMessage('せっかく失せ人を捕まえたんだから、お化けに渡してあげよう');
+                    } else if (gameState.entrance.flags.powerOn && gameState.entrance.flags.finalPuzzleSolved) {
                         updateMessage('もう使う必要はない');
                     } else if (gameState.entrance.flags.powerOn && gameState.jinja.flags.foundMemo && !gameState.entrance.flags.finalPuzzleSolved) {
                         showFinalPuzzle();
@@ -1198,18 +1265,41 @@
                     }
                     break;
                 case 'examine_entrance_ghost':
-                    if (gameState.entrance.flags.finalPuzzleSolved) {
-                        if (hasItem('takeoutYakisoba')) {
+                    if (gameState.entrance.flags.ghostSaikai) {
+                        updateMessage('ゲームクリア');
+                        changeRoom('trueEnd');
+                        removeItem('megane');
+                    } else if (!gameState.entrance.flags.finalPuzzleSolved && gameState.selectedItem=='kannushiAmi') {
+                        removeItem('kannushiAmi');
+                        showModal(
+                            '巨大お化けに神主を渡した',
+                            '<img src="images/7/ghost_saikai.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );  
+                        gameState.entrance.flags.ghostSaikai = true;
+                        updateMessage('巨大お化けは神主を連れて去っていった');
+                    } else if (gameState.entrance.flags.finalPuzzleSolved) {
+                        if (hasItem('takeoutYakisoba') && hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
-                            changeRoom('trueEnd');
+                            removeItem('megane');
+                            changeRoom('yakisobaEnd');
+                        } else if (hasItem('takeoutYakisoba') && !hasItem('takeoutNingyo2')) {
+                            updateMessage('ゲームクリア');
+                            removeItem('megane');
+                            changeRoom('yakisobaEnd2');
                         } else if (hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
+                            removeItem('megane');
                             changeRoom('end');
                         } else if (!hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
+                            removeItem('megane');
                             changeRoom('end2');
                         } 
                         
+                    } else if (gameState.jinja.flags.bearCoinCnt>1) {
+                        renderCanvasRoom();
+                        updateMessage('あれ？良く見えるようになったら、何か困っているようだ...');
                     } else if (gameState.jinja.flags.foundEma) {
                         updateMessage('除霊の呪文が効くかもしれない');
                     } else {
@@ -1413,6 +1503,11 @@
                         updateMessage('なにもない');
                     } else {
                         gameState.kingyo.flags.foundCoin = true;
+                        showModal(
+                            'クマコインを手に入れた',
+                            '<img src="images/bear_coin.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
                         addItem('coin');
                         updateMessage('クマコインを手に入れた');
                         renderCanvasRoom();
@@ -1447,20 +1542,38 @@
                             [{text: '閉じる', action: 'close'}]
                         );
                     } else if (gameState.selectedItem=='takeoutYakisoba') {
-                        updateMessage('焼きそばはいやじゃ');
+                        updateMessage('今は焼きそばの気分でないのう');
                     } else {
                         updateMessage('お腹が空いたのう…');
                     }
                     break;
                 case 'examine_jinja_kannushi_fat':
                     if (gameState.selectedItem=='takeoutYakisoba') {
-                        updateMessage('焼きそばはいやじゃ');
+                        removeItem('takeoutYakisoba');
+                        showModal(
+                            '焼きそばもうまい。眠くなってきた…',
+                            '<img src="images/7/kannushi_yakisoba.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('焼きそばもうまい。眠くなってきた…<br>寝てしまった');
+                        gameState.jinja.flags.kannushiFavor++;
+                        renderCanvasRoom();
                         
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
                         updateMessage('除霊が成功した？良かったのう');
 
                     } else {
                         talkToHintCharacter('jinja','kannushi');
+                    }
+                    break;
+                case 'examine_jinja_kannushi_fat_slept': 
+                    if (gameState.selectedItem=='ami') {
+                        updateMessage('神主を手に入れた');
+                        addItem('kannushiAmi');
+                        removeItem('ami');
+                        renderCanvasRoom();
+                    } else {
+                        updateMessage('満腹になって寝てしまった');
                     }
                     break;
                 case 'examine_jinja_saisen':
@@ -1545,16 +1658,16 @@
                 case 'examine_seat_bottle3':
                     updateMessage('「ペットボトル」だ');
                     break; 
-                case 'examine_seat_prapiece': 
-                    if (gameState.seat.flags.foundPra) {
+                case 'examine_seat_ami': 
+                    if (gameState.seat.flags.foundAmi) {
                         updateMessage('なにもない'); 
                     } else {
-                        updateMessage('何かの破片を手に入れた');
-                        addItem('praPiece');
-                        gameState.seat.flags.foundPra = true;
+                        updateMessage('引っ張り出すと、虫取り網だった。虫取り網を手に入れた');
+                        addItem('ami');
+                        gameState.seat.flags.foundAmi = true;
                         showModal(
-                            '何かの破片を手に入れた。',
-                            '<img src="images/7/pra_piece.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '虫取り網を手に入れた。',
+                            '<img src="images/7/ami.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                     }
@@ -1565,8 +1678,14 @@
                 case 'examine_end2':
                     updateMessage('あなたは不思議な夏祭りから日常に戻りました。（ノーマルエンド2）');
                     break; 
+                case 'examine_yakisoba_end':
+                    updateMessage('あなたは不思議な夏祭りから日常に戻りました。(焼きそばエンド）');
+                    break; 
+                case 'examine_yakisoba_end2':
+                    updateMessage('あなたは不思議な夏祭りから日常に戻りました。(焼きそばエンド2）');
+                    break; 
                 case 'examine_true_end':
-                    updateMessage('あなたは夏祭りを出て心置きなく日常に戻りました。焼きそばも美味しそうですね（トゥルーエンド）');
+                    updateMessage('あなたは日常に戻り、お化けたちも嬉しそうです。(トゥルーエンド）');
                     break; 
             }
             gameState.selectedItem = null;
@@ -1748,6 +1867,8 @@
                 takeoutNingyo2: '人形焼',
                 ticketTakoyaki: 'たこ焼きチケット',
                 ticketYakisoba: '焼きそばチケット',
+                ami: '虫取り網',
+                kannushiAmi: '神主',
                 
             };
             return names[itemId] || itemId;
