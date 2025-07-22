@@ -1567,7 +1567,7 @@
                     }
                     break;
                 case 'examine_jinja_kannushi_fat_slept': 
-                    if (gameState.selectedItem=='ami') {
+                    if (!gameState.entrance.flags.finalPuzzleSolved && gameState.selectedItem=='ami') {
                         updateMessage('神主を手に入れた');
                         addItem('kannushiAmi');
                         removeItem('ami');
