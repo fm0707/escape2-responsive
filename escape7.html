@@ -510,7 +510,8 @@
                 end2: ['images/7/normalEnd2.jpg'],
                 yakisobaEnd: ['images/7/yakisobaEnd.jpg'],
                 yakisobaEnd2: ['images/7/yakisobaEnd2.jpg'],
-                trueEnd: ['images/7/trueEnd.png'],
+                ghostEnd: ['images/7/ghostEnd.png'],
+                trueEnd: ['images/7/trueEnd.jpg'],
             },
             items: {
                 
@@ -532,6 +533,7 @@
                 boxClose:'images/7/box_close.png',
                 ticketTakoyaki:'images/7/ticket_takoyaki.png',
                 ticketYakisoba:'images/7/ticket_yakisoba.png',
+                ticketSpecial:'images/7/ticket_special.png',
                 kannushi:'images/7/kannushi.png',
                 fatKannushi:'images/7/fat_kannushi.png',
                 fatKannushiSlept:'images/7/fat_kannushi_slept.png',
@@ -543,6 +545,8 @@
                 megane: 'images/7/saisen2.jpg',
                 ami: 'images/7/ami.png',
                 amiParts: 'images/7/ami_parts.png',
+                takeoutSpecial: 'images/7/takeout_special.jpg',
+
             }
         };
 
@@ -1049,9 +1053,20 @@
                     },
                 ]
             },
+            ghostEnd: {
+                name: 'お化け愛ルート',
+                description: 'あなたは穏便な手段で夏祭り会場の外に出た。お化けたちも喜んでいます',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_ghost_end',
+                        description: 'お化けの平和'
+                    },
+                ]
+            },
             trueEnd: {
-                name: '平和に解決ルート',
-                description: 'あなたはお化けの困りごとを解決し、外に出た。お化け界も幸せです',
+                name: 'スペシャルルート',
+                description: 'あなたはお化けの困りごとを解決し、外に出た。お土産もたっぷりです',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -1069,6 +1084,7 @@
                 "感謝するぞ",
                 "絵馬が読めない？",
                 "困ったときは神頼みじゃ",
+                "しかし、むやみな除霊はお勧めしないぞ…",
                 ]
             },
         };
@@ -1149,8 +1165,10 @@
             updateMessage(`${room.name}です。${room.description}`);
 
             // BGM切替はそのまま
-            if (roomId === "end" || roomId === "end2"|| roomId === "trueEnd") {
+            if (roomId === "end" || roomId === "end2"|| roomId === "yakisobaEnd"|| roomId === "yakisobaEnd2"|| roomId === "ghostEnd") {
                 changeBGM("sounds/6/mizunomati.mp3");
+            } else if(roomId === 'trueEnd') {
+                changeBGM("sounds/7/festive.mp3");
             } else {
                 changeBGM("sounds/7/yatai.mp3");
             }
@@ -1265,9 +1283,13 @@
                     }
                     break;
                 case 'examine_entrance_ghost':
-                    if (gameState.entrance.flags.ghostSaikai) {
+                    if (gameState.entrance.flags.ghostSaikai && hasItem('takeoutSpecial')) {
                         updateMessage('ゲームクリア');
                         changeRoom('trueEnd');
+                        removeItem('megane');
+                    } else if (gameState.entrance.flags.ghostSaikai) {
+                        updateMessage('ゲームクリア');
+                        changeRoom('ghostEnd');
                         removeItem('megane');
                     } else if (!gameState.entrance.flags.finalPuzzleSolved && gameState.selectedItem=='kannushiAmi') {
                         removeItem('kannushiAmi');
@@ -1277,7 +1299,8 @@
                             [{text: '閉じる', action: 'close'}]
                         );  
                         gameState.entrance.flags.ghostSaikai = true;
-                        updateMessage('巨大お化けは神主を連れて去っていった');
+                        updateMessage('巨大お化けは神主を連れて去っていった。お礼にクマコインをもらった');
+                        addItem('coin');
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
                         if (hasItem('takeoutYakisoba') && hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
@@ -1389,6 +1412,15 @@
                             [{text: '閉じる', action: 'close'}]
                         );
                         updateMessage('焼きそばを手に入れた');
+                    } else if (gameState.selectedItem=='ticketSpecial') {
+                        addItem('takeoutSpecial');
+                        removeItem('ticketSpecial');
+                        showModal(
+                            'クマスペシャルを手に入れた',
+                            '<img src="images/7/takeout_special.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        updateMessage('クマスペシャルを手に入れた');
                     } else {
                         updateMessage('チケットを持っていたら置いてみよう');
                     }
@@ -1559,6 +1591,8 @@
                         gameState.jinja.flags.kannushiFavor++;
                         renderCanvasRoom();
                         
+                    } else if (gameState.selectedItem=='takeoutNingyo2') {
+                        updateMessage('これは…？');
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
                         updateMessage('除霊が成功した？良かったのう');
 
@@ -1591,12 +1625,12 @@
                             updateMessage('蚊に刺されなくなった');
                         } else if (gameState.jinja.flags.bearCoinCnt==2) {
                             showModal(
-                                'コインを賽銭箱に入れた。なんと神の加護を得た！',
+                                'なんと神のメガネを得た！持っているだけで効果がある。',
                                 '<img src="images/7/saisen2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                                 [{text: '閉じる', action: 'close'}]
                             );
                             addItem('megane');
-                            updateMessage('今まで見えなかったものが見える。メガネを持っているだけで効果があるようだ');
+                            updateMessage('コインを賽銭箱に入れると、神のメガネを得た。今まで見えなかったものが見える。メガネを持っているだけで効果があるようだ');
                         } else if (gameState.jinja.flags.bearCoinCnt==3) {
                             showModal(
                                 'コインを賽銭箱に入れた。神からの贈り物を手に入れた',
@@ -1605,6 +1639,14 @@
                             );
                             addItem('ticketYakisoba');
                             updateMessage('焼きそばチケットを手に入れた');
+                        } else if (gameState.jinja.flags.bearCoinCnt==4) {
+                            showModal(
+                                'よくぞここまで集めました。これは神のご褒美です',
+                                '<img src="images/7/saisen4.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{text: '閉じる', action: 'close'}]
+                            );
+                            addItem('ticketSpecial');
+                            updateMessage('スペシャルチケットを手に入れた');
                         } 
                     } else {
                         updateMessage('賽銭箱だ。クマがデザインされている');
@@ -1684,8 +1726,11 @@
                 case 'examine_yakisoba_end2':
                     updateMessage('あなたは不思議な夏祭りから日常に戻りました。(焼きそばエンド2）');
                     break; 
+                case 'examine_ghost_end':
+                    updateMessage('あなたは日常に戻り、お化けたちも嬉しそうです。(お化け愛エンド）');
+                    break; 
                 case 'examine_true_end':
-                    updateMessage('あなたは日常に戻り、お化けたちも嬉しそうです。(トゥルーエンド）');
+                    updateMessage('あなたは日常に戻り、お祭りグルメを堪能しました。(トゥルーエンド）');
                     break; 
             }
             gameState.selectedItem = null;
@@ -1865,8 +1910,10 @@
                 takeoutTakoyaki: 'たこ焼き',
                 takeoutYakisoba: '焼きそば',
                 takeoutNingyo2: '人形焼',
+                takeoutSpecial: 'クマスペシャル',
                 ticketTakoyaki: 'たこ焼きチケット',
                 ticketYakisoba: '焼きそばチケット',
+                ticketSpecial: 'スペシャルチケット',
                 ami: '虫取り網',
                 kannushiAmi: '神主',
                 
