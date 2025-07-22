@@ -150,8 +150,31 @@
             height:65px;
             min-height: 40px;
             border: 1px solid #d4af37;
+            position: relative;
         }
+        #msgText {
 
+        }
+        #statusIconArea {
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+        .status-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            border: 2px solid gold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px #0005;
+            font-size: 1.4em;
+        }
         .navigation {
             display: flex;
             justify-content: center;
@@ -348,6 +371,9 @@
         }
 
         @media (max-width: 600px) {
+            #msgText {
+                font-size:.8rem;
+            }
             .save-area {
                 width: 100%;
                 max-width: 100%;
@@ -439,7 +465,8 @@
         <div class="ui-panel">
             <div class="info-panel">
                 <div class="message-area" id="messageArea">
-                    気が付くとあなたは夏祭り会場に居ました。もう遅いし家に帰ろう
+                    <span id="msgText">気が付くとあなたは夏祭り会場に居ました。もう遅いし家に帰ろう</span>
+                    <div id="statusIconArea" style="position:absolute; bottom:6px; right:12px; display:flex; gap:8px;"></div>
                 </div>
                 <div class="navigation">
                     
@@ -544,7 +571,6 @@
                 jinjaMemo: 'images/7/jinja_memo.png',
                 jinjaMemo2: 'images/7/jinja_memo2.png',
                 kira: 'images/7/kira.png',
-                megane: 'images/7/saisen2.jpg',
                 ami: 'images/7/ami.png',
                 amiParts: 'images/7/ami_parts.png',
                 takeoutSpecial: 'images/7/takeout_special.jpg',
@@ -1283,11 +1309,9 @@
                     if (gameState.entrance.flags.ghostSaikai && hasItem('takeoutSpecial')) {
                         updateMessage('ゲームクリア');
                         changeRoom('trueEnd');
-                        removeItem('megane');
                     } else if (gameState.entrance.flags.ghostSaikai) {
                         updateMessage('ゲームクリア');
                         changeRoom('ghostEnd');
-                        removeItem('megane');
                     } else if (!gameState.entrance.flags.finalPuzzleSolved && gameState.selectedItem=='kannushiAmi') {
                         removeItem('kannushiAmi');
                         playSE('se-tenkai');
@@ -1309,19 +1333,15 @@
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
                         if (hasItem('takeoutYakisoba') && hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
-                            removeItem('megane');
                             changeRoom('yakisobaEnd');
                         } else if (hasItem('takeoutYakisoba') && !hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
-                            removeItem('megane');
                             changeRoom('yakisobaEnd2');
                         } else if (hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
-                            removeItem('megane');
                             changeRoom('end');
                         } else if (!hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
-                            removeItem('megane');
                             changeRoom('end2');
                         } 
                         
@@ -1633,14 +1653,15 @@
                                 [{text: '閉じる', action: 'close'}]
                             );
                             updateMessage('蚊に刺されなくなった');
+                            updateStatusIcons();
                         } else if (gameState.jinja.flags.bearCoinCnt==2) {
                             showModal(
-                                'なんと神のメガネを得た！持っているだけで効果がある。',
-                                '<img src="images/7/saisen2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                'なんと神の加護を得た！今まで見えなかったものが見える。',
+                                '<img src="images/7/saisen2.png" style="width:300px;display:block;margin:0 auto 20px;">',
                                 [{text: '閉じる', action: 'close'}]
                             );
-                            addItem('megane');
-                            updateMessage('神のメガネを得た。今まで見えなかったものが見える。メガネを持っているだけで効果があるようだ');
+                            updateMessage('今まで見えなかったものが見える。');
+                            updateStatusIcons();
                         } else if (gameState.jinja.flags.bearCoinCnt==3) {
                             showModal(
                                 'コインを賽銭箱に入れた。神からの贈り物を手に入れた',
@@ -1916,7 +1937,6 @@
             const names = {
                 dust: 'ゴミ',
                 coin: 'クマコイン',
-                megane: '良く見えるメガネ',
                 takeoutTakoyaki: 'たこ焼き',
                 takeoutYakisoba: '焼きそば',
                 takeoutNingyo2: '人形焼',
@@ -1987,8 +2007,26 @@
 
         // メッセージ更新
         function updateMessage(message) {
-            document.getElementById('messageArea').innerHTML = message;
+            //document.getElementById('messageArea').innerHTML = message;
+            document.getElementById('msgText').textContent = message;
         }
+
+        function updateStatusIcons() {
+            const area = document.getElementById('statusIconArea');
+            area.innerHTML = "";
+
+            // 蚊に刺され無効フラグの例
+            if (gameState.jinja.flags.bearCoinCnt >= 1) {
+                // アイコン画像または絵文字で表示
+                area.innerHTML += `<div class="status-icon" title="蚊に刺されにくい"><img src="images/7/no_mosquite_icon.png" style="width:18px;height:18px;"></div>`;
+            }
+            // 観察力アップ状態例（メガネ所持）
+            if (gameState.jinja.flags.bearCoinCnt >= 2) {
+                area.innerHTML += `<div class="status-icon" title="観察力アップ中"><img src="images/7/visible_icon.png" style="width:18px;height:18px;"></div>`;
+                // area.innerHTML += `<div class="status-icon" title="観察力アップ中">👓✨</div>`;
+            }
+        }
+
 
         // モーダル表示
         function showModal(title, content, buttons, onSequenceSuccess) {
@@ -2109,6 +2147,7 @@
             };
             closeModal();
             initGame();
+            updateStatusIcons();
             updateInventoryDisplay();
         }
 
@@ -2297,6 +2336,7 @@
                 gameState = JSON.parse(saved);
                 // UIや画面をstateに合わせて復元する
                 changeRoom(gameState.currentRoom);
+                updateStatusIcons();
                 updateInventoryDisplay();
                 renderNavigation();
                 updateMessage('ロードしました！');
