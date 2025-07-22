@@ -988,7 +988,7 @@
                         description: '金色金魚'
                     },
                     {
-                        x: 61.2, y: 33.7, width: 4.3, height: 4.3,
+                        x: 61.2, y: 33.7, width: 5.3, height: 5.3,
                         action: 'examine_kingyo_coin',
                         description: 'コイン',
                         usable: () => (gameState.jinja.flags.bearCoinCnt==2 && !gameState.kingyo.flags.foundCoin),
@@ -1630,7 +1630,7 @@
                                 [{text: '閉じる', action: 'close'}]
                             );
                             addItem('megane');
-                            updateMessage('コインを賽銭箱に入れると、神のメガネを得た。今まで見えなかったものが見える。メガネを持っているだけで効果があるようだ');
+                            updateMessage('神のメガネを得た。今まで見えなかったものが見える。メガネを持っているだけで効果があるようだ');
                         } else if (gameState.jinja.flags.bearCoinCnt==3) {
                             showModal(
                                 'コインを賽銭箱に入れた。神からの贈り物を手に入れた',
