@@ -575,6 +575,9 @@
                 amiParts: 'images/7/ami_parts.png',
                 takeoutSpecial: 'images/7/takeout_special.jpg',
                 kannushiTojo: 'images/7/kannushi_tojo.jpg',
+                kannushiIkari: 'images/7/kannushi_ikari.jpg',
+                kannushiFatIkari: 'images/7/kannushi_fat_ikari.jpg',
+                dyingMsg: 'images/7/dyingmsg.png',
             }
         };
 
@@ -902,6 +905,16 @@
                             img: 'jinjaMemo',   
                             visible: () => !!gameState.jinja.flags.foundMemo, 
                         },
+                    },
+                    {
+                        x: 85.6, y: 45.6, width: 3.3, height: 4.8,
+                        action: 'examine_jinja_dyingmsg',
+                        description: '?',
+                        usable: () => gameState.jinja.flags.bearCoinCnt>1,
+                        item: {
+                            img: 'dyingMsg',   
+                            visible: () => gameState.jinja.flags.bearCoinCnt>1, 
+                        },
                     }
                 ]
             },
@@ -1101,6 +1114,12 @@
         };
 
         const hintMessages = {
+            entrance: {
+                bigGhost: [
+                    "あれ？良く見えるようになったら、何か困っているようだ...",
+                    "手にしているチラシによれば、お化け王子が行方不明らしい",
+                ]
+            },
             jinja: {
                 kannushi: [
                 "うむ、ごちそうさま",
@@ -1331,6 +1350,15 @@
                         updateMessage('巨大お化けは神主？を連れて去っていった。お礼にクマコインをもらった');
                         addItem('coin');
                     } else if (gameState.entrance.flags.finalPuzzleSolved) {
+                        if (!hasItem('takeoutNingyo2')) {
+                            showModal(
+                                    'せっかくだから拾っていこう',
+                                    '<img src="images/7/ningyoyaki_ground.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                    [{text: '閉じる', action: 'close'}]
+                                );  
+                            updateMessage('せっかくだから拾っていこう');
+                            return;
+                        }
                         if (hasItem('takeoutYakisoba') && hasItem('takeoutNingyo2')) {
                             updateMessage('ゲームクリア');
                             changeRoom('yakisobaEnd');
@@ -1347,7 +1375,7 @@
                         
                     } else if (gameState.jinja.flags.bearCoinCnt>1) {
                         renderCanvasRoom();
-                        updateMessage('あれ？良く見えるようになったら、何か困っているようだ...');
+                        talkToHintCharacter('entrance','bigGhost');
                     } else if (gameState.jinja.flags.foundEma) {
                         updateMessage('除霊の呪文が効くかもしれない');
                     } else {
@@ -1594,7 +1622,13 @@
                     }
                     break;
                 case 'examine_jinja_kannushi':
-                    if (gameState.selectedItem=='takeoutTakoyaki') {
+                    if (gameState.selectedItem=='ami') {
+                        showModal(
+                            'なにをする！',
+                            '<img src="images/7/kannushi_ikari.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                    } else if (gameState.selectedItem=='takeoutTakoyaki') {
                         gameState.jinja.flags.kannushiFavor++;
                         removeItem('takeoutTakoyaki');
                         updateMessage('たこ焼きは美味かった。感謝するぞ');
@@ -1610,7 +1644,13 @@
                     }
                     break;
                 case 'examine_jinja_kannushi_fat':
-                    if (gameState.selectedItem=='takeoutYakisoba') {
+                    if (gameState.selectedItem=='ami') {
+                        showModal(
+                            'なにをする！',
+                            '<img src="images/7/kannushi_fat_ikari.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                    } else if (gameState.selectedItem=='takeoutYakisoba') {
                         removeItem('takeoutYakisoba');
                         showModal(
                             '焼きそばもうまい。眠くなってきた…',
@@ -1697,6 +1737,14 @@
                     showModal(
                         '落ちてきたメモだ',
                         '<img src="images/7/jinja_memo2.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{text: '閉じる', action: 'close'}]
+                    );  
+                    break; 
+                case 'examine_jinja_dyingmsg':
+                    updateMessage('誰かのダイイングメッセージかな…？');
+                    showModal(
+                        '誰かのダイイングメッセージかな…？',
+                        '<img src="images/7/dyingmsg2.png" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     break; 
@@ -2323,7 +2371,7 @@
 
         function saveGame() {
             localStorage.setItem('escapeGameState', JSON.stringify(gameState));
-            const oldMsg = document.getElementById('messageArea').innerHTML;
+            const oldMsg = document.getElementById('msgText').textContent;
             updateMessage('セーブしました！');
             setTimeout(() => {
                 updateMessage(oldMsg);
