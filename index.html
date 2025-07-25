@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>スラセブンの脱出ゲーム作品集</title>
+  <link rel="stylesheet" href="css/main.css">
   <style>
     body {
       background: #f7f4ef;
@@ -14,7 +15,8 @@
     }
     h1 {
       text-align: center;
-      margin: 32px 0 24px 0;
+      margin: 32px auto 24px auto;
+      max-width:80%;
       font-size: 2rem;
       letter-spacing: 2px;
     }
@@ -114,9 +116,22 @@
         min-height: 100px;
       }
     }
+    
   </style>
 </head>
 <body>
+  <!-- ハンバーガー & メニュー -->
+  <button class="hamburger" id="hamburgerBtn" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <nav class="side-menu" id="sideMenu">
+    <a href="index.html">脱出ゲーム一覧</a>
+    <a href="wallpaper.html">今月の壁紙</a>
+    <!-- ここにメニュー項目追加可能 -->
+  </nav>
   <h1>スラセブンの脱出ゲーム作品集</h1>
   <div class="games-list">
     <div class="game-card">
@@ -190,4 +205,25 @@
         <script async src="https://ofuse.me/assets/platform/widget.js" charset="utf-8"></script>
   </div>
 </body>
+<script>
+  const hamburger = document.getElementById('hamburgerBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('menuOverlay');
+
+  hamburger.onclick = function() {
+    sideMenu.classList.add('open');
+    overlay.classList.add('open');
+  }
+  overlay.onclick = function() {
+    sideMenu.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+  // ESCキーでも閉じる
+  window.addEventListener('keydown', (e) => {
+    if(e.key === "Escape"){
+      sideMenu.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+  });
+</script>
 </html>

@@ -1,0 +1,63 @@
+.hamburger {
+    position: fixed;
+    top: 22px;
+    left: 24px;
+    z-index: 1001;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+}
+.hamburger span {
+    display: block;
+    width: 30px;
+    height: 4px;
+    margin: 7px auto;
+    background: #b8941f;
+    border-radius: 2px;
+    transition: 0.3s;
+}
+.menu-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(80,60,20,0.25);
+    z-index: 1000;
+    display: none;
+}
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -240px;
+    width: 220px;
+    height: 100vh;
+    background: #fffbe8;
+    box-shadow: 4px 0 16px #b8941f33;
+    z-index: 1002;
+    padding: 38px 24px 24px 24px;
+    transition: left 0.27s cubic-bezier(.55,.13,.31,1.02);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.side-menu.open {
+    left: 0;
+}
+.menu-overlay.open {
+    display: block;
+}
+.side-menu a {
+    font-size: 1.13rem;
+    text-decoration: none;
+    color: #85631c;
+    font-weight: bold;
+    padding: 8px 6px;
+    border-radius: 6px;
+    transition: background 0.14s;
+}
+.side-menu a:hover {
+    background: #faebd7;
+    color: #b8941f;
+}

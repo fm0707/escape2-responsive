@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今月の壁紙</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    body {
+      background: #f7f4ef;
+      font-family: 'Arial', sans-serif;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    .wallpaper-container {
+      max-width: 420px;
+      margin: 38px auto 0 auto;
+      background: linear-gradient(135deg, #fffbe8 70%, #faebd7 100%);
+      border: 2.3px solid #d4af37;
+      border-radius: 22px;
+      box-shadow: 0 4px 18px #d4af3720;
+      padding: 24px 18px 30px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .wallpaper-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #b8941f;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+    .wallpaper-img {
+      width: 100%;
+      max-width: 360px;
+      border-radius: 14px;
+      border: 1.5px solid #d4af37;
+      box-shadow: 0 2px 8px #b8941f20;
+      margin-bottom: 20px;
+      background: #eee;
+    }
+    .download-btn {
+      background: linear-gradient(135deg, #d4af37 80%, #b8941f 100%);
+      color: #1a0f08;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 38px;
+      text-decoration: none;
+      font-size: 1.13rem;
+      box-shadow: 0 1px 8px #b8941f33;
+      transition: background 0.19s, color 0.13s;
+      cursor: pointer;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    .download-btn:hover {
+      background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+      color: #fff;
+    }
+    .wallpaper-note {
+      color: #5a4c33;
+      font-size: 0.98rem;
+      margin-top: 10px;
+      text-align: center;
+    }
+    @media (max-width: 500px) {
+      .wallpaper-container {
+        max-width: 98vw;
+        padding: 11px 3vw 18px 3vw;
+      }
+      .wallpaper-img {
+        max-width: 94vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ハンバーガー & メニュー -->
+  <button class="hamburger" id="hamburgerBtn" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <nav class="side-menu" id="sideMenu">
+    <a href="index.html">脱出ゲーム一覧</a>
+    <a href="wallpaper.html">今月の壁紙</a>
+    <!-- ここにメニュー項目追加可能 -->
+  </nav>
+  <div class="wallpaper-container">
+    <div class="wallpaper-title">2025年8月 壁紙カレンダー</div>
+    <img class="wallpaper-img" src="wallpapers/hanabi8.png" alt="2025年8月 壁紙カレンダー 花火" />
+    <a class="download-btn" href="wallpapers/hanabi8.png" download="hanabi2025-08.png">ダウンロード</a>
+    <div class="wallpaper-note">スマホ壁紙推奨サイズです。<br>個人利用のみOK！</div>
+  </div>
+  <div class="wallpaper-container">
+    <div class="wallpaper-title">2025年8月 壁紙カレンダー</div>
+    <img class="wallpaper-img" src="wallpapers/kuma8.png" alt="2025年8月 壁紙カレンダー クマ" />
+    <a class="download-btn" href="wallpapers/kuma8.png" download="hanabi2025-08.png">ダウンロード</a>
+    <div class="wallpaper-note">スマホ壁紙推奨サイズです。<br>個人利用のみOK！</div>
+  </div>
+</body>
+<script>
+  const hamburger = document.getElementById('hamburgerBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('menuOverlay');
+
+  hamburger.onclick = function() {
+    sideMenu.classList.add('open');
+    overlay.classList.add('open');
+  }
+  overlay.onclick = function() {
+    sideMenu.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+  // ESCキーでも閉じる
+  window.addEventListener('keydown', (e) => {
+    if(e.key === "Escape"){
+      sideMenu.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+  });
+</script>
+</html>
