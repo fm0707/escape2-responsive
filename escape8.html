@@ -556,6 +556,7 @@
                 sweetsEnd: ['images/8/end_sweets.jpg'],
                 lunchEnd: ['images/8/end_lunch.jpg'],
                 totoEnd: ['images/8/end_toto.jpg'],
+                necchuEnd: ['images/8/end_necchu.jpg'],
             },
             items: {
                 
@@ -598,6 +599,7 @@
             ["つ", "け", "緑", "A", "4"], // 3つめ
             ["5",  "こ", "た", "ま", "ー"]            // 4つめ
         ];
+        const defaultLockTime = 3;
 
         // ゲーム状態
         let gameState = {
@@ -632,6 +634,7 @@
                     boxPazzuleSolved: false,
                     kumaPicTaken: false,
                     ikaPicTaken: false,
+                    timeOut: false,
                 }
             },
             tv: {
@@ -1070,6 +1073,17 @@
                         description: 'トートバッグエンド'
                     },
                 ]
+            },
+            necchuEnd: {
+                name: '搬送ルート',
+                description: '脱出したあなたは熱中症で搬送されました',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_necchu_end',
+                        description: '熱中症搬送エンド'
+                    },
+                ]
             }
         };
 
@@ -1089,6 +1103,8 @@
             renderNavigation();
             changeRoom('entrance');
             updateMessage('気が付くとあなたは喫茶店に閉じ込められていました');
+            localStorage.setItem('timelock_start', Date.now());
+            setInterval(renderCanvasRoom, 1000);
         }
 
         function findHitArea(x, y, clickableAreas, canvas) {
@@ -1227,6 +1243,32 @@
                     ctx.restore();
                 }
             }
+
+            // タイムロックの残り時間を描画するのはtakeoutAreaのみ（好きに条件調整OK）
+            if (gameState.currentRoom === "takeoutArea" && !gameState.takeoutArea.flags.boxPazzuleSolved) {
+                const start = parseInt(localStorage.getItem('timelock_start') || "0");
+                if (start) {
+                    const now = Date.now();
+                    const lockTime = defaultLockTime * 60 * 1000; // 10分
+                    const remain = lockTime - (now - start);
+                    if (remain > 0) {
+                        const min = Math.floor(remain / 60000);
+                        const sec = Math.floor((remain % 60000) / 1000);
+                        const ctx = canvas.getContext('2d');
+                        ctx.save();
+                        ctx.font = "bold 32px Arial";
+                        ctx.textAlign = "center";
+                        ctx.fillStyle = "#fff";
+                        ctx.strokeStyle = "#222";
+                        ctx.lineWidth = 3;
+                        const text = `タイムロック解除まで：${min}分${sec}秒`;
+                        // 枠線→塗りの順でクッキリ
+                        ctx.strokeText(text, canvas.width / 2, 60);
+                        ctx.fillText(text, canvas.width / 2, 60);
+                        ctx.restore();
+                    }
+                }
+            }
         }
 
         function drawRoomItems(ctx, canvas, roomId) {
@@ -1277,6 +1319,8 @@
                             changeRoom('totoEnd');
                         } else if (hasItem('miyageLunchbox')) {
                             changeRoom('lunchEnd');
+                        } else if (gameState.takeoutArea.flags.timeOut) {
+                            changeRoom('necchuEnd');
                         } else {
                             changeRoom('end');
                         }
@@ -1534,6 +1578,26 @@
                     }
                     break;
                 case 'examine_takeoutArea_box_close':
+                    // 時間判定
+                    const start = parseInt(localStorage.getItem('timelock_start') || "0");
+                    const now = Date.now();
+                    const tenMin = defaultLockTime * 60 * 1000; // ←10分にしたい場合
+
+                    if (start && (now - start) >= tenMin) {
+                        closeModal();
+                        gameState.takeoutArea.flags.boxPazzuleSolved = true;
+                        showModal(
+                            'タイムロック解除！（経過時間で開きました）',
+                            '<img src="images/8/box_open_key.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        addItem('key');
+                        playSE('se-clear');
+                        renderCanvasRoom();
+                        updateMessage('時間経過でカギが手に入った！');
+                        gameState.takeoutArea.flags.timeOut = true;
+                        return;
+                    }
                     if (gameState.takeoutArea.flags.boxPazzuleSolved){
                         updateMessage('なかにはなにもない');
                     } else {
@@ -1623,6 +1687,9 @@
                     break; 
                 case 'examine_toto_end':
                     updateMessage('あなたは喫茶店からお土産付きで脱出しました。（グッドエンド）');
+                    break; 
+                case 'examine_necchu_end':
+                    updateMessage('あなたは脱出することはできました。（ノーマルエンド）');
                     break; 
                 
             }
