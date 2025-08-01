@@ -599,7 +599,7 @@
             ["つ", "け", "緑", "A", "4"], // 3つめ
             ["5",  "こ", "た", "ま", "ー"]            // 4つめ
         ];
-        const defaultLockTime = 3;
+        const defaultLockTime = 120;
 
         // ゲーム状態
         let gameState = {
@@ -1178,6 +1178,8 @@
             // BGM切替はそのまま
             if (roomId === "end" || roomId === "sweetsEnd"|| roomId === "lunchEnd"|| roomId === "totoEnd") {
                 changeBGM("sounds/8/Kokage_De_Yuttari-1(Slow).mp3");
+            } else if (roomId ==="necchuEnd") {
+                changeBGM("sounds/8/kuraituuro.mp3");
             } else {
                 changeBGM("sounds/8/Ware_Ha_Umi_No_Ko-Xy02-1(Straight).mp3");
             }
@@ -1261,10 +1263,10 @@
                         ctx.fillStyle = "#fff";
                         ctx.strokeStyle = "#222";
                         ctx.lineWidth = 3;
-                        const text = `タイムロック解除まで：${min}分${sec}秒`;
-                        // 枠線→塗りの順でクッキリ
-                        ctx.strokeText(text, canvas.width / 2, 60);
-                        ctx.fillText(text, canvas.width / 2, 60);
+                        // const text = `タイムロック解除まで：${min}分${sec}秒`;
+                        // // 枠線→塗りの順でクッキリ
+                        // ctx.strokeText(text, canvas.width / 2, 60);
+                        // ctx.fillText(text, canvas.width / 2, 60);
                         ctx.restore();
                     }
                 }
