@@ -1165,6 +1165,11 @@
             renderCanvasRoom();
             updateMessage(`${room.name}です。${room.description}`);
 
+            if (roomId==='takeoutArea') {
+                gameState.takeoutArea.flags.selectAry = [];
+                console.log(gameState.takeoutArea.flags.selectAry);
+            }
+
             // BGM切替はそのまま
             if (roomId === "end" || roomId === "sweetsEnd"|| roomId === "lunchEnd"|| roomId === "totoEnd") {
                 changeBGM("sounds/8/Kokage_De_Yuttari-1(Slow).mp3");
