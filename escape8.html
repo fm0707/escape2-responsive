@@ -737,44 +737,34 @@
                 description: 'ガラスケースのふた部分だ',
                 clickableAreas: [
                     {
-                        x: 2.58, y: 10.97, width: 20, height: 14.8,
+                        x: 6.45, y: 28.5, width: 13.4, height: 13.4,
                         action: 'examine_counter_box_pass1',
                         description: '箱のふたパスワード',
                         zIndex:1, 
-                        item: {
-                            img: 'string1',   
-                            visible: () => true, 
-                        },
                     },
                     {
-                        x: 27.74, y: 10.97, width: 20, height: 14.8,
+                        x: 22.2, y: 28.8, width: 13.4, height: 13.4,
                         action: 'examine_counter_box_pass2',
                         description: '箱のふたパスワード',
                         zIndex:1, 
-                        item: {
-                            img: 'string1',   
-                            visible: () => true, 
-                        },
                     },
                     {
-                        x: 52.26, y: 11.29, width: 20, height: 14.8,
+                        x: 37.7, y: 28.6, width: 13.4, height: 13.4,
                         action: 'examine_counter_box_pass3',
                         description: '箱のふたパスワード',
                         zIndex:1, 
-                        item: {
-                            img: 'string1',   
-                            visible: () => true, 
-                        },
                     },
-                     {
-                        x: 76.45, y: 11.29, width: 20, height: 14.8,
+                    {
+                        x: 53.5, y: 28.8, width: 13.4, height: 13.4,
                         action: 'examine_counter_box_pass4',
                         description: '箱のふたパスワード',
                         zIndex:1, 
-                        item: {
-                            img: 'string1',   
-                            visible: () => true, 
-                        },
+                    },
+                    {
+                        x: 70.2, y: 27.4, width: 16.2, height: 15.7,
+                        action: 'examine_counter_box_open',
+                        description: '箱のふたボタン',
+                        zIndex:1, 
                     },
                     {
                         x: 90.6, y: 90.6, width: 9.4, height: 9.4,
@@ -1229,8 +1219,8 @@
             }
             if(gameState.currentRoom === 'counterCloseup'){
                 // 仮の座標例
-                const box_x = [0.125, 0.375, 0.625, 0.875];
-                const box_y = 0.20;
+                const box_x = [0.13, 0.29, 0.44, 0.60];
+                const box_y = 0.37;
                 for(let i=0;i<4;i++){
                     ctx.save();
                     ctx.font = "bold 68px Arial";
@@ -1435,6 +1425,27 @@
                     break;
                 case 'examine_counter_box_pass4':
                     updateCounterBoxPass(3);
+                    break;
+                case 'examine_counter_box_open': 
+                    // 正解判定
+                    if (gameState.counter.flags.boxPazzuleSolved) {
+                        updateMessage('ロックは解除されている');
+                    } else if (counterBoxPassState.every((v, i) => v === counterBoxPassAnswer[i])) {
+                        // ロック解除イベント
+                        showSparkleEffectAtPercent(50,50);
+                        updateMessage('ロックが解除された');
+                        showModal(
+                            'ロックが解除された',
+                            '',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        showSparkleEffectAtPercent(30,40);
+                        gameState.counter.flags.boxPazzuleSolved = true;
+                        playSE('se-clear'); 
+                    } else {
+                        playSE('se-error');
+                        updateMessage('違うようだ');
+                    }
                     break;
                 case 'examine_counter_back':
                     changeRoom('counter');
@@ -1778,22 +1789,6 @@
             const n = counterBoxPassTexts[idx].length;
             counterBoxPassState[idx] = (counterBoxPassState[idx] + 1) % n;
             renderCanvasRoom();
-            
-            // 正解判定
-            if (counterBoxPassState.every((v, i) => v === counterBoxPassAnswer[i])) {
-                // ロック解除イベント
-                showSparkleEffectAtPercent(50,50);
-                updateMessage('ロックが解除された');
-                showModal(
-                    'ロックが解除された',
-                    '',
-                    [{text: '閉じる', action: 'close'}]
-                );
-                showSparkleEffectAtPercent(30,40);
-                gameState.counter.flags.boxPazzuleSolved = true;
-                playSE('se-clear');
-                
-            }
         }
 
         // アイテム管理
