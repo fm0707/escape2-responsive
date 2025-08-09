@@ -1598,7 +1598,7 @@
                     // 時間判定
                     const start = parseInt(localStorage.getItem('timelock_start') || "0");
                     const now = Date.now();
-                    const tenMin = defaultLockTime * 60 * 1000; // ←10分にしたい場合
+                    const tenMin = defaultLockTime * 60 * 1000; 
 
                     if (start && (now - start) >= tenMin) {
                         closeModal();
@@ -1909,12 +1909,10 @@
             const area = document.getElementById('statusIconArea');
             area.innerHTML = "";
 
-            // 蚊に刺され無効フラグの例
             if (gameState.takeoutArea.flags.bearCoinCnt >= 1) {
                 // アイコン画像または絵文字で表示
                 area.innerHTML += `<div class="status-icon" title="蚊に刺されにくい"><img src="images/8/no_mosquite_icon.png" style="width:18px;height:18px;"></div>`;
             }
-            // 観察力アップ状態例（メガネ所持）
             if (gameState.takeoutArea.flags.bearCoinCnt >= 2) {
                 area.innerHTML += `<div class="status-icon" title="観察力アップ中"><img src="images/8/visible_icon.png" style="width:18px;height:18px;"></div>`;
                 // area.innerHTML += `<div class="status-icon" title="観察力アップ中">👓✨</div>`;
@@ -2005,9 +2003,9 @@
                 // 登録内容は {title, content, buttons, after} オブジェクト
                 let modal = window._nextModal;
                 window._nextModal = null; // クリア
-                if (modal.before) modal.before(); // もしplaySEなど事前処理したければ
+                if (modal.before) modal.before(); 
                 showModal(modal.title, modal.content, modal.buttons);
-                if (modal.after) modal.after(); // もしshowModal直後にやりたいことあれば
+                if (modal.after) modal.after(); 
             }
         }
 
@@ -2063,7 +2061,7 @@
             updateInventoryDisplay();
         }
 
-        let isBGMPlaying = false;   // ←デフォルトは再生してない
+        let isBGMPlaying = false;   
         let isBGMInitialized = false; // 初回クリック判定用
 
         // 初回クリック時にだけBGMを再生
