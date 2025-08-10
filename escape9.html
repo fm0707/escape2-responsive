@@ -1865,16 +1865,21 @@
                     "悲しそうなおばけだ",
                     "地縛霊かな？",
                     "池に未練があるみたいだ",
+                ],
+                reiHappy: [
+                    "『ダイジ…パーツ…』",
+                    "『……』",
+                    "『…』",
                 ]
             },
             desktop: {
                 nisshi: [
-                    "8月18日 お経をあげるフィギュアを作れば、喉も楽になる。  音声も準備、合掌モーションも実装。順調だ。",
+                    "8月18日 お経をあげるフィギュアを作れば、楽ができるんじゃないか？これはいいアイディアだ。音声も準備、合掌モーションも実装。順調だ。",
                     "11月9日 もう半分は完成したようなものだ。これで朝の勤行も午後の法事も、フィギュアに任せられる",
-                    "11月15日 冷却機構が必要だ。池の水を使うのはどうだろうか",
+                    "11月15日 長時間稼働させると熱の問題が発生する。冷却機構が必要だ。池の水を使うのはどうだろうか",
                     "11月16日 池で試運転中、重要パーツを落とした。泥の底だ。探しに潜ったが見つからず、体が冷える…。",
                     "11月17日 今日も潜った。寒い。指先の感覚がない…まだ…終わっていないのに…",
-                    "日誌はここで終わっている…",
+                    "日誌はここで終わっている",
                 ]
             }
         };
@@ -2388,12 +2393,7 @@
                     talkToHintCharacter('engawa','reiSad');
                     break;
                 case 'examine_engawa_rei_happy': 
-                    showModal(
-                            'なにか訴えているみたいだ',
-                            '<img src="images/9/rei_image.png" style="width:300px;display:block;margin:0 auto 20px;">',
-                            [{text: '閉じる', action: 'close'}]
-                        );
-                    updateMessage('なにか訴えているみたいだ');
+                    talkToHintCharacter('engawa','reiHappy');
                     break;
                 case 'examine_engawa_mahoujin': 
                     if (!gameState.engawa.flags.foundJuzu) {
