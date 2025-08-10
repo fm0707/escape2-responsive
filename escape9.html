@@ -2603,6 +2603,10 @@
                         renderCanvasRoom();
                         updateMessage('お数珠をお供えした');
                         checkButsudanState();
+                    } else if (gameState.selectedItem=='praJuzu') {                    
+                        updateMessage('こんなおもちゃはお供えできない');
+                    } else {
+                        updateMessage('お供えの品が置けそうだ');
                     }
                     break;
                 case 'examine_butsudan_sonae_center': 
@@ -2612,6 +2616,8 @@
                         renderCanvasRoom();
                         updateMessage('蓮の花をお供えした');
                         checkButsudanState();
+                    } else {
+                        updateMessage('お供えの品が置けそうだ');
                     }
                     break; 
                 case 'examine_butsudan_sonae_right': 
@@ -2625,6 +2631,8 @@
                         updateMessage('凍ったままでは罰が当たりそうだ…');
                     } else if (gameState.selectedItem=='miyageDango') {
                         updateMessage('これは持って帰りたい…');
+                    } else {
+                        updateMessage('お供えの品が置けそうだ');
                     }
                     break;  
                 case 'examine_butsudan_back': 
@@ -2756,7 +2764,7 @@
             if (!hasDango) lack.push('お団子');
 
             // 1回目は囁きSEを再生
-            if (!gameState.flags.playedDoorWhisper) {
+            if (!gameState.flags.playedDoorWhisper && lack.length>0) {
                 playSE('se-door');
                 gameState.flags.playedDoorWhisper = true;
             }
