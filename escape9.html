@@ -2748,7 +2748,7 @@
 
             if (gameState.selectedItem=='keyExit') {
                 updateMessage('扉の錠が静かに外れた…');
-                removeItem('exitKey');
+                removeItem('keyExit');
                 gameState.openRooms = [];
                 renderNavigation();
                 if (hasItem('miyageDango')) {
