@@ -519,7 +519,7 @@
         <div class="title-wrapper">
             <div class="title">写経部屋からの脱出</div>
             <div style="margin:0 0; text-align:center;">
-                <a href="escape8_hint.html" target="_blank" style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
+                <a href="escape9_hint.html" target="_blank" style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
                     🔍 ヒントを見る
                 </a>
             </div>
@@ -587,6 +587,22 @@
     <audio id="se-login" src="sounds/9/Cyber20-1.mp3"></audio>
 
     <script>
+        // --- Analytics helper ---
+        window.ANA = {
+        start: Date.now(),
+        hintCount: 0,
+        send(ev, params={}) { try { gtag('event', ev, params); } catch(e){} }
+        };
+        window.addEventListener('DOMContentLoaded', () => {
+            const a = document.querySelector('a[href="escape8_hint.html"]');
+            if (a) {
+                a.addEventListener('click', () => {
+                ANA.hintCount++;
+                ANA.send('open_hint', { count: ANA.hintCount });
+                });
+            }
+        });
+
         window._nextModal = null;
         const canvas = document.getElementById('gameCanvas');
         // ゲーム設定 - 画像パスをここで管理
@@ -1962,6 +1978,28 @@
             }
         }
 
+        const END_IDS = new Set(['end','trueEnd']); // 増えたら追記
+
+        const _changeRoom_orig = changeRoom;
+        changeRoom = function(roomId){
+        _changeRoom_orig.apply(this, arguments);
+
+        if (END_IDS.has(roomId)) {
+            const elapsed = Math.round((Date.now() - ANA.start) / 1000);
+            const f = gameState.butsudan.flags;
+            const offerings = (f.setJuzu?1:0)+(f.setHasu?1:0)+(f.setDango?1:0);
+
+            const isTrue = (roomId === 'trueEnd');
+            ANA.send('ending_reached', {
+            ending_id: roomId,
+            is_true: isTrue,
+            elapsed_sec: elapsed,
+            hints: ANA.hintCount,
+            offerings
+            });
+        }
+        }
+
 
         function renderCanvasRoom() {
             const canvas = document.getElementById('gameCanvas');
@@ -2826,10 +2864,12 @@
                 playSE('se-login');
                 renderCanvasRoom();
                 updateMessage('PCにログインした');
+                ANA.send('pc_login_success', {});
 
             } else {
                 playSE('se-error');
                 updateMessage('ログインできませんでした');
+                ANA.send('pc_login_failed', {});
             }
         }
 
