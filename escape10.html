@@ -1991,7 +1991,7 @@
                 }
 
                 case 'examine_ticket_btn_enter': {
-                    if (gameState.ticket.flags.machineOrderEnabled) {
+                    if (gameState.ticket.flags.machineOrderEnabled && !gameState.ticket.flags.machineOrderSolved) {
                         updateMessage('ボタンが押せない');
                         return;
                     }
