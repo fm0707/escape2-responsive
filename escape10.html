@@ -2474,7 +2474,7 @@
             if (gameState.ticket.flags.adminMode) {
                 console.log('adminmode');
                 handleAdminPress(BTN_IDS[idx]);
-            } else if (gameState.ticket.flags.machineOrderEnabled) {
+            } else if (gameState.ticket.flags.machineOrderEnabled && !gameState.ticket.flags.machineOrderSolved) {
                 // 2回目：押し順モード（RAMENLUCK）
                 console.log('ordermode');
                 handleMachinePress(idx);
