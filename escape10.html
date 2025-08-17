@@ -517,7 +517,7 @@
     <div id="roomEffectOverlay"></div>
     <div class="game-container">
         <div class="title-wrapper">
-            <div class="title">写経部屋からの脱出</div>
+            <div class="title">ラーメン屋さんからの脱出</div>
             <div style="margin:0 0; text-align:center;">
                 <a href="escape10_hint.html" target="_blank" style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
                     🔍 ヒントを見る
@@ -1079,15 +1079,19 @@
                         },
                     },
                     {
+                        x: 69.9, y: 44.5, width: 9.8, height: 11.6,
+                        action: 'examine_counter_chomiryo',
+                        description: '調味料',
+                        zIndex:1, 
+                        
+                    },
+                    {
                         x: 79.4, y: 39.3, width: 10.0, height: 18.9,
                         action: 'examine_counter_waribashi',
                         description: 'わりばし',
                         zIndex:1, 
                         usable: () => true,
-                        item: {
-                            img: 'koushi',   
-                            visible: () => true, 
-                        },
+                        
                     },
                     {
                         x: 37.7, y: 23.7, width: 10.6, height: 8.9,
@@ -1095,10 +1099,7 @@
                         description: 'どんぶり',
                         zIndex:1, 
                         usable: () => true,
-                        item: {
-                            img: 'koushi',   
-                            visible: () => true, 
-                        },
+                       
                     },
                     {
                         x: 58.4, y: 36.0, width: 10.6, height: 16.5,
@@ -1106,10 +1107,7 @@
                         description: '冷水ポット',
                         zIndex:1, 
                         usable: () => true,
-                        item: {
-                            img: 'koushi',   
-                            visible: () => true, 
-                        },
+                        
                     },
                 ]
             },
@@ -1802,10 +1800,10 @@
                     const pad = Math.min(w, h) * 0.12;                 // ちょい内側に余白
                     const fontSize = Math.floor((h - pad * 2) * 0.75); 
                     let text;
-                    if (!gameState.ticket.flags.machineOrderEnabled) {
-                        text = `${gameState.ticket.flags.total || 0}`;
-                    } else if (gameState.ticket.flags.adminMode) {
+                    if (gameState.ticket.flags.adminMode) {
                         text = 'ADMIN'
+                    } else if (!gameState.ticket.flags.machineOrderEnabled) {
+                        text = `${gameState.ticket.flags.total || 0}`;
                     } else if (gameState.ticket.flags.machineOrderEnabled) {
                         text = gameState.machineProgress;
                     }
@@ -2051,6 +2049,7 @@
                         gameState.ticket.flags.adminMode = true;
                         gameState.ticket.flags.adminSeq = [];
                         gameState.ticket.flags.adminUnlocked = true;
+                        ticketClear();
                         playSE && playSE('se-cyber');
                         updateMessage('カードのQRを読み取った…アドミンモードが起動した！');
                         renderCanvasRoom();
@@ -2195,7 +2194,9 @@
                         updateMessage('もういらないな');
                     }
                     break;
-
+                case 'examine_counter_chomiryo':
+                    updateMessage('醤油、タレなどが並んでいる');
+                    break;
                 // kitchen
                 case 'examine_kitchen_shelf':
                     showModal(
@@ -2500,11 +2501,9 @@
             updateMessage(TICKET_ITEMS[id]?.label || '…');
             playSE('se-pi');
             if (gameState.ticket.flags.adminMode) {
-                console.log('adminmode');
                 handleAdminPress(BTN_IDS[idx]);
             } else if (gameState.ticket.flags.machineOrderEnabled && !gameState.ticket.flags.machineOrderSolved) {
                 // 2回目：押し順モード（RAMENLUCK）
-                console.log('ordermode');
                 handleMachinePress(idx);
             } else {
                 // 1回目：選択トグル（777チャレンジ）
@@ -2562,6 +2561,7 @@
         }
 
         function handleAdminPress(id){ // id は 'shio' などの商品ID
+            if (gameState.openRooms.includes('storageHidden')) return;
             ensureTicketState();
             const f = gameState.ticket.flags;
             if (!f.adminMode) return false;   // 通常モードは素通り
