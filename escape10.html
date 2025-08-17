@@ -594,6 +594,30 @@
                 });
             }
         });
+        window.ANA = Object.assign(window.ANA || {}, {
+            sid: Math.random().toString(36).slice(2),
+            sent: new Set(),
+            baseParams() {
+                return {
+                elapsed_sec: Math.round((Date.now() - this.start) / 1000),
+                hints: this.hintCount || 0,
+                save_version: (typeof SAVE_VERSION === 'number' ? SAVE_VERSION : null),
+                room: (window.gameState && gameState.currentRoom) || null,
+                sid: this.sid,
+                };
+            },
+            once(ev, key = '', params = {}) {
+                const k = `${ev}:${key}`;
+                if (this.sent.has(k)) return;
+                this.sent.add(k);
+                this.send(ev, { ...this.baseParams(), ...params });
+            }
+            });
+
+        // 汎用マイルストーン送信用ヘルパ
+        function markProgress(step, extra = {}) {
+            ANA.once('progress', step, { step, ...extra });
+        }
 
         window._nextModal = null;
         const canvas = document.getElementById('gameCanvas');
@@ -1979,6 +2003,7 @@
                     const t = gameState.ticket.flags.total || 0;
 
                     if (t === 777) {
+                        markProgress('ticket_machine_777_solved');
                         removeItem('discount');
                         playSE('se-777');
                         updateMessage('🎉 777！取り出し口に何か出てきた…');
@@ -2056,6 +2081,7 @@
 
                         renderCanvasRoom();
                     } else if (gameState.ticket.flags.machineOrderSolved && !gameState.ticket.flags.haveTempMemo) {
+                        markProgress('ticket_machine_order_solved');
                         updateMessage('何かのメモを手に入れた');
                         addItem('hintPaperTemp');
                         gameState.ticket.flags.haveTempMemo = true;
@@ -2554,6 +2580,7 @@
                         f.adminSeq[2]==='nori');
 
             if (ok) {
+                markProgress('ticket_machine_admin_solved');
                 f.adminMode = false; // 1回きりにするならOFF
                 playSE && playSE('se-open');
                 updateMessage('隠し部屋が開いた…！');
