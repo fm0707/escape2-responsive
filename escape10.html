@@ -2349,18 +2349,7 @@
                     }
                     break; 
                 case 'examine_storage_bear':
-                    if (!gameState.flags.trueEndUnlocked) {
-                        talkToHintCharacter('storage', 'bear');
-                    } else if (gameState.flags.trueEndUnlocked && !gameState.flags.getMiyage) {
-                        // お土産
-                        showModal(
-                            'ボク、心の目で見てたよ。これあげる',
-                            '<img src="images/10/ramen.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
-                            [{text: '閉じる', action: 'close'}]
-                        );
-                        gameState.flags.getMiyage = true;
-                        addItem('ramen');
-                    } else if(gameState.selectedItem=='keyExit') {
+                    if(gameState.selectedItem=='keyExit') {
                         updateMessage('面白い鍵だね');
                     } else if(gameState.selectedItem=='donburiWater') {
                         updateMessage('ボク妖精だからお水飲まなくていいんだ');
@@ -2368,7 +2357,18 @@
                         updateMessage('つついたら怒るよ');
                     } else if(gameState.selectedItem=='ramen') {
                         updateMessage('きっとおいしいよ。ボクコラボなの');
-                    } else {
+                    } else if (!gameState.flags.trueEndUnlocked) {
+                        talkToHintCharacter('storage', 'bear');
+                    } else if (gameState.flags.trueEndUnlocked && !gameState.flags.getMiyage) {
+                        // お土産
+                        showModal(
+                            'ボク、心の目で見てたよ。これあげる',
+                            '<img src="images/10/bear_ramen.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
+                        gameState.flags.getMiyage = true;
+                        addItem('ramen');
+                    } else  { 
                         updateMessage('気を付けて帰ってね');
                     }
                     break; 
@@ -2664,11 +2664,11 @@
                 <div style="display:flex;gap:12px;justify-content:center;align-items:flex-end;flex-wrap:wrap">
                 <label style="display:flex;flex-direction:column;align-items:center;">
                     <span>温度(℃)</span>
-                    <input type="number" class="puzzle-input" id="konroTemp" placeholder="0〜120" min="0" max="120" step="1" value="${temp}">
+                    <input type="number" class="puzzle-input" id="konroTemp" placeholder="0〜120直接入力可" min="0" max="120" step="1" value="${temp}">
                 </label>
                 <label style="display:flex;flex-direction:column;align-items:center;">
                     <span>時間(分)</span>
-                    <input type="number" class="puzzle-input" id="konroTime" placeholder="0〜30"  min="0" max="30"  step="1" value="${time}">
+                    <input type="number" class="puzzle-input" id="konroTime" placeholder="0〜30直接入力可"  min="0" max="30"  step="1" value="${time}">
                 </label>
                 </div>
                 <br>
