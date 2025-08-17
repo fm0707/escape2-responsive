@@ -2360,6 +2360,14 @@
                         );
                         gameState.flags.getMiyage = true;
                         addItem('ramen');
+                    } else if(gameState.selectedItem=='keyExit') {
+                        updateMessage('面白い鍵だね');
+                    } else if(gameState.selectedItem=='donburiWater') {
+                        updateMessage('ボク妖精だからお水飲まなくていいんだ');
+                    } else if(gameState.selectedItem=='waribashi') {
+                        updateMessage('つついたら怒るよ');
+                    } else if(gameState.selectedItem=='ramen') {
+                        updateMessage('きっとおいしいよ。ボクコラボなの');
                     } else {
                         updateMessage('気を付けて帰ってね');
                     }
