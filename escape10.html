@@ -2521,6 +2521,7 @@
                 if (gameState.machineProgress >= gameState.machineOrder.length){
                     // クリア：温度メモ排出
                     gameState.ticket.flags.machineOrderSolved = true;
+                    playSE('se-gacha');
                     updateMessage('カシャン…');
                     startPrizeBlink && startPrizeBlink(1000);
                 }
