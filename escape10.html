@@ -576,6 +576,7 @@
     <audio id="se-open" src="sounds/10/Short_Accent09-1(Dry).mp3"></audio>
     <audio id="se-change" src="sounds/10/Scene_Change02-1(Up).mp3"></audio>
     <audio id="se-777" src="sounds/10/Winning_Bell01-05(Gentle).mp3"></audio>
+    <audio id="se-remove" src="sounds/10/Hand-Foley01-1(Rub).mp3"></audio>
 
     <script>
         // --- Analytics helper ---
@@ -2375,6 +2376,7 @@
                         if (gameState.refrigerator.flags.foundTimeMemo)removeItem('waribashi');
                         gameState.storageHidden.flags.removeSpider = true;
                         renderCanvasRoom();
+                        playSE('se-remove');
                         updateMessage('割りばしでクモの巣を取り除いた');
                     } else {
                         updateMessage('すごいクモの巣だ…素手では触りたくない');
@@ -2429,8 +2431,8 @@
                         }
 
                         showModal(
-                        '供養が完了した',
-                        '…「ありがとう」\nかすかな声がした。',
+                        'お水を供えた',
+                        '…「ありがとう」\nかすかな声がしたきがする',
                         [{ text:'閉じる', action:'close' }]
                         );
                         renderCanvasRoom();
