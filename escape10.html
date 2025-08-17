@@ -1802,7 +1802,7 @@
                     let text;
                     if (gameState.ticket.flags.adminMode) {
                         text = 'ADMIN'
-                    } else if (!gameState.ticket.flags.machineOrderEnabled) {
+                    } else if (!gameState.ticket.flags.machineOrderEnabled || gameState.ticket.flags.machineOrderSolved) {
                         text = `${gameState.ticket.flags.total || 0}`;
                     } else if (gameState.ticket.flags.machineOrderEnabled) {
                         text = gameState.machineProgress;
