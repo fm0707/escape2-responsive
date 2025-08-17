@@ -1845,7 +1845,6 @@
                     // 点滅条件：景品が出現中、未取得、かつ点滅中フラグON
                     const now = Date.now();
                     const shouldBlink = f.prizeReady && !f.prizeCollected && f.prizeBlinkOn && now < f.prizeBlinkUntil;
-                    console.log(shouldBlink);
 
                     if (shouldBlink ? f.prizeBlinkPhase : false) {
                         // “光る枠”を太めに描く
@@ -2538,7 +2537,6 @@
 
         // 券売機2回目の判定
         function handleMachinePress(idx){
-            console.log('handleMachinePress' + gameState.ticket.flags.machineOrderEnabled);
             if (!gameState.ticket.flags.machineOrderEnabled) return;         
 
             const need = gameState.machineOrder[gameState.machineProgress || 0];
