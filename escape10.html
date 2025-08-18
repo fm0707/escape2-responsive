@@ -2650,11 +2650,11 @@
                 <div style="display:flex;gap:12px;justify-content:center;align-items:flex-end;flex-wrap:wrap">
                 <label style="display:flex;flex-direction:column;align-items:center;">
                     <span>温度(℃)</span>
-                    <input type="number" class="puzzle-input" id="konroTemp" placeholder="0〜120直接入力可" min="0" max="120" step="1" value="${temp}">
+                    <input type="text" class="puzzle-input" id="konroTemp" placeholder="数字" value="${temp}">
                 </label>
                 <label style="display:flex;flex-direction:column;align-items:center;">
                     <span>時間(分)</span>
-                    <input type="number" class="puzzle-input" id="konroTime" placeholder="0〜30直接入力可"  min="0" max="30"  step="1" value="${time}">
+                    <input type="text" class="puzzle-input" id="konroTime" placeholder="数字"  value="${time}">
                 </label>
                 </div>
                 <br>
@@ -2667,15 +2667,15 @@
 
         // コンロパズルの答えをチェック
         function checkKonroPuzzle() {
-            const t = Number(document.getElementById('konroTemp').value);
-            const m = Number(document.getElementById('konroTime').value);
+            const t = document.getElementById('konroTemp').value;
+            const m = document.getElementById('konroTime').value;
 
             // 入力値を保持（不正解でも残す）
-            gameState.kitchen.flags.konroTemp = Number.isNaN(t)? null : t;
-            gameState.kitchen.flags.konroTime = Number.isNaN(m)? null : m;
+            gameState.kitchen.flags.konroTemp = t;
+            gameState.kitchen.flags.konroTime = m;
 
             // 正解は 92℃・8分（ヒント紙） 
-            if (t === 92 && m === 8) {
+            if ((t === '92' || t ==='９２') && (m === '8' || m ==='８')) {
                 closeModal();
                 gameState.kitchen.flags.konroSolved = true;
                 showModal('設定完了', '', [{text:'閉じる', action:'close'}]);
