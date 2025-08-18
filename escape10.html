@@ -2252,6 +2252,8 @@
                 case 'examine_kitchen_right_handle':
                     if (gameState.kitchen.flags.refrigeratorPuzzleSolved) {
                         changeRoom('refrigerator');
+                    } else {
+                        updateMessage('開かない');
                     }
                     break;    
                 case 'examine_kitchen_right_left':
@@ -2360,6 +2362,7 @@
                         );
                         gameState.flags.getMiyage = true;
                         addItem('ramen');
+                        updateMessage('変わった袋麺をもらった');
                     } else  { 
                         updateMessage('気を付けて帰ってね');
                     }
@@ -2462,7 +2465,7 @@
                     updateMessage('あなたはラーメン屋さんから無事に脱出しました。（ノーマルエンド）');
                     break; 
                 case 'examine_true_end':
-                    updateMessage('あなたは弔いを完了させ、ラーメン屋さんから脱出しました。（トゥルーエンド）');
+                    updateMessage('あなたはかわいそうな植物を救い、ラーメン屋さんから脱出しました。（トゥルーエンド）');
                     break; 
                 case 'examine_ramen_end':
                     updateMessage('あなたはラーメン屋さんからお土産付きで脱出しました。（トゥルー+エンド）');
