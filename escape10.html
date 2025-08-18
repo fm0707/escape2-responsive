@@ -577,6 +577,7 @@
     <audio id="se-change" src="sounds/10/Scene_Change02-1(Up).mp3"></audio>
     <audio id="se-777" src="sounds/10/Winning_Bell01-05(Gentle).mp3"></audio>
     <audio id="se-remove" src="sounds/10/Hand-Foley01-1(Rub).mp3"></audio>
+    <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
 
     <script>
         // --- Analytics helper ---
@@ -654,8 +655,8 @@
                 storageFront: [
                     'images/10/storage_front.png',
                 ],
-                storageHidden: [
-                    'images/10/storage_hidden.png',
+                masterRoom: [
+                    'images/10/master_room.jpg',
                 ],
                 end: ['images/10/end.png'],
                 trueEnd: ['images/10/true_end.jpg'],
@@ -698,6 +699,8 @@
                 light: 'images/10/light.png',
                 ramen: 'images/10/ramen.jpg',
                 spider: 'images/10/spider.png',
+                driedGreen: 'images/10/green_dried.png',
+                green: 'images/10/green.png',
   
             }
         };
@@ -747,7 +750,7 @@
             refrigeratorLock: { flags: {  } },
             storage: { flags: { locked: true, putDonburi: false, foundBear: false, safeSolved: false} },
             storageFront: { flags: {  } },
-            storageHidden: { flags: { purified:false, removeSpider: false } },
+            masterRoom: { flags: { purified:false, removeSpider: false, foundCoin: false } },
             endings: { normal:false, true:false },
             flags: { trueEndUnlocked: false,  getMiyage: false},
             selectedItem: null,
@@ -1443,82 +1446,64 @@
                     
                 ]
             },
-            storageHidden: {
-                name: '隠し倉庫',
-                description: '隠し倉庫だ',
+            masterRoom: {
+                name: '店主の部屋',
+                description: 'デスクがある',
                 clickableAreas: [
                     {
-                        x: 17.9, y: 40.1, width: 12.4, height: 10.9,
-                        action: 'examine_storage_hidden_msg',
+                        x: 1.6, y: 67.7, width: 33.2, height: 14.7,
+                        action: 'examine_master_room_msg',
                         description: 'メッセージ',
-                        zIndex:5,
-                        usable: () => gameState.storageHidden.flags.removeSpider,
+                        usable: () => true,
                     },
                     {
-                        x: 16.5, y: 37.9, width: 56.1, height: 40.7,
-                        action: 'examine_storage_hidden_spider',
-                        description: 'クモの巣',
-                        zIndex:5,
-                        usable: () => !gameState.storageHidden.flags.removeSpider,
-                        item: {
-                            img: 'spider',   
-                            visible: () => !gameState.storageHidden.flags.removeSpider, 
-                        },
-                    },
-                    {
-                        x: 31.2, y: 50.5, width: 28.6, height: 20.1,
-                        action: 'examine_storage_hidden_skeleton',
-                        description: 'がいこつ',
+                        x: 47.9, y: 38.9, width: 21.6, height: 38.5,
+                        action: 'examine_master_room_dried_green',
+                        description: '枯れた植物',
                         zIndex:1,
+                        usable: () => !gameState.masterRoom.flags.purified,
+                        item: {
+                            img: 'driedGreen',   
+                            visible: () => !gameState.masterRoom.flags.purified, 
+                        },
                         
                     },
                     {
-                        x: 37.2, y: 28.0, width: 20.0, height: 40.5,
-                        action: 'examine_storage_hidden_skeleton_light',
-                        description: 'がいこつの光',
-                        zIndex:5,
-                        usable: () => false,
+                        x: 47.9, y: 38.9, width: 21.6, height: 38.5,
+                        action: 'examine_master_room_green',
+                        description: '植物',
+                        zIndex:1,
+                        usable: () => gameState.masterRoom.flags.purified,
                         item: {
-                            img: 'light',   
-                            visible: () => gameState.storageHidden.flags.purified, 
+                            img: 'green',   
+                            visible: () => gameState.masterRoom.flags.purified, 
                         },
                     },
                     {
-                        x: 67.8, y: 60.4, width: 8.2, height: 6.9,
-                        action: 'examine_storage_hidden_coin',
+                        x: 43.9, y: 48.8, width: 32.1, height: 25.1,
+                        action: 'examine_master_room_spider',
+                        description: 'クモの巣',
+                        zIndex:5,
+                        usable: () => !gameState.masterRoom.flags.removeSpider,
+                        item: {
+                            img: 'spider',   
+                            visible: () => !gameState.masterRoom.flags.removeSpider, 
+                        },
+                    },
+                    {
+                        x: 62.7, y: 80.7, width: 3.3, height: 3.3,
+                        action: 'examine_master_room_coin',
                         description: 'コイン',
-                        zIndex:5,
+                        zIndex:1,
+                        usable: () => gameState.masterRoom.flags.purified && !gameState.masterRoom.flags.foundCoin,
+                        item: {
+                            img: 'coin',   
+                            visible: () => gameState.masterRoom.flags.purified && !gameState.masterRoom.flags.foundCoin, 
+                        },
                     },
-                    {
-                        x: 18.9, y: 66.5, width: 11.6, height: 8.5,
-                        action: 'examine_storage_hidden_dai',
-                        description: '?',
-                        zIndex:5,
-                        usable: () => gameState.storageHidden.flags.removeSpider,
-                        item: {
-                            img: 'donburiWater',   
-                            visible: () => gameState.storageHidden.flags.purified, 
-                        },
-                    }
+                    
                 ]
             },
-            entrancePoster: {
-                name: '何かの絵',
-                description: '',
-                clickableAreas: [
-                    {
-                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
-                        action: 'examine_entrance_poster_back',
-                        description: '戻る',
-                        zIndex:5,
-                        item: {
-                            img: 'back',   
-                            visible: () => true, 
-                        },
-                    },  
-                ]
-            },
-            
             end: {
                 name: '脱出成功',
                 description: 'おめでとうございます！',
@@ -1559,7 +1544,16 @@
                 bear: [
                 "呼んだ？",
                 "このラーメン屋さん、もう営業してないよ",
-                "昔、神隠しがあって寂れちゃったんだ",
+                "店長さんが夜逃げしちゃったんだ",
+                ]
+            },
+            masterRoom: {
+                msg: [
+                "今日も負け。取り返せると思ったのに、また借りを増やした",
+                "777さえ揃えば…",
+                "うっぷんが溜まってつい券売機を改造してしまった",
+                "外であやしい連中が従業員を捕まえて、俺の居場所を聞いてきたらしい",
+                "もう長くは持たない。ここを出る時が来た"
                 ]
             },
             
@@ -1707,9 +1701,6 @@
             } else if (roomId === "ramenEnd") {
                 changeBGM("sounds/10/aosora.mp3");
                 gameState.openRooms = [];
-                renderNavigation();
-            } else if (roomId === "storageHidden") {
-                changeBGM("sounds/10/distopia.mp3");
                 renderNavigation();
             } else {
                 changeBGM("sounds/10/choda.mp3");
@@ -2272,7 +2263,7 @@
                         addItem('hintPaperTime');
                         updateMessage('割りばしでメモを落とした');
                         gameState.refrigerator.flags.foundTimeMemo = true;
-                        if (gameState.storageHidden.flags.removeSpider) {
+                        if (gameState.masterRoom.flags.removeSpider) {
                             removeItem('waribashi');
                         }
                         renderCanvasRoom();
@@ -2359,10 +2350,11 @@
                         updateMessage('きっとおいしいよ。ボクコラボなの');
                     } else if (!gameState.flags.trueEndUnlocked) {
                         talkToHintCharacter('storage', 'bear');
-                    } else if (gameState.flags.trueEndUnlocked && !gameState.flags.getMiyage) {
+                    } else if (gameState.flags.trueEndUnlocked && !gameState.flags.getMiyage && gameState.selectedItem=='coin') {
                         // お土産
+                        removeItem('coin');
                         showModal(
-                            'ボク、心の目で見てたよ。これあげる',
+                            'ありがとう！これあげる',
                             '<img src="images/10/bear_ramen.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
@@ -2404,11 +2396,12 @@
                 case 'examine_storage_front_right': 
                     changeRoom('dining');
                     break;
-                // storageHidden
-                case 'examine_storage_hidden_spider': 
+                
+                // masterRoom
+                case 'examine_master_room_spider': 
                     if (gameState.selectedItem=='waribashi') {
                         if (gameState.refrigerator.flags.foundTimeMemo)removeItem('waribashi');
-                        gameState.storageHidden.flags.removeSpider = true;
+                        gameState.masterRoom.flags.removeSpider = true;
                         renderCanvasRoom();
                         playSE('se-remove');
                         updateMessage('割りばしでクモの巣を取り除いた');
@@ -2416,46 +2409,23 @@
                         updateMessage('すごいクモの巣だ…素手では触りたくない');
                     }
                     break;
-                case 'examine_storage_hidden_msg': 
-                    showModal(
-                        '',
-                        '<img src="images/10/msg.png" style="width:300px;display:block;margin:0 auto 20px;">',
-                        [{text: '閉じる', action: 'close'}]
-                    );
+                case 'examine_master_room_msg': 
+                    talkToHintCharacter('masterRoom', 'msg');
                     break;
-                case 'examine_storage_hidden_skeleton': 
-                    if (!gameState.storageHidden.flags.removeSpider) {
+                case 'examine_master_room_dried_green': 
+                    if (!gameState.masterRoom.flags.removeSpider) {
 
-                    } else if (!gameState.storageHidden.flags.removeSpider && gameState.selectedItem=='waribashi') {
+                    } else if (!gameState.masterRoom.flags.removeSpider && gameState.selectedItem=='waribashi') {
                         updateMessage('クモの巣を取り除いた');
                         removeItem('waribashi');
                         renderCanvasRoom();
-                    }
-                    else if (gameState.storageHidden.flags.purified) {
-                        updateMessage('安らかな気配が漂っている');
-                    } else {
-                        updateMessage('返事がない…');
-                    }
-                    break;
-                case 'examine_storage_hidden_coin': 
-                    updateMessage('コインが落ちている');
-                    break;
-                case 'examine_storage_hidden_dai': {
-                    const sel = gameState.selectedItem;
-
-                    // 既に成仏済み
-                    if (gameState.storageHidden?.flags?.purified) {
-                        updateMessage('静かな気配だけが残っている。');
-                        break;
-                    }
-
-                    // 正解：水入りどんぶりを供える
-                    if (sel === 'donburiWater') {
-                        // 消費→空どんぶり返却
+                    } else if (gameState.selectedItem === 'donburiWater') {
+                        
                         removeItem && removeItem('donburiWater');
+                        addItem('donburi');
 
                         // フラグ更新
-                        gameState.storageHidden.flags.purified = true;
+                        gameState.masterRoom.flags.purified = true;
                         gameState.flags.trueEndUnlocked = true;   // トゥルー解禁
 
                         const overlay = document.getElementById('roomEffectOverlay');
@@ -2463,18 +2433,31 @@
                             overlay.style.opacity = '1';
                             setTimeout(() => overlay.style.opacity = '0', 450);
                         }
+                        playSE('se-coin');
 
                         showModal(
-                        'お水を供えた',
-                        '…「ありがとう」\nかすかな声がしたきがする',
+                        'お水をあげた',
+                        '…「ありがとう」\nかすかな声がしたきがする（チリーン…）',
                         [{ text:'閉じる', action:'close' }]
                         );
                         renderCanvasRoom();
                     } else {
-                        updateMessage('何かを置けそうだ。');
+                        updateMessage('枯れかけている…');
                     }
                     break;
-}
+                case 'examine_master_room_green': 
+                    if (gameState.masterRoom.flags.purified) {
+                        updateMessage('生き生きとしている');
+                    } 
+                    break;
+                case 'examine_master_room_coin': 
+                    if (!gameState.masterRoom.flags.foundCoin) {
+                        addItem('coin');
+                        updateMessage('クマコインを手に入れた');
+                        gameState.masterRoom.flags.foundCoin = true;
+                    }
+                    break;
+                
                 case 'examine_end':
                     updateMessage('あなたはラーメン屋さんから無事に脱出しました。（ノーマルエンド）');
                     break; 
@@ -2567,7 +2550,7 @@
         }
 
         function handleAdminPress(id){ // id は 'shio' などの商品ID
-            if (gameState.openRooms.includes('storageHidden')) return;
+            if (gameState.openRooms.includes('masterRoom')) return;
             ensureTicketState();
             const f = gameState.ticket.flags;
             if (!f.adminMode) return false;   // 通常モードは素通り
@@ -2590,9 +2573,8 @@
                 f.adminMode = false; // 1回きりにするならOFF
                 playSE && playSE('se-open');
                 updateMessage('隠し部屋が開いた…！');
-                if (!gameState.openRooms.includes('storageHidden')) gameState.openRooms.push('storageHidden');
+                if (!gameState.openRooms.includes('masterRoom')) gameState.openRooms.push('masterRoom');
                 renderNavigation();
-                // changeRoom('storageHidden');
                 return true;
             }
             return false;
