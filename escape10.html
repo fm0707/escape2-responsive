@@ -1462,7 +1462,7 @@
                         action: 'examine_master_room_dried_green',
                         description: '枯れた植物',
                         zIndex:1,
-                        usable: () => !gameState.masterRoom.flags.purified,
+                        usable: () => !gameState.masterRoom.flags.purified && gameState.masterRoom.flags.removeSpider,
                         item: {
                             img: 'driedGreen',   
                             visible: () => !gameState.masterRoom.flags.purified, 
