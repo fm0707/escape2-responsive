@@ -706,7 +706,7 @@
         };
 
 
-        let refrigeratorPassState = [1,1,1,1,1,1];
+        // let refrigeratorPassState = [1,1,1,1,1,1];
         // 正解パターン
 
         const refrigeratorPassAnswer = [3,1,2,4,0,0];
@@ -755,7 +755,8 @@
             flags: { trueEndUnlocked: false,  getMiyage: false},
             selectedItem: null,
             machineOrder: [], 
-            machineProgress : 0
+            machineProgress : 0,
+            refrigeratorPassState :[1,1,1,1,1,1]
         };
         }
 
@@ -1870,7 +1871,7 @@
                     for (let j=0;j<3;j++){
                         ctx.save();
                         if (i>0) tmpI = 3;
-                        const img = refrigeratorPassImages[tmpI+j][refrigeratorPassState[tmpI+j]];
+                        const img = refrigeratorPassImages[tmpI+j][gameState.refrigeratorPassState[tmpI+j]];
                         if (img && img.complete) {
                             
                             ctx.drawImage(img, box_x[i], box_y[j], 136, 136);
@@ -2731,10 +2732,10 @@
         function updaterefrigeratorPass(idx) {
             if (gameState.kitchen.flags.refrigeratorPuzzleSolved) return;
             const n = refrigeratorPassImages[idx].length;
-            refrigeratorPassState[idx] = (refrigeratorPassState[idx] + 1) % n;
+            gameState.refrigeratorPassState[idx] = (gameState.refrigeratorPassState[idx] + 1) % n;
             renderCanvasRoom();
             // 正解判定
-            if (refrigeratorPassState.every((v, i) => v === refrigeratorPassAnswer[i])) {
+            if (gameState.refrigeratorPassState.every((v, i) => v === refrigeratorPassAnswer[i])) {
                 // ロック解除イベント
                 gameState.kitchen.flags.refrigeratorPuzzleSolved = true;
                 gameState.ticket.flags.machineOrderEnabled = true;
