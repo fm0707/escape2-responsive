@@ -678,7 +678,7 @@
                 posterWorker: 'images/10/poster_worker.png',
                 posterUmami: 'images/10/poster_umami.png',
                 posterRecruit: 'images/10/poster_recruit.png',
-                posterAdmin: 'images/10/poster_admin.png',
+                posterRamen: 'images/10/poster_ramen.png',
                 menu: 'images/10/menu.png',
                 menuTopping: 'images/10/menu_topping.png',
                 discount: 'images/10/discount.png',
@@ -1078,7 +1078,7 @@
                         zIndex:1, 
                         usable: () => true,
                         item: {
-                            img: 'posterAdmin',   
+                            img: 'posterRamen',   
                             visible: () => true, 
                         },
                     },
@@ -2136,12 +2136,6 @@
                     updateMessage('ポスターだ');
                     break;
                 case 'examine_counter_poster6':
-                    showModal(
-                        '',
-                        '<img src="images/10/poster_admin.png" style="width:300px;display:block;margin:0 auto 20px;">',
-                        [{text: '閉じる', action: 'close'}]
-                    );
-                    updateMessage('ポスターだ');
                     updateMessage('ポスターだ');
                     break;
                 case 'examine_counter_water':
