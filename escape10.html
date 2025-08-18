@@ -1322,7 +1322,7 @@
                 description: '冷蔵庫内部だ',
                 clickableAreas: [
                     {
-                        x: 36.1, y: 20.8, width: 10.0, height: 2.0,
+                        x: 36.1, y: 20.8, width: 10.0, height: 4.0,
                         action: 'examine_refrigerator_paper',
                         description: '',
                         zIndex:1, 
@@ -2466,6 +2466,7 @@
                         addItem('coin');
                         updateMessage('クマコインを手に入れた');
                         gameState.masterRoom.flags.foundCoin = true;
+                        renderCanvasRoom();
                     }
                     break;
                 
