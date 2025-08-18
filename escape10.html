@@ -2587,6 +2587,7 @@
                 updateMessage('隠し部屋が開いた…！');
                 if (!gameState.openRooms.includes('masterRoom')) gameState.openRooms.push('masterRoom');
                 renderNavigation();
+                renderCanvasRoom();
                 return true;
             }
             return false;
