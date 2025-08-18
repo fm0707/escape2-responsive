@@ -1546,6 +1546,11 @@
                 "呼んだ？",
                 "このラーメン屋さん、もう営業してないよ",
                 "店長さんが夜逃げしちゃったんだ",
+                ],
+                bear2: [
+                "店長さん、今頃どうしてるかな",
+                "ラーメン、評判良かったんだよ",
+                "ボクはとんこつが好き！",
                 ]
             },
             masterRoom: {
@@ -2364,6 +2369,8 @@
                         gameState.flags.getMiyage = true;
                         addItem('ramen');
                         updateMessage('変わった袋麺をもらった');
+                    } else if (gameState.flags.trueEndUnlocked) { 
+                        talkToHintCharacter('storage', 'bear2');
                     } else  { 
                         updateMessage('気を付けて帰ってね');
                     }
