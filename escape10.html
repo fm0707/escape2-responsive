@@ -2180,7 +2180,7 @@
                     if (!gameState.counter.flags.foundWaribashi) {
                         addItem('waribashi');
                         gameState.counter.flags.foundWaribashi = true;
-                        updateMessage('割りばしを手に入れた');
+                        updateMessage('わりばしを手に入れた');
                     } else {
                         updateMessage('もういらないな');
                     }
@@ -2264,7 +2264,7 @@
                 case 'examine_refrigerator_paper': 
                     if (!gameState.refrigerator.flags.foundTimeMemo && gameState.selectedItem=='waribashi') {
                         addItem('hintPaperTime');
-                        updateMessage('割りばしでメモを落とした');
+                        updateMessage('わりばしでメモを落とした');
                         gameState.refrigerator.flags.foundTimeMemo = true;
                         if (gameState.masterRoom.flags.removeSpider) {
                             removeItem('waribashi');
@@ -2408,7 +2408,7 @@
                         gameState.masterRoom.flags.removeSpider = true;
                         renderCanvasRoom();
                         playSE('se-remove');
-                        updateMessage('割りばしでクモの巣を取り除いた');
+                        updateMessage('わりばしでクモの巣を取り除いた');
                     } else {
                         updateMessage('すごいクモの巣だ…素手では触りたくない');
                     }
