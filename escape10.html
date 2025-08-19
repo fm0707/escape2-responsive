@@ -1458,7 +1458,7 @@
                         usable: () => true,
                     },
                     {
-                        x: 47.9, y: 38.9, width: 21.6, height: 38.5,
+                        x: 46.9, y: 38.9, width: 22.6, height: 38.5,
                         action: 'examine_master_room_dried_green',
                         description: '枯れた植物',
                         zIndex:1,
@@ -1470,7 +1470,7 @@
                         
                     },
                     {
-                        x: 47.9, y: 38.9, width: 21.6, height: 38.5,
+                        x: 46.9, y: 35.9, width: 20.6, height: 41.5,
                         action: 'examine_master_room_green',
                         description: '植物',
                         zIndex:1,
@@ -1559,7 +1559,8 @@
                 "777さえ揃えば…",
                 "うっぷんが溜まってつい券売機を改造してしまった",
                 "外であやしい連中が従業員を捕まえて、俺の居場所を聞いてきたらしい",
-                "もう長くは持たない。ここを出る時が来た"
+                "これ以上はここに居られない。ここを出る時が来た",
+                "桃子と別れるのだけが辛い。許してくれ…"
                 ]
             },
             
@@ -2442,7 +2443,7 @@
 
                         showModal(
                         'お水をあげた',
-                        '…「ありがとう」\nかすかな声がしたきがする（チリーン…）',
+                        '…「ありがとう」\nかすかな声がした気がする（チリーン…）',
                         [{ text:'閉じる', action:'close' }]
                         );
                         renderCanvasRoom();
@@ -2452,6 +2453,11 @@
                     break;
                 case 'examine_master_room_green': 
                     if (gameState.masterRoom.flags.purified) {
+                        showModal(
+                            '生き生きとしている',
+                            '<img src="images/10/momoko.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{text: '閉じる', action: 'close'}]
+                        );
                         updateMessage('生き生きとしている');
                     } 
                     break;
