@@ -1732,6 +1732,7 @@
             hints: ANA.hintCount,
             
             });
+            setTimeout(() => showFeedbackModal(roomId), 1500);
         }
         }
 
@@ -3286,6 +3287,50 @@
                 return out;
             }
             return source; 
+        }
+
+        function showFeedbackModal(endingId) {
+            const modal = document.getElementById('modal');
+            const box   = document.getElementById('modalContent');
+
+            box.innerHTML = `
+                <div style="text-align:center;max-width:480px">
+                <h2 style="margin-top:0">遊んでくれてありがとうございます！</h2>
+                <p style="margin:8px 0 16px">プレイ感はどうでしたか？ </p>
+                <div id="modalButtons">
+                    <button class="text-btn" data-val="難しかった">難しかった</button>
+                    <button class="text-btn" data-val="ちょうどよい">ちょうどよい</button>
+                    <button class="text-btn" data-val="簡単だった">簡単だった</button>
+                    <button class="text-btn" data-val="つまらない">つまらない</button>
+                    <button class="text-btn" data-val="おもしろい">おもしろい</button>
+                </div>
+                <div id="modalClose"><button class="modal-close-btn">閉じる</button></div>
+                </div>
+            `;
+
+            // クリックで送信
+            box.querySelectorAll('#modalButtons .text-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                const choice = btn.getAttribute('data-val');
+                // 既存のANAヘルパで送信
+                ANA.send('ending_feedback', {
+                    choice,
+                    ending: endingId,
+                    ...ANA.baseParams(),
+                });
+                // サンクス表示して数秒で閉じる
+                box.innerHTML = `<p style="font-weight:bold;margin:16px 0">ありがとう！</p>`;
+                setTimeout(hideModal, 600);
+                });
+            });
+
+            // 閉じる系
+            box.querySelector('.modal-close-btn').addEventListener('click', hideModal);
+            modal.onclick = (e) => { if (e.target === modal) hideModal(); };
+            function hideModal(){ modal.style.display='none'; modal.onclick=null; }
+
+            // 表示
+            modal.style.display = 'flex';
         }
 
         // ゲーム開始
