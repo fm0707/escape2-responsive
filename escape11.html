@@ -1310,6 +1310,10 @@
                 "ボクが作ったおにぎり、食べてくれたんだね",
                 "良いこと教えてあげる",
                 "m-gyoza って入力してみてね",
+                ],
+                bear3: [
+                "ボクまだ餃子は作れないんだ",
+                "店長さんは上手だよ",
                 ]
                 
             },
@@ -2204,6 +2208,9 @@
                         updateMessage('さっきボクが作ったんだよ');
                     } else if(gameState.main.flags.onigiriEaten && !gameState.main.flags.getMiyage) {
                         talkToHintCharacter('main', 'bear2');
+
+                    } else if(gameState.main.flags.onigiriEaten && gameState.main.flags.getMiyage) {
+                        talkToHintCharacter('main', 'bear3');
 
                     } else  { 
                         talkToHintCharacter('main', 'bear');
