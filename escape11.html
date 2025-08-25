@@ -1856,7 +1856,11 @@
                     
                     break;
                 case 'examine_main_poster_wall_storage':
-                    changeRoom('wallstorage');
+                    if (gameState.main.flags.wallStorageOpened) {
+                        changeRoom('wallstorage2');
+                    } else {
+                        changeRoom('wallstorage');
+                    }
                     break;
                 case 'examine_main_zabuton1':
                     updateMessage('座布団に刺繍がしてある');
