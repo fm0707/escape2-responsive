@@ -577,6 +577,7 @@
     <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
     <audio id="se-surprize" src="sounds/11/Onoma-Surprise08-4(High).mp3"></audio>
     <audio id="se-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
+    <audio id="se-beam" src="sounds/11/Retro_Anime-Beam01-1(High-Long).mp3"></audio>
     <script>
         // --- Analytics helper ---
         window.ANA = {
@@ -717,6 +718,8 @@
                             fridgeNotice: "", 
                             mGyozaUnlocked: false,
                             zabutonClicks: 0,
+                            bearBeerOfferCount: 0,
+                            beerCarryingOpened: false,
                         } }, 
             menu: {
                 ja: {
@@ -1637,6 +1640,7 @@
 
         // エリアクリック処理
         function handleAreaClick(action, event) {
+            const f = gameState.main.flags;
             switch(action) {
                 case 'examine_main_door': 
                     if (gameState.main.flags.doorUnlocked) {
@@ -1720,7 +1724,7 @@
                     );
                     break;
                 case 'examine_main_table_coaster': {
-                    const f = gameState.main.flags;
+                    
 
                     // ① まだ何も置いていない → 置く
                     if (!f.beerPlaced) {
@@ -1767,35 +1771,59 @@
                     break;
                     }
                 case 'examine_main_table_beer_on_coaster': {
-                    const f = gameState.main.flags;
                     if (!f.beerPlaced) { updateMessage('コースターだ。'); break; }
 
-                    // 演出モーダル（瓶/生で絵を出し分け）
-                    const imgSrc = f.beerIsBottle
-                        ? 'images/11/beer_bottle_drink.jpg'
-                        : 'images/11/beer_draft_drink.jpg';
-                    showModal(
-                        '',
-                        `
-                        <div style="display:flex;flex-direction:column;align-items:center;">
-                            <img src="${imgSrc}" style="width:240px;display:block;margin:0 auto 12px;">
+                    // 瓶/生の表示だけは現状踏襲
+                    const imgSrc = f.beerIsBottle ? 'images/11/beer_bottle_open_placed.jpg' : 'images/11/beer_draft_drink.jpg';
+
+                    const canPickUpOpenedBottle = f.beerIsBottle && f.beerOpened;
+
+                    const buttons = [];
+
+                    buttons.push({
+                        text: '飲む',
+                        action: () => {
+                            const src = f.beerIsBottle? 'images/11/beer_bottle_drink.jpg': imgSrc;
+                        showModal(
+                            '',
+                            `
+                            <div style="display:flex;flex-direction:column;align-items:center;">
+                            <img src="${src}" style="width:240px;display:block;margin:0 auto 12px;">
                             <div style="font-size:1.2em">ゴクゴク……ぷはぁ。</div>
-                        </div>
-                        `,
-                        [{ text: 'ふぅ', action: 'close' }]
-                    );
-                    f.beerDrunk = true;
-                    f.beerLastType = f.beerIsBottle ? 'bottle' : 'draft';
+                            </div>
+                            `,
+                            [{ text: 'ふぅ', action: 'close' }]
+                        );
+                        f.beerDrunk = true;
+                        f.beerLastType = f.beerIsBottle ? 'bottle' : 'draft';
+                        // テーブルから消す
+                        f.beerPlaced = false;
+                        f.beerIsBottle = false;
+                        f.beerOpened = false;
+                        updateMessage('ビールを飲み干した。');
+                        renderCanvasRoom();
+                        }
+                    });
 
-                    // 消費（テーブルから消す）
-                    f.beerPlaced = false;
-                    f.beerIsBottle = false;
-                    f.beerOpened = false;
+                    // 開けた瓶を “手に取る”（＝インベントリに戻す）
+                    if (canPickUpOpenedBottle) {
+                        buttons.push({
+                        text: '手に取る',
+                        action: () => {
+                            addItem('bottleBeerOpen');
+                            f.beerPlaced = false;
+                            f.beerCarryingOpened = true;
+                            updateMessage('開けた瓶ビールを手に取った。');
+                            renderCanvasRoom();
+                            closeModal();
+                        }
+                        });
+                    }
 
-                    updateMessage('ビールを飲み干した。');
-                    renderCanvasRoom();
+                    showModal('', `<img src="${imgSrc}" style="width:240px;display:block;margin:0 auto 12px;">`, buttons);
                     break;
-                }
+                    }
+
                 case 'examine_main_table_shoyu':
                 case 'examine_main_table_shouyu': { // 念のためタイポも拾う
                 if (gameState.selectedItem === 'secretSara') {
@@ -1892,7 +1920,6 @@
                     updateMessage('座布団に刺繍がしてある');
                     break;  
                 case 'examine_main_zabuton3':
-                    const f = gameState.main.flags;
 
                     // 解錠済みなら寝落ちは起こさない（通常メッセ）
                     if (f.doorUnlocked) {
@@ -2215,7 +2242,6 @@
                         gameState.main.flags.onigiriEaten = true;
 
                         // ビール演出：置いてあって開いてたら一言足す
-                        const f = gameState.main.flags;
                         const withBeer = f.beerPlaced && (f.beerOpened || !f.beerIsBottle); // 生 or 栓抜き済み瓶
 
                         showModal(
@@ -2232,9 +2258,30 @@
                     break;
                 }
                 case 'examine_wallstorage2_bear':
-                    if(gameState.selectedItem=='draftBeer') {
+
+                    if (gameState.selectedItem === 'bottleBeerOpen') {
+                        
+                    f.bearBeerOfferCount = (f.bearBeerOfferCount || 0) + 1;
+
+                    if (f.bearBeerOfferCount === 1) {
                         updateMessage('ボク禁酒中なの');
-                    } else if(gameState.selectedItem=='onigiri') {
+                    } else if (f.bearBeerOfferCount === 2) {
+                        updateMessage('うーん');
+                    } else {
+                        // 3回目：クマが飲んでBAD END
+                        removeItem('bottleBeer');
+                        gameState.selectedItem = null;
+                        f.beerCarryingOpened = false;
+
+                        showModal(
+                            'BAD END\nあなたはクマ妖精に泡ビームを撃たれて気を失った',
+                            '<img src="images/11/badend_bear.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{ text: '最初から', action: 'restart' }]
+                        );
+                        playSE?.('se-beam');
+                    }
+                    break;
+                } else if(gameState.selectedItem=='onigiri') {
                         updateMessage('さっきボクが作ったんだよ');
                     } else if(gameState.main.flags.onigiriEaten && !gameState.main.flags.getMiyage) {
                         talkToHintCharacter('main', 'bear2');
@@ -2834,27 +2881,27 @@
         }
 
         function openFeedbackForm(endingId, t) {
-        if (!FEEDBACK_FORM_URL) {
-            updateMessage('フォームURLが未設定です'); return;
-        }
-        const f = gameState.main.flags;
-        const beer    = f.beerDrunk ? (f.beerLastType === '瓶' ? '瓶' : '生') : '飲んでない';
-        const onigiri = f.onigiriEaten ? '食べた' : (hasItem('onigiri') ? '食べてない' : 'なし');
+            if (!FEEDBACK_FORM_URL) {
+                updateMessage('フォームURLが未設定です'); return;
+            }
+            const f = gameState.main.flags;
+            const beer    = f.beerDrunk ? (f.beerLastType === '瓶' ? '瓶' : '生') : '飲んでない';
+            const onigiri = f.onigiriEaten ? '食べた' : (hasItem('onigiri') ? '食べてない' : 'なし');
 
-        const params = new URLSearchParams({ usp: 'pp_url' });
-        if (FORM_FIELDS.ending)  params.set(FORM_FIELDS.ending, endingId==='end'?'ノーマル':'トゥルー');
-        if (FORM_FIELDS.beer)    params.set(FORM_FIELDS.beer, beer);
-        if (FORM_FIELDS.onigiri) params.set(FORM_FIELDS.onigiri, onigiri);
-        if (FORM_FIELDS.time)    params.set(FORM_FIELDS.time, `${t.mm}:${t.ss}`);
-        if (FORM_FIELDS.comment) {
-            params.set(
-            FORM_FIELDS.comment,
-            `#escape11 感想\nエンディング: ${endingId}\nビール: ${beer}\nおにぎり: ${onigiri}\nプレイ時間: ${t.mm}:${t.ss}\nひとこと: `
-            );
-        }
+            const params = new URLSearchParams({ usp: 'pp_url' });
+            if (FORM_FIELDS.ending)  params.set(FORM_FIELDS.ending, endingId==='end'?'ノーマル':'トゥルー');
+            if (FORM_FIELDS.beer)    params.set(FORM_FIELDS.beer, beer);
+            if (FORM_FIELDS.onigiri) params.set(FORM_FIELDS.onigiri, onigiri);
+            if (FORM_FIELDS.time)    params.set(FORM_FIELDS.time, `${t.mm}:${t.ss}`);
+            if (FORM_FIELDS.comment) {
+                params.set(
+                FORM_FIELDS.comment,
+                `#escape11 感想\nエンディング: ${endingId}\nビール: ${beer}\nおにぎり: ${onigiri}\nプレイ時間: ${t.mm}:${t.ss}\nひとこと: `
+                );
+            }
 
-        const url = FEEDBACK_FORM_URL + '?' + params.toString();
-        window.open(url, '_blank', 'noopener');
+            const url = FEEDBACK_FORM_URL + '?' + params.toString();
+            window.open(url, '_blank', 'noopener');
         }
 
 
