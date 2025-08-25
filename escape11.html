@@ -715,6 +715,7 @@
                             onigiriEaten: false,
                             getMiyage: false,
                             fridgeNotice: "", 
+                            mGyozaUnlocked: false,
                         } }, 
             menu: {
                 ja: {
@@ -1030,6 +1031,17 @@
                         },   
                     },
                     {
+                        x: 26.2, y: 77.7, width: 19.0, height: 19.0,
+                        action: 'examine_refrigerator_miyage',
+                        description: 'おみやげ',
+                        zIndex: 2,
+                        usable: () => gameState.main.flags.mGyozaUnlocked && !gameState.main.flags.getMiyage,
+                        item: {
+                            img: 'miyage',
+                            visible: () => gameState.main.flags.mGyozaUnlocked && !gameState.main.flags.getMiyage,
+                        },
+                    },
+                    {
                         x: 90.6, y: 90.6, width: 9.4, height: 9.4,
                         action: 'examine_refrigerator_back',
                         description: '戻る',
@@ -1293,6 +1305,11 @@
                 "呼んだ？",
                 "これはボク専用通路だよ",
                 "ここでバイトしてるんだ",
+                ],
+                bear2: [
+                "ボクが作ったおにぎり、食べてくれたんだね",
+                "良いこと教えてあげる",
+                "m-gyoza って入力してみてね",
                 ]
                 
             },
@@ -1931,7 +1948,18 @@
                         updateMessage('もう何もない');
                     }
                     break;
-                    //box
+                case 'examine_refrigerator_miyage':
+                    if (!gameState.main.flags.getMiyage) {
+                        addItem('miyage');                 
+                        gameState.main.flags.getMiyage = true;
+                        gameState.flags.trueEndUnlocked = true; 
+                        updateMessage('おみやげ（餃子セット）を手に入れた');
+                        renderCanvasRoom();
+                    } else {
+                        updateMessage('もう何もない');
+                    }
+                    break;
+                //box
                 case 'examine_box_back':
                     changeRoom('main');
                     break;
@@ -2072,6 +2100,15 @@
                         break;
                     }
                     //if(r.otherTxt) msg += `／リクエスト：「${r.otherTxt}」`;
+                    // 「m-gyoza」で冷蔵庫におみやげが出現
+                    const ot = (r.otherTxt || '').trim().toLowerCase();
+                    if (/^m-?gyoza$/.test(ot)) {
+                        gameState.main.flags.mGyozaUnlocked = true;
+                        playSE('se-don');
+                        updateMessage('……冷蔵庫に何か入った音がした。');
+                        renderCanvasRoom();
+                    break; // ここでいったん終了（他の注文処理はスキップ）
+                    }
 
                     gameState.main.flags.fridgeNotice = "";             
                     if (r.otherTxt) {
@@ -2088,7 +2125,7 @@
                         msg += `／リクエスト：「${raw}」`;
                     }
 
-                    playSE('se-don')
+                    playSE('se-don');
                     updateMessage(msg + '冷蔵庫のほうで音がしたようだ');
                     break;
                 }
@@ -2161,15 +2198,7 @@
                     } else if(gameState.selectedItem=='onigiri') {
                         updateMessage('さっきボクが作ったんだよ');
                     } else if(gameState.main.flags.onigiriEaten && !gameState.main.flags.getMiyage) {
-                        showModal(
-                            'おにぎり食べてくれたんだね。これお土産だよ',
-                            '<img src="images/11/miyage.png" style="width:300px;display:block;margin:0 auto 20px;">',
-                            [{text: '閉じる', action: 'close'}]
-                        );
-                        gameState.flags.trueEndUnlocked = true;
-                        gameState.main.flags.getMiyage = true;
-                        updateMessage('折詰を手に入れた');
-                        addItem('miyage');
+                        talkToHintCharacter('main', 'bear2');
 
                     } else  { 
                         talkToHintCharacter('main', 'bear');
