@@ -714,6 +714,7 @@
                             wallStorageOpened: false,
                             onigiriEaten: false,
                             getMiyage: false,
+                            fridgeNotice: "", 
                         } }, 
             menu: {
                 ja: {
@@ -1457,8 +1458,6 @@
                 }
             }
             
-
-            
             // --- その他リクエストの表示（menuJa専用）---
             if (gameState.currentRoom === 'menuJa') {
                 const m = gameState.menu.ja;
@@ -1507,6 +1506,39 @@
                         }
                 }
             }
+            // --- 冷蔵庫内のお知らせ（NGワード） ---
+            if (gameState.currentRoom === 'refrigeratorInner') {
+            const t = gameState.main.flags.fridgeNotice;
+            if (t) {
+                ctx.save();
+                // 位置とサイズ（上部に横長のふきだし）
+                const pad = 12;
+                ctx.font = '20px Arial, sans-serif';
+                const textW = ctx.measureText(t).width;
+                const w = Math.min(canvas.width * 0.9, textW + 40);
+                const h = 44;
+                const x = (canvas.width - w) / 2;
+                const y = canvas.height * 0.06;
+
+                // 下地（白＋薄い枠＋影）
+                ctx.shadowColor = 'rgba(0,0,0,0.25)';
+                ctx.shadowBlur = 6;
+                ctx.fillStyle = 'rgba(255,255,255,0.96)';
+                ctx.fillRect(x, y, w, h);
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, w, h);
+
+                // テキスト
+                ctx.fillStyle = '#222';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(t, x + w/2, y + h/2);
+                ctx.restore();
+            }
+            }
+
         }
 
         function drawRoomItems(ctx, canvas, roomId) {
@@ -1586,6 +1618,8 @@
                 case 'examine_main_door': 
                     if (gameState.main.flags.doorUnlocked) {
                         handleDoor();
+                    } else if (gameState.selectedItem=='key') {
+                        updateMessage('この鍵では開かないみたい');
                     } else {
                         updateMessage('開かない');
                     }
@@ -2033,7 +2067,23 @@
                         playSE?.('se-change');
                         break;
                     }
-                    if(r.otherTxt) msg += `／リクエスト：「${r.otherTxt}」`;
+                    //if(r.otherTxt) msg += `／リクエスト：「${r.otherTxt}」`;
+
+                    gameState.main.flags.fridgeNotice = "";             
+                    if (r.otherTxt) {
+                        // 入力された文字列そのままを表示したいので生のまま保持
+                        const raw = r.otherTxt;
+                        // 代表的な表記ゆれをざっくり拾う
+                        const NG = [
+                        /(gyoza|餃子|ぎょうざ|ｷﾞｮｳｻﾞ)/i,
+                        /(beer|ビール|びーる)/i
+                        ];
+                        // if (NG.some(re => re.test(raw))) {
+                        gameState.main.flags.fridgeNotice = `${raw}には対応しておりません`;
+                        // }
+                        msg += `／リクエスト：「${raw}」`;
+                    }
+
                     playSE('se-don')
                     updateMessage(msg + '冷蔵庫のほうで音がしたようだ');
                     break;
@@ -2151,7 +2201,7 @@
             const beerTxt = f.beerDrunk
                 ? (f.beerLastType === 'bottle' ? '🍺 瓶ビールを飲んだ'
                                             : '🍺 生ビールを飲んだ')
-                : '🥤 ビールは飲まずに帰宅（意志が強い）';
+                : '🍺 ビールは飲まずに帰宅（意志が強い）';
 
             const onigiriTxt = f.onigiriEaten
                 ? '🍙 おにぎり：その場で完食（〆力＋10）'
@@ -2179,7 +2229,7 @@
                     <li>${timeTxt}</li>
                 </ul>
                 <div style="margin-top:14px;font-size:.95em;opacity:.9">
-                    ※ もう一度クリックで閉じます
+
                 </div>
                 </div>
             `;
@@ -2672,7 +2722,7 @@
         }
 
         function loadGame() {
-            const raw = localStorage.getItem(SAVE_KEY) || localStorage.getItem('escapeGameState'); 
+            const raw = localStorage.getItem(SAVE_KEY); 
             if (!raw) {
                 updateMessage('セーブデータがありません');
                 return;
