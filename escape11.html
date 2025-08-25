@@ -716,6 +716,7 @@
                             getMiyage: false,
                             fridgeNotice: "", 
                             mGyozaUnlocked: false,
+                            zabutonClicks: 0,
                         } }, 
             menu: {
                 ja: {
@@ -1892,18 +1893,35 @@
                     break;  
                 case 'examine_main_zabuton3':
                     const f = gameState.main.flags;
-                    if (f.beerDrunk && !f.doorUnlocked) {
-                        updateMessage('すこしだけ…すこしだけ…（Zzz）');
+
+                    // 解錠済みなら寝落ちは起こさない（通常メッセ）
+                    if (f.doorUnlocked) {
+                        updateMessage('ふかふかの座布団だ。');
+                        break;
+                    }
+
+                    // 条件：ビール飲んでて、まだ解錠していない
+                    if (f.beerDrunk) {
+                        f.zabutonClicks = (f.zabutonClicks || 0) + 1;
+
+                        if (f.zabutonClicks === 1) {
+                        updateMessage('ちょっと座ろう…（ふかふか）');
+                        } else if (f.zabutonClicks === 2) {
+                        updateMessage('5分だけ……5分だけ……');
+                        } else {
+                        updateMessage('すこしだけ…すこし……（Zzz）');
                         showModal(
-                                'BAD END\nビールを飲んで睡魔に襲われたあなたは脱出機会を失った',
+                                'BAD END\nあなたは寝落ちして脱出の機会を失った',
                                 '<img src="images/11/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                                 [{ text:'最初から', action:'restart' }]
                             );
                             playSE('se-down');
+                        break;
+                        }
                     } else {
                         updateMessage('ふかふかの座布団だ。刺繍がしてある');
                     }
-                    break; 
+                    break;
                 case 'examine_main_zabuton4':
                     updateMessage('座布団に刺繍がしてある');
                     break; 
