@@ -956,7 +956,7 @@
                         description: '座布団2',  
                     },
                     {
-                        x: 56.3, y: 95.4, width: 7.5, height: 3.5,
+                        x: 34.8, y: 93.5, width: 33.5, height: 6.1,
                         action: 'examine_main_zabuton3',
                         description: '座布団3',  
                     },
@@ -970,6 +970,7 @@
                         action: 'examine_main_zabuton5',
                         description: '座布団5',  
                     },
+
                 ]
             },
             refrigeratorInner: {
@@ -1890,7 +1891,18 @@
                     updateMessage('座布団に刺繍がしてある');
                     break;  
                 case 'examine_main_zabuton3':
-                    updateMessage('座布団に刺繍がしてある');
+                    const f = gameState.main.flags;
+                    if (f.beerDrunk && !f.doorUnlocked) {
+                        updateMessage('すこしだけ…すこしだけ…（Zzz）');
+                        showModal(
+                                'BAD END\nビールを飲んで睡魔に襲われたあなたは脱出機会を失った',
+                                '<img src="images/11/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{ text:'最初から', action:'restart' }]
+                            );
+                            playSE('se-down');
+                    } else {
+                        updateMessage('ふかふかの座布団だ。刺繍がしてある');
+                    }
                     break; 
                 case 'examine_main_zabuton4':
                     updateMessage('座布団に刺繍がしてある');
