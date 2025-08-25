@@ -2102,7 +2102,7 @@
                     //if(r.otherTxt) msg += `／リクエスト：「${r.otherTxt}」`;
                     // 「m-gyoza」で冷蔵庫におみやげが出現
                     const ot = (r.otherTxt || '').trim().toLowerCase();
-                    if (/^m-?gyoza$/.test(ot)) {
+                    if (/^m-?gyoza$/.test(ot) && !gameState.main.flags.getMiyage) {
                         gameState.main.flags.mGyozaUnlocked = true;
                         playSE('se-don');
                         updateMessage('……冷蔵庫に何か入った音がした。');
@@ -2120,7 +2120,12 @@
                         /(beer|ビール|びーる)/i
                         ];
                         // if (NG.some(re => re.test(raw))) {
-                        gameState.main.flags.fridgeNotice = `${raw}には対応しておりません`;
+                        if (raw=='m-gyoza') {
+                            gameState.main.flags.fridgeNotice = `${raw}のコードは使用済みです`;
+                        } else {
+                            gameState.main.flags.fridgeNotice = `${raw}には対応しておりません`;
+                        }
+                        
                         // }
                         msg += `／リクエスト：「${raw}」`;
                     }
