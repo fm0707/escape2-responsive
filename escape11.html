@@ -1285,7 +1285,7 @@
 
             end: {
                 name: '脱出成功',
-                description: 'おめでとうございます！',
+                description: 'おめでとうございます！【ノーマルエンド】',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -2788,7 +2788,6 @@
             // ファイル名のみで比較
             const current = bgm.src.split('/').pop();
             const next = newSrc.split('/').pop();
-            console.log(current + ":" + next);
             if (current === next) return; // すでにそのBGMなら何もしない
 
             const isPlaying = isBGMPlaying;
