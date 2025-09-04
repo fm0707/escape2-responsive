@@ -3513,7 +3513,7 @@
 
             // --- 実績テキスト ---
             const piyoTxt = f.piyoLost ? '🐣 ぴよ：ロスト（親子が目を光らせている…）'
-                : (f.foundPiyo ? '🐣 ぴよ：無事' : '🐣 ぴよ：未発見');
+                : (f.piyoMachineLost ? '🐣 ぴよ：時空のはざまへ消えた' : '🐣 ぴよ：無事');
             const bearTxt = f.wakeupBear ? '🐻 クマ妖精：起こした' : '🐻 クマ妖精：まだ眠っている';
 
             const hintTxt = `🔍 ヒント使用：${ana.hintCount || 0}回`;
