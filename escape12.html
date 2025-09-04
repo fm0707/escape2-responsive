@@ -829,7 +829,7 @@
                         foundPiyo: false, doorPuzzleSolved: false, piyoInKara: false, bearPiecesSet: false,
                         foundPiece1: false, foundPiece2: false, foundPiece3: false, foundStone: false, openDrawer1: false,
                         safePuzleSolved: false, boxAboveItem: null, piyoLost: false, wakeupBear: false, canRemovePoster: false, removePoster: false,
-                        fillOil: false, foundUpstairs: false,bearHasamiOfferCount: 0,
+                        fillOil: false, foundUpstairs: false, bearHasamiOfferCount: 0, piyoMachineCount: 0, piyoMachineLost: false,
                         talkTo: { bear: 0 }
                     }
 
@@ -1643,7 +1643,12 @@
                 name: '屋根裏部屋',
                 description: '',
                 clickableAreas: [
+                    {
+                        x: 18.6, y: 60.4, width: 49.8, height: 32.0,
+                        action: 'examine_attic_storage',
+                        description: '物置', zIndex: 1,
 
+                    },
                     {
                         x: 90.6, y: 50.6, width: 9.4, height: 9.4,
                         action: 'examine_attic_right',
@@ -2701,10 +2706,10 @@
             drawSparkles(ctx);
 
             // --- ペガサス座の演出（数秒後にうっすら表示 → 真エンドへ） ---
-            if (st.t > 4500) {
+            if (st.t > 6500) {
                 const img = loadedImages['images/12/end_pegasus.png' || 'images/12/end_pegasus.png'];
                 if (img?.complete) {
-                    const alpha = Math.min(1, (st.t - 4500) / 1500);
+                    const alpha = Math.min(1, (st.t - 6500) / 1500);
                     const w = canvas.width * 0.38, h = w * img.height / img.width;
                     ctx.save();
                     ctx.globalAlpha = 0.2 + alpha * 0.6;
@@ -2714,7 +2719,7 @@
             }
 
             // 自動遷移（6.5秒後）
-            if (st.t > 6500) {
+            if (st.t > 7500) {
                 disableAmbientStars();
                 changeRoom('trueEnd');
                 return;
@@ -2781,7 +2786,7 @@
                     break;
                 case 'examine_main_door_bear':
                     if (gameState.selectedItem === 'hasami') {
-                        
+
                         f.bearHasamiOfferCount = (f.bearHasamiOfferCount || 0) + 1;
 
                         if (f.bearHasamiOfferCount === 1) {
@@ -2792,7 +2797,7 @@
                             // 3回目：BAD END
                             removeItem('hasami');
                             gameState.selectedItem = null;
-                            
+
 
                             showModal(
                                 'BAD END\nあなたは怒ったクマ妖精に絵に封印されてしまった',
@@ -2809,7 +2814,7 @@
                         talkToHintCharacter('main', 'bear');
                     }
                     break;
-                case 'examine_main_door_box_above': 
+                case 'examine_main_door_box_above':
                     const placed = gameState.main.flags.boxAboveItem;
                     const sel = gameState.selectedItem;
 
@@ -2840,20 +2845,34 @@
                         renderCanvasRoom();
                         break;
 
-                    
 
-                    if (placed) {
-                        addItem(placed);
-                        gameState.main.flags.boxAboveItem = null;
-                        playSE('se-item');
-                        updateMessage('置いてあった物を取り戻した');
-                        renderCanvasRoom();
-                    } else {
-                        updateMessage('ここには何も置かれていない');
+
+                        if (placed) {
+                            addItem(placed);
+                            gameState.main.flags.boxAboveItem = null;
+                            playSE('se-item');
+                            updateMessage('置いてあった物を取り戻した');
+                            renderCanvasRoom();
+                        } else {
+                            updateMessage('ここには何も置かれていない');
+                        }
+                        break;
                     }
-                    break;
-                }
                 case 'overlay_piyo_on_box_above':
+                    if (gameState.selectedItem == 'hasami') {
+
+                        gameState.main.flags.piyoLost = true;
+                        gameState.main.flags.boxAboveItem = null;
+                        showModal(
+                            '！',
+                            '<img src="images/12/piyo_lost.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        playSE('se-piyo2');
+                        updateMessage('ぴよは居なくなった');
+                        renderCanvasRoom();
+                        break;
+                    }
                     addItem('piyo');
                     gameState.main.flags.boxAboveItem = null;
                     playSE('se-item');
@@ -3229,6 +3248,17 @@
                         break;
                     }
 
+                    // ★ ぴよ時空ロスト後はバッドエンド
+                    if (gameState.main.flags.piyoMachineLost) {
+                        showModal(
+                            'BAD END\nあなたは時空のはざまへ引き込まれた',
+                            '<img src="images/12/badend_piyo.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            [{ text: '最初から', action: 'restart' }]
+                        );
+                        playSE?.('se-bad');
+                    }
+
+
                     // アイテム未選択なら、使える旨を案内
                     if (!gameState.selectedItem) {
                         updateMessage('何か入れたら動きそうだ');
@@ -3237,6 +3267,34 @@
 
                     // レシピ判定
                     const using = gameState.selectedItem;
+                    // ★ ここから“piyoだけ”特別扱い（3回目に消滅）
+                    if (using === 'piyo') {
+                        const f = gameState.main.flags;
+                        f.piyoMachineCount = (f.piyoMachineCount || 0) + 1;
+                        console.log(f.piyoMachineCount);
+
+                        if (f.piyoMachineCount >= 3 && !f.piyoLost) {
+                            // 3回目：ぴよは時空のはざまへ（何も出さない）
+                            removeItem('piyo');
+                            gameState.selectedItem = null;
+
+                            playSE('se-scene-change');
+                            playSE('se-piyo2');
+                            showModal(
+                                'タイムマシンがうなった…',
+                                '<div style="text-align:center;padding:8px 0;">ゴゴゴ…<br><span style="font-weight:bold;">ぴよ</span>は時空のはざまに消えた…</div>'
+                                + '<img src="images/12/piyo_in_time.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{ text: '閉じる', action: 'close' }]
+                            );
+                            f.piyoMachineLost = true;
+                            gameState.corridor.flags.machineOn = true;
+                            renderCanvasRoom();
+                            updateMessage('ぴよは時空のはざまへ消えてしまった');
+                            break;
+                        }
+                    }
+
+
                     const recipe = MACHINE_RECIPES[using];
 
                     if (!recipe) {
@@ -3311,7 +3369,7 @@
                         changeRoom('entrance');
                     } else {
                         showModal(
-                            '何かはめ込めそうな穴がある',
+                            'ドアは開かない。何かはめ込めそうな穴がある',
                             '<img src="images/12/corridor_door_unset.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{ text: '閉じる', action: 'close' }]
                         );
@@ -3356,6 +3414,9 @@
                         '<img src="images/12/poster_entrance.png" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{ text: '閉じる', action: 'close' }]
                     );
+                    break;
+                case 'examine_attic_storage': 
+                    updateMessage('物置のようだ');
                     break;
                 case 'examine_attic_right':
                     changeRoom('atticRight');
