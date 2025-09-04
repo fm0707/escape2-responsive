@@ -649,6 +649,7 @@
     <audio id="se-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
     <audio id="se-oil" src="sounds/12/sosogu.mp3"></audio>
     <audio id="se-cut" src="sounds/12/Scissors02-2(Cut_Paper).mp3"></audio>
+    <audio id="se-bad" src="sounds/12/Parody_Accent03-1(Long).mp3"></audio>
     <audio id="se-end" src="sounds/12/Scene_Change07-07(Low-Up-Slow).mp3"></audio>
     <script>
         // --- Analytics helper ---
@@ -828,7 +829,7 @@
                         foundPiyo: false, doorPuzzleSolved: false, piyoInKara: false, bearPiecesSet: false,
                         foundPiece1: false, foundPiece2: false, foundPiece3: false, foundStone: false, openDrawer1: false,
                         safePuzleSolved: false, boxAboveItem: null, piyoLost: false, wakeupBear: false, canRemovePoster: false, removePoster: false,
-                        fillOil: false, foundUpstairs: false,
+                        fillOil: false, foundUpstairs: false,bearHasamiOfferCount: 0,
                         talkTo: { bear: 0 }
                     }
 
@@ -1009,7 +1010,7 @@
                         action: 'overlay_piyo_on_box_above',
                         description: '',
                         zIndex: 3,
-                        usable: () => false,
+                        usable: () => gameState.main.flags.boxAboveItem === 'piyo',
                         item: {
                             img: 'piyo',
                             visible: () => gameState.main.flags.boxAboveItem === 'piyo',
@@ -1020,7 +1021,7 @@
                         action: 'overlay_koke_on_box_above',
                         description: '',
                         zIndex: 3,
-                        usable: () => false,
+                        usable: () => gameState.main.flags.boxAboveItem === 'koke',
                         item: {
                             img: 'koke',
                             visible: () => gameState.main.flags.boxAboveItem === 'koke',
@@ -2779,13 +2780,36 @@
                     }
                     break;
                 case 'examine_main_door_bear':
+                    if (gameState.selectedItem === 'hasami') {
+                        
+                        f.bearHasamiOfferCount = (f.bearHasamiOfferCount || 0) + 1;
+
+                        if (f.bearHasamiOfferCount === 1) {
+                            updateMessage('人に向けたらいけないんだよ');
+                        } else if (f.bearHasamiOfferCount === 2) {
+                            updateMessage('だめだって言ってるでしょ');
+                        } else {
+                            // 3回目：BAD END
+                            removeItem('hasami');
+                            gameState.selectedItem = null;
+                            
+
+                            showModal(
+                                'BAD END\nあなたは怒ったクマ妖精に絵に封印されてしまった',
+                                '<img src="images/12/badend.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                                [{ text: '最初から', action: 'restart' }]
+                            );
+                            playSE?.('se-bad');
+                        }
+                        break;
+                    }
                     if (gameState.main.flags.removePoster) {
                         talkToHintCharacter('main', 'bear2');
                     } else {
                         talkToHintCharacter('main', 'bear');
                     }
                     break;
-                case 'examine_main_door_box_above': {
+                case 'examine_main_door_box_above': 
                     const placed = gameState.main.flags.boxAboveItem;
                     const sel = gameState.selectedItem;
 
@@ -2816,7 +2840,7 @@
                         renderCanvasRoom();
                         break;
 
-                    }
+                    
 
                     if (placed) {
                         addItem(placed);
@@ -2829,6 +2853,20 @@
                     }
                     break;
                 }
+                case 'overlay_piyo_on_box_above':
+                    addItem('piyo');
+                    gameState.main.flags.boxAboveItem = null;
+                    playSE('se-item');
+                    updateMessage('置いてあったぴよを取り戻した');
+                    renderCanvasRoom();
+                    break;
+                case 'overlay_koke_on_box_above':
+                    addItem('koke');
+                    gameState.main.flags.boxAboveItem = null;
+                    playSE('se-item');
+                    updateMessage('置いてあったコケを取り戻した');
+                    renderCanvasRoom();
+                    break;
                 case 'examine_main_door_box': {
                     if (gameState.main.flags.boxAboveItem === 'koke') {
                         changeRoom('boxTime');
