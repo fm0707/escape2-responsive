@@ -772,6 +772,7 @@
                 angryPiyo: 'images/12/angry_piyo.png',
                 realPegasus: 'images/12/real_pegasus.png',
                 oilHandle: 'images/12/oil_handle.png',
+                dirt: 'images/12/dirt.png',
 
             },
             puzzles: {
@@ -1237,7 +1238,16 @@
                         description: 'テーブルライト',
 
                     },
-
+                    {
+                        x: 88.7, y: 94.7, width: 6.6, height: 5.0,
+                        action: 'examine_main_book_dirt',
+                        description: '汚れ',
+                        usable: () => true,
+                        item: {
+                            img: 'dirt',
+                            visible: () => true,
+                        },
+                    },
                     {
                         x: 90.6, y: 50.6, width: 9.4, height: 9.4,
                         action: 'examine_main_book_right',
@@ -1735,7 +1745,7 @@
                     { x: 90.6, y: 90.6, width: 9.4, height: 9.4, action: 'examine_trueFlight_skip', description: 'スキップ', zIndex: 5, item: { img: 'back', visible: () => true } }
                 ]
             },
-            
+
             trueEnd: {
                 name: '脱出成功',
                 description:
@@ -2954,6 +2964,9 @@
                     break;
                 case 'examine_main_book_light':
                     updateMessage('ポータブルランプだ');
+                    break;
+                case 'examine_main_book_dirt':
+                    updateMessage('油っぽい汚れだ');
                     break;
                 case 'examine_main_book_safe_close':
                     if (!gameState.main.flags.safePuzleSolved) {
