@@ -2151,6 +2151,7 @@
                     // showModal('星座が完成した', '<div style="font-size:1.1em">ペガサス座が正しくそろった！</div>', [{ text: '閉じる', action: 'close' }]);
                     updateMessage('ペガサス座が完成した！');
                     sparkleAtRectCenter(STAR_OKBTN, { count: 18, life: 2000, size: [6, 8] });
+                    markProgress('pegasus_puzzle_solved');
                 } else {
                     playSE('se-error');
                     updateMessage('まだ合ってないみたい…');
@@ -2253,6 +2254,7 @@
                     ]);
                     renderCanvasRoom();
                     updateMessage('絵が完成した！');
+                    markProgress('bear_puzzle_solved');
                 } else {
                     playSE('se-error');
                     updateMessage('まだ合ってないみたい…');
@@ -2350,6 +2352,7 @@
                     gameState.drawerInner2.flags.unlocked = true;
                     updateMessage('カチリ…ロックが外れた！');
                     sparkleAtRectCenter(DRW_OKBTN, { count: 18, life: 2000, size: [6, 8] });
+                    markProgress('drawer2_open');
                 } else {
                     playSE('se-error');
                     updateMessage('違うみたい…');
@@ -2401,6 +2404,7 @@
                         gameState.corridor.flags.machineUnlocked = true;   // ← 指定どおり corridor に立てる
                         playSE('se-gacha');
                         updateMessage('カチリ…ダイアルのロックが外れた！');
+                        markProgress('timemachine_open');
                     }
                     renderCanvasRoom();
                     return;
@@ -2473,6 +2477,7 @@
                     updateMessage('コケコッコー！！');
                     gameState.boxTime.flags.kokeCried = true;
                     setTimeout(() => playSE('se-fanta'), 1500);
+                    markProgress('bear_wakeup');
                 } else {
                     playSE && playSE('se-error');
                     updateMessage('反応がない…');
@@ -2555,6 +2560,7 @@
                     playSE('se-change');
                     updateMessage('キャビネットのロックが外れた！');
                     sparkleAtRectCenter(CAB_OKBTN, { count: 18, life: 2000, size: [6, 8] });
+                    markProgress('cabinet_open');
 
                 } else {
                     playSE('se-error');
@@ -2798,7 +2804,7 @@
                             removeItem('hasami');
                             gameState.selectedItem = null;
 
-
+                            markProgress('badend_bear');
                             showModal(
                                 'BAD END\nあなたは怒ったクマ妖精に絵に封印されてしまった',
                                 '<img src="images/12/badend.png" style="width:300px;display:block;margin:0 auto 20px;">',
@@ -3251,6 +3257,7 @@
 
                     // ★ ぴよ時空ロスト後はバッドエンド
                     if (gameState.main.flags.piyoMachineLost) {
+                        markProgress('badend_piyo');
                         showModal(
                             'BAD END\nあなたは時空のはざまへ引き込まれた',
                             '<img src="images/12/badend_piyo.png" style="width:300px;display:block;margin:0 auto 20px;">',
@@ -3676,78 +3683,6 @@
             }
         }
 
-        // 冷蔵庫パズルを表示
-        function showrefrigeratorPuzzle() {
-            const modalContent = `
-                <h3>ドアロックがかかっている</h3>
-                <input type="text" class="puzzle-input" id="refrigeratorInput" placeholder="英単語">
-                <br>
-                <button onclick="checkrefrigeratorPuzzle()">確認</button>
-                <button onclick="closeModal()">閉じる</button>
-            `;
-
-            document.getElementById('modalContent').innerHTML = modalContent;
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        // 冷蔵庫パズルの答えをチェック
-        function checkrefrigeratorPuzzle() {
-            const input = document.getElementById('refrigeratorInput').value;
-            if (input === 'star') {
-                closeModal();
-                gameState.main.flags.refrigeratorPuzzleSolved = true;
-                markProgress('refrigerator_opened');
-                playSE('se-open');
-                renderCanvasRoom();
-                updateMessage('冷蔵庫のロックが解除されたようだ');
-
-            } else {
-                playSE('se-error');
-                updateMessage('反応しない');
-            }
-        }
-
-        // タブレットパズルを表示
-        function showTabletPuzzle() {
-            const modalContent = `
-                <div class="login-container">
-                    <h3 class="login-title">🔒 ログイン</h3>
-                    <div class="login-form">
-                        <label for="pcInput">パスワード</label>
-                        <input type="text" class="puzzle-input" id="tabletInput" placeholder="数字で入力">
-                        <div class="login-buttons">
-                            <button class="login-btn" onclick="checkTabletPuzzle()">ログイン</button>
-                            <button class="cancel-btn" onclick="closeModal()">閉じる</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('modalContent').innerHTML = modalContent;
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        // タブレットパズルの答えをチェック
-        function checkTabletPuzzle() {
-            const input = document.getElementById('tabletInput').value;
-            if (input === '2029' || input === '２０２９') {
-                closeModal();
-                gameState.main.flags.tabletPuzzleSolved = true;
-                markProgress('tablet_opened');
-                showModal(
-                    'ログイン成功',
-                    '',
-                    [{ text: '閉じる', action: 'close' }]
-                );
-                playSE('se-open');
-                renderCanvasRoom();
-                updateMessage('注文端末が使えるようになった');
-
-            } else {
-                playSE('se-error');
-                updateMessage('注文端末はロックされている');
-            }
-        }
 
         function handleDoor() {
             removeItem && removeItem('key');
@@ -3856,8 +3791,7 @@
                     magBtn.innerHTML = '<img src="images/magnifier.png" alt="拡大">';
                     magBtn.onclick = (e) => {
                         e.stopPropagation();
-                        if (gameState.inventory[index] === 'onigiri') { openOnigiriInspect(); return; }
-                        if (gameState.inventory[index] === 'bottleBeerOpen') { openBottleBeerOpenInspect(); return; }
+                        
                         showModal(
                             getItemName(gameState.inventory[index]),
                             `<img src="${img.src}" style="max-width: 300px; max-height: 300px; width: auto; height: auto; object-fit: contain; display:block;margin:0 auto 16px;">`,
@@ -3874,46 +3808,6 @@
                 }
             });
         }
-
-        function openOnigiriInspect() {
-            const f = gameState.main.flags;
-
-            const canEat = !!f.redBoxOpened && hasItem('onigiri');
-
-            const img = IMAGES.items?.onigiri || 'images/11/onigiri.png';
-            const eatBtn = canEat ? [{ text: '食べる', action: 'eat_onigiri' }] : [];
-            const caption = canEat
-                ? 'おいしそうなおにぎりだ。食べられそうだ。'
-                : 'おいしそうだ…（今は食べないでおこう）';
-
-            showModal(
-                '',
-                `<div style="text-align:center">
-                <img src="${img}" style="max-width:70vw;max-height:50vh;display:block;margin:0 auto 12px;">
-                <div style="font-size:1.1em">${caption}</div>
-                </div>`,
-                [...eatBtn, { text: '閉じる', action: 'close' }]
-            );
-        }
-
-        function openBottleBeerOpenInspect() {
-            const f = gameState.main.flags;
-            const canDrink = hasItem('bottleBeerOpen'); // インベントリにある＝飲める
-            const img = IMAGES.items?.bottleBeerOpen || 'images/11/beer_bottle_open_placed.jpg';
-            const drinkBtn = canDrink ? [{ text: '飲む', action: 'drink_bottle_beer_inv' }] : [];
-            const caption = canDrink ? '開栓済みの瓶ビールだ。' : '開栓はしてあるが、今は飲まないでおこう。';
-
-            showModal(
-                '',
-                `<div style="text-align:center">
-                <img src="${img}" style="max-width:70vw;max-height:50vh;display:block;margin:0 auto 12px;">
-                <div style="font-size:1.1em">${caption}</div>
-                </div>`,
-                [...drinkBtn, { text: '閉じる', action: 'close' }]
-            );
-        }
-
-
 
         // メッセージ更新
         function updateMessage(message) {
