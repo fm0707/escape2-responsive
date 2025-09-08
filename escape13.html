@@ -694,6 +694,7 @@
                 bearDango: 'images/13/bear_dango.png',
                 memoDoorRight: 'images/13/memodoor_right.png',
                 memoDoorLeft: 'images/13/memodoor_left.png',
+                dango: 'images/13/dango.png',
 
             },
 
@@ -713,7 +714,7 @@
                 main: {
                     flags: {
                         foundKey: false, badEnd: false, found4Part: false,
-                        talkTo: { books: 0 }, backgroundState: 0,
+                        talkTo: { books: 0 }, backgroundState: 0, dangoAppear: false, foundDango: false,
                     }
 
                 },
@@ -780,6 +781,17 @@
                         action: 'examine_main_window_below',
                         description: '窓下部',
                         zIndex: 1,
+                    },
+                    {
+                        x: 35.4, y: 62.3, width: 9.3, height: 6.0,
+                        action: 'examine_main_dango',
+                        description: 'お団子',
+                        zIndex: 1,
+                        usable: () => gameState.main.flags.dangoAppear && !gameState.main.flags.foundDango,
+                        item: {
+                            img: 'dango',
+                            visible: () => gameState.main.flags.dangoAppear && !gameState.main.flags.foundDango,
+                        },
                     },
                     {
                         x: 29.1, y: 70.1, width: 19.1, height: 5.0,
@@ -1134,7 +1146,7 @@
                 bear: [
                     "呼んだ？",
                     "ボクオペレーターだよ",
-                    "さあ脱出しよう",
+                    "お団子食べたいね。odango",
                 ],
                 bear2: [
                     "わーい",
@@ -1250,7 +1262,7 @@
                 gameState.openRooms = [];
                 renderNavigation();
             } else {
-                changeBGM("sounds/13/Frozen_Moon.mp3");
+                changeBGM("sounds/13/Past_and_Future.mp3");
             }
             if (AMBIENT_STARS.rooms.has(roomId)) {
                 enableAmbientStars();
@@ -1507,6 +1519,15 @@
                     }
 
                     break;
+                case 'examine_main_dango':
+                    showModal(
+                        'お月見団子を手に入れた',
+                        '<img src="images/13/dango.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    gameState.main.flags.foundDango = true;
+                    addItem('dango');
+                    break;
                 case 'examine_main_pic':
                     showModal(
                         '',
@@ -1574,8 +1595,8 @@
                 case 'examine_main_book_open':
                     changeRoom('book1');
                     break;
-                
-                
+
+
                 // drawer
                 case 'examine_drawer1_part':
                     if (!gameState.drawerInner1.flags.foundDummyPart) {
@@ -1768,7 +1789,7 @@
             const endingLabel = (id => ({
                 trueEnd: "トゥルーエンド",
                 end: "ノーマルエンド",
-                badEnd: "BAD END"        
+                badEnd: "BAD END"
             }[id] || ""))(endingId);
 
             const bearLabel = f.wakeupBear ? "登場した" : "未登場";
@@ -1906,6 +1927,13 @@
                 return;
 
 
+            } else if (val === 'odango' || val === 'おだんご') {
+                closeModal();
+                playSE && playSE('se-fanta'); 
+                updateMessage("タンスの上にお団子が出現した");
+                gameState.main.flags.dangoAppear = true;
+                renderCanvasRoom();
+                return;
             } else {
                 playSE('se-error');
                 updateMessage('ちがうようだ');
@@ -1992,6 +2020,7 @@
                 partDummy4: '？',
                 part4_1: '？',
                 part2_2: '？',
+                dango: 'お団子'
 
 
             };
