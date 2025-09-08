@@ -1613,6 +1613,7 @@
                             '<img src="images/13/key.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{ text: '閉じる', action: 'close' }]
                         );
+                        updateMessage('カギをみつけた');
                         gameState.main.flags.foundKey = true;
                         addItem('key');
                     } else {
@@ -1780,7 +1781,7 @@
                 ? '🐻 クマ妖精：現れた'
                 : '🐻 クマ妖精：いない';
 
-            const dangoTxt = f.foundDango ? 'お団子GET': 'お団子なし';
+            const dangoTxt = f.foundDango ? '🍡お団子：GET': 'お団子：なし';
 
             const hintTxt = `🔍 ヒント使用：${ana.hintCount || 0}回`;
             const timeTxt = `⌛ プレイ時間：${mm}:${ss}`;
