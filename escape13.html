@@ -688,7 +688,7 @@
                 greenBack: 'images/common/green_back.png',
                 key: 'images/13/key.png',
                 memo: 'images/13/memo.png',
-                partDummy4: 'images/13/4dummy.png',
+                // partDummy4: 'images/13/4dummy.png',
                 part4_1: 'images/13/4-1.png',
                 part2_2: 'images/13/2-2.png',
                 bearDango: 'images/13/bear_dango.png',
@@ -847,17 +847,17 @@
                         action: 'rotate_drawer_digit_1',
                         description: '数字(上段)'
                     },
-                    {
-                        x: 54.6, y: 46.8, width: 16.7, height: 33.4,
-                        action: 'examine_drawer1_part',
-                        description: 'パーツ',
-                        zIndex: 5,
-                        usable: () => !gameState.drawerInner1.flags.foundDummyPart,
-                        item: {
-                            img: 'partDummy4',
-                            visible: () => !gameState.drawerInner1.flags.foundDummyPart,
-                        },
-                    },
+                    // {
+                    //     x: 54.6, y: 46.8, width: 16.7, height: 33.4,
+                    //     action: 'examine_drawer1_part',
+                    //     description: 'パーツ',
+                    //     zIndex: 5,
+                    //     usable: () => !gameState.drawerInner1.flags.foundDummyPart,
+                    //     item: {
+                    //         img: 'partDummy4',
+                    //         visible: () => !gameState.drawerInner1.flags.foundDummyPart,
+                    //     },
+                    // },
                     {
                         x: 32.5, y: 60.9, width: 14.9, height: 20.4,
                         action: 'examine_drawer1_memo',
