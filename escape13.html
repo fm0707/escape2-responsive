@@ -533,6 +533,10 @@
             background: radial-gradient(circle at 50% 50%, #fff, #000 70%);
             animation: warpFlash 900ms ease-out both, chroma 900ms ease-out both;
         }
+
+        #hintModal {
+            color: #000;
+        }
     </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -551,10 +555,14 @@
         <div class="title-wrapper">
             <div class="title">夜空が見える部屋からの脱出</div>
             <div style="margin:0 0; text-align:center;">
-                <a href="escape13_hint.html" target="_blank"
+                <!-- <a href="escape13_hint.html" target="_blank"
                     style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
                     🔍 ヒントを見る
-                </a>
+                </a> -->
+                <button id="hintFab"
+                    style="z-index:9999;padding:10px 14px;border-radius:999px;border:none;box-shadow:0 4px 16px rgba(0,0,0,.2);background:#222;color:#fff;cursor:pointer">
+                    💡 ヒント
+                </button>
             </div>
         </div>
 
@@ -599,6 +607,25 @@
             <!-- モーダルの内容は動的に生成 -->
         </div>
     </div>
+    <!-- hintモーダル -->
+    <div id="hintModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5)">
+        <div
+            style="max-width:560px;margin:10vh auto;background:#fff;border-radius:12px;padding:16px 16px 8px;box-shadow:0 10px 30px rgba(0,0,0,.3)">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <strong id="hintTitle">ヒント</strong>
+                <button id="hintClose"
+                    style="border:none;background:transparent;font-size:20px;cursor:pointer">✕</button>
+            </div>
+            <div id="hintBody" style="margin:12px 0">
+                <!-- 段階ヒントが入る -->
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <small id="hintUsage" style="opacity:.7"></small>
+                <button id="hintMore"
+                    style="padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#f7f7f7;cursor:pointer">さらに見る</button>
+            </div>
+        </div>
+    </div>
     <audio id="bgm" src="sounds/11/Is_The_Source_Exist.mp3" loop></audio>
     <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
     <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
@@ -621,15 +648,7 @@
             hintCount: 0,
             send(ev, params = {}) { try { gtag('event', ev, params); } catch (e) { } }
         };
-        window.addEventListener('DOMContentLoaded', () => {
-            const a = document.querySelector('a[href="escape11_hint.html"]');
-            if (a) {
-                a.addEventListener('click', () => {
-                    ANA.hintCount++;
-                    ANA.send('open_hint', { count: ANA.hintCount });
-                });
-            }
-        });
+
         window.ANA = Object.assign(window.ANA || {}, {
             sid: Math.random().toString(36).slice(2),
             sent: new Set(),
@@ -654,6 +673,193 @@
         function markProgress(step, extra = {}) {
             ANA.once('progress', step, { step, ...extra });
         }
+
+        (() => {
+            const puzzleId = "escape13_short";
+
+            // —— ブランチ判定：今どの進捗か
+            function getBranch() {
+                const f = (gameState && gameState.main && gameState.main.flags) || {};
+                if (!f.foundKey) return "need_key";
+                if (!f.unlockDrawer3) return "need_drawer3";
+                if (!f.unlockDoor) return "need_door";
+                return "done";
+            }
+
+            // —— ブランチごとのヒント配列
+            function getHintsFor(branch) {
+                switch (branch) {
+                    case "need_key": return [
+                        "【やんわり】まだ開けてない小さな引き出し、どこかにあるよ。",
+                        "【手がかり】机の右側の小引き出し、調べてみて。",
+                        "【かなり具体】その小引き出しを調べればカギが手に入る。"
+                    ];
+                    case "need_drawer3": return [
+                        "【やんわり】下段は6桁。",
+                        "【手がかり】🐵🐰🦊は並び順。本とメモから数字を探そう。",
+                        "【かなり具体】引き出し中段のメモと、ウサギの絵本から数字を導こう。"
+                    ];
+                    case "need_door": return [
+                        "【やんわり】準備は整った。最後はドアのロック。",
+                        "【手がかり】左右に分かれたメモ。",
+                        "【かなり具体】入力は“go”＋“西暦”。"
+                    ];
+                    case "done": return [
+                        "ロックは解除済み。もう“ドアを調べれば”進めるよ！"
+                    ];
+                    default: return ["（ヒント生成に失敗。リロードしてね）"];
+                }
+            }
+
+            // —— ブランチ別に tier を保存（＝段階が変われば自動で0から）
+            function tierKey(branch) { return `hintTier_${puzzleId}_${branch}`; }
+            function getTier(branch) {
+                if (!gameState.main.hintTiers) gameState.main.hintTiers = {};
+                return gameState.main.hintTiers[branch] || 0;
+            }
+
+            function setTier(branch, n) {
+                if (!gameState.main.hintTiers) gameState.main.hintTiers = {};
+                gameState.main.hintTiers[branch] = n;
+            }
+
+            // —— 要素
+            const elFab = document.getElementById("hintFab");
+            const elModal = document.getElementById("hintModal");
+            const elBody = document.getElementById("hintBody");
+            const elClose = document.getElementById("hintClose");
+            const elMore = document.getElementById("hintMore");
+            const elUsage = document.getElementById("hintUsage");
+
+            // 文字が薄い問題に対応（見やすく）
+            if (elUsage) {
+                elUsage.style.opacity = "1";
+                elUsage.style.fontSize = "14px";
+                elUsage.style.color = "#222";
+            }
+
+            let cooling = false;
+            let blurArmed = true;
+            let lastBranch = null;
+
+            function render() {
+                const branch = getBranch();
+                const hints = getHintsFor(branch);
+
+                // ブランチが変わったら tier 未設定＝0から始まる（キーも別）
+                const tier = Math.min(getTier(branch), hints.length);
+
+                // ヘッダに“現在地”ミニ表示（任意）
+                const smallHead = document.createElement("div");
+                smallHead.style.fontSize = "12px";
+                smallHead.style.color = "#555";
+                smallHead.style.marginBottom = "8px";
+                const badge = {
+                    need_key: "進捗: カギ✗ / 下段✗ / ドア✗",
+                    need_drawer3: "進捗: カギ✓ / 下段✗ / ドア✗",
+                    need_door: "進捗: カギ✓ / 下段✓ / ドア✗",
+                    done: "進捗: カギ✓ / 下段✓ / ドア✓"
+                }[branch] || "";
+                smallHead.textContent = badge;
+
+                elBody.innerHTML = "";
+                elBody.appendChild(smallHead);
+
+                // 既に解放済みの段まで表示
+                for (let i = 0; i < tier; i++) {
+                    const p = document.createElement("p");
+                    p.textContent = hints[i];
+                    p.style.margin = "0 0 10px";
+                    p.style.color = "#111";
+                    elBody.appendChild(p);
+                }
+
+                // 次段階プレビュー（ぼかし）
+                if (tier < hints.length) {
+                    const nextWrap = document.createElement("div");
+                    nextWrap.style.position = "relative";
+                    nextWrap.style.margin = "0 0 10px";
+
+                    const next = document.createElement("div");
+                    next.textContent = hints[tier];
+                    next.style.filter = blurArmed ? "blur(6px)" : "none";
+                    next.style.userSelect = "none";
+                    next.style.transition = "filter .2s";
+                    next.style.color = "#111";
+                    nextWrap.appendChild(next);
+
+                    if (blurArmed) {
+                        const tap = document.createElement("div");
+                        tap.textContent = "（タップしてぼかし解除）";
+                        tap.style.position = "absolute";
+                        tap.style.inset = "0";
+                        tap.style.display = "grid";
+                        tap.style.placeItems = "center";
+                        tap.style.background = "rgba(255,255,255,.6)";
+                        tap.style.cursor = "pointer";
+                        nextWrap.appendChild(tap);
+                        tap.addEventListener("click", () => {
+                            blurArmed = false;
+                            next.style.filter = "none";
+                            tap.remove();
+                        });
+                    }
+                    elBody.appendChild(nextWrap);
+                }
+
+                // 使用回数表示
+                if (elUsage) elUsage.textContent = `ヒント使用 ${Math.min(tier + 1, hints.length)}/${hints.length}`;
+
+                // ボタン状態
+                if (tier >= hints.length) {
+                    elMore.disabled = true;
+                    elMore.textContent = "これ以上はナイショ";
+                } else {
+                    elMore.disabled = false;
+                    elMore.textContent = "さらに見る";
+                }
+
+                // 分析（任意）
+                if (branch !== lastBranch && window.gtag) {
+                    gtag('event', 'hint_context', { puzzleId, branch });
+                }
+                lastBranch = branch;
+            }
+
+            function openModal() {
+                blurArmed = true; // 毎回ぼかしから
+                elModal.style.display = "block";
+                render();
+                if (window.gtag) gtag('event', 'hint_open', { puzzleId });
+            }
+            function closeModal() { elModal.style.display = "none"; }
+
+            elFab?.addEventListener("click", openModal);
+            elClose?.addEventListener("click", closeModal);
+            elModal?.addEventListener("click", (e) => { if (e.target === elModal) closeModal(); });
+
+            elMore?.addEventListener("click", () => {
+                if (cooling) return;
+                const branch = getBranch();
+                const hints = getHintsFor(branch);
+                const next = Math.min(getTier(branch) + 1, hints.length);
+                setTier(branch, next);
+                render();
+
+                ANA.hintCount = (ANA.hintCount || 0) + 1;
+                ANA.send('open_hint', {
+                    count: ANA.hintCount,
+                    branch,
+                    tier: next
+                });
+
+                if (window.gtag) gtag('event', 'hint_tier_unlock', { puzzleId, branch, tier: next });
+
+
+            });
+
+            // 初回：各ブランチは未設定（＝0）で良い
+        })();
 
         window._nextModal = null;
         const canvas = document.getElementById('gameCanvas');
@@ -713,7 +919,8 @@
                 inventory: [],
                 main: {
                     flags: {
-                        foundKey: false, badEnd: false, found4Part: false,
+                        hintTiers: {},
+                        foundKey: false, unlockDrawer3: false, badEnd: false, found4Part: false,
                         talkTo: { books: 0 }, backgroundState: 0, dangoAppear: false, foundDango: false, wakeupBear: false
                     }
 
@@ -724,7 +931,7 @@
                 },
                 drawerPuzzle: { digits: [0, 0, 0], solved: false },
                 drawerInner2: {
-                    flags: { unlocked: false },
+                    flags: {},
                 },
                 drawerInner3: {
                     flags: { foundPart: false },
@@ -1452,7 +1659,7 @@
             let t0 = performance.now();
 
             // 既存SEを活用
-            playSE && playSE('se-scene-change');   
+            playSE && playSE('se-scene-change');
 
             // 色ズレ＆フラッシュ
             overlay.classList.add('warp-active');
@@ -1957,7 +2164,7 @@
             } else if (val === 'go1071' || val === '1071') {
                 if (gameState.main.flags.wakeupBear) {
                     closeModal();
-                    // フラグ(任意)
+
                     gameState.flags.trueEndUnlocked = true;
                     gameState.main.flags.unlockDoor = true;
                     // 演出→トゥルーへ
@@ -1979,7 +2186,7 @@
             } else if (val === 'go1969' || val === '1969') {
                 if (gameState.main.flags.wakeupBear) {
                     closeModal();
-                    // フラグ(任意)
+
                     gameState.flags.apoloEnd = true;
                     gameState.main.flags.unlockDoor = true;
                     // 演出→トゥルーへ
@@ -2013,7 +2220,6 @@
 
         function checkBearAppear() {
             const g = gameState.drawerDigits;
-            // 上=2, 中=4, 下=9が揃ったらクマ登場
             if (g.d1 === 2 && g.d2 === 4 && g.d3 === 9) {
                 if (!gameState.main.flags.wakeupBear) {
                     gameState.main.flags.wakeupBear = true;
