@@ -1558,7 +1558,7 @@
                         addItem('part4_1');
                     } else if (gameState.flags.trueEndUnlocked) {
                         talkToHintCharacter('main', 'bear2');
-                    } else if (gameState.selectedItem=='dango') {
+                    } else if (gameState.selectedItem=='dango' || hasItem('dango')) {
                         talkToHintCharacter('main', 'bear3');
                     } else {
                         talkToHintCharacter('main', 'bear');
