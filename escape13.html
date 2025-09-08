@@ -676,6 +676,7 @@
                 end: ['images/13/end.png'],
                 trueEnd: ['images/13/true_end.jpg'],
                 trueEnd2: ['images/13/true_end2.jpg'],
+                end1969: ['images/13/end1969.png'],
 
             },
             items: {
@@ -733,7 +734,7 @@
                 drawerDigits: { d1: null, d2: null, d3: null },
 
                 endings: { normal: false, true: false },
-                flags: { trueEndUnlocked: false },
+                flags: { trueEndUnlocked: false, apoloEnd: false },
                 selectedItem: null,
 
             };
@@ -1145,7 +1146,14 @@
                 description:
                     'おめでとうございます！お団子を食べつつ綺麗な月を眺めましょう' +
                     '',
-                clickableAreas: [{ x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end', description: 'トゥルーエンド+' }]
+                clickableAreas: [{ x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end2', description: 'トゥルーエンド+' }]
+            },
+            end1969: {
+                name: 'アポロ時代に脱出成功',
+                description:
+                    'おめでとうございます！本当にこの時代で良かった？' +
+                    '',
+                clickableAreas: [{ x: 0, y: 0, width: 100, height: 100, action: 'examine_end1969', description: 'アポロエンド' }]
             },
         };
 
@@ -1271,6 +1279,10 @@
                 renderNavigation();
             } else if (roomId === "end") {
                 changeBGM("sounds/13/tsukiwomitsumete.mp3");
+                gameState.openRooms = [];
+                renderNavigation();
+            } else if (roomId === "end1969") {
+                changeBGM("sounds/13/Past_and_Future.mp3");
                 gameState.openRooms = [];
                 renderNavigation();
             } else {
@@ -1729,6 +1741,12 @@
                 case 'examine_true_end':
                     showEndingReport('trueEnd');
                     break;
+                case 'examine_true_end2':
+                    showEndingReport('trueEnd2');
+                    break;
+                case 'examine_end1969':
+                    showEndingReport('end1969');
+                    break;
             }
             gameState.selectedItem = null;
             gameState.selectedItemSlot = null;
@@ -1761,6 +1779,8 @@
                 ? '🐻 クマ妖精：現れた'
                 : '🐻 クマ妖精：いない';
 
+            const dangoTxt = f.foundDango ? 'お団子GET': 'お団子なし';
+
             const hintTxt = `🔍 ヒント使用：${ana.hintCount || 0}回`;
             const timeTxt = `⌛ プレイ時間：${mm}:${ss}`;
 
@@ -1770,6 +1790,7 @@
         <div style="font-size:1.4em;margin-bottom:10px">${endingTxt}</div>
         <ul style="line-height:1.8;margin:0;padding-left:1.1em">
           <li>${bearTxt}</li>
+          <li>${dangoTxt}</li>
           <li>${hintTxt}</li>
           <li>${timeTxt}</li>
         </ul>
@@ -1792,6 +1813,7 @@
         const FORM_FIELDS = {
             ending: 'entry.525974988',
             bear_appeared: 'entry.1343186601',
+            dango: 'entry.1541264966'
 
         };
 
@@ -1802,11 +1824,14 @@
 
             const endingLabel = (id => ({
                 trueEnd: "トゥルーエンド",
+                trueEnd2: "トゥルーエンド2",
                 end: "ノーマルエンド",
+                end1969: 'アポロエンド',
                 badEnd: "BAD END"
             }[id] || ""))(endingId);
 
             const bearLabel = f.wakeupBear ? "登場した" : "未登場";
+            const dangoLabel = f.foundDango ? "GET" : "未入手";
 
             const params = new URLSearchParams();
             params.set("usp", "pp_url");
@@ -1814,6 +1839,7 @@
             // マッピングがある項目だけ詰める
             if (FORM_FIELDS.ending && endingLabel) params.set(FORM_FIELDS.ending, endingLabel);
             if (FORM_FIELDS.bear_appeared && bearLabel) params.set(FORM_FIELDS.bear_appeared, bearLabel);
+            if (FORM_FIELDS.dango && dangoLabel) params.set(FORM_FIELDS.dango, dangoLabel);
 
             window.open(`${FEEDBACK_URL}?${params.toString()}`, "_blank", "noopener,noreferrer");
         }
@@ -1941,6 +1967,21 @@
                 
                 return;
 
+            } else if (val === 'go1969' || val === '1969') {
+                closeModal();
+                // フラグ(任意)
+                gameState.flags.apoloEnd = true;
+                gameState.main.flags.unlockDoor = true;
+                // 演出→トゥルーへ
+                startTimeWarp(1400, () => {
+                    // changeRoom('trueEnd');
+                    gameState.main.flags.backgroundState = 1;
+                    updateMessage('ドアロックが解除されたのかな？さあ脱出しよう');
+                    renderCanvasRoom();
+                });
+                
+                return;
+
             } else if (val === 'odango' || val === 'おだんご') {
                 closeModal();
                 playSE && playSE('se-fanta'); 
@@ -1982,6 +2023,8 @@
             } else if (gameState.flags.trueEndUnlocked) {
                 gameState.endings.true = true;
                 changeRoom('trueEnd');
+            } else if (gameState.flags.apoloEnd) {
+                changeRoom('end1969');
             } else if (gameState.main.flags.badEnd) {
                 markProgress('badend_2082');
                 showModal(
