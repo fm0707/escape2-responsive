@@ -716,7 +716,7 @@
                 main: {
                     flags: {
                         foundKey: false, badEnd: false, found4Part: false,
-                        talkTo: { books: 0 }, backgroundState: 0, dangoAppear: false, foundDango: false,
+                        talkTo: { books: 0 }, backgroundState: 0, dangoAppear: false, foundDango: false, wakeupBear: false
                     }
 
                 },
@@ -1571,7 +1571,7 @@
                         addItem('part4_1');
                     } else if (gameState.flags.trueEndUnlocked) {
                         talkToHintCharacter('main', 'bear2');
-                    } else if (gameState.selectedItem=='dango' || hasItem('dango')) {
+                    } else if (gameState.selectedItem == 'dango' || hasItem('dango')) {
                         talkToHintCharacter('main', 'bear3');
                     } else {
                         talkToHintCharacter('main', 'bear');
@@ -1773,6 +1773,7 @@
             const endingTxt = ({
                 trueEnd: '🌙 TRUE END（平安の月見へ…）',
                 end: '⭐ NORMAL END（夜空の月を見上げて脱出）',
+                end1969: '⭐ NORMAL END（月面へ脱出）',
                 badEnd: '💀 BAD END（時空の彼方へ…）'
             })[endingId] || '⭐ END';
 
@@ -1781,7 +1782,7 @@
                 ? '🐻 クマ妖精：現れた'
                 : '🐻 クマ妖精：いない';
 
-            const dangoTxt = f.foundDango ? '🍡お団子：GET': 'お団子：なし';
+            const dangoTxt = f.foundDango ? '🍡お団子：GET' : 'お団子：なし';
 
             const hintTxt = `🔍 ヒント使用：${ana.hintCount || 0}回`;
             const timeTxt = `⌛ プレイ時間：${mm}:${ss}`;
@@ -1910,6 +1911,7 @@
             const modalContent = `
                 <h3>ドアロック</h3>
                 <p>コードを入れる必要があるみたい</p>
+                <p id="doormsg"></p>
                 <input type="text" class="puzzle-input" id="doorInput" placeholder="">
                 <br>
                 <button onclick="checkDoorPuzzle()">確認</button>
@@ -1955,38 +1957,52 @@
                 updateMessage('ドアロックが解除された。さあ脱出しよう');
 
             } else if (val === 'go1071' || val === '1071') {
-                closeModal();
-                // フラグ(任意)
-                gameState.flags.trueEndUnlocked = true;
-                gameState.main.flags.unlockDoor = true;
-                // 演出→トゥルーへ
-                startTimeWarp(1400, () => {
-                    // changeRoom('trueEnd');
-                    gameState.main.flags.backgroundState = 1;
-                    updateMessage('ドアロックが解除されたのかな？さあ脱出しよう');
-                    renderCanvasRoom();
-                });
-                
-                return;
+                if (gameState.main.flags.wakeupBear) {
+                    closeModal();
+                    // フラグ(任意)
+                    gameState.flags.trueEndUnlocked = true;
+                    gameState.main.flags.unlockDoor = true;
+                    // 演出→トゥルーへ
+                    startTimeWarp(1400, () => {
+                        // changeRoom('trueEnd');
+                        gameState.main.flags.backgroundState = 1;
+                        updateMessage('ドアロックが解除されたのかな？さあ脱出しよう');
+                        renderCanvasRoom();
+                    });
+
+                    return;
+                } else {
+                    document.getElementById("doormsg").innerText = "オペレーター不在のため実行できませんでした";
+                    playSE('se-error');
+                    updateMessage('実行できないようだ');
+                }
+
 
             } else if (val === 'go1969' || val === '1969') {
-                closeModal();
-                // フラグ(任意)
-                gameState.flags.apoloEnd = true;
-                gameState.main.flags.unlockDoor = true;
-                // 演出→トゥルーへ
-                startTimeWarp(1400, () => {
-                    // changeRoom('trueEnd');
-                    gameState.main.flags.backgroundState = 1;
-                    updateMessage('ドアロックが解除されたのかな？さあ脱出しよう');
-                    renderCanvasRoom();
-                });
-                
-                return;
+                if (gameState.main.flags.wakeupBear) {
+                    closeModal();
+                    // フラグ(任意)
+                    gameState.flags.apoloEnd = true;
+                    gameState.main.flags.unlockDoor = true;
+                    // 演出→トゥルーへ
+                    startTimeWarp(1400, () => {
+                        // changeRoom('trueEnd');
+                        gameState.main.flags.backgroundState = 1;
+                        updateMessage('ドアロックが解除されたのかな？さあ脱出しよう');
+                        renderCanvasRoom();
+                    });
+
+                    return;
+                } else {
+                    document.getElementById("doormsg").innerText = "オペレーター不在のため実行できませんでした";
+                    playSE('se-error');
+                    updateMessage('実行できないようだ');
+                }
+
 
             } else if (val === 'odango' || val === 'おだんご') {
                 closeModal();
-                playSE && playSE('se-fanta'); 
+                playSE && playSE('se-fanta');
                 updateMessage("タンスの上にお団子が出現した");
                 gameState.main.flags.dangoAppear = true;
                 renderCanvasRoom();
