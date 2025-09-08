@@ -1491,7 +1491,7 @@
                 case 'examine_main_window_above':
                     if (gameState.main.flags.backgroundState == 0) {
                         showModal(
-                            '！',
+                            '',
                             '<img src="images/13/sky.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{ text: '閉じる', action: 'close' }]
                         );
@@ -1809,7 +1809,7 @@
         function showDrawer3Puzzle() {
             const modalContent = `
                 <h3>ロックがかかっている</h3>
-                <p>🐵🦊🐰</p>
+                <p>🐵🐰🦊</p>
                 <input type="text" class="puzzle-input" id="drawer3Input" placeholder="数字6桁">
                 <br>
                 <button onclick="checkDrawer3Puzzle()">確認</button>
@@ -1823,7 +1823,7 @@
         // 引き出しパズルの答えをチェック
         function checkDrawer3Puzzle() {
             const input = document.getElementById('drawer3Input').value;
-            if (input === '191829' || input === '１９１８２９') {
+            if (input === '192918' || input === '１９２９１８') {
                 closeModal();
                 gameState.main.flags.unlockDrawer3 = true;
                 markProgress('drawer3_open');
