@@ -813,7 +813,7 @@
                 // ボタン状態
                 if (tier >= hints.length) {
                     elMore.disabled = true;
-                    elMore.textContent = "これ以上はナイショ";
+                    elMore.textContent = "これ以上はありません";
                 } else {
                     elMore.disabled = false;
                     elMore.textContent = "さらに見る";
@@ -2125,7 +2125,7 @@
             const modalContent = `
                 <h3>ドアロック</h3>
                 <p>コードを入れる必要があるみたい</p>
-                <p id="doormsg"></p>
+                <p id="doormsg" style="color:red;"></p>
                 <input type="text" class="puzzle-input" id="doorInput" placeholder="">
                 <br>
                 <button onclick="checkDoorPuzzle()">確認</button>
