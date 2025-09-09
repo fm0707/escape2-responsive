@@ -702,7 +702,7 @@
                     case "need_door": return [
                         "【ヒント1】最後はドアのロック。",
                         "【ヒント2】左右に分かれたメモ。",
-                        "【ヒント3】入力は“go”＋“西暦”。"
+                        "【ヒント3】入力は“go”＋“西暦”ですが、西暦だけでも反応します。"
                     ];
                     case "done": return [
                         "ロックは解除済み。もうドアを調べれば進めます"
@@ -2143,7 +2143,7 @@
             const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
             const val = z2h(v).toLowerCase();
             document.getElementById("doormsg").innerText = "";
-            if (val === 'go2025') {
+            if (val === 'go2025'|| val === '2025') {
                 closeModal();
                 gameState.main.flags.unlockDoor = true;
                 markProgress('door_open');
