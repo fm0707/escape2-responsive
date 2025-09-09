@@ -948,7 +948,7 @@
                 drawerDigits: { d1: null, d2: null, d3: null },
 
                 endings: { normal: false, true: false },
-                flags: { trueEndUnlocked: false, apoloEnd: false },
+                flags: { trueEndUnlocked: false, apolloEnd: false },
                 selectedItem: null,
 
             };
@@ -1503,11 +1503,7 @@
             } else {
                 changeBGM("sounds/13/Village_girl.mp3");
             }
-            if (AMBIENT_STARS.rooms.has(roomId)) {
-                enableAmbientStars();
-            } else {
-                disableAmbientStars();
-            }
+            
         }
 
         const END_IDS = new Set(['end', 'trueEnd']);
@@ -1996,7 +1992,7 @@
                 ? '🐻 クマ妖精：現れた'
                 : '🐻 クマ妖精：いない';
 
-            const dangoTxt = f.foundDango ? '🍡お団子：GET' : 'お団子：なし';
+            const dangoTxt = f.foundDango ? '🍡 お団子：GET' : '🍡 お団子：なし';
 
             const hintTxt = `🔍 ヒント使用：${ana.hintCount || 0}回`;
             const timeTxt = `⌛ プレイ時間：${mm}:${ss}`;
@@ -2100,8 +2096,11 @@
 
         // 引き出しパズルの答えをチェック
         function checkDrawer3Puzzle() {
-            const input = document.getElementById('drawer3Input').value;
-            if (input === '192918' || input === '１９２９１８') {
+            const v = document.getElementById('drawer3Input').value.trim();
+            // 全角対策
+            const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+            const val = z2h(v).toLowerCase();
+            if (val === '192918') {
                 closeModal();
                 gameState.main.flags.unlockDrawer3 = true;
                 markProgress('drawer3_open');
@@ -2198,7 +2197,7 @@
                 if (gameState.main.flags.wakeupBear) {
                     closeModal();
 
-                    gameState.flags.apoloEnd = true;
+                    gameState.flags.apolloEnd = true;
                     gameState.main.flags.unlockDoor = true;
                     // 演出→トゥルーへ
                     startTimeWarp(1400, () => {
@@ -2247,7 +2246,6 @@
 
 
         function handleDoor() {
-            removeItem && removeItem('key');
 
             // 分岐：trueEndUnlocked が立っていればトゥルーENDへ
             if (gameState.flags.trueEndUnlocked && hasItem('dango')) {
@@ -2256,7 +2254,7 @@
             } else if (gameState.flags.trueEndUnlocked) {
                 gameState.endings.true = true;
                 changeRoom('trueEnd');
-            } else if (gameState.flags.apoloEnd) {
+            } else if (gameState.flags.apolloEnd) {
                 changeRoom('end1969');
             } else if (gameState.main.flags.badEnd) {
                 markProgress('badend_2082');
@@ -2391,21 +2389,6 @@
                 a.style.textDecoration = 'underline';
             });
         }
-
-        function updateStatusIcons() {
-            const area = document.getElementById('statusIconArea');
-            area.innerHTML = "";
-
-            if (gameState.takeoutArea.flags.bearCoinCnt >= 1) {
-                // アイコン画像または絵文字で表示
-                area.innerHTML += `<div class="status-icon" title="蚊に刺されにくい"><img src="images/8/no_mosquite_icon.png" style="width:18px;height:18px;"></div>`;
-            }
-            if (gameState.takeoutArea.flags.bearCoinCnt >= 2) {
-                area.innerHTML += `<div class="status-icon" title="観察力アップ中"><img src="images/8/visible_icon.png" style="width:18px;height:18px;"></div>`;
-                // area.innerHTML += `<div class="status-icon" title="観察力アップ中">👓✨</div>`;
-            }
-        }
-
 
         // モーダル表示
         function showModal(title, content, buttons, onSequenceSuccess) {
@@ -2708,86 +2691,7 @@
             ctx.fill();
         }
 
-        const AMBIENT_STARS = {
-            enabled: false,
-            rooms: new Set(['endPiyoLost', 'endPiyoSafe']),
-            rateMs: 1900,           // 何msごとに1バースト発生させるか（ゆっくり）
-            lastSpawn: 0,
-            area: { x: 40, y: 6, w: 20, h: 35 }, // 画面上部の空（%指定）。お好みで
-        };
-
-        function enableAmbientStars() {
-            AMBIENT_STARS.enabled = true;
-            AMBIENT_STARS.lastSpawn = 0; // リセット
-            _kickStarLoop();             // RAFを起動（既に回ってれば何もしない）
-        }
-        function disableAmbientStars() {
-            AMBIENT_STARS.enabled = false;
-        }
-
-        // ループ内で呼ぶ“アンビエント湧き”
-        function _maybeSpawnAmbient(t) {
-            if (!AMBIENT_STARS.enabled) return;
-            if (!AMBIENT_STARS.rooms.has(gameState.currentRoom)) return;
-            if (AMBIENT_STARS.lastSpawn === 0) AMBIENT_STARS.lastSpawn = t;
-
-            if (t - AMBIENT_STARS.lastSpawn >= AMBIENT_STARS.rateMs) {
-                AMBIENT_STARS.lastSpawn = t;
-
-                // 画面%→px 変換
-                const W = canvas.width, H = canvas.height;
-                const ar = AMBIENT_STARS.area;
-                const x = (ar.x + Math.random() * ar.w) / 100 * W;
-                const y = (ar.y + Math.random() * ar.h) / 100 * H;
-
-                // 穏やかな星（少なめ＆低速＆寿命長め）を発生
-                sparkleAt(x, y, {
-                    count: 8,
-                    life: 1200,
-                    speed: 80,
-                    spread: Math.PI * 1.4,
-                    size: [1.5, 3.2],
-                    colors: ['#fff8b0', '#e8f3ff', '#ffe26a', '#ffffff']
-                });
-            }
-        }
-
-        /***** 一度だけ作る星空レイヤー *****/
-        let STARFIELD_CACHE = { room: null, w: 0, h: 0, canvas: null, ctx: null };
-
-        function getStarfieldLayer(roomId, w, h) {
-            // サイズやルームが変わったら作り直し
-            if (!STARFIELD_CACHE.canvas || STARFIELD_CACHE.w !== w || STARFIELD_CACHE.h !== h || STARFIELD_CACHE.room !== roomId) {
-                const off = document.createElement('canvas');
-                off.width = w; off.height = h;
-                const octx = off.getContext('2d');
-
-                // ★ここで一度だけ星を描く（静止背景）
-                const sky = octx.createLinearGradient(0, 0, 0, h);
-                sky.addColorStop(0, '#061a44');
-                sky.addColorStop(1, '#0b0f2b');
-                octx.fillStyle = sky;
-                octx.fillRect(0, 0, w, h);
-
-                // 星を散らす（1回だけ）
-                for (let i = 0; i < 120; i++) {
-                    const x = Math.random() * w;
-                    const y = Math.random() * h * 0.7;
-                    const r = Math.random() * 1.6 + 0.4;
-                    octx.globalAlpha = 0.6 + Math.random() * 0.4;
-                    octx.beginPath();
-                    octx.arc(x, y, r, 0, Math.PI * 2);
-                    octx.fillStyle = '#cfe6ff';
-                    octx.fill();
-                }
-                octx.globalAlpha = 1;
-
-                STARFIELD_CACHE = { room: roomId, w, h, canvas: off, ctx: octx };
-            }
-            return STARFIELD_CACHE.canvas;
-        }
-
-
+        
         function saveGame() {
             const toSave = { ...gameState, __version: SAVE_VERSION };
             localStorage.setItem(SAVE_KEY, JSON.stringify(toSave));
