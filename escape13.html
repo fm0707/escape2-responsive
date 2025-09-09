@@ -904,6 +904,15 @@
 
             },
 
+            modals: {
+                sky: 'images/13/sky.png',
+                dango: 'images/13/dango.png',
+                bearDango: 'images/13/bear_dango.png',
+                bearGive: 'images/13/bear_give.png',
+                memo: 'images/13/memo.png',
+                badend: 'images/13/badend.jpg',
+            },
+
 
         };
 
@@ -1733,7 +1742,7 @@
                     if (gameState.main.flags.backgroundState == 0) {
                         showModal(
                             '',
-                            '<img src="images/13/sky.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            `<img src="${IMAGES.modals.sky}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
                     } else {
@@ -1751,7 +1760,7 @@
                 case 'examine_main_dango':
                     showModal(
                         'お月見団子を手に入れた',
-                        '<img src="images/13/dango.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        `<img src="${IMAGES.modals.dango}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
                     gameState.main.flags.foundDango = true;
@@ -1760,7 +1769,7 @@
                 case 'examine_main_pic':
                     showModal(
                         '',
-                        '<img src="images/13/bear_dango.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        `<img src="${IMAGES.modals.bearDango}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
                     break;
@@ -1768,7 +1777,7 @@
                     if (gameState.main.flags.talkTo.bear > 2 && !gameState.main.flags.found4Part) {
                         showModal(
                             'これあげる',
-                            '<img src="images/13/bear_give.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            `<img src="${IMAGES.modals.bearGive}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
                         gameState.main.flags.found4Part = true;
@@ -1849,7 +1858,7 @@
                 case 'examine_drawer2_memo':
                     showModal(
                         '手書きのメモだ',
-                        '<img src="images/13/memo.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        `<img src="${IMAGES.modals.memo}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
                     break;
@@ -2168,6 +2177,7 @@
                     gameState.flags.trueEndUnlocked = true;
                     gameState.main.flags.unlockDoor = true;
                     // 演出→トゥルーへ
+                    updateMessage('?');
                     startTimeWarp(1400, () => {
                         // changeRoom('trueEnd');
                         gameState.main.flags.backgroundState = 1;
@@ -2251,7 +2261,7 @@
                 markProgress('badend_2082');
                 showModal(
                     'BAD END\nあなたは突然宇宙空間に投げ出された',
-                    '<img src="images/13/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    `<img src="${IMAGES.modals.badend}" style="width:300px;display:block;margin:0 auto 20px;">`,
                     [{ text: '最初から', action: 'restart' }]
                 );
                 playSE?.('se-bad-space');
@@ -2555,6 +2565,15 @@
             });
             // アイテム画像
             Object.values(IMAGES.items).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+            // モーダル画像
+            Object.values(IMAGES.modals).forEach(src => {
                 if (!loadedImages[src]) {
                     const img = new Image();
                     img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
