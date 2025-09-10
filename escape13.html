@@ -2233,6 +2233,7 @@
             if (g.d1 === 2 && g.d2 === 4 && g.d3 === 9) {
                 if (!gameState.main.flags.wakeupBear) {
                     gameState.main.flags.wakeupBear = true;
+                    markProgress('bear_appear');
                     playSE && playSE('se-fanta');
                     showModal(
                         '何か物音がした',
