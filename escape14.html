@@ -721,6 +721,7 @@
                 end2: ['images/14/end2.png'],
                 trueEnd: ['images/14/true_end.png'],
                 trueEnd2: ['images/14/true_end2.png'],
+                hakone: ['images/14/hakone.jpeg'],
                 // end1969: ['images/14/end1969.png'],
 
             },
@@ -753,6 +754,7 @@
                 maracasBeamDoorRight: 'images/14/maracas_beam_door_right.png',
                 cloudSeal: 'images/14/cloud_seal.png',
                 posterCloud: 'images/14/poster_cloud.png',
+                posterHakone: 'images/14/poster_hakone.png',
                 bachi: 'images/14/bachi.png',
                 maracas: 'images/14/maracas.png',
                 posterOngaku: 'images/14/poster_ongaku.png',
@@ -1213,6 +1215,17 @@
                 description: '',
                 clickableAreas: [
                     {
+                        x: 82.1, y: 33.3, width: 6.9, height: 8.4,
+                        action: 'examine_door_poster_hakone',
+                        description: '箱根のポスター',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: {
+                            img: 'posterHakone',
+                            visible: () => true,
+                        },
+                    },
+                    {
                         x: 90.7, y: 37.6, width: 8.9, height: 12.0,
                         action: 'examine_door_poster_cloud',
                         description: '雲のポスター',
@@ -1605,7 +1618,20 @@
                 description:
                     'おめでとうございます！マラカスチャームも何かに付けてね' +
                     '',
-                clickableAreas: [{ x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end2', description: 'トゥルーエンド+' }]
+                clickableAreas: [
+                    // { x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end2', description: 'トゥルーエンド+' }
+                    { x: 23.1, y: 18.5, width: 47.2, height: 20.7, action: 'examine_true_end2_hole', description: 'トゥルーエンド+ワープホール' }
+                ]
+            },
+            hakone: {
+                name: '箱根',
+                description:
+                    '脱出成功！ そして、かまぼこへ──ここまで遊んでくれてありがとう' +
+                    '',
+                clickableAreas: [
+                    { x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end2', description: 'トゥルーエンド+' }
+                   
+                ]
             },
 
         };
@@ -1735,6 +1761,8 @@
                 renderNavigation();
             } else if (roomId === "piano") {
                 pauseBGM();
+            } else if (roomId === "hakone") {
+                changeBGM("sounds/14/1458.mp3");
             } else {
                 changeBGM("sounds/14/canvasintheroom.mp3");
             }
@@ -2583,7 +2611,13 @@
                         [{ text: '閉じる', action: 'close' }]
                     );
                     break;
-
+case 'examine_door_poster_hakone':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.items.posterHakone}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
                 // mainDrum
                 case 'examine_main_drum': {
                     if (gameState.selectedItem === 'bachi' || gameState.main.flags.foundBachi) {
@@ -2875,6 +2909,9 @@
                     break;
                 case 'examine_true_end':
                     showEndingReport('trueEnd');
+                    break;
+                case 'examine_true_end2_hole':
+                    changeRoom('hakone');
                     break;
                 case 'examine_true_end2':
                     showEndingReport('trueEnd2');
