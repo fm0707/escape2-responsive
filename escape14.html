@@ -788,6 +788,7 @@
                 otoshimonoCoin: 'images/14/otoshimono_coin.jpeg',
                 bearMaracasGiving: 'images/14/bear_maracas_giving.jpeg',
                 badend: 'images/14/badend.png',
+                badendBear: 'images/14/badend_bear.jpeg',
                 bearBoard: 'images/14/bear_board.png',
             },
 
@@ -1630,7 +1631,7 @@
                     '',
                 clickableAreas: [
                     { x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end2', description: 'トゥルーエンド+' }
-                   
+
                 ]
             },
 
@@ -2611,7 +2612,7 @@
                         [{ text: '閉じる', action: 'close' }]
                     );
                     break;
-case 'examine_door_poster_hakone':
+                case 'examine_door_poster_hakone':
                     showModal(
                         '',
                         `<img src="${IMAGES.items.posterHakone}" style="width:300px;display:block;margin:0 auto 20px;">`,
@@ -2747,6 +2748,15 @@ case 'examine_door_poster_hakone':
                     }
                     if (gameState.flags.trueEndUnlocked) {
                         talkToHintCharacter('main', 'bearTrueEnd');
+                        break;
+                    }
+                    if (gameState.selectedItem == 'bearMaracas') {
+                        showModal(
+                            'BAD END\nあなたはもらったマラカスチャームでクマ妖精をたたこうとした。<br>クマ妖精に怒られて気を失った',
+                            `<img src="${IMAGES.modals.badendBear}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '最初から', action: 'restart' }]
+                        );
+                        playSE?.('se-gaan');
                         break;
                     }
                     if (gameState.selectedItem == 'bachi') {
