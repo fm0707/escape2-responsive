@@ -994,7 +994,12 @@
                         x: 33.4, y: 46.0, width: 16.5, height: 14.5,
                         action: 'enter_maracas',
                         description: 'マラカス',
-                        zIndex: 2
+                        zIndex: 2,
+                        usable: () => !gameState.main.flags.ghostMoved,
+                        item: {
+                            img: 'ghost',
+                            visible: () => !gameState.main.flags.ghostMoved,
+                        },
                     },
                     {
                         x: 72.0, y: 15.0, width: 10.1, height: 8.2,
