@@ -1,0 +1,3409 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="音楽室を舞台にした分岐エンド付きの無料脱出ゲーム。全4エンドのマルチエンディング。スマホ＆PC対応。">
+    <title>音楽室からの脱出</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            color: #f4f1e8;
+            width: 100%;
+            overflow-x: hidden;
+            /* ←これ重要 */
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1408px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #endingShareArea {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 18px;
+            box-shadow: 0 0 24px #fffc;
+            padding: 18px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 99;
+            font-size: 1.2em;
+            gap: 10px;
+            border: 2px solid gold;
+        }
+
+        #endingShareArea button {
+            font-size: 1.1em;
+            padding: 10px 24px;
+            margin: 6px 0;
+            background: gold;
+            color: #333;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #ffdc;
+            cursor: pointer;
+        }
+
+        .ui-panel {
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1048px;
+            min-height: 120px;
+            background: #2c1810;
+            box-sizing: border-box;
+            display: flex;
+        }
+
+        .inventory {
+            /* flex: 1; */
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            padding: 0 12px;
+            /* width:100%; */
+        }
+
+        .inventory-slot {
+            width: 14vw;
+            height: 14vw;
+            max-width: 80px;
+            max-height: 80px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .inventory-slot.selected {
+            border: 3px solid #9f2b02;
+            /* 金色・太め推奨 */
+            box-shadow: 0 0 12px #ff8c0099;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .inventory-slot img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+
+        .magnifier-btn {
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px #0002;
+            cursor: pointer;
+            z-index: 10;
+            transition: box-shadow .15s;
+        }
+
+        .magnifier-btn:hover {
+            box-shadow: 0 0 10px #ffd70099;
+        }
+
+        .magnifier-btn img {
+            width: 16px;
+            height: 16px;
+            pointer-events: none;
+        }
+
+        .info-panel {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            height: 65px;
+            min-height: 40px;
+            border: 1px solid #d4af37;
+            position: relative;
+        }
+
+        #msgText {}
+
+        #statusIconArea {
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .status-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid gold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px #0005;
+            font-size: 1.4em;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #d4af37;
+            max-width: calc(100vw - 60px);
+            text-align: center;
+        }
+
+        .modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #modalButtons button {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0 10px 10px 0;
+            cursor: pointer;
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            border-radius: 10px;
+        }
+
+        #modalButtons button img {
+            width: 80px;
+            height: 80px;
+            vertical-align: middle;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+        }
+
+        #modalButtons button:hover img {
+            filter: brightness(1.08) drop-shadow(0 2px 6px #ffd70050);
+            box-shadow: 0 0 10px #ffd70080;
+            transform: scale(1.05);
+        }
+
+        #modalButtons button:active img,
+        #modalButtons button.pressed img {
+            filter: brightness(0.95) grayscale(20%);
+            box-shadow: 0 0 8px #3332;
+            transform: scale(0.97);
+        }
+
+        #modalButtons button:disabled img {
+            filter: grayscale(90%) opacity(0.5);
+            box-shadow: none;
+        }
+
+        /* テキスト型ボタンも画像ボタン風に */
+        #modalButtons button.text-btn {
+            min-width: 120px;
+            font-size: 1.15em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            margin: 0 10px 10px 0;
+            box-shadow: 0 4px 14px #ffc90022;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        #modalButtons button.text-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+            transform: scale(1.05);
+        }
+
+        #modalButtons button.text-btn:active {
+            filter: brightness(0.96);
+            transform: scale(0.97);
+        }
+
+        #modalButtons button.text-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 閉じるボタン */
+        #modalClose .modal-close-btn {
+            display: inline-block;
+            min-width: 160px;
+            font-size: 1.2em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            box-shadow: 0 4px 14px #ffc90022;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s;
+        }
+
+        #modalClose .modal-close-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+        }
+
+        .puzzle-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #d4af37;
+            background: rgba(244, 241, 232, 0.9);
+            color: #1a0f08;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border: 2px solid #d4af37;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        .login-container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            width: 280px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .login-form label {
+            font-size: 14px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .login-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .login-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* 画像プレースホルダー用のスタイル */
+        .image-placeholder {
+            background: linear-gradient(135deg, #444, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .notice {
+            text-overflow: clip;
+        }
+
+        .save-area {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 18px 0 4px 0;
+            /* width: 40%; */
+        }
+
+        @media (max-width: 600px) {
+            #msgText {
+                font-size: .8rem;
+            }
+
+            .save-area {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-top: 8px;
+                gap: 16px;
+            }
+
+            .inventory {
+                gap: 16px;
+                align-items: center;
+                padding: 0 2px;
+                width: 100%;
+            }
+        }
+
+        .save-area .nav-btn {
+            min-width: 80px;
+            padding: 10px 18px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+            border-radius: 8px;
+            border: none;
+            color: #1a0f08;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .save-area .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 12px #d4af3740;
+        }
+
+        #roomEffectOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s;
+            z-index: 9999;
+        }
+
+        .title-wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        @keyframes warpFlash {
+            0% {
+                opacity: 0
+            }
+
+            15% {
+                opacity: .95
+            }
+
+            50% {
+                opacity: .4
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes chroma {
+            0% {
+                filter: none
+            }
+
+            100% {
+                filter: contrast(1.2) saturate(1.2) hue-rotate(20deg)
+            }
+        }
+
+        .warp-active {
+            background: radial-gradient(circle at 50% 50%, #fff, #000 70%);
+            animation: warpFlash 900ms ease-out both, chroma 900ms ease-out both;
+        }
+
+        #hintModal {
+            color: #000;
+        }
+    </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G9BX4FBF"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-F2G9BX4FBF');
+</script>
+
+<body>
+    <div id="roomEffectOverlay"></div>
+    <div class="game-container">
+        <div class="title-wrapper">
+            <div class="title">音楽室からの脱出</div>
+            <div style="margin:0 0; text-align:center;">
+                <a href="escape14_hint.html" target="_blank"
+                    style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
+                    🔍 ヒントを見る
+                </a>
+
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="640" height="640" style="width: 90vw; max-width: 640px;"></canvas>
+
+        <div class="ui-panel">
+            <div class="info-panel">
+                <div class="message-area" id="messageArea">
+                    <span id="msgText">気が付くとあなたは音楽室に閉じ込められていました。</span>
+                    <div id="statusIconArea" style="position:absolute; bottom:6px; right:12px; display:flex; gap:8px;">
+                    </div>
+                </div>
+                <div class="navigation">
+
+                </div>
+            </div>
+            <div class="inventory" id="inventory">
+                <div class="inventory-slot" onclick="useItem(0)"></div>
+                <div class="inventory-slot" onclick="useItem(1)"></div>
+                <div class="inventory-slot" onclick="useItem(2)"></div>
+                <div class="inventory-slot" onclick="useItem(3)"></div>
+                <div class="inventory-slot" onclick="useItem(4)"></div>
+                <div class="inventory-slot" onclick="useItem(5)"></div>
+                <div class="inventory-slot" onclick="useItem(6)"></div>
+            </div>
+            <button id="bgm-toggle" onclick="toggleBGM()" style="position:absolute;top:20px;right:20px;z-index:1000;">
+                🔊 BGM
+            </button>
+            <div class="save-area">
+                <button class="nav-btn" onclick="saveGame()">セーブ</button>
+                <button class="nav-btn" onclick="loadGame()">ロード</button>
+            </div>
+        </div>
+        <div class="notice">当サイトの音源は<a href="https://otologic.jp/" target="blank">OtoLogic</a>,<a
+                href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a>、<a href="https://maou.audio/"
+                target="blank">魔王魂</a>の素材を使用しています 作者:<a href="index.html">スラセブン</a>
+        </div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- モーダルの内容は動的に生成 -->
+        </div>
+    </div>
+    <!-- hintモーダル -->
+    <div id="hintModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5)">
+        <div
+            style="max-width:560px;margin:10vh auto;background:#fff;border-radius:12px;padding:16px 16px 8px;box-shadow:0 10px 30px rgba(0,0,0,.3)">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <strong id="hintTitle">ヒント</strong>
+                <button id="hintClose"
+                    style="border:none;background:transparent;font-size:20px;cursor:pointer">✕</button>
+            </div>
+            <div id="hintBody" style="margin:12px 0">
+                <!-- 段階ヒントが入る -->
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <small id="hintUsage" style="opacity:.7"></small>
+                <button id="hintMore"
+                    style="padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#f7f7f7;cursor:pointer">さらに見る</button>
+            </div>
+        </div>
+    </div>
+    <audio id="bgm" src="sounds/14/canvasintheroom.mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-clear" src="sounds/common/Cyber03-1.mp3"></audio>
+    <audio id="se-change" src="sounds/common/Scene_Change01-1(Up).mp3"></audio>
+    <audio id="se-down" src="sounds/14/Motion-Slam01-1(Dry).mp3"></audio>
+    <audio id="se-open" src="sounds/common/Short_Accent09-1(Dry).mp3"></audio>
+    <audio id="se-fanta" src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
+    <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
+    <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
+    <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
+    <audio id="se-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
+    <audio id="se-bad-space" src="sounds/13/Single_Accent18-1(Mid).mp3"></audio>
+    <audio id="se-maracas" src="sounds/14/Maracas01-01(Single).mp3"></audio>
+    <audio id="se-do" src="sounds/14/maou_se_inst_piano2_1do.mp3"></audio>
+    <audio id="se-re" src="sounds/14/maou_se_inst_piano2_2re.mp3"></audio>
+    <audio id="se-mi" src="sounds/14/maou_se_inst_piano2_3mi.mp3"></audio>
+    <audio id="se-fa" src="sounds/14/maou_se_inst_piano2_4fa.mp3"></audio>
+    <audio id="se-so" src="sounds/14/maou_se_inst_piano2_5so.mp3"></audio>
+    <audio id="se-ra" src="sounds/14/maou_se_inst_piano2_6ra.mp3"></audio>
+    <audio id="se-shi" src="sounds/14/maou_se_inst_piano2_7si.mp3"></audio>
+    <audio id="se-do2" src="sounds/14/maou_se_inst_piano1_8do.mp3"></audio>
+    <audio id="se-harmonica" src="sounds/14/harmonica.mp3"></audio>
+    <audio id="se-donguri" src="sounds/14/donguri.mp3"></audio>
+    <audio id="se-kumasan" src="sounds/14/kumasan.mp3"></audio>
+    <audio id="se-chime" src="sounds/14/chime.mp3"></audio>
+    <audio id="se-hakone" src="sounds/14/harmonica_hakone.mp3"></audio>
+    <audio id="se-drum1" src="sounds/14/Woodblock02-3(High).mp3"></audio>
+    <audio id="se-drum2" src="sounds/14/Woodblock02-1(Low).mp3"></audio>
+    <audio id="se-drum3" src="sounds/14/Woodblock02-2(Mid).mp3"></audio>
+    <audio id="se-drum4" src="sounds/14/Woodblock01-1(Low).mp3"></audio>
+    <audio id="se-drum5" src="sounds/14/Woodblock01-3(Mid).mp3"></audio>
+    <audio id="se-gaan" src="sounds/14/gaan.mp3"></audio>
+    <script>
+        // --- Analytics helper ---
+        window.ANA = {
+            start: Date.now(),
+            hintCount: 0,
+            send(ev, params = {}) { try { gtag('event', ev, params); } catch (e) { } }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const a = document.querySelector('a[href="escape11_hint.html"]');
+            if (a) {
+                a.addEventListener('click', () => {
+                    ANA.hintCount++;
+                    ANA.send('open_hint', { count: ANA.hintCount });
+                });
+            }
+        });
+
+        window.ANA = Object.assign(window.ANA || {}, {
+            sid: Math.random().toString(36).slice(2),
+            sent: new Set(),
+            baseParams() {
+                return {
+                    elapsed_sec: Math.round((Date.now() - this.start) / 1000),
+                    hints: this.hintCount || 0,
+                    save_version: (typeof SAVE_VERSION === 'number' ? SAVE_VERSION : null),
+                    room: (window.gameState && gameState.currentRoom) || null,
+                    sid: this.sid,
+                };
+            },
+            once(ev, key = '', params = {}) {
+                const k = `${ev}:${key}`;
+                if (this.sent.has(k)) return;
+                this.sent.add(k);
+                this.send(ev, { ...this.baseParams(), ...params });
+            }
+        });
+
+        // 汎用マイルストーン送信用ヘルパ
+        function markProgress(step, extra = {}) {
+            ANA.once('progress', step, { step, ...extra });
+        }
+
+        window._nextModal = null;
+        const canvas = document.getElementById('gameCanvas');
+        // ゲーム設定 - 画像パスをここで管理
+        let IMAGES = {
+            rooms: {
+                piano: ['images/14/piano.png'],
+                mainWindow: ['images/14/main_window.jpeg'],
+                mainPiano: ['images/14/main_piano.png'],
+                mainDrum: ['images/14/main_drum.png'],
+                mainDoor: ['images/14/main_door.jpeg'],
+                maracas: ['images/14/maracas_back.png'],
+                safeCenter: ['images/14/safe_close_center.png'],
+                drum: ['images/14/drum.png'],
+                ghost: ['images/14/ghost_back.png'],
+                humendai: ['images/14/gakuhu_yama.png', 'images/14/gakuhu_yama_cloud.png'],
+                guitarCase: ['images/14/guitar_case.png'],
+                end: ['images/14/end.jpeg'],
+                end2: ['images/14/end2.png'],
+                trueEnd: ['images/14/true_end.png'],
+                trueEnd2: ['images/14/true_end2.png'],
+                // end1969: ['images/14/end1969.png'],
+
+            },
+            items: {
+
+                coin: 'images/bear_coin.png',
+                bear: 'images/bear.png',
+                back: 'images/common/back.png',
+                arrowRight: 'images/common/arrow_right.png',
+                arrowLeft: 'images/common/arrow_left.png',
+                redBack: 'images/common/red_back.png',
+                greenBack: 'images/common/green_back.png',
+                ghost: 'images/14/ghost.png',
+                ghost2: 'images/14/ghost2.png',
+                safeOpened: 'images/14/safe_open.png',
+                safeCenterClosed: 'images/14/safe_close_center.png',
+                safeLeftOpened: 'images/14/safe_open_left.png',
+                safeLeftClosed: 'images/14/safe_close_left.png',
+                harmonica: 'images/14/harmonica_wind.png',
+                harmonicaNormal: 'images/14/harmonica_normal.png',
+                tani: 'images/14/tani.png',
+                kashi: 'images/14/kashi.png',
+                fog: 'images/14/fog.png',
+                picDonguri: 'images/14/pic_donguri.png',
+                keyDonguri: 'images/14/key_donguri.png',
+                maracasBeamLeft: 'images/14/maracas_beam_left.png',
+                maracasBeamRight: 'images/14/maracas_beam_right.png',
+                maracasBeamDoor: 'images/14/door_beam.png',
+                maracasBeamDoorLeft: 'images/14/maracas_beam_door_left.png',
+                maracasBeamDoorRight: 'images/14/maracas_beam_door_right.png',
+                cloudSeal: 'images/14/cloud_seal.png',
+                posterCloud: 'images/14/poster_cloud.png',
+                bachi: 'images/14/bachi.png',
+                maracas: 'images/14/maracas.png',
+                posterOngaku: 'images/14/poster_ongaku.png',
+                locked: 'images/14/locked.png',
+                goout: 'images/14/goout.png',
+                score: 'images/14/score.png',
+                door: 'images/14/door.png',
+                key: 'images/14/key.png',
+                bearMaracas: 'images/14/bear_maracas.jpeg',
+                bearBoardTrans: 'images/14/bear_board_trans.png',
+
+            },
+
+            modals: {
+                kashi: 'images/14/kashi.png',
+                beethoven: 'images/14/beethoven.png',
+                mozart: 'images/14/mozart.png',
+                chopin: 'images/14/chopin.png',
+                bach: 'images/14/bach.png',
+                brahms: 'images/14/brahms.png',
+                taki: 'images/14/taki.png',
+                picDonguri: 'images/14/pic_donguri.png',
+                safeLeftClosedDonguri: 'images/14/left_sage_closed_donguri.png',
+                drumGhost: 'images/14/drum_ghost.png',
+                maracasOnfloor: 'images/14/maracas_onfloor.png',
+                bearSticker: 'images/14/bear_sticker.png',
+                bearReceiveHarmonica: 'images/14/bear_receive_harmonica.png',
+                bearPlayHarmonica: 'images/14/bear_play_harmonica.png',
+                windowZoom: 'images/14/window_zoom.png',
+                otoshimono: 'images/14/otoshimono.png',
+                otoshimonoCoin: 'images/14/otoshimono_coin.jpeg',
+                bearMaracasGiving: 'images/14/bear_maracas_giving.jpeg',
+                badend: 'images/14/badend.png',
+                bearBoard: 'images/14/bear_board.png',
+            },
+
+
+        };
+
+
+        // ゲーム状態
+        const SAVE_KEY = 'escapeGameState14';
+        const SAVE_VERSION = 1;
+
+        function getDefaultGameState() {
+            return {
+                currentRoom: 'main',
+                openRooms: ['mainPiano'],
+                inventory: [],
+                main: {
+                    flags: {
+                        hintTiers: {},
+                        safeCenterOpend: false, safeLeftOpend: false, safeRightOpend: false,
+                        unlockBox: false, foundKey: false, putBachi: false,
+                        foundHarmonica: false, foundDonguri: false, foundBachi: false, badEnd: false,
+                        foundDonguriKey: false, ghostMoved: false, foundMaracasMemo: false, foundScore: false, setScore: false,
+                        pianoSeq: [], drumSeq: [], unlockDoor: false, gotMaracas: false,
+                        talkTo: { bear: 0 }, backgroundState: 0, dangoAppear: false, foundDango: false, wakeupBear: false
+                    }
+
+                },
+                safeCenter: {
+                    counts: [0, 0, 0, 0, 0],  // 各数字(1〜5)の押下回数
+                    target: [3, 1, 4, 1, 5]   // 目標回数
+                },
+
+                maracas: {
+                    playing: false,
+                    clusters: [3, 1, 4, 1, 5],
+                    t0: 0
+                },
+                humendai: {
+                    flags: { backgroundState: 0, }
+                },
+
+                endings: { normal: false, true: false },
+                flags: { trueEndUnlocked: false },
+                selectedItem: null,
+
+            };
+        }
+
+        let gameState = getDefaultGameState();
+
+
+
+
+        // 部屋データ
+        let rooms = {
+            mainPiano: {
+                name: '音楽室',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 37.5, y: 65.1, width: 20.1, height: 9.0,
+                        action: 'examine_main_piano_kenban',
+                        description: '鍵盤',
+                        usable: () => gameState.main.flags.clearFog,
+
+                    },
+                    {
+                        x: 9.0, y: 19.2, width: 28.9, height: 25.2,
+                        action: 'examine_main_kokuban_kashi',
+                        description: '黒板の歌詞',
+                        usable: () => true,
+                        item: {
+                            img: 'kashi',
+                            visible: () => true,
+                        },
+                    },
+                    {
+                        x: 41.2, y: 37.6, width: 14.6, height: 15.3,
+                        action: 'examine_main_kokuban_tani',
+                        description: '黒板の谷',
+                        usable: () => true,
+                        item: {
+                            img: 'tani',
+                            visible: () => true,
+                        },
+                    },
+                    {
+                        x: 46.2, y: 47.1, width: 8.1, height: 9.1,
+                        action: 'examine_main_kokuban_donguri',
+                        description: '黒板のどんぐり',
+                        usable: () => true,
+                        item: {
+                            img: 'picDonguri',
+                            visible: () => true,
+                        },
+                    },
+                    {
+                        x: 79.1, y: 29.1, width: 10.8, height: 10.1,
+                        action: 'examine_main_kokuban_bear',
+                        description: '黒板のクマの絵',
+                        usable: () => true,
+                        item: {
+                            img: 'bearBoardTrans',
+                            visible: () => true,
+                        },
+                    },
+                    {
+                        x: 32.9, y: 42.7, width: 48.1, height: 33.9,
+                        action: 'examine_main_fog',
+                        description: '霧',
+                        usable: () => !gameState.main.flags.clearFog,
+                        zIndex: 10,
+                        item: {
+                            img: 'fog',
+                            visible: () => !gameState.main.flags.clearFog,
+                        },
+                    },
+                    {
+                        x: 10.0, y: 0.0, width: 16.6, height: 15.4,
+                        action: 'examine_main_piano_beethoven',
+                        description: 'ベートーヴェンの肖像画',
+                    },
+                    {
+                        x: 42.0, y: 0.0, width: 14.6, height: 15.4,
+                        action: 'examine_main_piano_mozart',
+                        description: 'モーツァルトの肖像画',
+                    },
+                    {
+                        x: 74.2, y: 0.0, width: 13.9, height: 15.0,
+                        action: 'examine_main_piano_chopin',
+                        description: 'ショパンの肖像画',
+                    },
+                    {
+                        x: 70, y: 85, width: 7, height: 8,
+                        action: 'examine_main_piano_donguri_key',
+                        description: 'どんぐり鍵',
+                        usable: () => gameState.main.flags.foundDonguriKey && !gameState.main.flags.foundDonguri,
+                        item: {
+                            img: 'keyDonguri',
+                            visible: () => gameState.main.flags.foundDonguriKey && !gameState.main.flags.foundDonguri,
+                        },
+                    },
+                    {
+                        x: 32.1, y: 20.9, width: 65.1, height: 76,
+                        action: 'examine_main_piano_door',
+                        description: 'ドア',
+                        zIndex: 9,
+                        usable: () => gameState.main.flags.ghostDisappeared,
+                        item: {
+                            img: 'door',
+                            visible: () => gameState.main.flags.ghostDisappeared,
+                        },
+                    },
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_piano_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_piano_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+            mainWindow: {
+                name: '窓側',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 11.3, y: 60.3, width: 15.8, height: 4.5,
+                        action: 'examine_main_window_case1',
+                        description: '楽器ケース左',
+                    },
+                    {
+                        x: 34.0, y: 60.2, width: 13.7, height: 4.8,
+                        action: 'examine_main_window_case2',
+                        description: '楽器ケース左中央',
+                    },
+                    {
+                        x: 51.9, y: 60.0, width: 20.8, height: 4.2,
+                        action: 'examine_main_window_case3',
+                        description: '楽器ケース右中央',
+                    },
+                    {
+                        x: 81.3, y: 58.1, width: 13.9, height: 6.8,
+                        action: 'examine_main_window_case4',
+                        description: '楽器ケース右',
+                    },
+                    {
+                        x: 33.4, y: 46.0, width: 16.5, height: 14.5,
+                        action: 'examine_main_window_ghost',
+                        description: 'おばけ',
+                        zIndex: 1,
+                        usable: () => !gameState.main.flags.ghostMoved,
+                        item: {
+                            img: 'ghost',
+                            visible: () => !gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 33.4, y: 46.0, width: 16.5, height: 14.5,
+                        action: 'enter_maracas',
+                        description: 'マラカス',
+                        zIndex: 2
+                    },
+                    {
+                        x: 72.0, y: 15.0, width: 10.1, height: 8.2,
+                        action: 'examine_main_window_cloud',
+                        description: '雲',
+                        zIndex: 2,
+                        usable: () => !gameState.main.flags.foundCloudSeal,
+                        item: {
+                            img: 'cloudSeal',
+                            visible: () => !gameState.main.flags.foundCloudSeal,
+                        },
+                    },
+                    {
+                        x: 38.1, y: 28.9, width: 22.0, height: 14.0,
+                        action: 'examine_main_window_zoom',
+                        description: '窓',
+
+                    },
+                    {
+                        x: 72.6, y: 68.9, width: 16.9, height: 15.6,
+                        action: 'examine_main_window_safe_center',
+                        description: '中央金庫',
+                        zIndex: 2,
+                        usable: () => !gameState.main.flags.safeCenterOpend,
+                        item: {
+                            img: 'safeCenterClosed',
+                            visible: () => !gameState.main.flags.safeCenterOpend,
+                        },
+                    },
+                    {
+                        x: 72.6, y: 68.9, width: 16.9, height: 15.6,
+                        action: 'examine_main_window_safe_center',
+                        description: '中央金庫',
+                        zIndex: 2,
+                        usable: () => gameState.main.flags.safeCenterOpend,
+                        item: {
+                            img: 'safeOpened',
+                            visible: () => gameState.main.flags.safeCenterOpend,
+                        },
+                    },
+                    {
+                        x: 12.6, y: 68.9, width: 16.9, height: 15.6,
+                        action: 'examine_main_window_safe_left',
+                        description: '左金庫',
+                        zIndex: 2,
+                        usable: () => !gameState.main.flags.safeLeftOpend,
+                        item: {
+                            img: 'safeLeftClosed',
+                            visible: () => !gameState.main.flags.safeLeftOpend,
+                        },
+                    },
+                    {
+                        x: 12.6, y: 68.9, width: 16.9, height: 15.6,
+                        action: 'examine_main_window_safe_left',
+                        description: '左金庫',
+                        zIndex: 2,
+                        usable: () => gameState.main.flags.safeLeftOpend,
+                        item: {
+                            img: 'safeLeftOpened',
+                            visible: () => gameState.main.flags.safeLeftOpend,
+                        },
+                    },
+                    {
+                        x: 72.6, y: 68.9, width: 16.9, height: 15.6,
+                        action: 'examine_main_window_harmonica',
+                        description: '中央金庫内ハーモニカ',
+                        zIndex: 3,
+                        usable: () => gameState.main.flags.safeCenterOpend && !gameState.main.flags.foundHarmonica,
+                        item: {
+                            img: 'harmonica',
+                            visible: () => gameState.main.flags.safeCenterOpend && !gameState.main.flags.foundHarmonica,
+                        },
+                    },
+                    {
+                        x: 12.6, y: 76.6, width: 12.9, height: 5,
+                        action: 'examine_main_window_bachi',
+                        description: '左金庫内ばち',
+                        zIndex: 3,
+                        usable: () => gameState.main.flags.safeLeftOpend && !gameState.main.flags.foundBachi,
+                        item: {
+                            img: 'bachi',
+                            visible: () => gameState.main.flags.safeLeftOpend && !gameState.main.flags.foundBachi,
+                        },
+                    },
+                    {
+                        x: 28.3, y: 51.2, width: 8.5, height: 45.2,
+                        action: 'examine_main_window_maracas_beam_left',
+                        description: 'マラカスビーム',
+                        zIndex: 9,
+                        usable: () => !gameState.main.flags.ghostMoved,
+                        item: {
+                            img: 'maracasBeamLeft',
+                            visible: () => !gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 47.6, y: 51.5, width: 12.5, height: 45.2,
+                        action: 'examine_main_window_maracas_beam_right',
+                        description: 'マラカスビーム',
+                        zIndex: 9,
+                        usable: () => !gameState.main.flags.ghostMoved,
+                        item: {
+                            img: 'maracasBeamRight',
+                            visible: () => !gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 27.9, y: 82.8, width: 13.2, height: 14.0,
+                        action: 'examine_main_window_maracas',
+                        description: '落ちているマラカス',
+                        zIndex: 2,
+                        usable: () => gameState.main.flags.ghostMoved,
+                        item: {
+                            img: 'maracas',
+                            visible: () => gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_window_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_window_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+            mainDrum: {
+                name: '教室後方',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 27.7, y: 32.3, width: 30.4, height: 29.0,
+                        action: 'examine_main_drum',
+                        description: '太鼓'
+                    },
+                    {
+                        x: 63.1, y: 44.7, width: 17.7, height: 13.1,
+                        action: 'examine_main_drum_humendai',
+                        description: '譜面台',
+                    },
+                    {
+                        x: 68.4, y: 45.8, width: 7.5, height: 9.2,
+                        action: 'examine_main_drum_humendai_scpre',
+                        description: '譜面台の楽譜',
+                        usable: () => false,
+                        item: {
+                            img: 'score',
+                            visible: () => gameState.main.flags.setScore,
+                        },
+                    },
+                    {
+                        x: 4.3, y: 0.0, width: 19.2, height: 19.0,
+                        action: 'examine_main_drum_bach',
+                        description: 'バッハ'
+                    },
+                    {
+                        x: 30.1, y: 0.0, width: 18.8, height: 18.8,
+                        action: 'examine_main_drum_brahms',
+                        description: 'ブラームス'
+                    },
+                    {
+                        x: 55.3, y: 0.0, width: 17.4, height: 18.8,
+                        action: 'examine_main_drum_taki',
+                        description: '滝廉太郎'
+                    },
+                    {
+                        x: 58.0, y: 27.0, width: 18.3, height: 16.4,
+                        action: 'examine_main_drum_ghost',
+                        description: 'おばけ',
+                        zIndex: 1,
+                        usable: () => gameState.main.flags.ghostMoved && !gameState.main.flags.ghostDisappeared,
+                        item: {
+                            img: 'ghost2',
+                            visible: () => gameState.main.flags.ghostMoved && !gameState.main.flags.ghostDisappeared,
+                        },
+                    },
+                    {
+                        x: 61.6, y: 61.3, width: 19.3, height: 21.9,
+                        action: 'examine_main_drum_bear',
+                        description: 'クマ妖精',
+                        zIndex: 6,
+                        usable: () => gameState.main.flags.wakeupBear,
+                        item: {
+                            img: 'bear',
+                            visible: () => gameState.main.flags.wakeupBear,
+                        },
+                    },
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_drum_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_drum_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+            mainDoor: {
+                name: '通路側',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 90.7, y: 37.6, width: 8.9, height: 12.0,
+                        action: 'examine_door_poster_cloud',
+                        description: '雲のポスター',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: {
+                            img: 'posterCloud',
+                            visible: () => true,
+                        },
+                    },
+                    {
+                        x: 82.2, y: 42.7, width: 7.5, height: 8.4,
+                        action: 'examine_door_poster_ongaku',
+                        description: '音楽室のポスター',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: {
+                            img: 'posterOngaku',
+                            visible: () => true,
+                        },
+                    },
+                    {
+                        x: 14.8, y: 23.6, width: 60.0, height: 55.0,
+                        action: 'examine_door_beam',
+                        description: 'マラカスビームからの光',
+                        zIndex: 1,
+                        usable: () => !gameState.main.flags.ghostMoved,
+                        item: {
+                            img: 'maracasBeamDoor',
+                            visible: () => !gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 30.7, y: 57.4, width: 12.0, height: 41.9,
+                        action: 'examine_door_beam',
+                        description: 'マラカスビームからの光左',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'maracasBeamDoorLeft',
+                            visible: () => !gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 53.6, y: 57.4, width: 12.0, height: 41.9,
+                        action: 'examine_door_beam',
+                        description: 'マラカスビームからの光右',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'maracasBeamDoorRight',
+                            visible: () => !gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 77.3, y: 55.4, width: 10.5, height: 26.2,
+                        action: 'examine_door_guitar_case_left',
+                        description: '楽器ケース左',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: {
+                            img: 'light',
+                            visible: () => gameState.main.flags.foundMaracasMemo,
+                        },
+                    },
+                    {
+                        x: 88.8, y: 52.4, width: 10.8, height: 29.0,
+                        action: 'examine_door_guitar_case_right',
+                        description: '楽器ケース右',
+                        zIndex: 4,
+
+                    },
+                    {
+                        x: 22.4, y: 29.8, width: 19.6, height: 9.3,
+                        action: 'examine_door_disp_left',
+                        description: 'ドア窓左',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'locked',
+                            visible: () => !gameState.main.flags.unlockDoor && gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 49.0, y: 29.8, width: 19.9, height: 9.5,
+                        action: 'examine_door_disp_right',
+                        description: 'ドア窓右',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'locked',
+                            visible: () => !gameState.main.flags.unlockDoor && gameState.main.flags.ghostMoved,
+                        },
+                    },
+                    {
+                        x: 22.4, y: 29.8, width: 19.6, height: 9.3,
+                        action: 'examine_door_disp_left',
+                        description: 'ドア窓左',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'goout',
+                            visible: () => gameState.main.flags.unlockDoor,
+                        },
+                    },
+                    {
+                        x: 49.0, y: 29.8, width: 19.9, height: 9.5,
+                        action: 'examine_door_disp_right',
+                        description: 'ドア窓右',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'goout',
+                            visible: () => gameState.main.flags.unlockDoor,
+                        },
+                    },
+                    {
+                        x: 17.5, y: 25.9, width: 56.1, height: 52.3,
+                        action: 'examine_door',
+                        description: 'ドア',
+                        zIndex: 1,
+                        usable: () => gameState.main.flags.ghostMoved,
+                    },
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_door_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_door_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+            piano: {
+                name: '鍵盤',
+                description: '',
+                clickableAreas: [
+
+                    {
+                        x: 2.6, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_do',
+                        description: 'ド',
+
+                    },
+                    {
+                        x: 13.8, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_re',
+                        description: 'レ',
+
+                    },
+                    {
+                        x: 25.6, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_mi',
+                        description: 'ミ',
+
+                    },
+                    {
+                        x: 37.4, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_fa',
+                        description: 'ファ',
+
+                    },
+                    {
+                        x: 48.9, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_so',
+                        description: 'ソ',
+
+                    },
+                    {
+                        x: 60.4, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_ra',
+                        description: 'ラ',
+
+                    },
+                    {
+                        x: 72.4, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_shi',
+                        description: 'シ',
+
+                    },
+                    {
+                        x: 83.8, y: 70.2, width: 9.6, height: 12.7,
+                        action: 'examine_piano_do2',
+                        description: 'ド',
+
+                    },
+                    {
+                        x: 93.6, y: 93.6, width: 6.4, height: 6.4,
+                        action: 'examine_piano_back',
+                        description: '戻る', zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    },
+                ]
+            },
+            safeCenter: {
+                name: '中央の金庫',
+                description: '',
+                clickableAreas: [
+
+                    {
+                        x: 9.3, y: 20.0, width: 14.0, height: 14.4,
+                        action: 'examine_safe_center_1',
+                        description: '1番目',
+
+                    },
+                    {
+                        x: 24.2, y: 20.0, width: 14.0, height: 14.4,
+                        action: 'examine_safe_center_2',
+                        description: '2番目',
+
+                    },
+                    {
+                        x: 39.5, y: 20.0, width: 14.0, height: 14.4,
+                        action: 'examine_safe_center_3',
+                        description: '3番目',
+
+                    },
+                    {
+                        x: 54.7, y: 20.0, width: 14.0, height: 14.4,
+                        action: 'examine_safe_center_4',
+                        description: '4番目',
+
+                    },
+                    {
+                        x: 69.5, y: 20.0, width: 14.0, height: 14.4,
+                        action: 'examine_safe_center_5',
+                        description: '5番目',
+
+                    },
+                    {
+                        x: 7.4, y: 39.6, width: 36.3, height: 19.2,
+                        action: 'examine_safe_center_lever',
+                        description: 'レバー',
+
+                    },
+                    {
+                        x: 93.6, y: 93.6, width: 6.4, height: 6.4,
+                        action: 'examine_safe_center_back',
+                        description: '戻る', zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    },
+                ]
+            },
+            drum: {
+                name: '太鼓',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 46.1, y: 17.0, width: 17, height: 16,
+                        action: 'drum_tap_above',
+                        description: '叩くポイント上'
+                    },
+                    {
+                        x: 21.1, y: 43.8, width: 17, height: 16,
+                        action: 'drum_tap_left',
+                        description: '叩くポイント左'
+                    },
+                    {
+                        x: 46.3, y: 68.9, width: 17, height: 16.3,
+                        action: 'drum_tap_bellow',
+                        description: '叩くポイント下'
+                    },
+                    {
+                        x: 71.7, y: 43.8, width: 17, height: 16,
+                        action: 'drum_tap_right',
+                        description: '叩くポイント右'
+                    },
+                    {
+                        x: 46.0, y: 42.6, width: 17.7, height: 17.2,
+                        action: 'drum_tap_center',
+                        description: '叩くポイント中央'
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_drum_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back',
+                            visible: () => true,
+                        },
+                    },
+                ]
+            },
+            humendai: {
+                name: '譜面台',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 27.0, y: 29.3, width: 47.7, height: 34.3,
+                        action: 'examine_humendai_center',
+                        description: '譜面台の山'
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_drum_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back',
+                            visible: () => true,
+                        },
+                    },
+                ]
+            },
+            guitarCase: {
+                name: 'ギターケース',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 38.9, y: 57.9, width: 19.0, height: 28.9,
+                        action: 'examine_guitar_case_score',
+                        description: '譜面'
+                    },
+                    {
+                        x: 50.3, y: 44.1, width: 9.9, height: 11.2,
+                        action: 'examine_guitar_case_sticker',
+                        description: 'ステッカー'
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_guitar_case_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back',
+                            visible: () => true,
+                        },
+                    },
+                ]
+            },
+            maracas: {
+                name: 'マラカス',
+                description: '',
+                clickableAreas: [
+                    { x: 10, y: 84, width: 22, height: 9, action: 'maracas_play', description: '再生', zIndex: 5 },
+                    { x: 74, y: 84, width: 10, height: 9, action: 'maracas_back', description: '戻る', zIndex: 5 },
+                ]
+            },
+            ghost: {
+                name: 'おばけ',
+                description: '踊っている',
+                clickableAreas: [
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_ghost_back',
+                        description: '戻る', zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
+                ]
+            },
+
+
+            end: {
+                name: 'ノーマルエンド',
+                description: '脱出おめでとうございます！チャイムを無事鳴らせましたね！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end',
+                        description: 'ノーマルエンド'
+                    },
+                ]
+            },
+            end2: {
+                name: 'ノーマルエンド+',
+                description: '脱出おめでとうございます！チャイムを無事鳴らせましたね！マラカスチャームも何かに付けてね',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end2',
+                        description: 'ノーマルエンド+'
+                    },
+                ]
+            },
+            trueEnd: {
+                name: '屋上に脱出成功',
+                description:
+                    'おめでとうございます！秋晴れの空がすがすがしいですね' +
+                    '',
+                clickableAreas: [{ x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end', description: 'トゥルーエンド' }]
+            },
+            trueEnd2: {
+                name: '屋上に脱出成功',
+                description:
+                    'おめでとうございます！マラカスチャームも何かに付けてね' +
+                    '',
+                clickableAreas: [{ x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end2', description: 'トゥルーエンド+' }]
+            },
+
+        };
+
+        const hintMessages = {
+            main: {
+                bear: [
+                    "呼んだ？",
+                    "えへへ",
+                    "ボク楽器得意なんだ",
+                ],
+                bearNormalEnd: [
+                    "外に出られるようになったみたいだよ",
+                    "よかったねえ",
+                ],
+                bearTrueEnd: [
+                    "じょうずだった？",
+                    "えへへ",
+                ],
+                bearBachi: [
+                    "叩いたらだめだよ",
+                    "叩いたら怒るよ",
+                    "ボク忍耐を身につけたの"
+                ],
+
+            },
+            atticRight: {
+                bear: [
+                    "…",
+                ],
+
+            },
+
+        };
+
+        // ゲーム初期化
+        function initGame() {
+            renderNavigation();
+            changeRoom('mainPiano');
+            updateMessage('気が付くとあなたは音楽室に閉じ込められていました');
+        }
+
+        function findHitArea(x, y, clickableAreas, canvas) {
+            // zIndex降順で
+            const sorted = clickableAreas.slice().sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+            for (const area of sorted) {
+                // 必要ならusable判定もここで
+                const usable = area.usable === undefined ? true :
+                    (typeof area.usable === "function" ? area.usable() : area.usable);
+
+                if (!usable) continue; // 使えないエリアは判定しない
+                const ax = area.x / 100 * canvas.width;
+                const ay = area.y / 100 * canvas.height;
+                const aw = area.width / 100 * canvas.width;
+                const ah = area.height / 100 * canvas.height;
+                if (x >= ax && x <= ax + aw && y >= ay && y <= ay + ah) {
+                    return area; // 最初にヒットしたものだけ返す！
+                }
+            }
+            return null;
+        }
+
+        let hoveredAreaIndex = null;  // 今hoverしてるエリア（なければnull）
+        canvas.addEventListener('mousemove', function (e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+            const idx = area ? room.clickableAreas.indexOf(area) : null;
+            if (hoveredAreaIndex !== idx) {
+                hoveredAreaIndex = idx;
+                renderCanvasRoom();
+            }
+        });
+
+        canvas.addEventListener('mouseout', function () {
+            if (hoveredAreaIndex !== null) {
+                hoveredAreaIndex = null;
+                renderCanvasRoom();
+            }
+        });
+
+        canvas.addEventListener('click', function (e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // ★今いる部屋のエリアだけ判定！
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+
+            if (area) {
+                handleAreaClick(area.action, e);
+            }
+
+        });
+
+        function changeRoom(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+
+            // 背景＋アイテム＋クリックエリアをcanvasで全部再描画
+            renderCanvasRoom();
+            const msg = (room.name && room.name.trim() !== "")
+                ? `${room.name}です。${room.description}`
+                : room.description;
+            if (roomId === 'trueEnd') {
+                updateMessageHTML(msg);
+            } else {
+                updateMessage(msg);
+            }
+
+            // BGM切替はそのまま
+            if (roomId === "trueEnd" || roomId === "trueEnd2") {
+                changeBGM("sounds/14/akihasnti.mp3");
+                gameState.openRooms = [];
+                renderNavigation();
+            } else if (roomId === "end" || roomId === "end2") {
+                changeBGM("sounds/14/minorinokisetsu.mp3");
+                gameState.openRooms = [];
+                renderNavigation();
+            } else if (roomId === "piano") {
+                pauseBGM();
+            } else {
+                changeBGM("sounds/14/canvasintheroom.mp3");
+            }
+
+            if (roomId === 'maracas') {
+                cancelAnimationFrame(_maracasRAF);
+                _maracasRAF = requestAnimationFrame(maracasTick);
+
+                // ★入室1.5秒後に自動再生
+                clearTimeout(_maracasAutoTimer);
+                _maracasAutoTimer = setTimeout(() => {
+                    if (gameState.currentRoom === 'maracas' && !gameState.maracas.playing) {
+                        _maracasIdx = 0;
+                        _maracasCount = 0;
+                        gameState.maracas.playing = true;
+                        updateMessage('…シャカシャカ…');
+                    }
+                }, 1500);
+            } else {
+                cancelAnimationFrame(_maracasRAF);
+                clearTimeout(_maracasAutoTimer);
+            }
+
+            if (roomId !== 'ghost') {
+                cancelAnimationFrame(_ghostRAF);
+                ghostLetters = [];
+            }
+
+
+        }
+
+        const END_IDS = new Set(['end', 'trueEnd']);
+
+        const _changeRoom_orig = changeRoom;
+        changeRoom = function (roomId) {
+            _changeRoom_orig.apply(this, arguments);
+
+            if (END_IDS.has(roomId)) {
+                const elapsed = Math.round((Date.now() - ANA.start) / 1000);
+                ANA.endTimes = ANA.endTimes || {};
+                if (!ANA.endTimes[roomId]) ANA.endTimes[roomId] = elapsed;
+
+                const isTrue = (roomId === 'trueEnd');
+                ANA.send('ending_reached', {
+                    ending_id: roomId,
+                    is_true: isTrue,
+                    elapsed_sec: elapsed,
+                    hints: ANA.hintCount,
+
+                });
+                // setTimeout(() => showFeedbackModal(roomId), 1500);
+            }
+        }
+
+
+        function renderCanvasRoom() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const roomId = gameState.currentRoom;
+            const room = rooms[roomId];
+            const bgImgSrc = getRoomBackgroundImage(roomId, gameState);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+            // 背景描画
+            const bgImg = loadedImages[bgImgSrc];
+            if (bgImg && bgImg.complete) {
+                ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+            }
+
+            // アイテム描画（未取得のみ）
+            drawRoomItems(ctx, canvas, roomId);
+
+            // ★ ここから重なり優先のhover枠線を描画
+            if (hoveredAreaIndex !== null && hoveredAreaIndex !== undefined) {
+                // zIndex降順でソート
+                const sortedAreas = room.clickableAreas
+                    .map((area, i) => ({ ...area, __idx: i }))
+                    .filter(area => area.usable === undefined ? true :
+                        (typeof area.usable === "function" ? area.usable() : area.usable)
+                    )
+                    .sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+                // hoveredAreaIndexと一致するエリアをzIndex順で1つだけ枠描画
+                const hoverArea = sortedAreas.find(area => area.__idx === hoveredAreaIndex);
+                if (hoverArea) {
+                    const ax = hoverArea.x / 100 * canvas.width;
+                    const ay = hoverArea.y / 100 * canvas.height;
+                    const aw = hoverArea.width / 100 * canvas.width;
+                    const ah = hoverArea.height / 100 * canvas.height;
+                    ctx.save();
+                    ctx.strokeStyle = 'gold';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(ax, ay, aw, ah);
+                    ctx.restore();
+                }
+            }
+
+            if (gameState.currentRoom === 'ghost') {
+                drawGhostDance(ctx, canvas, performance.now());
+                cancelAnimationFrame(_ghostRAF);
+                _ghostRAF = requestAnimationFrame(() => renderCanvasRoom());
+            }
+
+
+        }
+
+        function drawRoomItems(ctx, canvas, roomId) {
+            const room = rooms[roomId];
+            room.clickableAreas.forEach(area => {
+                if (area.item && area.item.visible && area.item.visible()) {
+                    const img = loadedImages[IMAGES.items[area.item.img]];
+                    if (img && img.complete && img.naturalWidth > 0) {
+                        const alpha = area.alpha ? area.alpha : 1;
+                        const px = area.x / 100 * canvas.width;
+                        const py = area.y / 100 * canvas.height;
+                        const w = area.width / 100 * canvas.width;
+                        const h = area.height / 100 * canvas.height;
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+                        ctx.drawImage(img, px, py, w, h);
+                        ctx.restore();
+                    }
+                }
+            });
+        }
+
+
+        function getRoomBackgroundImage(roomId, gameState) {
+            let state = gameState[roomId]?.flags?.backgroundState || 0;
+            let imgList = IMAGES.rooms[roomId];
+            if (Array.isArray(imgList)) {
+                return imgList[state] || imgList[0];
+            } else {
+                return imgList;
+            }
+        }
+
+        // ===== マラカス描画（procedural） =====
+        let _maracasRAF = 0;
+        let _maracasAutoTimer = 0;
+        let _maracasAnimNow = 0;
+        let _maracasIdx = 0;   // どのクラスタか
+        let _maracasCount = 0; // クラスタ内の何回目か
+        let _maracasPhase = 0; // 振りの位相
+
+        function drawMaraca(ctx, x, y, angle, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            // 持ち手
+            ctx.fillStyle = '#8b5a2b';
+            ctx.fillRect(-4, 60, 8, 48);
+            // 玉
+            ctx.fillStyle = color;
+            ctx.fillRect(-20, -24, 40, 90);
+            // 模様
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(-20, -6, 40, 6);
+            ctx.restore();
+        }
+
+        function drawMaracasRoomScene(ctx, canvas) {
+            // 背景が無い場合のベタ塗り
+            if (!IMAGES.rooms.maracas) {
+                ctx.fillStyle = '#0e0e18';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            // 軽いガイド
+            ctx.fillStyle = '#bfc3ff';
+            ctx.font = '16px monospace';
+            // ctx.fillText('', 20, canvas.height - 20);
+
+            // 角度
+            const maxAng = 0.33; // ≒ 19deg
+            const angle = Math.sin(_maracasPhase) * maxAng;
+
+            // 左右
+            const Lx = canvas.width * 0.32, Rx = canvas.width * 0.68, Y = canvas.height * 0.25;
+            drawMaraca(ctx, Lx, Y, -angle, '#00c2ff');
+            drawMaraca(ctx, Rx, Y, angle, '#ff7a00');
+
+            // --- ボタン描画 ---
+            ctx.font = '36px sans-serif';     // ★文字サイズを2倍に
+            ctx.textBaseline = 'middle';
+
+            // ▶再生ボタン
+            const playText = '▶ 再生';
+            const playX = canvas.width * 0.12;
+            const playY = canvas.height * 0.88;
+            const playMetrics = ctx.measureText(playText);
+            const playW = playMetrics.width + 24; // ★余白も2倍
+            const playH = 56;                     // ★高さも2倍
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(playX - 12, playY - playH / 2, playW, playH);
+            ctx.fillStyle = '#fff';
+            ctx.fillText(playText, playX, playY);
+
+            // 戻るボタン
+            const backText = '戻';
+            const backX = canvas.width * 0.76;
+            const backY = canvas.height * 0.88;
+            const backMetrics = ctx.measureText(backText);
+            const backW = backMetrics.width + 24;
+            const backH = 56;
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(backX - 12, backY - backH / 2, backW, backH);
+            ctx.fillStyle = '#fff';
+            ctx.fillText(backText, backX, backY);
+        }
+
+        function maracasTick() {
+
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // 元の部屋描画（背景・hover等）
+            renderCanvasRoom();
+
+            // マラカス専用上描き
+            if (gameState.currentRoom === 'maracas') {
+                drawMaracasRoomScene(ctx, canvas);
+            }
+
+            if (gameState.currentRoom !== 'maracas') return; // 部屋を出たら停止
+
+            // 再生中のときだけ、カウントを進める
+            if (gameState.maracas.playing) {
+
+                const spd = 0.65;
+                const hz = 6 * spd;                     // 1秒あたりの振りサイクル
+                _maracasPhase += (Math.PI * 2) * (hz / 60); // 60fps仮定の位相増分
+
+                // 1カウント終わりを擬似的に検出（最大角 付近通過）
+                // シンプルに位相0→PIの通過で1カウント扱い
+                if (Math.sin(_maracasPhase) > 0.98) {
+                    // 「一振り」カウント
+                    _maracasCount++;
+                    playSE('se-maracas');
+                    // クラスタ完了？
+                    const need = gameState.maracas.clusters[_maracasIdx] || 0;
+                    if (_maracasCount >= need && need > 0) {
+                        _maracasIdx++;
+                        _maracasCount = 0;
+                        // クラスタ間の長ポーズ：少し止める
+                        gameState.maracas.playing = false;
+                        setTimeout(() => {
+                            if (gameState.currentRoom === 'maracas') {
+                                // まだ配列の続きがあれば再開
+                                if (_maracasIdx < gameState.maracas.clusters.length) {
+                                    gameState.maracas.playing = true;
+                                } else {
+                                    // 終了（先頭に戻す。ここで正解フラグなど立ててもOK）
+                                    _maracasIdx = 0;
+                                    // 例：ヒント進捗を送る
+                                    ANA.send('maracas_pattern_done', { seq: gameState.maracas.clusters.join('') });
+                                }
+                            }
+                        }, Math.max(400, 600 / spd));
+                    }
+                }
+            }
+
+            _maracasRAF = requestAnimationFrame(maracasTick);
+        }
+
+        let _ghostRAF = 0;
+        let ghostLetters = [];
+        let ghostLetterIdx = 0;
+        let ghostLettersText = 'kane';
+        let ghostLastEmit = 0;
+
+        // // 角丸矩形（簡易）
+        // function roundRect(ctx, x, y, w, h, r) {
+        //     const rr = Math.min(r, w / 2, h / 2);
+        //     ctx.beginPath();
+        //     ctx.moveTo(x + rr, y);
+        //     ctx.arcTo(x + w, y, x + w, y + h, rr);
+        //     ctx.arcTo(x + w, y + h, x, y + h, rr);
+        //     ctx.arcTo(x, y + h, x, y, rr);
+        //     ctx.arcTo(x, y, x + w, y, rr);
+        //     ctx.closePath();
+        // }
+
+
+        function emitGhostLetter(x, y) {
+            if (!ghostLettersText || !ghostLettersText.length) return;
+            const ch = ghostLettersText[ghostLetterIdx % ghostLettersText.length];
+            ghostLetterIdx++;
+
+            ghostLetters.push({
+                ch,
+                x: x + (Math.random() * 14 - 7),
+                y: y - 110,
+                // y: y + (Math.random() * 10 - 5),
+                vx: (Math.random() * 0.4 - 0.2),
+                vy: -0.6 - Math.random() * 0.6,
+                life: 3200,       // ms
+                t0: performance.now(),
+                rot: (Math.random() * 0.3 - 0.15),
+                spin: (Math.random() * 0.02 - 0.01),
+                scale: 0.9 + Math.random() * 0.25,
+                hue: 200 + Math.random() * 40   // 青系
+            });
+        }
+
+        function updateGhostLetters(now) {
+            ghostLetters = ghostLetters.filter(p => {
+                const dt = now - p.t0;
+                if (dt > p.life) return false;
+                p.vy += 0.004;
+                p.x += p.vx;
+                p.y += p.vy * 0.35;
+                p.rot += p.spin;
+                return true;
+            });
+        }
+
+        function drawGhostLetters(ctx, now) {
+            const maxSimul = 1; // 同時に見える数
+
+            const visible = ghostLetters.slice(-maxSimul);
+
+            for (const p of visible) {
+                const dt = now - p.t0;
+                const a = 1 - (dt / p.life);         // フェードアウト
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot);
+                ctx.scale(p.scale, p.scale);
+                ctx.globalAlpha = Math.max(0, a);
+
+                // 文字描画（輪郭＋塗りつぶし）
+                ctx.font = 'bold 60px sans-serif';
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = `hsl(${p.hue} 80% 30%)`;
+                ctx.fillStyle = `hsl(${p.hue} 90% 65%)`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.strokeText(p.ch, 0, 0);
+                ctx.fillText(p.ch, 0, 0);
+
+                ctx.restore();
+            }
+        }
+
+
+        function drawGhostDance(ctx, canvas, now) {
+            const img = loadedImages[IMAGES.items.ghost2];
+            if (!img || !img.complete) return;
+
+            const baseX = canvas.width * 0.62;
+            const baseY = canvas.height * 0.38;
+
+            const sway = Math.sin(now * 0.004) * 10;
+            const bob = Math.sin(now * 0.003 + 1.2) * 6;
+            const rot = Math.sin(now * 0.005) * 0.05;
+            const scale = 1 + Math.sin(now * 0.006) * 0.04;
+
+            const x = baseX + sway, y = baseY + bob;
+            const w = canvas.width * 0.48, h = w * (img.height / img.width);
+
+            // ゴースト本体
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rot);
+            ctx.scale(scale, scale);
+            ctx.drawImage(img, -w / 2, -h / 2, w, h);
+            ctx.restore();
+
+            // --- アルファベット発生（約150ms間隔 / 同時5文字程度） ---
+            if (now - ghostLastEmit > 200 && ghostLetters.length < 4) {
+                ghostLastEmit = now;
+                // 右上＆左上あたりから1〜2個ずつ
+                emitGhostLetter(x + w * 0.18, y - h * 0.08);
+                // if (Math.random() < 0.5) emitGhostLetter(x - w * 0.12, y - h * 0.10);
+                // emitGhostLetter(x - w * 0.12, y - h * 0.10);
+            }
+
+            updateGhostLetters(now);
+            drawGhostLetters(ctx, now);
+        }
+
+
+
+
+
+
+
+        // 小物ユーティリティ
+        function pointInRect(x, y, r) {
+            return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+        }
+
+        function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+            if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+            ctx.beginPath();
+            ctx.moveTo(x + r.tl, y);
+            ctx.lineTo(x + w - r.tr, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+            ctx.lineTo(x + w, y + h - r.br);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+            ctx.lineTo(x + r.bl, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+            ctx.lineTo(x, y + r.tl);
+            ctx.quadraticCurveTo(x, y, x + r.tl, y);
+            ctx.closePath();
+            if (fill) ctx.fill();
+            if (stroke) ctx.stroke();
+        }
+
+
+        let _ghostFadeRAF = 0;
+
+        function startGhostFadeOut(duration = 1600) {
+            // mainDrum のゴーストエリアを取得
+            const room = rooms.mainDrum;
+            const ghostArea = room.clickableAreas.find(a => a.action === 'examine_main_drum_ghost');
+            if (!ghostArea) return;
+
+            ghostArea.alpha = 1;
+
+            const t0 = performance.now();
+            const startY = ghostArea.y;
+            const rise = 6;
+
+            cancelAnimationFrame(_ghostFadeRAF);
+
+            const tick = (now) => {
+                const t = Math.min(1, (now - t0) / duration);
+                // イージング（お好みで）
+                const ease = 1 - Math.pow(1 - t, 3); // easeOutCubic
+
+                // 透明度を落とす & 位置を少し上げる
+                ghostArea.alpha = 1 - ease;
+                ghostArea.y = startY - rise * ease;
+
+                renderCanvasRoom();
+
+                if (t < 1) {
+                    _ghostFadeRAF = requestAnimationFrame(tick);
+                } else {
+                    // 描画を消し、以後出てこないようフラグON
+                    delete ghostArea.alpha;
+                    ghostArea.y = startY;
+                    gameState.main.flags.ghostDisappeared = true;
+                    renderCanvasRoom();
+                }
+            };
+
+            _ghostFadeRAF = requestAnimationFrame(tick);
+        }
+
+
+        function _tryOpenSafeCenter() {
+            if (gameState.main.flags.safeCenterOpend) return;
+            const ok = gameState.safeCenter.counts.every(
+                (v, i) => v === gameState.safeCenter.target[i]
+            );
+            if (ok) {
+                gameState.main.flags.safeCenterOpend = true;
+                playSE('se-gacha');
+                showModal(
+                    '金庫が開いた',
+                    '',
+                    [{ text: '閉じる', action: 'close' }]
+                );
+            }
+        }
+
+        function checkPianoSequence(note) {
+            // 複数シーケンスを後方一致で判定するため最大8音保持
+            const seq = gameState.main.flags.pianoSeq;
+            seq.push(note);
+            const MAX_LEN = 8;
+            if (seq.length > MAX_LEN) seq.splice(0, seq.length - MAX_LEN);
+
+            // ヘルパ
+            function endsWith(target) {
+                if (seq.length < target.length) return false;
+                for (let i = 0; i < target.length; i++) {
+                    if (seq[seq.length - target.length + i] !== target[i]) return false;
+                }
+                return true;
+            }
+
+            // どんぐり鍵
+            const TARGET_DONGURI = ['so', 'mi', 'mi', 're'];
+            if (!gameState.main.flags.foundDonguriKey && endsWith(TARGET_DONGURI)) {
+                gameState.main.flags.foundDonguriKey = true;
+                showModal(
+                    'なにか落ちてきたような音がした',
+                    '',
+                    [{ text: '閉じる', action: 'close' }]
+                );
+                updateMessage("なにか落ちてきたような音がした");
+                playSE('se-donguri');
+                playSE('se-down');
+                return;
+            }
+
+            // ドア解錠
+            const TARGET_UNLOCK = ['ra', 'fa', 'so', 'do'];
+            if (!gameState.main.flags.unlockDoor && endsWith(TARGET_UNLOCK)) {
+                gameState.main.flags.unlockDoor = true;
+                playSE && playSE('se-chime');
+                showModal('ドアのロックが外れた気配がする。', '',
+                    [{ text: '閉じる', action: 'close' }]);
+                updateMessage('ドアロックが解除されたようだ');
+                return;
+            }
+
+            // クマ妖精出現
+            const TARGET_BEAR = ['mi', 're', 'do', 're', 'so', 'ra', 'so', 'mi'];
+            if (!gameState.main.flags.wakeupBear && gameState.main.flags.ghostMoved && endsWith(TARGET_BEAR)) {
+                gameState.main.flags.wakeupBear = true;
+                playSE && playSE('se-kumasan');
+                showModal('どこからか「呼んだ？」という声がした', '',
+                    [{ text: '閉じる', action: 'close' }]);
+                renderCanvasRoom();
+                return;
+            }
+        }
+
+
+        // ---- 太鼓シーケンス判定 ----
+        function drumPush(step) {
+            const target = ['left', 'bellow', 'left', 'center', 'above', 'center'];
+            const arr = gameState.main.flags.drumSeq;
+
+            arr.push(step);
+            if (arr.length > target.length) arr.shift();
+
+            // タップ音
+            switch (step) {
+                case 'left':
+                    playSE('se-drum1');
+                    break;
+                case 'bellow':
+                    playSE('se-drum2');
+                    break;
+                case 'right':
+                    playSE('se-drum3');
+                    break;
+                case 'above':
+                    playSE('se-drum4');
+                    break;
+                case 'center':
+                    playSE('se-drum5');
+                    break;
+            }
+
+            if (arr.join(',') === target.join(',')) {
+                // 成功！
+                gameState.main.flags.drumSeq = []; // クリア
+                if (!gameState.main.flags.ghostMoved) {
+                    gameState.main.flags.ghostMoved = true;
+                    showModal(
+                        '!',
+                        `<img src="${IMAGES.modals.drumGhost}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('太鼓の響きに驚いて、マラカスおばけが移動してきた');
+                    playSE('se-clear');
+
+                    // changeRoom('mainDoor');
+                }
+            }
+        }
+
+        // エリアクリック処理
+        function handleAreaClick(action, event) {
+            const f = gameState.main.flags;
+            switch (action) {
+                case 'examine_main_kokuban_kashi':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.modals.kashi}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
+                case 'examine_main_kokuban_tani':
+                    if (f.clearFog) {
+                        showModal(
+                            '谷の絵',
+                            `<img src="${IMAGES.items.tani}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                    } else {
+                        updateMessage('谷の絵が描かれている');
+                    }
+
+                    break;
+                case 'examine_main_kokuban_donguri':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.modals.picDonguri}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
+                case 'examine_main_kokuban_bear':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.modals.bearBoard}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
+                case 'examine_main_fog':
+                    if (gameState.selectedItem === 'harmonica') {
+                        // 風のハーモニカ使用時の霧が晴れる演出
+                        playSE('se-harmonica');
+
+
+                        // メッセージ表示
+                        updateMessage('風のハーモニカを吹いた。♪～♪♪');
+
+                        gameState.main.flags.clearFog = true;
+
+                        const ctx = canvas.getContext('2d');
+                        let alpha = 1.0;
+                        function fadeFog() {
+                            renderCanvasRoom(); // 通常描画
+                            const fogImg = loadedImages[IMAGES.items.fog];
+                            if (fogImg && fogImg.complete) {
+                                ctx.save();
+                                ctx.globalAlpha = alpha;
+                                ctx.drawImage(fogImg, canvas.width * 0.329, canvas.height * 0.427, canvas.width * 0.481, canvas.height * 0.339);
+                                ctx.restore();
+                            }
+                            alpha -= 0.05;
+                            if (alpha > 0) {
+                                requestAnimationFrame(fadeFog);
+                            } else {
+                                renderCanvasRoom();
+                                updateMessage('風のハーモニカを吹くと、霧が風に吹き飛ばされていった…。風のハーモニカは風の力を失った。');
+                                removeItem('harmonica');
+                                addItem('harmonicaNormal');
+                            }
+                        }
+                        setTimeout(() => fadeFog(), 1500);
+
+                        return;
+                    } else {
+                        updateMessage('霧が立ち込めていて、よく見えない…');
+                        return;
+                    }
+                    break;
+                case 'examine_main_piano_kenban':
+                    changeRoom('piano');
+                    break;
+                case 'examine_main_piano_beethoven':
+                    showModal(
+                        'ベートーヴェンの肖像だ',
+                        `<img src="${IMAGES.modals.beethoven}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('ベートーヴェンの肖像だ');
+                    break;
+                case 'examine_main_piano_mozart':
+                    showModal(
+                        'モーツァルトの肖像だ',
+                        `<img src="${IMAGES.modals.mozart}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('モーツァルトの肖像だ');
+                    break;
+                case 'examine_main_piano_chopin':
+                    showModal(
+                        'ショパンの肖像だ',
+                        `<img src="${IMAGES.modals.chopin}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('ショパンの肖像だ');
+                    break;
+                case 'examine_main_piano_donguri_key':
+                    addItem('keyDonguri');
+                    gameState.main.flags.foundDonguri = true;
+                    updateMessage("どんぐりを手に入れた");
+                    renderCanvasRoom();
+                    break;
+                case 'examine_main_piano_door':
+                    handleDoor();
+                    break;
+                // mainWindow
+                case 'examine_main_window_case1':
+                    updateMessage("誰かの楽器ケースだ");
+                    break;
+                case 'examine_main_window_case2':
+                    updateMessage("誰かの楽器ケースだ");
+                    break;
+                case 'examine_main_window_case3':
+                    updateMessage("誰かの楽器ケースだ");
+                    break;
+                case 'examine_main_window_case4':
+                    if (gameState.main.flags.unlockBox && !gameState.main.flags.foundKey) {
+                        gameState.main.flags.foundKey = true;
+                        addItem('key');
+                        updateMessage('カギを手に入れた');
+
+                    } else if (gameState.main.flags.unlockBox && gameState.main.flags.ghostMoved && gameState.selectedItem == 'bachi') {
+                        updateMessage('ばちをおとしものばこに入れた');
+                        removeItem('bachi');
+                        addItem('coin');
+                        gameState.main.flags.putBachi = true;
+                        showModal(
+                            'ばちをおとしものばこに入れると、コインが落ちてきた。<br>「あなたの親切心に報いを…」',
+                            `<img src="${IMAGES.modals.otoshimonoCoin}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                    } else if (gameState.main.flags.unlockBox && gameState.main.flags.putBachi) {
+                        updateMessage('太鼓のばちが入っている');
+                    } else if (gameState.main.flags.unlockBox) {
+                        updateMessage('何も入っていない');
+                    } else {
+                        showboxPuzzle();
+                        updateMessage("落とし物箱だ。ロックがかかっている");
+                    }
+
+                    break;
+
+                case 'examine_main_window_cloud':
+                    addItem('cloudSeal');
+                    gameState.main.flags.foundCloudSeal = true;
+                    updateMessage("雲のシールを手に入れた");
+                    renderCanvasRoom();
+                    break;
+                case 'examine_main_window_zoom':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.modals.windowZoom}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
+                case 'examine_main_window_safe_center':
+                    if (!f.safeCenterOpend) {
+                        changeRoom('safeCenter');
+                    } else {
+                        updateMessage('金庫はすでに開いている');
+                    }
+                    break;
+                case 'examine_main_window_safe_left':
+                    if (gameState.selectedItem == 'keyDonguri') {
+                        removeItem('keyDonguri');
+                        f.safeLeftOpend = true;
+                        showModal(
+                            'くぼみにどんぐりを嵌め込んだ。ロックが解除されたようだ',
+                            `<img src="${IMAGES.modals.safeLeftClosedDonguri}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        playSE('se-gacha');
+                        updateMessage('くぼみにどんぐりを嵌め込んだ。ロックが解除されたようだ');
+                    }
+                    if (!f.safeLeftOpend) {
+                        showModal(
+                            '開かない。扉に妙な形のくぼみがある',
+                            `<img src="${IMAGES.items.safeLeftClosed}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                    } else {
+                        updateMessage('金庫はすでに開いている');
+                    }
+                    break;
+                case 'examine_main_window_harmonica':
+                    if (!f.foundHarmonica) {
+                        addItem('harmonica');
+                        updateMessage('風のハーモニカを手に入れた');
+                        f.foundHarmonica = true;
+                        renderCanvasRoom();
+                    }
+                    break;
+                case 'examine_main_window_bachi':
+                    if (!f.foundBachi) {
+                        addItem('bachi');
+                        updateMessage('太鼓のばち(叩く棒)を手に入れた');
+                        f.foundBachi = true;
+                        renderCanvasRoom();
+                    }
+                    break;
+                case 'examine_main_window_maracas_beam_left':
+                    updateMessage('マラカスビームだ');
+                    break;
+                case 'examine_main_window_maracas_beam_right':
+                    updateMessage('マラカスビームだ。ドアのほうに向かっているようだ');
+                    break;
+                case 'examine_main_window_maracas':
+                    updateMessage('マラカスだ。');
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.modals.maracasOnfloor}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    gameState.main.flags.foundMaracasMemo = true;
+                    break;
+                // mainDoor
+                case 'examine_main_door':
+                    if (gameState.main.flags.unlockDoor) {
+                        handleDoor();
+                    } else {
+                        updateMessage('開かない');
+                    }
+                    break;
+                case 'examine_main_piano_key':
+                    changeRoom('piano');
+                    break;
+                case 'examine_door_beam':
+                    updateMessage('謎の光に阻まれて近づけない');
+                    break;
+                case 'examine_door':
+                    if (gameState.main.flags.unlockDoor) {
+                        handleDoor();
+                    } else {
+                        updateMessage('開かないようだ');
+                    }
+                    break;
+                case 'examine_door_guitar_case_left':
+                    if (gameState.main.flags.foundMaracasMemo) {
+                        // モーダルを表示
+                        showModal(
+                            "楽器ケース",
+                            "マラカスのイニシャルと同じだ。もう少し調べてみますか？",
+                            [
+                                { text: "はい", action: () => { closeModal(); changeRoom("guitarCase"); } },
+                                { text: "いいえ", action: "close" }
+                            ]
+                        );
+                    } else {
+                        updateMessage('使い込まれたギターケースだ。T.Kとイニシャルが入っている');
+                    }
+                    break;
+
+
+                case 'examine_door_guitar_case_right':
+                    updateMessage('ギターケースだ');
+                    break;
+                case 'examine_door_poster_cloud':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.items.posterCloud}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
+                case 'examine_door_poster_ongaku':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.items.posterOngaku}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
+
+                // mainDrum
+                case 'examine_main_drum': {
+                    if (gameState.selectedItem === 'bachi' || gameState.main.flags.foundBachi) {
+                        updateMessage('ばちを手に取り、太鼓の前に立った。');
+                        changeRoom('drum');
+                    } else {
+                        updateMessage('素手ではうまく叩けない…ばちが必要だ。');
+                    }
+                    break;
+                }
+                case 'drum_tap_left': drumPush('left'); break;
+                case 'drum_tap_bellow': drumPush('bellow'); break;
+                case 'drum_tap_center': drumPush('center'); break;
+                case 'drum_tap_above': drumPush('above'); break;
+                case 'drum_tap_right': drumPush('right'); break;
+
+                case 'examine_drum_back':
+                    changeRoom('mainDrum');
+                    break;
+                case 'examine_main_drum_ghost':
+                    updateMessage('おばけがうれしそうに踊っている…');
+                    changeRoom('ghost');
+                    break;
+                case 'examine_ghost_back':
+                    changeRoom('mainDrum');
+                    break;
+                case 'examine_main_drum_bach':
+                    if (gameState.selectedItem == 'bachi') {
+                        showModal(
+                            'BAD END\nあなたは音楽の父に不敬な行為をした。<br>バッハに怒られて気を失った',
+                            `<img src="${IMAGES.modals.badend}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '最初から', action: 'restart' }]
+                        );
+                        playSE?.('se-gaan');
+                    } else {
+                        showModal(
+                            'バッハの肖像だ',
+                            `<img src="${IMAGES.modals.bach}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        updateMessage('バッハの肖像だ');
+                    }
+
+                    break;
+                case 'examine_main_drum_brahms':
+                    showModal(
+                        'ブラームスの肖像だ',
+                        `<img src="${IMAGES.modals.brahms}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('ブラームスの肖像だ');
+                    break;
+                case 'examine_main_drum_taki':
+                    showModal(
+                        '滝廉太郎の肖像だ',
+                        `<img src="${IMAGES.modals.taki}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('滝廉太郎の肖像だ');
+                    break;
+                case 'examine_main_drum_humendai':
+                    if (gameState.main.flags.ghostMoved && gameState.selectedItem == 'score') {
+                        updateMessage('楽譜を譜面台に置いた');
+                        gameState.main.flags.setScore = true;
+                        removeItem('score');
+                        renderCanvasRoom();
+                    } else if (gameState.main.flags.ghostMoved && !gameState.main.flags.setScore) {
+                        updateMessage('楽譜があれば置けそうだ');
+                    } else if (gameState.main.flags.ghostMoved && gameState.main.flags.setScore) {
+                        updateMessage('楽譜が置いてある');
+                    } else {
+                        changeRoom('humendai');
+                    }
+
+                    break;
+                case 'examine_humendai_center':
+                    if (gameState.selectedItem == 'cloudSeal') {
+                        gameState.humendai.flags.backgroundState = 1;
+                        removeItem('cloudSeal');
+                        renderCanvasRoom();
+                        updateMessage('雲シールを貼ってみた');
+                    } else {
+                        updateMessage('山の絵が描かれた紙がある');
+                    }
+                    break;
+                // guitarCase
+                case 'examine_guitar_case_score':
+                    if (gameState.selectedItem == 'key' && !gameState.main.flags.foundScore) {
+                        gameState.main.flags.foundScore = true;
+                        addItem('score');
+                        removeItem('key');
+                        renderCanvasRoom();
+                        updateMessage('楽譜を見つけた');
+                    } else if (!gameState.main.flags.foundScore) {
+                        updateMessage('カギがかかっている');
+                    } else {
+                        updateMessage('なにもない');
+                    }
+                    break;
+                case 'examine_guitar_case_sticker':
+                    showModal(
+                        'ステッカーだ',
+                        `<img src="${IMAGES.modals.bearSticker}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    break;
+                case 'examine_guitar_case_back':
+                    changeRoom('mainDoor');
+                    break;
+
+                case 'examine_main_drum_bear':
+                    if (gameState.selectedItem == 'coin') {
+                        gameState.main.flags.gotMaracas = true;
+                        removeItem('coin');
+                        addItem('bearMaracas');
+                        showModal(
+                            'ありがとう！これあげる',
+                            `<img src="${IMAGES.modals.bearMaracasGiving}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        updateMessage('マラカスチャームを手に入れた');
+                        break;
+                    }
+                    if (gameState.main.flags.unlockDoor) {
+                        talkToHintCharacter('main', 'bearNormalEnd');
+                        break;
+                    }
+                    if (gameState.flags.trueEndUnlocked) {
+                        talkToHintCharacter('main', 'bearTrueEnd');
+                        break;
+                    }
+                    if (gameState.selectedItem == 'bachi') {
+                        talkToHintCharacter('main', 'bearBachi');
+                        break;
+                    }
+                    if (gameState.main.flags.setScore && gameState.selectedItem == 'harmonicaNormal') {
+                        window._nextModal = {
+                            title: 'マラカスおばけが昇天していく…',
+                            content: `<img src="${IMAGES.modals.bearPlayHarmonica}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            buttons: [{ text: '閉じる', action: 'close' }],
+
+
+                        };
+                        gameState.flags.trueEndUnlocked = true;
+                        let needCloses = 2; // 1枚目（受け取り）→2枚目（昇天）
+                        const onClosed = () => {
+                            if (--needCloses === 0) {
+                                window.removeEventListener('modal:closed', onClosed);
+                                startGhostFadeOut(2600);
+                                playSE('se-change');
+                            }
+                        };
+                        window.addEventListener('modal:closed', onClosed);
+                        showModal('ふふん。ボクハーモニカ吹けるんだよ', `<img src="${IMAGES.modals.bearReceiveHarmonica}" style="width:300px;display:block;margin:0 auto 20px;">`, [{ text: '閉じる', action: 'close' }]);
+                        updateMessage('マラカスおばけが昇天した。ピアノのほうで音がしたようだ');
+
+                        removeItem('harmonicaNormal');
+                        setTimeout(() => playSE('se-hakone'), 1500);
+                        markProgress('bear_play_harmonica');
+                        renderCanvasRoom();
+                    } else if (!gameState.main.flags.setScore && gameState.selectedItem == 'harmonicaNormal') {
+                        updateMessage('楽譜があればなあ');
+                    } else if (gameState.selectedItem == 'score') {
+                        updateMessage('ぼやけてるけど、ボクの妖精のちからで読めるよ');
+                    } else {
+                        talkToHintCharacter('main', 'bear');
+                    }
+                    break;
+
+                // 移動
+                case 'examine_main_piano_right':
+                    changeRoom('mainDoor');
+                    break;
+                case 'examine_main_piano_left':
+                    changeRoom('mainWindow');
+                    break;
+                case 'examine_main_window_right':
+                    changeRoom('mainPiano');
+                    break;
+                case 'examine_main_window_left':
+                    changeRoom('mainDrum');
+                    break;
+                case 'examine_main_drum_right':
+                    changeRoom('mainWindow');
+                    break;
+                case 'examine_main_drum_left':
+                    changeRoom('mainDoor');
+                    break;
+                case 'examine_main_door_right':
+                    changeRoom('mainDrum');
+                    break;
+                case 'examine_main_door_left':
+                    changeRoom('mainPiano');
+                    break;
+                // piano
+                case 'examine_piano_do':
+                    playSE('se-do');
+                    checkPianoSequence('do');
+                    break;
+                case 'examine_piano_re':
+                    playSE('se-re');
+                    checkPianoSequence('re');
+                    break;
+                case 'examine_piano_mi':
+                    playSE('se-mi');
+                    checkPianoSequence('mi');
+                    break;
+                case 'examine_piano_fa':
+                    playSE('se-fa');
+                    checkPianoSequence('fa');
+                    break;
+                case 'examine_piano_so':
+                    playSE('se-so');
+                    checkPianoSequence('so');
+                    break;
+                case 'examine_piano_ra':
+                    playSE('se-ra');
+                    checkPianoSequence('ra');
+                    break;
+                case 'examine_piano_shi':
+                    playSE('se-shi');
+                    checkPianoSequence('shi');
+                    break;
+                case 'examine_piano_do2':
+                    playSE('se-do2');
+                    checkPianoSequence('do2');
+                    break;
+                case 'examine_piano_back':
+                    changeRoom('mainPiano');
+                    break;
+                // safeCenter
+                case 'examine_safe_center_1':
+                case 'examine_safe_center_2':
+                case 'examine_safe_center_3':
+                case 'examine_safe_center_4':
+                case 'examine_safe_center_5': {
+                    if (f.safeCenterOpend) return;
+                    playSE('se-maracas');
+                    const idx = parseInt(action.split('_').pop(), 10) - 1;
+                    gameState.safeCenter.counts[idx]++;
+
+                    // オーバーしたらリセット
+                    if (gameState.safeCenter.counts[idx] > gameState.safeCenter.target[idx]) {
+                        playSE('se-error');
+                        gameState.safeCenter.counts = [0, 0, 0, 0, 0];
+                        updateMessage('やり直しだ。');
+                    } else {
+                        // 目標に一致したかチェック
+                        _tryOpenSafeCenter();
+                    }
+                    break;
+                }
+                case 'examine_safe_center_lever':
+                    if (f.safeCenterOpend) {
+                        playSE('se-gacha');
+                        changeRoom('mainWindow');
+                    } else {
+                        updateMessage('開かない');
+                    }
+                    break;
+                case 'examine_safe_center_back':
+                    gameState.safeCenter.input = [];
+                    changeRoom('mainWindow');
+                    break;
+
+                // === マラカス導線 ===
+                case 'enter_maracas':
+                    changeRoom('maracas');
+                    updateMessage('マラカスおばけだ。');
+                    break;
+
+                case 'maracas_play':
+                    // 再生を最初から
+                    _maracasIdx = 0;
+                    _maracasCount = 0;
+                    gameState.maracas.playing = true;
+                    updateMessage('マラカスおばけだ。…シャカシャカ…（長いポーズで区切り）');
+                    break;
+                case 'maracas_back':
+                    gameState.maracas.playing = false;
+                    changeRoom('mainWindow');
+                    break;
+
+                case 'examine_end':
+                    showEndingReport('end');
+                    break;
+                case 'examine_end2':
+                    showEndingReport('end2');
+                    break;
+                case 'examine_true_end':
+                    showEndingReport('trueEnd');
+                    break;
+                case 'examine_true_end2':
+                    showEndingReport('trueEnd2');
+                    break;
+
+            }
+            gameState.selectedItem = null;
+            gameState.selectedItemSlot = null;
+
+            playSE('se-click');
+            updateInventoryDisplay();
+        }
+
+        function showEndingReport(endingId) {
+            console.log(endingId);
+            const f = gameState?.main?.flags || {};
+            const ana = window.ANA || {};
+            const sec = Math.max(
+                1,
+                (ana.endTimes && ana.endTimes[endingId]) ||
+                Math.round((Date.now() - (ana.start || Date.now())) / 1000)
+            );
+            const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+            const ss = String(sec % 60).padStart(2, '0');
+
+            // 今作のエンディング表記
+            const endingTxt = ({
+                trueEnd: '🌤 TRUE END（屋上へ脱出｜秋空）',
+                trueEnd2: '🌤 TRUE+ END（屋上＋マラカスチャーム）',
+                end: '🔔 NORMAL END（チャイムを鳴らして脱出）',
+                end2: '🔔 NORMAL+ END（チャイム＋マラカスチャーム）',
+                badEnd: '💀 BAD END（楽聖の逆鱗）'
+            })[endingId] || '⭐ END';
+
+            // 実績/達成状況（今作フラグに合わせて）
+            const rows = [
+                `🐻 クマ妖精：${f.wakeupBear ? '現れた' : 'いない'}`,
+                `🔍 ヒント使用：${ana.hintCount || 0}回`,
+                `⌛ プレイ時間：${mm}:${ss}`,
+            ];
+
+            const html = `
+    <div style="text-align:left;max-width:560px">
+      <div style="font-size:1.4em;margin-bottom:10px">${endingTxt}</div>
+      <ul style="line-height:1.8;margin:0;padding-left:1.1em">
+        ${rows.map(r => `<li>${r}</li>`).join('')}
+      </ul>
+      <div style="margin-top:14px;font-size:.95em;opacity:.9">
+        クリアおめでとう！<br>ご意見が次回の改善に直結します🙏
+      </div>
+    </div>
+  `;
+            // 共有テキスト（X用）
+            const shareText = (() => {
+                const short = {
+                    trueEnd: 'TRUE END（屋上）',
+                    trueEnd2: 'TRUE+ END（屋上＋チャーム）',
+                    end: 'NORMAL END（チャイム）',
+                    end2: 'NORMAL+ END（チャイム＋チャーム）',
+                    badEnd: 'BAD END'
+                }[endingId] || 'END';
+                return `『音楽室からの脱出』${short} を達成！ ⌛${mm}:${ss} / ヒント${ana.hintCount || 0}回 #脱出ゲーム #音楽室`;
+            })();
+
+            showModal('', html, [
+                { text: '感想フォームを開く', action: () => openFeedbackForm(endingId, { mm, ss }) },
+                { text: '閉じる', action: 'close' },
+            ]);
+
+        }
+
+
+        const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSed7bJdV_IIlhSbjnRQ-rbct2p2RnsoJV6Cu4uc2nt7-S_9sw/viewform?";
+        const FORM_FIELDS = {
+            ending: 'entry.666725843',
+
+
+        };
+
+        function openFeedbackForm(endingId, meta = {}) {
+            const f = gameState?.main?.flags || {};
+            const mm = meta.mm || "00";
+            const ss = meta.ss || "00";
+
+            const endingLabel = ({
+                trueEnd: "トゥルーエンド",
+                trueEnd2: "トゥルーエンド+",
+                end: "ノーマルエンド",
+                end2: "ノーマルエンド+",
+                badEnd: "BAD END"
+            })[endingId] || "";
+
+            const params = new URLSearchParams();
+            params.set("usp", "pp_url");
+            if (FORM_FIELDS.ending && endingLabel) params.set(FORM_FIELDS.ending, endingLabel);
+            // もしフォームに項目があれば、以下をアンコメント＆項目IDを設定
+            if (FORM_FIELDS.bear_appeared) params.set(FORM_FIELDS.bear_appeared, f.wakeupBear ? "登場した" : "未登場");
+
+            window.open(`${FEEDBACK_URL}?${params.toString()}`, "_blank", "noopener,noreferrer");
+        }
+
+        function talkToHintCharacter(roomId, charId) {
+            // flags取得
+            let flags = gameState[roomId].flags;
+            // まだカウント無ければ初期化
+            if (!flags.talkTo) flags.talkTo = {};
+            if (!flags.talkTo[charId]) flags.talkTo[charId] = 0;
+
+            // カウントアップ
+            flags.talkTo[charId]++;
+
+            // セリフリスト取得
+            const messages = hintMessages[roomId][charId];
+            if (roomId == 'main' && charId == 'bear' && flags.talkTo[charId] == 3) {
+                gameState.main.flags.canRemovePoster = true;
+            }
+            // 範囲外なら最後のメッセージ
+            const idx = (flags.talkTo[charId] - 1) % messages.length;
+
+            // 表示
+            updateMessage(messages[idx]);
+        }
+
+        // おとしものばこパズルを表示
+        function showboxPuzzle() {
+            const modalContent = `
+                <h3>ロックがかかっている</h3>
+                <p><img src="${IMAGES.modals.otoshimono}" style="width:300px;display:block;margin:0 auto 20px;"></p>
+                <input type="text" class="puzzle-input" id="boxInput" placeholder="数字3桁">
+                <br>
+                <button onclick="checkBoxPuzzle()">確認</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // おとしものばこパズルの答えをチェック
+        function checkBoxPuzzle() {
+            const v = document.getElementById('boxInput').value.trim();
+            // 全角対策
+            const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+            const val = z2h(v).toLowerCase();
+            if (val === '463') {
+                closeModal();
+                gameState.main.flags.unlockBox = true;
+                markProgress('otoshimonobox_open');
+                showModal(
+                    'ロック解除された',
+                    '',
+                    [{ text: '閉じる', action: 'close' }]
+                );
+                playSE('se-gacha');
+                updateMessage('ロック解除された。中を調べよう');
+
+            } else {
+                playSE('se-error');
+                updateMessage('ちがうようだ');
+            }
+        }
+
+        function handleDoor() {
+
+            // 分岐：trueEndUnlocked が立っていればトゥルーENDへ
+            if (gameState.flags.trueEndUnlocked && hasItem('bearMaracas')) {
+                gameState.endings.true = true;
+                changeRoom('trueEnd2');
+            } else if (gameState.flags.trueEndUnlocked) {
+                gameState.endings.true = true;
+                changeRoom('trueEnd');
+            } else if (!gameState.flags.trueEndUnlocked && hasItem('bearMaracas')) {
+                gameState.endings.true = true;
+                changeRoom('end2');
+            } else {
+                changeRoom('end');
+            }
+        }
+
+        // アイテム管理
+        function addItem(itemId) {
+            playSE('se-item');
+            if (gameState.inventory.length < 8) {
+                gameState.inventory.push(itemId);
+                updateInventoryDisplay();
+            }
+        }
+
+        function removeItem(itemId) {
+            const index = gameState.inventory.indexOf(itemId);
+            if (index !== -1) {
+                gameState.inventory.splice(index, 1);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+
+        }
+
+        function hasItem(itemId) {
+            return gameState.inventory.includes(itemId);
+        }
+
+        function useItem(slotIndex) {
+            if (gameState.inventory[slotIndex]) {
+                const item = gameState.inventory[slotIndex];
+                updateMessage(`${getItemName(item)}を選択しました。使用したい場所をクリックしてください。`);
+                gameState.selectedItem = item;
+                gameState.selectedItemSlot = slotIndex;
+                updateInventoryDisplay();
+            }
+        }
+
+        function getItemName(itemId) {
+            const names = {
+
+                bear: 'クマ妖精',
+                key: 'カギ',
+                harmonica: '風のハーモニカ（吹くと風が吹く）',
+                harmonicaNormal: 'ハーモニカ',
+                keyDonguri: 'どんぐり',
+                score: '手書きの楽譜',
+                bachi: '太鼓のばち（叩く棒）',
+                bearMaracas: 'マラカスチャーム'
+
+
+            };
+            return names[itemId] || itemId;
+        }
+
+        function renderNavigation() {
+            const navDiv = document.querySelector('.navigation');
+            navDiv.innerHTML = '';
+            gameState.openRooms.forEach(roomId => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = rooms[roomId].name;
+                btn.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(btn);
+            });
+        }
+
+        // インベントリ表示更新
+        function updateInventoryDisplay() {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                if (gameState.inventory[index]) {
+                    const img = document.createElement('img');
+                    img.src = IMAGES.items[gameState.inventory[index]];
+                    img.onerror = function () {
+                        // 画像が読み込めない場合はプレースホルダーを表示
+                        this.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder';
+                        placeholder.textContent = getItemName(gameState.inventory[index]);
+                        placeholder.style.width = '60px';
+                        placeholder.style.height = '60px';
+                        slot.appendChild(placeholder);
+                    };
+                    slot.appendChild(img);
+                    const magBtn = document.createElement('div');
+                    magBtn.className = 'magnifier-btn';
+                    magBtn.title = '拡大表示';
+                    magBtn.innerHTML = '<img src="images/magnifier.png" alt="拡大">';
+                    magBtn.onclick = (e) => {
+                        e.stopPropagation();
+
+                        showModal(
+                            getItemName(gameState.inventory[index]),
+                            `<img src="${img.src}" style="max-width: 300px; max-height: 300px; width: auto; height: auto; object-fit: contain; display:block;margin:0 auto 16px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                    };
+                    slot.appendChild(magBtn);
+                }
+                // ★選択中ならselectedクラス追加
+                if (gameState.selectedItemSlot === index) {
+                    slot.classList.add('selected');
+                } else {
+                    slot.classList.remove('selected');
+                }
+            });
+        }
+
+        // メッセージ更新
+        function updateMessage(message) {
+            //document.getElementById('messageArea').innerHTML = message;
+            document.getElementById('msgText').textContent = message;
+        }
+
+        function updateMessageHTML(html) {
+            const el = document.getElementById('msgText');
+            el.innerHTML = html;
+            el.querySelectorAll('a').forEach(a => {
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.style.color = '#d4af37';
+                a.style.textDecoration = 'underline';
+            });
+        }
+
+        // モーダル表示
+        function showModal(title, content, buttons, onSequenceSuccess) {
+            let modalHtml = `<h3>${title}</h3><p>${content}</p>`;
+            if (buttons && buttons.length > 0) {
+                modalHtml += `<div id="modalButtons" style="text-align:center;"></div>`;
+                modalHtml += `<div id="modalClose" style="margin-top:25px;text-align:center;"></div>`;
+            }
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modal').style.display = 'flex';
+
+            if (!buttons || buttons.length === 0) return;
+
+            let pressed = [];
+            let heartCnt = 0;
+            let checkCnt = 0;
+            let houseCnt = 0;
+
+            // 画像/通常ボタンとcloseボタンで分ける
+            const modalButtons = document.getElementById('modalButtons');
+            const modalClose = document.getElementById('modalClose');
+
+            buttons.forEach((button, idx) => {
+                // 閉じるボタンは下へ
+                if (button.action === 'close') {
+                    const btn = document.createElement('button');
+                    btn.textContent = button.text || '閉じる';
+                    btn.className = 'modal-close-btn';
+                    btn.onclick = function () {
+                        closeModal();
+                        if (typeof onSequenceSuccess === "function") {
+                            onSequenceSuccess();
+                        }
+                    };
+                    modalClose.appendChild(btn);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.style.margin = "0 10px 10px 0";
+                    if (button.img) {
+                        btn.innerHTML = `<img src="${button.img}" alt="${button.text || ''}" style="width:80px;height:80px;vertical-align:middle;">`;
+                    } else {
+                        btn.textContent = button.text;
+                        btn.className = 'text-btn';
+                    }
+                    btn.onclick = function () {
+                        if (button.action === 'restart') {
+                            restartGame();
+                        } else if (typeof button.action === "function") {
+                            button.action();
+                        } else if (typeof button.action === 'string') {
+                            closeModal();
+                            handleAreaClick(button.action);
+                        }
+                    };
+                    modalButtons.appendChild(btn);
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            // 次のモーダルが登録されていれば表示
+            if (window._nextModal) {
+                // 登録内容は {title, content, buttons, after} オブジェクト
+                let modal = window._nextModal;
+                window._nextModal = null; // クリア
+                if (modal.before) modal.before();
+                showModal(modal.title, modal.content, modal.buttons);
+                if (modal.after) modal.after();
+            }
+            window.dispatchEvent(new Event('modal:closed'));
+        }
+
+        // ゲームリスタート
+        function restartGame() {
+            gameState = getDefaultGameState();
+            closeModal();
+            initGame();
+            updateInventoryDisplay();
+        }
+
+        let isBGMPlaying = false;
+        let isBGMInitialized = false; // 初回クリック判定用
+
+        // 初回クリック時にだけBGMを再生
+        function initBGMOnce() {
+            if (!isBGMInitialized) {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.2;
+                bgm.play();
+                isBGMPlaying = true;
+                isBGMInitialized = true;
+                document.getElementById('bgm-toggle').textContent = "🔊 BGM";
+            }
+        }
+        window.addEventListener('click', initBGMOnce, { once: true });
+
+        function toggleBGM() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('bgm-toggle');
+            if (!isBGMPlaying) {
+                bgm.play();
+                isBGMPlaying = true;
+                btn.textContent = "🔊 BGM";
+            } else {
+                bgm.pause();
+                isBGMPlaying = false;
+                btn.textContent = "🔇 BGM";
+            }
+        }
+
+        function changeBGM(newSrc) {
+            const bgm = document.getElementById('bgm');
+            // ファイル名のみで比較
+            const current = bgm.src.split('/').pop();
+            const next = newSrc.split('/').pop();
+            if (current === next) return; // すでにそのBGMなら何もしない
+
+            const isPlaying = isBGMPlaying;
+            bgm.pause();
+            bgm.src = newSrc;
+            bgm.load();
+            if (isPlaying) {
+                bgm.play();
+            }
+        }
+
+        function pauseBGM() {
+            const bgm = document.getElementById('bgm');
+            bgm.src = "";
+            bgm.pause();
+        }
+
+        function playSE(id) {
+            const se = document.getElementById(id);
+            se.currentTime = 0;
+            se.play();
+        }
+
+        // どこかで最初に一度だけ呼ぶ
+        let loadedImages = {};
+        function preloadImages() {
+            // 部屋画像
+            Object.values(IMAGES.rooms).forEach(val => {
+                if (Array.isArray(val)) {
+                    val.forEach(src => {
+                        if (!loadedImages[src]) {
+                            const img = new Image();
+                            img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                            img.src = src;
+                            loadedImages[src] = img;
+
+
+
+                        }
+                    });
+                } else if (typeof val === "string") {
+                    if (!loadedImages[val]) {
+                        const img = new Image();
+                        img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                        img.src = val;
+                        loadedImages[val] = img;
+                    }
+                }
+            });
+            // アイテム画像
+            Object.values(IMAGES.items).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+            // モーダル画像
+            Object.values(IMAGES.modals).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+        }
+
+        function saveGame() {
+            const toSave = { ...gameState, __version: SAVE_VERSION };
+            localStorage.setItem(SAVE_KEY, JSON.stringify(toSave));
+            updateMessage('セーブしました！');
+        }
+
+        function loadGame() {
+            const raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) {
+                updateMessage('セーブデータがありません');
+                return;
+            }
+            const saved = JSON.parse(raw);
+
+            // デフォルトとマージして不足キーを補完
+            const def = getDefaultGameState();
+            const merged = deepMerge(def, saved);
+
+            if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
+            if (!merged.currentRoom || !rooms[merged.currentRoom]) merged.currentRoom = def.currentRoom;
+
+            gameState = merged;
+
+            changeRoom(gameState.currentRoom);
+            updateInventoryDisplay?.();
+            renderNavigation?.();
+            updateMessage('ロードしました！');
+        }
+
+
+        function deepMerge(target, source) {
+            if (source === undefined || source === null) return target;
+            if (Array.isArray(source)) return source.slice();
+            if (typeof source === 'object') {
+                const out = (target && typeof target === 'object') ? { ...target } : {};
+                for (const k of Object.keys(source)) {
+                    out[k] = deepMerge(target ? target[k] : undefined, source[k]);
+                }
+                return out;
+            }
+            return source;
+        }
+
+
+        // ゲーム開始
+        preloadImages();
+        initGame();
+    </script>
+</body>
+
+</html>
