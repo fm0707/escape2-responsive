@@ -808,7 +808,7 @@
                 main: {
                     flags: {
                         hintTiers: {},
-                        safeCenterOpend: false, safeLeftOpend: false, safeRightOpend: false,
+                        safeCenterOpened: false, safeLeftOpend: false, safeRightOpend: false,
                         unlockBox: false, foundKey: false, putBachi: false,
                         foundHarmonica: false, foundDonguri: false, foundBachi: false, badEnd: false,
                         foundDonguriKey: false, ghostMoved: false, foundMaracasMemo: false, foundScore: false, setScore: false,
@@ -1026,10 +1026,10 @@
                         action: 'examine_main_window_safe_center',
                         description: '中央金庫',
                         zIndex: 2,
-                        usable: () => !gameState.main.flags.safeCenterOpend,
+                        usable: () => !gameState.main.flags.safeCenterOpened,
                         item: {
                             img: 'safeCenterClosed',
-                            visible: () => !gameState.main.flags.safeCenterOpend,
+                            visible: () => !gameState.main.flags.safeCenterOpened,
                         },
                     },
                     {
@@ -1037,10 +1037,10 @@
                         action: 'examine_main_window_safe_center',
                         description: '中央金庫',
                         zIndex: 2,
-                        usable: () => gameState.main.flags.safeCenterOpend,
+                        usable: () => gameState.main.flags.safeCenterOpened,
                         item: {
                             img: 'safeOpened',
-                            visible: () => gameState.main.flags.safeCenterOpend,
+                            visible: () => gameState.main.flags.safeCenterOpened,
                         },
                     },
                     {
@@ -1070,10 +1070,10 @@
                         action: 'examine_main_window_harmonica',
                         description: '中央金庫内ハーモニカ',
                         zIndex: 3,
-                        usable: () => gameState.main.flags.safeCenterOpend && !gameState.main.flags.foundHarmonica,
+                        usable: () => gameState.main.flags.safeCenterOpened && !gameState.main.flags.foundHarmonica,
                         item: {
                             img: 'harmonica',
-                            visible: () => gameState.main.flags.safeCenterOpend && !gameState.main.flags.foundHarmonica,
+                            visible: () => gameState.main.flags.safeCenterOpened && !gameState.main.flags.foundHarmonica,
                         },
                     },
                     {
@@ -2219,12 +2219,12 @@
 
 
         function _tryOpenSafeCenter() {
-            if (gameState.main.flags.safeCenterOpend) return;
+            if (gameState.main.flags.safeCenterOpened) return;
             const ok = gameState.safeCenter.counts.every(
                 (v, i) => v === gameState.safeCenter.target[i]
             );
             if (ok) {
-                gameState.main.flags.safeCenterOpend = true;
+                gameState.main.flags.safeCenterOpened = true;
                 playSE('se-gacha');
                 showModal(
                     '金庫が開いた',
@@ -2500,7 +2500,7 @@
                     );
                     break;
                 case 'examine_main_window_safe_center':
-                    if (!f.safeCenterOpend) {
+                    if (!f.safeCenterOpened) {
                         changeRoom('safeCenter');
                     } else {
                         updateMessage('金庫はすでに開いている');
@@ -2866,7 +2866,7 @@
                 case 'examine_safe_center_3':
                 case 'examine_safe_center_4':
                 case 'examine_safe_center_5': {
-                    if (f.safeCenterOpend) return;
+                    if (f.safeCenterOpened) return;
                     playSE('se-maracas');
                     const idx = parseInt(action.split('_').pop(), 10) - 1;
                     gameState.safeCenter.counts[idx]++;
@@ -2883,7 +2883,7 @@
                     break;
                 }
                 case 'examine_safe_center_lever':
-                    if (f.safeCenterOpend) {
+                    if (f.safeCenterOpened) {
                         playSE('se-gacha');
                         changeRoom('mainWindow');
                     } else {
