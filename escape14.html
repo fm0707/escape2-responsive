@@ -1795,7 +1795,7 @@
 
         }
 
-        const END_IDS = new Set(['end', 'trueEnd']);
+        const END_IDS = new Set(['end', 'trueEnd', 'end2', 'trueEnd2']);
 
         const _changeRoom_orig = changeRoom;
         changeRoom = function (roomId) {
@@ -1806,7 +1806,7 @@
                 ANA.endTimes = ANA.endTimes || {};
                 if (!ANA.endTimes[roomId]) ANA.endTimes[roomId] = elapsed;
 
-                const isTrue = (roomId === 'trueEnd');
+                const isTrue = (roomId === 'trueEnd' || roomId === 'trueEnd2');
                 ANA.send('ending_reached', {
                     ending_id: roomId,
                     is_true: isTrue,
