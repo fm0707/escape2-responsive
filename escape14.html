@@ -2281,6 +2281,7 @@
             if (!gameState.main.flags.wakeupBear && gameState.main.flags.ghostMoved && endsWith(TARGET_BEAR)) {
                 gameState.main.flags.wakeupBear = true;
                 playSE && playSE('se-kumasan');
+                markProgress('morino_kumasan');
                 showModal('どこからか「呼んだ？」という声がした', '',
                     [{ text: '閉じる', action: 'close' }]);
                 renderCanvasRoom();
@@ -2328,6 +2329,7 @@
                     );
                     updateMessage('太鼓の響きに驚いて、マラカスおばけが移動してきた');
                     playSE('se-clear');
+                    markProgress('ghost_moved');
 
                     // changeRoom('mainDoor');
                 }
@@ -2401,6 +2403,7 @@
                                 updateMessage('風のハーモニカを吹くと、霧が風に吹き飛ばされていった…。風のハーモニカは風の力を失った。');
                                 removeItem('harmonica');
                                 addItem('harmonicaNormal');
+                                markProgress('harmonica_use');
                             }
                         }
                         setTimeout(() => fadeFog(), 1500);
