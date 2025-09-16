@@ -2652,7 +2652,7 @@
                             `<img src="${IMAGES.modals.badend}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '最初から', action: 'restart' }]
                         );
-                        playSE?.('se-gaan');
+                        playSE('se-gaan');
                     } else {
                         showModal(
                             'バッハの肖像だ',
@@ -2756,7 +2756,7 @@
                             `<img src="${IMAGES.modals.badendBear}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '最初から', action: 'restart' }]
                         );
-                        playSE?.('se-gaan');
+                        playSE('se-gaan');
                         break;
                     }
                     if (gameState.selectedItem == 'bachi') {
@@ -2889,7 +2889,7 @@
                     }
                     break;
                 case 'examine_safe_center_back':
-                    gameState.safeCenter.counts = [];
+                    gameState.safeCenter.counts = [0, 0, 0, 0, 0];
                     changeRoom('mainWindow');
                     break;
 
