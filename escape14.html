@@ -1975,50 +1975,41 @@
             ctx.fillText(backText, backX, backY);
         }
 
-        function maracasTick() {
+        let _lastTime = performance.now();
 
+        function maracasTick(now) {
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
 
-            // 元の部屋描画（背景・hover等）
             renderCanvasRoom();
-
-            // マラカス専用上描き
             if (gameState.currentRoom === 'maracas') {
                 drawMaracasRoomScene(ctx, canvas);
             }
+            if (gameState.currentRoom !== 'maracas') return;
 
-            if (gameState.currentRoom !== 'maracas') return; // 部屋を出たら停止
-
-            // 再生中のときだけ、カウントを進める
             if (gameState.maracas.playing) {
-
                 const spd = 0.65;
-                const hz = 6 * spd;                     // 1秒あたりの振りサイクル
-                _maracasPhase += (Math.PI * 2) * (hz / 60); // 60fps仮定の位相増分
+                const hz = 6 * spd; // 1秒あたりの振りサイクル
 
-                // 1カウント終わりを擬似的に検出（最大角 付近通過）
-                // シンプルに位相0→PIの通過で1カウント扱い
+                const deltaSec = (now - _lastTime) / 1000; 
+                _lastTime = now;
+
+                _maracasPhase += (Math.PI * 2) * hz * deltaSec;
+
                 if (Math.sin(_maracasPhase) > 0.98) {
-                    // 「一振り」カウント
                     _maracasCount++;
                     playSE('se-maracas');
-                    // クラスタ完了？
                     const need = gameState.maracas.clusters[_maracasIdx] || 0;
                     if (_maracasCount >= need && need > 0) {
                         _maracasIdx++;
                         _maracasCount = 0;
-                        // クラスタ間の長ポーズ：少し止める
                         gameState.maracas.playing = false;
                         setTimeout(() => {
                             if (gameState.currentRoom === 'maracas') {
-                                // まだ配列の続きがあれば再開
                                 if (_maracasIdx < gameState.maracas.clusters.length) {
                                     gameState.maracas.playing = true;
                                 } else {
-                                    // 終了（先頭に戻す。ここで正解フラグなど立ててもOK）
                                     _maracasIdx = 0;
-                                    // 例：ヒント進捗を送る
                                     ANA.send('maracas_pattern_done', { seq: gameState.maracas.clusters.join('') });
                                 }
                             }
@@ -2029,6 +2020,7 @@
 
             _maracasRAF = requestAnimationFrame(maracasTick);
         }
+
 
         let _ghostRAF = 0;
         let ghostLetters = [];
