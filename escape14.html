@@ -1908,7 +1908,7 @@
         let _maracasAnimNow = 0;
         let _maracasIdx = 0;   // どのクラスタか
         let _maracasCount = 0; // クラスタ内の何回目か
-        let _maracasPhase = 0; // 振りの位相
+        let _maracasPhase = Math.PI; // 振りの位相
 
         function drawMaraca(ctx, x, y, angle, color) {
             ctx.save();
@@ -1976,6 +1976,7 @@
         }
 
         let _lastTime = performance.now();
+        let _lastSin = 0;
 
         function maracasTick(now) {
             const canvas = document.getElementById('gameCanvas');
@@ -1989,16 +1990,19 @@
 
             if (gameState.maracas.playing) {
                 const spd = 0.65;
-                const hz = 6 * spd; // 1秒あたりの振りサイクル
+                const hz = 6 * spd;
 
-                const deltaSec = (now - _lastTime) / 1000; 
+                const deltaSec = (now - _lastTime) / 1000;
                 _lastTime = now;
 
                 _maracasPhase += (Math.PI * 2) * hz * deltaSec;
 
-                if (Math.sin(_maracasPhase) > 0.98) {
+                const currentSin = Math.sin(_maracasPhase);
+                if (_lastSin <= 0 && currentSin > 0) {
+                    // 0クロスで1カウント
                     _maracasCount++;
                     playSE('se-maracas');
+
                     const need = gameState.maracas.clusters[_maracasIdx] || 0;
                     if (_maracasCount >= need && need > 0) {
                         _maracasIdx++;
@@ -2010,12 +2014,14 @@
                                     gameState.maracas.playing = true;
                                 } else {
                                     _maracasIdx = 0;
+                                     _maracasPhase = Math.PI;
                                     ANA.send('maracas_pattern_done', { seq: gameState.maracas.clusters.join('') });
                                 }
                             }
                         }, Math.max(400, 600 / spd));
                     }
                 }
+                _lastSin = currentSin;
             }
 
             _maracasRAF = requestAnimationFrame(maracasTick);
