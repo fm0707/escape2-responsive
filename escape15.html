@@ -1617,6 +1617,8 @@
 
                 bearTrueEnd: [
                     "わーすごい",
+                    "キラドアだー",
+                    "妖精さん帰れたかな",
                 ],
                 robo: [
                     "最近、展示の評判がわるいのデス。",
@@ -2284,6 +2286,7 @@
                 // wall
                 case 'examine_main_wall_input':
                     changeRoom('wallInput');
+                    console.log(gameState.wallInput.slots);
                     break;
                 case 'examine_main_wall_robo_face':
                     if (!gameState.main.flags.roboWakeup) {
@@ -2387,19 +2390,23 @@
                             ]
                         );
                     }
+                    break;
 
                 // wallInput
                 case 'wallinput_cycle_L':
+                    if (gameState.main.flags.roboWakeup) break;
                     gameState.wallInput.slots[0] = gameState.wallInput.slots[0] % 4 + 1;
                     renderCanvasRoom();
                     break;
 
                 case 'wallinput_cycle_M':
+                    if (gameState.main.flags.roboWakeup) break;
                     gameState.wallInput.slots[1] = gameState.wallInput.slots[1] % 4 + 1;
                     renderCanvasRoom();
                     break;
 
                 case 'wallinput_cycle_R':
+                    if (gameState.main.flags.roboWakeup) break;
                     gameState.wallInput.slots[2] = gameState.wallInput.slots[2] % 4 + 1;
                     renderCanvasRoom();
                     break;
@@ -2434,6 +2441,7 @@
                     } else {
                         updateMessage('良く分からない石板だ');
                     }
+                    break;
                 // doorInput
                 case 'doorinput_cycle_0': _cycleDoorSlot(0); break;
                 case 'doorinput_cycle_1': _cycleDoorSlot(1); break;
@@ -2770,6 +2778,9 @@
                         break;
                     } else if (gameState.selectedItem == 'badgeGod') {
                         updateMessage('キラキラだねえ');
+                        break;
+                    } else if (gameState.flags.trueEndUnlocked) {
+                        talkToHintCharacter('main', 'bearTrueEnd');
                         break;
                     } else {
                         talkToHintCharacter('main', 'bear');
