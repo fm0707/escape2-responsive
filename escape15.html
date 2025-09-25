@@ -1,0 +1,3466 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="展示室を舞台にした分岐エンド付きの無料脱出ゲーム。全4エンドのマルチエンディング。スマホ＆PC対応。">
+    <title>展示室からの脱出</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            color: #f4f1e8;
+            width: 100%;
+            overflow-x: hidden;
+            /* ←これ重要 */
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1408px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #endingShareArea {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 18px;
+            box-shadow: 0 0 24px #fffc;
+            padding: 18px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 99;
+            font-size: 1.2em;
+            gap: 10px;
+            border: 2px solid gold;
+        }
+
+        #endingShareArea button {
+            font-size: 1.1em;
+            padding: 10px 24px;
+            margin: 6px 0;
+            background: gold;
+            color: #333;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #ffdc;
+            cursor: pointer;
+        }
+
+        .ui-panel {
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1048px;
+            min-height: 120px;
+            background: #2c1810;
+            box-sizing: border-box;
+            display: flex;
+        }
+
+        .inventory {
+            /* flex: 1; */
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            padding: 0 12px;
+            /* width:100%; */
+        }
+
+        .inventory-slot {
+            width: 14vw;
+            height: 14vw;
+            max-width: 80px;
+            max-height: 80px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .inventory-slot.selected {
+            border: 3px solid #9f2b02;
+            /* 金色・太め推奨 */
+            box-shadow: 0 0 12px #ff8c0099;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .inventory-slot img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+
+        .magnifier-btn {
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px #0002;
+            cursor: pointer;
+            z-index: 10;
+            transition: box-shadow .15s;
+        }
+
+        .magnifier-btn:hover {
+            box-shadow: 0 0 10px #ffd70099;
+        }
+
+        .magnifier-btn img {
+            width: 16px;
+            height: 16px;
+            pointer-events: none;
+        }
+
+        .info-panel {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            height: 65px;
+            min-height: 40px;
+            border: 1px solid #d4af37;
+            position: relative;
+        }
+
+        #msgText {}
+
+        #statusIconArea {
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .status-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid gold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px #0005;
+            font-size: 1.4em;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #d4af37;
+            max-width: calc(100vw - 60px);
+            text-align: center;
+        }
+
+        .modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #modalButtons button {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0 10px 10px 0;
+            cursor: pointer;
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            border-radius: 10px;
+        }
+
+        #modalButtons button img {
+            width: 80px;
+            height: 80px;
+            vertical-align: middle;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+        }
+
+        #modalButtons button:hover img {
+            filter: brightness(1.08) drop-shadow(0 2px 6px #ffd70050);
+            box-shadow: 0 0 10px #ffd70080;
+            transform: scale(1.05);
+        }
+
+        #modalButtons button:active img,
+        #modalButtons button.pressed img {
+            filter: brightness(0.95) grayscale(20%);
+            box-shadow: 0 0 8px #3332;
+            transform: scale(0.97);
+        }
+
+        #modalButtons button:disabled img {
+            filter: grayscale(90%) opacity(0.5);
+            box-shadow: none;
+        }
+
+        /* テキスト型ボタンも画像ボタン風に */
+        #modalButtons button.text-btn {
+            min-width: 120px;
+            font-size: 1.15em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            margin: 0 10px 10px 0;
+            box-shadow: 0 4px 14px #ffc90022;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        #modalButtons button.text-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+            transform: scale(1.05);
+        }
+
+        #modalButtons button.text-btn:active {
+            filter: brightness(0.96);
+            transform: scale(0.97);
+        }
+
+        #modalButtons button.text-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 閉じるボタン */
+        #modalClose .modal-close-btn {
+            display: inline-block;
+            min-width: 160px;
+            font-size: 1.2em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            box-shadow: 0 4px 14px #ffc90022;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s;
+        }
+
+        #modalClose .modal-close-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+        }
+
+        .puzzle-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #d4af37;
+            background: rgba(244, 241, 232, 0.9);
+            color: #1a0f08;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border: 2px solid #d4af37;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        .login-container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            width: 280px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .login-form label {
+            font-size: 14px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .login-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .login-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* 画像プレースホルダー用のスタイル */
+        .image-placeholder {
+            background: linear-gradient(135deg, #444, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .notice {
+            text-overflow: clip;
+        }
+
+        .save-area {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 18px 0 4px 0;
+            /* width: 40%; */
+        }
+
+        @media (max-width: 600px) {
+            #msgText {
+                font-size: .8rem;
+            }
+
+            .save-area {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-top: 8px;
+                gap: 16px;
+            }
+
+            .inventory {
+                gap: 16px;
+                align-items: center;
+                padding: 0 2px;
+                width: 100%;
+            }
+        }
+
+        .save-area .nav-btn {
+            min-width: 80px;
+            padding: 10px 18px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+            border-radius: 8px;
+            border: none;
+            color: #1a0f08;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .save-area .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 12px #d4af3740;
+        }
+
+        #roomEffectOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s;
+            z-index: 9999;
+        }
+
+        .title-wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        @keyframes warpFlash {
+            0% {
+                opacity: 0
+            }
+
+            15% {
+                opacity: .95
+            }
+
+            50% {
+                opacity: .4
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes chroma {
+            0% {
+                filter: none
+            }
+
+            100% {
+                filter: contrast(1.2) saturate(1.2) hue-rotate(20deg)
+            }
+        }
+
+        .warp-active {
+            background: radial-gradient(circle at 50% 50%, #fff, #000 70%);
+            animation: warpFlash 900ms ease-out both, chroma 900ms ease-out both;
+        }
+
+        #hintModal {
+            color: #000;
+        }
+
+
+        /* クリックはメインへ通す */
+    </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G9BX4FBF"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-F2G9BX4FBF');
+</script>
+
+<body>
+    <div id="roomEffectOverlay"></div>
+    <div class="game-container">
+        <div class="title-wrapper">
+            <div class="title">展示室からの脱出</div>
+            <div style="margin:0 0; text-align:center;">
+                <a href="escape14_hint.html" target="_blank"
+                    style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
+                    🔍 ヒントを見る
+                </a>
+
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="640" height="640" style="width: 90vw; max-width: 640px;"></canvas>
+
+        <div class="ui-panel">
+            <div class="info-panel">
+                <div class="message-area" id="messageArea">
+                    <span id="msgText">気が付くとあなたは展示室に閉じ込められていました。</span>
+                    <div id="statusIconArea" style="position:absolute; bottom:6px; right:12px; display:flex; gap:8px;">
+                    </div>
+                </div>
+                <div class="navigation">
+
+                </div>
+            </div>
+            <div class="inventory" id="inventory">
+                <div class="inventory-slot" onclick="useItem(0)"></div>
+                <div class="inventory-slot" onclick="useItem(1)"></div>
+                <div class="inventory-slot" onclick="useItem(2)"></div>
+                <div class="inventory-slot" onclick="useItem(3)"></div>
+                <div class="inventory-slot" onclick="useItem(4)"></div>
+                <div class="inventory-slot" onclick="useItem(5)"></div>
+                <div class="inventory-slot" onclick="useItem(6)"></div>
+            </div>
+            <button id="bgm-toggle" onclick="toggleBGM()" style="position:absolute;top:20px;right:20px;z-index:1000;">
+                🔊 BGM
+            </button>
+            <div class="save-area">
+                <button class="nav-btn" onclick="saveGame()">セーブ</button>
+                <button class="nav-btn" onclick="loadGame()">ロード</button>
+            </div>
+        </div>
+        <div class="notice">当サイトの音源は<a href="https://otologic.jp/" target="blank">OtoLogic</a>,<a
+                href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a>、<a href="https://maou.audio/"
+                target="blank">魔王魂</a>の素材を使用しています 作者:<a href="index.html">スラセブン</a>
+        </div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- モーダルの内容は動的に生成 -->
+        </div>
+    </div>
+    <!-- hintモーダル -->
+    <div id="hintModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5)">
+        <div
+            style="max-width:560px;margin:10vh auto;background:#fff;border-radius:12px;padding:16px 16px 8px;box-shadow:0 10px 30px rgba(0,0,0,.3)">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <strong id="hintTitle">ヒント</strong>
+                <button id="hintClose"
+                    style="border:none;background:transparent;font-size:20px;cursor:pointer">✕</button>
+            </div>
+            <div id="hintBody" style="margin:12px 0">
+                <!-- 段階ヒントが入る -->
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <small id="hintUsage" style="opacity:.7"></small>
+                <button id="hintMore"
+                    style="padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#f7f7f7;cursor:pointer">さらに見る</button>
+            </div>
+        </div>
+    </div>
+    <audio id="bgm" src="sounds/14/canvasintheroom.mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-clear" src="sounds/common/Cyber03-1.mp3"></audio>
+    <audio id="se-change" src="sounds/common/Scene_Change01-1(Up).mp3"></audio>
+    <audio id="se-monstar" src="sounds/15/gau.mp3"></audio>
+    <audio id="se-open" src="sounds/common/Short_Accent09-1(Dry).mp3"></audio>
+    <audio id="se-fanta" src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
+    <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
+    <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
+    <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
+    <audio id="se-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
+    <audio id="se-bad-space" src="sounds/13/Single_Accent18-1(Mid).mp3"></audio>
+    <audio id="se-jumon" src="sounds/15/Explosion02-2(Short).mp3"></audio>
+    <audio id="se-uwa" src="sounds/15/uwaa.wav"></audio>
+    <audio id="se-rei" src="sounds/15/rei.mp3"></audio>
+    <audio id="se-hakushu" src="sounds/15/hakushu.mp3"></audio>
+    <audio id="se-suzu" src="sounds/15/Kagura_Suzu01-4.mp3"></audio>
+    <audio id="se-god" src="sounds/common/Scene_Change01-1(Up).mp3"></audio>
+    <audio id="se-sare" src="sounds/15/sare.wav"></audio>
+    <audio id="se-hikari" src="sounds/15/hikari.wav"></audio>
+    <audio id="se-power" src="sounds/15/power.wav"></audio>
+    <audio id="se-omedeto" src="sounds/15/omedeto.wav"></audio>
+    <audio id="se-fossil" src="sounds/15/fossil.wav"></audio>
+    <audio id="se-water" src="sounds/15/water.mp3"></audio>
+    <script>
+        // --- Analytics helper ---
+        window.ANA = {
+            start: Date.now(),
+            hintCount: 0,
+            send(ev, params = {}) { try { gtag('event', ev, params); } catch (e) { } }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const a = document.querySelector('a[href*="_hint.html"]');
+            if (a) {
+                a.addEventListener('click', () => {
+                    ANA.hintCount++;
+                    ANA.send('open_hint', { count: ANA.hintCount });
+                });
+            }
+        });
+
+        window.ANA = Object.assign(window.ANA || {}, {
+            sid: Math.random().toString(36).slice(2),
+            sent: new Set(),
+            baseParams() {
+                return {
+                    elapsed_sec: Math.round((Date.now() - this.start) / 1000),
+                    hints: this.hintCount || 0,
+                    save_version: (typeof SAVE_VERSION === 'number' ? SAVE_VERSION : null),
+                    room: (window.gameState && gameState.currentRoom) || null,
+                    sid: this.sid,
+                };
+            },
+            once(ev, key = '', params = {}) {
+                const k = `${ev}:${key}`;
+                if (this.sent.has(k)) return;
+                this.sent.add(k);
+                this.send(ev, { ...this.baseParams(), ...params });
+            }
+        });
+
+        // 汎用マイルストーン送信用ヘルパ
+        function markProgress(step, extra = {}) {
+            ANA.once('progress', step, { step, ...extra });
+        }
+
+        window._nextModal = null;
+        const canvas = document.getElementById('gameCanvas');
+        // ゲーム設定 - 画像パスをここで管理
+        let IMAGES = {
+            rooms: {
+                mainCase: ['images/15/main_case.png'],
+                mainWall: ['images/15/main_wall.png'],
+                mainPicture: ['images/15/main_picture.jpeg'],
+                mainDoor: ['images/15/main_door.png'],
+                oldMap: ['images/15/oldmap.png', 'images/15/oldmap_2.png'],
+                fossil: ['images/15/fossil.jpeg', 'images/15/fossil_2.png'],
+                emaki1: ['images/15/emaki1.png', 'images/15/emaki1_2.png'],
+                emaki2: ['images/15/emaki2.png', 'images/15/emaki2_2.png'],
+                emaki3: ['images/15/emaki3.png', 'images/15/emaki3_2.png'],
+                emaki4: ['images/15/emaki4.png', 'images/15/emaki4_2.png'],
+                wallInput: ['images/15/wall_input.png'],
+                doorInput: ['images/15/door_input.png'],
+                emakiRiver: ['images/15/emaki_river.png', 'images/15/emaki_river_2.png'],
+                emakiJinja: ['images/15/emaki_jinja.png'],
+                jinjaInput: ['images/15/jinja_input.png'],
+                gachaInput: ['images/15/gacha_input.png'],
+                end: ['images/15/end.jpeg'],
+                // end2: ['images/15/end2.png'],
+                trueEnd: ['images/15/true_end.jpg'],
+                trueEnd2: ['images/15/true_end2.jpeg'],
+
+
+            },
+            items: {
+
+                coin: 'images/bear_coin.png',
+                bear: 'images/bear.png',
+                back: 'images/common/back.png',
+                arrowRight: 'images/common/arrow_right.png',
+                arrowLeft: 'images/common/arrow_left.png',
+                redBack: 'images/common/red_back.png',
+                greenBack: 'images/common/green_back.png',
+                blueBack: 'images/common/blue_back.png',
+                bone1: 'images/15/bone1.png',
+                bone2: 'images/15/bone2.png',
+                bone3: 'images/15/bone3.png',
+                bone4: 'images/15/bone4.png',
+                keyboard: 'images/15/robo_key.png',
+                roboEye: 'images/15/robo_eye.png',
+                numRight: 'images/15/num_1.png',
+                numMid: 'images/15/num_2.png',
+                numLeft: 'images/15/num_3.png',
+                posterRental: 'images/15/poster_rental.png',
+                posterVoice: 'images/15/poster_voice.png',
+                goggle: 'images/15/vr_goggles.png',
+                n: 'images/15/n.png',
+                ne: 'images/15/ne.png',
+                e: 'images/15/e.png',
+                se: 'images/15/se.png',
+                s: 'images/15/s.png',
+                sw: 'images/15/sw.png',
+                w: 'images/15/w.png',
+                nw: 'images/15/nw.png',
+                arDoor: 'images/15/ar_door2.png',
+                badge: 'images/15/badge.png',
+                badgeGod: 'images/15/badge_god.png',
+                trueDoor: 'images/15/true_door.png',
+                capsule: 'images/15/capsule.png',
+                omamoriSuinan: 'images/15/omamori_suinan.png',
+                omamori: 'images/15/omamori.png',
+                ofuseCup: 'images/15/ofuse_cup.png',
+
+            },
+
+            modals: {
+                roboWakeUp: 'images/15/robo_wakeup.mp4',
+                roboFace: 'images/15/robo_face.png',
+                roboFace2: 'images/15/robo_bluetooth.png',
+                roboFace3: 'images/15/robo_check.png',
+                stone: 'images/15/stone.png',
+                goggleOn: 'images/15/goggle_on.png',
+                monstar: 'images/15/monstar.png',
+                monstarDefeat: 'images/15/monstar_defeat.png',
+                riverDive: 'images/15/river_dive.jpeg',
+                badendEaten: 'images/15/badend_eaten.jpeg',
+                badendJumon: 'images/15/badend_magic.jpeg',
+                badendSuinan: 'images/15/badend_water.jpeg',
+                fairyMove: 'images/15/fairy_move.mp4',
+                fossilDisappear: 'images/15/fossil_disappear.png',
+                // bearBoard: 'images/15/bear_board.png',
+            },
+
+
+        };
+
+
+        // ゲーム状態
+        const SAVE_KEY = 'escapeGameState15';
+        const SAVE_VERSION = 1;
+
+        function getDefaultGameState() {
+            return {
+                currentRoom: 'mainCase',
+                openRooms: ['mainCase'],
+                inventory: [],
+                main: {
+                    flags: {
+                        roboWakeup: false, unlockRental: false, unlockDoor: false,
+                        clearAtraction: false, clearJinjaAr: false, showTrueDoor: false, unlockRoboBody: false, gotOhuseCup: false,
+                        talkTo: { bear: 0 }, backgroundState: 0
+                    }
+
+                },
+                wallInput: { slots: [0, 0, 0] },
+                doorInput: { slots: [0, 0, 0, 0] },
+                jinjaInput: { seq: [], solved: false },
+                emaki1: { flags: { backgroundState: 0 } },
+                emaki2: { flags: { backgroundState: 0 } },
+                emaki3: { flags: { backgroundState: 0 } },
+                emaki4: { flags: { backgroundState: 0 } },
+                emakiRiver: { flags: { monsterDefeated: false, badCount: 0, backgroundState: 0 } },
+                emakiJinja: { flags: { unlockGacha: false, gotGacha: false }, gachaSeq: [] },
+                fossil: { flags: { backgroundState: 0 } },
+                oldMap: { flags: { backgroundState: 0 }, popup: null },
+                endings: { normal: false, true: false },
+                fx: { flash: null },
+                flags: { trueEndUnlocked: false },
+                selectedItem: null,
+
+            };
+        }
+
+        let gameState = getDefaultGameState();
+
+
+
+
+        // 部屋データ
+        let rooms = {
+            mainCase: {
+                name: '展示室',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 14.4, y: 38.3, width: 14.4, height: 19.5,
+                        action: 'examine_main_case_oldmap',
+                        description: '左ケース地図',
+
+                    },
+                    {
+                        x: 41.4, y: 39.0, width: 18.1, height: 19.7,
+                        action: 'examine_main_case_fossil',
+                        description: '中央ケース化石',
+
+                    },
+                    {
+                        x: 44.8, y: 65.5, width: 10.4, height: 8.2,
+                        action: 'examine_main_case_fossil_reader',
+                        description: '中央ケース化石読み取り装置',
+
+                    },
+                    {
+                        x: 70.9, y: 39.1, width: 19.1, height: 18.6,
+                        action: 'examine_main_case_emaki',
+                        description: '右ケース絵巻物',
+
+                    },
+                    {
+                        x: 71.7, y: 66.6, width: 18.9, height: 18.8,
+                        action: 'examine_main_case_bear',
+                        description: 'クマ妖精',
+                        usable: () => gameState.main.flags.clearAtraction,
+                        item: {
+                            img: 'bear',
+                            visible: () => gameState.main.flags.clearAtraction,
+                        },
+                    },
+                    {
+                        x: 36.3, y: 28.5, width: 28.0, height: 50.1,
+                        action: 'examine_main_true_door',
+                        description: 'トゥルードア',
+                        zIndex: 9,
+                        usable: () => gameState.main.flags.showTrueDoor,
+                        item: {
+                            img: 'trueDoor',
+                            visible: () => gameState.main.flags.showTrueDoor,
+                        },
+                    },
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_case_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_case_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+            mainWall: {
+                name: '壁側',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 27.9, y: 35.3, width: 12.7, height: 9.4,
+                        action: 'examine_main_wall_input',
+                        description: '壁入力パネル', zIndex: 0,
+                        usable: () => true
+                    },
+                    {
+                        x: 13.1, y: 43.7, width: 11.1, height: 4.3,
+                        action: 'examine_main_wall_robo_key',
+                        description: 'ロボキーボード', zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'keyboard',
+                            visible: () => gameState.main.flags.roboWakeup,
+                        },
+                    },
+                    {
+                        x: 13.5, y: 39.1, width: 3.7, height: 3.1,
+                        action: 'examine_main_wall_robo_eye_left',
+                        description: 'ロボ目左', zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'roboEye',
+                            visible: () => gameState.main.flags.roboWakeup,
+                        },
+                    },
+                    {
+                        x: 20.0, y: 39.1, width: 3.7, height: 3.1,
+                        action: 'examine_main_wall_robo_eye_right',
+                        description: 'ロボ目右', zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: 'roboEye',
+                            visible: () => gameState.main.flags.roboWakeup,
+                        },
+                    },
+                    {
+                        x: 8.1, y: 35.8, width: 18.3, height: 14.0,
+                        action: 'examine_main_wall_robo_face',
+                        description: 'ロボ顔', zIndex: 1,
+                        usable: () => true,
+
+                    },
+                    {
+                        x: 8.1, y: 50.2, width: 18.5, height: 20.5,
+                        action: 'examine_main_wall_robo_body',
+                        description: 'ロボボディ', zIndex: 1,
+                        usable: () => true,
+
+                    },
+                    {
+                        x: 44.3, y: 29.4, width: 36.1, height: 44.0,
+                        action: 'examine_main_wall_ar_door',
+                        description: 'ARドア',
+                        zIndex: 1,
+                        usable: () => gameState.main.flags.unlockRental,
+                        item: {
+                            img: 'arDoor',
+                            visible: () => gameState.main.flags.unlockRental,
+                        },
+                    },
+
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_wall_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_wall_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+            mainDoor: {
+                name: 'ドアがある面',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 66.3, y: 31.9, width: 7.2, height: 8.7,
+                        action: 'examine_main_door_poster_rental',
+                        description: 'レンタルポスター', zIndex: 5,
+                        item: { img: 'posterRental', visible: () => true }
+                    },
+                    {
+                        x: 20.9, y: 31.0, width: 11.7, height: 12.7,
+                        action: 'examine_main_door_poster_voice',
+                        description: 'お客様の声ポスター', zIndex: 5,
+                        item: { img: 'posterVoice', visible: () => true }
+                    },
+                    {
+                        x: 34.6, y: 24.4, width: 30.1, height: 42.1,
+                        action: 'examine_main_door_door',
+                        description: 'ドア',
+
+                    },
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_door_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_door_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+            mainPicture: {
+                name: '展示コーナー',
+                description: '',
+                clickableAreas: [
+
+                    {
+                        x: 41.5, y: 24.5, width: 16.9, height: 22.3,
+                        action: 'examine_main_picture_stone',
+                        description: '石板',
+                        zIndex: 1,
+
+                    },
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_picture_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_main_picture_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+
+                ]
+            },
+
+            oldMap: {
+                name: '古地図',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 83.7, y: 3.4, width: 14.6, height: 13.6,
+                        action: 'examine_oldmap_yamasatojo',
+                        description: '山里城',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 74.9, y: 16.8, width: 7.5, height: 11.6,
+                        action: 'examine_oldmap_yamanaka_jinja',
+                        description: '山中神社',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 49.5, y: 23.4, width: 21.1, height: 12.4,
+                        action: 'examine_oldmap_kawanaka_mura',
+                        description: '川中村',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 16.6, y: 24.3, width: 17.5, height: 9.6,
+                        action: 'examine_oldmap_morimoto_mura',
+                        description: '森元村',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 15.0, y: 38.0, width: 23.4, height: 8.8,
+                        action: 'examine_oldmap_seikou_mura',
+                        description: '静光村',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 23.2, y: 47.5, width: 12.8, height: 9.8,
+                        action: 'examine_oldmap_seikou_oka',
+                        description: '静光の丘',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 39.1, y: 48.4, width: 6.8, height: 12.1,
+                        action: 'examine_oldmap_seikou_jinja',
+                        description: '静光神社',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 46.3, y: 58.9, width: 12.8, height: 9.0,
+                        action: 'examine_oldmap_sankaku_oka',
+                        description: '三角の丘',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 59.4, y: 48.9, width: 10.4, height: 8.1,
+                        action: 'examine_oldmap_ono_jinja',
+                        description: '小野神社',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 71.9, y: 57.2, width: 18.6, height: 9.9,
+                        action: 'examine_oldmap_hosokawa_mura',
+                        description: '細川村',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 16.2, y: 64.6, width: 16.1, height: 8.8,
+                        action: 'examine_oldmap_tukimi_oka',
+                        description: '月見の丘',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 20.0, y: 82.5, width: 11.0, height: 8.2,
+                        action: 'examine_oldmap_hirabara_jinja',
+                        description: '平原神社',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 51.7, y: 72.2, width: 18.1, height: 9.2,
+                        action: 'examine_oldmap_anahoti_mura',
+                        description: '穴掘村',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 39.6, y: 83.1, width: 17.4, height: 11.5,
+                        action: 'examine_oldmap_mizuhara_jo',
+                        description: '水原城',
+                        usable: () => gameState.main.flags.unlockRental,
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_oldmap_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back',
+                            visible: () => true,
+                        },
+                    },
+                ]
+            },
+            fossil: {
+                name: '化石',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 11.9, y: 26.7, width: 77.3, height: 45.7,
+                        action: 'examine_fossil',
+                        description: '化石',
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_case_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back',
+                            visible: () => true,
+                        },
+                    },
+                ]
+            },
+            emakiRiver: {
+                name: '絵巻川渡り体験',
+                description: '無事に川を渡ろう！',
+                clickableAreas: [
+                    {
+                        x: 62.0, y: 27.7, width: 14.5, height: 13.8,
+                        action: 'examine_ar_bear',
+                        description: 'クマ妖精',
+                        usable: () => true,
+
+                    },
+                    {
+                        x: 72.9, y: 80.3, width: 9.7, height: 8.1,
+                        action: 'examine_ar_s',
+                        description: 'S',
+                        usable: () => true,
+                        item: {
+                            img: 'blueBack',
+                            visible: () => emakiSequence.includes('S'),
+                        },
+                    },
+                    {
+                        x: 74.8, y: 66.4, width: 7.8, height: 6.2,
+                        action: 'examine_ar_a',
+                        description: 'A',
+                        usable: () => true,
+                        item: {
+                            img: 'blueBack',
+                            visible: () => emakiSequence.includes('A'),
+                        },
+                    },
+                    {
+                        x: 58.1, y: 56.7, width: 6.9, height: 5.7,
+                        action: 'examine_ar_h',
+                        description: 'H',
+                        usable: () => true,
+                        item: {
+                            img: 'blueBack',
+                            visible: () => emakiSequence.includes('H'),
+                        },
+                    },
+                    {
+                        x: 60.8, y: 47.2, width: 6.4, height: 5.5,
+                        action: 'examine_ar_u',
+                        description: 'U',
+                        usable: () => true,
+                        item: {
+                            img: 'blueBack',
+                            visible: () => emakiSequence.includes('U'),
+                        },
+                    },
+                    {
+                        x: 48.1, y: 41.6, width: 6.2, height: 5.3,
+                        action: 'examine_ar_g',
+                        description: 'G',
+                        usable: () => true,
+                        item: {
+                            img: 'blueBack',
+                            visible: () => emakiSequence.includes('G'),
+                        },
+                    },
+                    {
+                        x: 52.1, y: 34.1, width: 6.4, height: 5.7,
+                        action: 'examine_ar_r',
+                        description: 'R',
+                        usable: () => true,
+                        item: {
+                            img: 'blueBack',
+                            visible: () => emakiSequence.includes('R'),
+                        },
+                    },
+                    {
+                        x: 39.4, y: 30.6, width: 5.1, height: 5.4,
+                        action: 'examine_ar_o',
+                        description: 'O',
+                        usable: () => true,
+                        item: {
+                            img: 'blueBack',
+                            visible: () => emakiSequence.includes('O'),
+                        },
+                    },
+
+
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_ar_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back',
+                            visible: () => true,
+                        },
+                    },
+                ]
+            },
+            emakiJinja: {
+                name: '絵巻神社体験',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 43.0, y: 60.4, width: 13.9, height: 8.2,
+                        action: 'examine_emaki_jinja_input',
+                        description: '謎の入力パネル'
+                    },
+                    {
+                        x: 67.7, y: 57.1, width: 10.4, height: 16.6,
+                        action: 'examine_emaki_jinja_gacha',
+                        description: '謎のガチャポン'
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_ar_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back', visible: () => true,
+                        },
+                    },
+                ]
+            },
+            jinjaInput: {
+                name: '神社：操作パネル',
+                description: '',
+                clickableAreas: [
+                    // 左（お辞儀）
+                    { x: 2.3, y: 31.7, width: 29.9, height: 29.7, action: 'jinja_press_L', description: 'お辞儀' },
+                    // 中（拍手）
+                    { x: 35.2, y: 31.7, width: 29.9, height: 29.7, action: 'jinja_press_M', description: '拍手' },
+                    // 右（鈴）
+                    { x: 68.0, y: 31.7, width: 29.9, height: 29.7, action: 'jinja_press_R', description: '鈴を鳴らす' },
+
+                    // 戻る
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_jinja_input_back', description: '戻る',
+                        zIndex: 5, item: { img: 'back', visible: () => true }
+                    },
+                ]
+            },
+            gachaInput: {
+                name: '神社：なぞのガチャ',
+                description: '',
+                clickableAreas: [
+                    { x: 37.7, y: 46.2, width: 13.7, height: 15.6, action: 'jinja_press_star', description: '星' },
+                    { x: 55.7, y: 56.7, width: 11.9, height: 7.1, action: 'jinja_press_enter', description: 'エンター' },
+                    { x: 36.7, y: 64.7, width: 17.0, height: 14.8, action: 'jinja_gacha_handle', description: 'ガチャのハンドル' },
+                    {
+                        x: 39.8, y: 81.8, width: 13.0, height: 13.0,
+                        action: 'jinja_gacha_capsule',
+                        description: 'ガチャのカプセル',
+                        usable: () => gameState.emakiJinja.flags.unlockGacha && !gameState.emakiJinja.flags.gotGacha,
+                        zIndex: 5,
+                        item: {
+                            img: 'capsule',
+                            visible: () => gameState.emakiJinja.flags.unlockGacha && !gameState.emakiJinja.flags.gotGacha,
+                        }
+                    },
+                    // 戻る
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_jinja_input_back', description: '戻る',
+                        zIndex: 5, item: { img: 'back', visible: () => true }
+                    },
+                ]
+            },
+
+            emaki1: {
+                name: '絵巻①',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_emaki1_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_case_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back', visible: () => true,
+                        },
+                    },
+                ]
+            },
+            emaki2: {
+                name: '絵巻②',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_emaki2_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_emaki2_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_case_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back', visible: () => true,
+                        },
+                    },
+                ]
+            },
+            emaki3: {
+                name: '絵巻③',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_emaki3_left',
+                        description: '←', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_emaki3_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_case_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back', visible: () => true,
+                        },
+                    },
+                ]
+            },
+            emaki4: {
+                name: '絵巻④',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        action: 'examine_emaki4_right',
+                        description: '→', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_case_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back', visible: () => true,
+                        },
+                    },
+                ]
+            },
+            wallInput: {
+                name: '壁側インプット',
+                description: '',
+                clickableAreas: [
+                    // 左スロット
+                    {
+                        x: 2, y: 4.5, width: 30, height: 30,
+                        action: 'wallinput_cycle_L',
+                        description: '左スロット',
+                        zIndex: 1,
+                        usable: () => !gameState.main.flags.roboWakeup,
+                        item: {
+                            img: () => `bone${gameState.wallInput.slots[0]}`,
+                            visible: () => true
+                        }
+                    },
+                    // 中央スロット
+                    {
+                        x: 34.9, y: 4.5, width: 30, height: 30,
+                        action: 'wallinput_cycle_M',
+                        description: '中央スロット',
+                        zIndex: 1,
+                        usable: () => !gameState.main.flags.roboWakeup,
+                        item: {
+                            img: () => `bone${gameState.wallInput.slots[1]}`,
+                            visible: () => true
+                        }
+                    },
+                    // 右スロット
+                    {
+                        x: 67.65, y: 4.5, width: 30, height: 30,
+                        action: 'wallinput_cycle_R',
+                        description: '右スロット',
+                        zIndex: 1,
+                        usable: () => !gameState.main.flags.roboWakeup,
+                        item: {
+                            img: () => `bone${gameState.wallInput.slots[2]}`,
+                            visible: () => true
+                        }
+                    },
+                    // OK ボタン（下部中央想定）
+                    {
+                        x: 34.5, y: 72.5, width: 30.6, height: 13.7,
+                        action: 'wallinput_ok',
+                        description: 'OK',
+                        zIndex: 2,
+                        usable: () => !gameState.main.flags.roboWakeup,
+                    },
+                    {
+                        x: 2, y: 37, width: 30, height: 30,
+                        action: 'wallinput_number_L',
+                        description: '左スロット番号',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: () => 'numLeft',
+                            visible: () => gameState.main.flags.roboWakeup
+                        }
+                    },
+                    {
+                        x: 34.9, y: 37, width: 30, height: 30,
+                        action: 'wallinput_number_M',
+                        description: '中央スロット番号',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: () => 'numMid',
+                            visible: () => gameState.main.flags.roboWakeup
+                        }
+                    },
+                    {
+                        x: 67.65, y: 37, width: 30, height: 30,
+                        action: 'wallinput_number_R',
+                        description: '右スロット番号',
+                        zIndex: 1,
+                        usable: () => false,
+                        item: {
+                            img: () => 'numRight',
+                            visible: () => gameState.main.flags.roboWakeup
+                        }
+                    },
+
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'examine_wallinput_back',
+                        description: '戻る',
+                        zIndex: 5,
+                        item: {
+                            img: 'back',
+                            visible: () => true,
+                        },
+                    },
+                ]
+            },
+            // rooms オブジェクト内に追加
+            doorInput: {
+                name: 'ドア入力',
+                description: '右上から時計回りに正しい方角をそろえよう',
+                clickableAreas: [
+                    // 左上(0)
+                    {
+                        x: 6.7, y: 6.7, width: 39.5, height: 39.5,
+                        action: 'doorinput_cycle_0', zIndex: 1,
+                        usable: () => !gameState.main.flags.unlockDoor,
+                        item: {
+                            img: () => ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'][gameState.doorInput.slots[0]],
+                            visible: () => true
+                        }
+                    },
+                    // 右上(1)
+                    {
+                        x: 53.7, y: 6.7, width: 39.5, height: 39.5,
+                        action: 'doorinput_cycle_1', zIndex: 1,
+                        usable: () => !gameState.main.flags.unlockDoor,
+                        item: {
+                            img: () => ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'][gameState.doorInput.slots[1]],
+                            visible: () => true
+                        }
+                    },
+                    // 右下(2)
+                    {
+                        x: 53.7, y: 53.7, width: 39.5, height: 39.5,
+                        action: 'doorinput_cycle_2', zIndex: 1,
+                        usable: () => !gameState.main.flags.unlockDoor,
+                        item: {
+                            img: () => ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'][gameState.doorInput.slots[2]],
+                            visible: () => true
+                        }
+                    },
+                    // 左下(3)
+                    {
+                        x: 6.7, y: 53.7, width: 39.5, height: 39.5,
+                        action: 'doorinput_cycle_3', zIndex: 1,
+                        usable: () => !gameState.main.flags.unlockDoor,
+                        item: {
+                            img: () => ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'][gameState.doorInput.slots[3]],
+                            visible: () => true
+                        }
+                    },
+                    // 戻る
+                    {
+                        x: 90.6, y: 90.6, width: 9.4, height: 9.4,
+                        action: 'doorinput_back',
+                        description: '戻る', zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    },
+                ]
+            },
+
+
+
+            end: {
+                name: 'ノーマルエンド',
+                description: '無事に評判の悪い展示室から脱出できました。おめでとう！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end',
+                        description: 'ノーマルエンド'
+                    },
+                ]
+            },
+
+            trueEnd: {
+                name: 'トゥルーエンド',
+                description:
+                    'おめでとうございます！長い道のり遊んでくれてありがとうございます。' +
+                    '展示室の評判も上がりそうです',
+                clickableAreas: [{ x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end', description: 'トゥルーエンド' }]
+            },
+            trueEnd2: {
+                name: 'トゥルーエンド+',
+                description:
+                    'おめでとうございます！長い道のり遊んでくれてありがとうございます。' +
+                    '展示室の評判も上がりそうです',
+                clickableAreas: [
+                    { x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end2', description: 'トゥルーエンド+' }
+
+                ]
+            },
+
+
+        };
+
+        const hintMessages = {
+            main: {
+                bear: [
+                    "ついてきちゃった",
+                    "えへへ",
+                    "妖精さん…",
+                ],
+
+                bearTrueEnd: [
+                    "わーすごい",
+                ],
+                robo: [
+                    "最近、展示の評判がわるいのデス。",
+                    "困っていマス",
+                ],
+                robo2: [
+                    "異常な波動を検知。",
+                    "ピピ…",
+                ],
+
+            },
+        };
+
+        // ゲーム初期化
+        function initGame() {
+            renderNavigation();
+            changeRoom('mainCase');
+            updateMessage('気が付くとあなたは展示室に閉じ込められていました');
+        }
+
+        function findHitArea(x, y, clickableAreas, canvas) {
+            // zIndex降順で
+            const sorted = clickableAreas.slice().sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+            for (const area of sorted) {
+                // 必要ならusable判定もここで
+                const usable = area.usable === undefined ? true :
+                    (typeof area.usable === "function" ? area.usable() : area.usable);
+
+                if (!usable) continue; // 使えないエリアは判定しない
+                const ax = area.x / 100 * canvas.width;
+                const ay = area.y / 100 * canvas.height;
+                const aw = area.width / 100 * canvas.width;
+                const ah = area.height / 100 * canvas.height;
+                if (x >= ax && x <= ax + aw && y >= ay && y <= ay + ah) {
+                    return area; // 最初にヒットしたものだけ返す！
+                }
+            }
+            return null;
+        }
+
+        let hoveredAreaIndex = null;  // 今hoverしてるエリア（なければnull）
+        canvas.addEventListener('mousemove', function (e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+            const idx = area ? room.clickableAreas.indexOf(area) : null;
+            if (hoveredAreaIndex !== idx) {
+                hoveredAreaIndex = idx;
+                renderCanvasRoom();
+            }
+        });
+
+        canvas.addEventListener('mouseout', function () {
+            if (hoveredAreaIndex !== null) {
+                hoveredAreaIndex = null;
+                renderCanvasRoom();
+            }
+        });
+
+        canvas.addEventListener('click', function (e) {
+            if (gameState.currentRoom === 'oldMap' && gameState.oldMap.popup) {
+                closeOldMapPopup(); return;
+            }
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // ★今いる部屋のエリアだけ判定！
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+
+            if (area) {
+                handleAreaClick(area.action, e);
+            }
+
+        });
+
+        function changeRoom(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+
+
+
+            // 背景＋アイテム＋クリックエリアをcanvasで全部再描画
+            renderCanvasRoom();
+            const msg = (room.name && room.name.trim() !== "")
+                ? `${room.name}です。${room.description}`
+                : room.description;
+            if (roomId === 'trueEnd') {
+                updateMessageHTML(msg);
+            } else {
+                updateMessage(msg);
+            }
+
+            // BGM切替はそのまま
+            if (roomId === "trueEnd" || roomId === "trueEnd2") {
+                changeBGM("sounds/15/White_ice_snowing.mp3");
+                gameState.openRooms = [];
+                renderNavigation();
+            } else if (roomId === "end" || roomId === "end2") {
+                changeBGM("sounds/14/minorinokisetsu.mp3");
+                gameState.openRooms = [];
+                renderNavigation();
+            } else if (roomId === "emakiRiver") {
+                changeBGM("sounds/15/Battle_of_The_Fool.mp3");
+
+            } else if (roomId === "emakiJinja" || roomId === "jinjaInput" || roomId === "gachaInput") {
+                changeBGM("sounds/15/KAMISAMA.mp3");
+
+            } else {
+                changeBGM("sounds/15/chomau.mp3");
+            }
+
+            if (roomId === 'fossil') {
+                __fossilFx.t0 = performance.now();
+            } else {
+                __fossilFx.t0 = 0;
+            }
+            if (roomId === 'fossil' && gameState.main.flags.unlockRental) ensureFossilAnimator();
+
+
+
+        }
+
+        const END_IDS = new Set(['end', 'trueEnd', 'end2', 'trueEnd2']);
+
+        const _changeRoom_orig = changeRoom;
+        changeRoom = function (roomId) {
+            _changeRoom_orig.apply(this, arguments);
+
+            if (END_IDS.has(roomId)) {
+                const elapsed = Math.round((Date.now() - ANA.start) / 1000);
+                ANA.endTimes = ANA.endTimes || {};
+                if (!ANA.endTimes[roomId]) ANA.endTimes[roomId] = elapsed;
+
+                const isTrue = (roomId === 'trueEnd' || roomId === 'trueEnd2');
+                ANA.send('ending_reached', {
+                    ending_id: roomId,
+                    is_true: isTrue,
+                    elapsed_sec: elapsed,
+                    hints: ANA.hintCount,
+
+                });
+                // setTimeout(() => showFeedbackModal(roomId), 1500);
+            }
+        }
+
+        // === fossil 角グロー座標（%）: NE, SE, SW, NW ===
+        const FOSSIL_GLOW = [
+            { x: 82.0, y: 10.8, w: 4.2, h: 4.2 }, // 右上(NE)
+            { x: 82.2, y: 78.9, w: 4.2, h: 4.2 }, // 右下(SE)
+            { x: 13.7, y: 78.9, w: 4.2, h: 4.2 }, // 左下(SW)
+            { x: 13.7, y: 10.4, w: 4.2, h: 4.2 }, // 左上(NW)
+        ];
+
+        // 放射グロー
+        function drawRadialGlow(ctx, cx, cy, r, alpha) {
+            const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+            g.addColorStop(0, `rgba(217,185,95,${0.70 * alpha})`);
+            g.addColorStop(0.55, `rgba(217,185,95,${0.25 * alpha})`);
+            g.addColorStop(1, `rgba(217,185,95,0)`);
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+
+        // 1か所ずつ「点灯→消灯→次へ」ゆっくり回す
+        const __fossilFx = { t0: 0 };
+        function drawFossilCornerGlow(ctx, canvas) {
+            const PER_MS = 1800;   // 1角あたり
+            const REST_MS = 1800;    // 左上(NW)まで行ったあと休む時間 
+            const TOTAL_MS = PER_MS * 4;           // 4角ぶん
+            const LOOP_MS = TOTAL_MS + REST_MS;   // 1周＋休止
+
+            if (!__fossilFx.t0) __fossilFx.t0 = performance.now();
+            const t = (performance.now() - __fossilFx.t0) % LOOP_MS;
+
+            // 休止ゾーンなら描かない（＝真っ暗で一拍置く）
+            if (t >= TOTAL_MS) return;
+
+            // どの角か（NE→SE→SW→NW の順）
+            const seg = Math.floor(t / PER_MS);          // 0..3
+            const local = (t % PER_MS) / PER_MS;           // 0..1
+            const aWave = Math.sin(local * Math.PI);       // 0→1→0
+
+            const p = FOSSIL_GLOW[seg];
+            const ax = p.x / 100 * canvas.width;
+            const ay = p.y / 100 * canvas.height;
+            const w = p.w / 100 * canvas.width;
+            const h = p.h / 100 * canvas.height;
+            const cx = ax + w / 2, cy = ay + h / 2;
+            const r = Math.max(w, h) * 1.2;
+
+            // ★明るさアップ：底上げ＋ピーク強化＋コアの二重描き
+            const alphaOuter = 0.25 + 0.95 * aWave;
+            const alphaInner = 0.35 + 1.10 * aWave;
+
+            drawRadialGlow(ctx, cx, cy, r, alphaOuter);
+            drawRadialGlow(ctx, cx, cy, r * 0.58, alphaInner);
+        }
+
+        let fossilRAF = null;
+        function ensureFossilAnimator() {
+            if (fossilRAF) return;
+            const tick = () => {
+                if (gameState.currentRoom !== 'fossil' || !gameState.main.flags.unlockRental) {
+                    fossilRAF = null; return;
+                }
+                // 既存の描画をそのまま呼ぶ
+                renderCanvasRoom();
+                fossilRAF = requestAnimationFrame(tick);
+            };
+            fossilRAF = requestAnimationFrame(tick);
+        }
+
+
+
+
+        function renderCanvasRoom() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const roomId = gameState.currentRoom;
+            const room = rooms[roomId];
+            const bgImgSrc = getRoomBackgroundImage(roomId, gameState);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+            // 背景描画
+            const bgImg = loadedImages[bgImgSrc];
+            if (bgImg && bgImg.complete) {
+                ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+            }
+
+            // アイテム描画（未取得のみ）
+            drawRoomItems(ctx, canvas, roomId);
+
+            // ★ ここから重なり優先のhover枠線を描画
+            if (hoveredAreaIndex !== null && hoveredAreaIndex !== undefined) {
+                // zIndex降順でソート
+                const sortedAreas = room.clickableAreas
+                    .map((area, i) => ({ ...area, __idx: i }))
+                    .filter(area => area.usable === undefined ? true :
+                        (typeof area.usable === "function" ? area.usable() : area.usable)
+                    )
+                    .sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+                // hoveredAreaIndexと一致するエリアをzIndex順で1つだけ枠描画
+                const hoverArea = sortedAreas.find(area => area.__idx === hoveredAreaIndex);
+                if (hoverArea) {
+                    const ax = hoverArea.x / 100 * canvas.width;
+                    const ay = hoverArea.y / 100 * canvas.height;
+                    const aw = hoverArea.width / 100 * canvas.width;
+                    const ah = hoverArea.height / 100 * canvas.height;
+                    ctx.save();
+                    ctx.strokeStyle = 'gold';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(ax, ay, aw, ah);
+                    ctx.restore();
+                }
+            }
+
+            {
+                const c = document.getElementById('gameCanvas');
+                const ctx = c.getContext('2d');
+                if (gameState.currentRoom === 'fossil' && gameState.main.flags.unlockRental) {
+                    drawFossilCornerGlow(ctx, c);
+                }
+            }
+
+            if (roomId === 'oldMap' && gameState.oldMap.popup) {
+                drawOldMapPopup(ctx, canvas, gameState.oldMap.popup);
+            }
+
+            const fx = gameState.fx?.flash;
+            if (fx) {
+                const t = performance.now() - fx.t0;
+                const per = fx.duration / fx.pulses;     // 1パルスの長さ
+                const phase = (t % per) / per;           // 0→1
+                // 三角波で 0→1→0 のα（点滅がクッキリ）
+                const alpha = (phase < 0.5 ? phase * 2 : (1 - phase) * 2) * fx.maxAlpha;
+
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = fx.color;                // '#fff' で白フラッシュ、'#000'で暗転
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.restore();
+            }
+
+        }
+
+        function drawRoomItems(ctx, canvas, roomId) {
+            const room = rooms[roomId];
+            room.clickableAreas.forEach(area => {
+                if (area.item && area.item.visible && area.item.visible()) {
+                    const key = (typeof area.item.img === 'function') ? area.item.img() : area.item.img;
+                    const img = loadedImages[IMAGES.items[key]];
+                    if (img && img.complete && img.naturalWidth > 0) {
+                        const alpha = area.alpha ? area.alpha : 1;
+                        const px = area.x / 100 * canvas.width;
+                        const py = area.y / 100 * canvas.height;
+                        const w = area.width / 100 * canvas.width;
+                        const h = area.height / 100 * canvas.height;
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+                        ctx.drawImage(img, px, py, w, h);
+                        ctx.restore();
+                    }
+                }
+            });
+        }
+
+
+        function getRoomBackgroundImage(roomId, gameState) {
+            let state = gameState[roomId]?.flags?.backgroundState || 0;
+            let imgList = IMAGES.rooms[roomId];
+            if (Array.isArray(imgList)) {
+                return imgList[state] || imgList[0];
+            } else {
+                return imgList;
+            }
+        }
+
+
+
+        // 小物ユーティリティ
+        function pointInRect(x, y, r) {
+            return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+        }
+
+        function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+            if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+            ctx.beginPath();
+            ctx.moveTo(x + r.tl, y);
+            ctx.lineTo(x + w - r.tr, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+            ctx.lineTo(x + w, y + h - r.br);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+            ctx.lineTo(x + r.bl, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+            ctx.lineTo(x, y + r.tl);
+            ctx.quadraticCurveTo(x, y, x + r.tl, y);
+            ctx.closePath();
+            if (fill) ctx.fill();
+            if (stroke) ctx.stroke();
+        }
+
+        // 角丸＋影つきの半透明パネル＋テキスト
+        function drawOldMapPopup(ctx, canvas, pop) {
+            const pad = 16;
+            const x = canvas.width * 0.05;      // 左上の空いている余白に出す
+            const y = canvas.height * 0.05;
+            const w = canvas.width * 0.60;
+            const h = canvas.height * 0.24;
+
+            // フェード（任意）
+            const dt = Math.min(1, (performance.now() - (pop.t0 || 0)) / 120);
+            ctx.save();
+            ctx.globalAlpha = 0.92 * dt;
+
+            // 影
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            roundRect(ctx, x + 3, y + 4, w, h, 12, true, false);
+
+            // 本体
+            ctx.fillStyle = 'rgba(16,16,16,0.85)';
+            roundRect(ctx, x, y, w, h, 12, true, false);
+
+            // 枠線（ほんのり金）
+            ctx.strokeStyle = 'rgba(212,175,55,0.9)';
+            ctx.lineWidth = 3;
+            roundRect(ctx, x, y, w, h, 12, false, true);
+
+            // タイトル
+            ctx.fillStyle = '#f8f3e3';
+            ctx.font = 'bold 22px Arial';
+            ctx.textBaseline = 'top';
+            ctx.fillText(pop.title, x + pad, y + pad);
+
+            // サブテキスト（自動折返し）
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#efe6c9';
+            const text = pop.subtitle || '';
+            wrapTextJP(ctx, text, x + pad, y + pad + 30, w - pad * 2, 20, (w - pad * 2) * 0.05);
+
+            // 閉じるヒント
+            ctx.font = '12px Arial';
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fillText('（もう一度タップで閉じる）', x + pad, y + h - pad - 14);
+
+            ctx.restore();
+        }
+
+        // 日本語対応の折り返し（句読点の簡易禁則つき）
+        function wrapTextJP(ctx, text, x, y, maxWidth, lineHeight, margin = 24) {
+            const preferBreakAfter = new Set(['、', '。', '・', '，', '．', '!', '?', '！', '？', ')', '）', ']', '］', '」', '』', '、']);
+            const forbidBreakBefore = new Set(['、', '。', '・', '，', '．', '!', '?', '！', '？', ')', '）', ']', '］', '」', '』', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ー', '・', '゛', '゜']);
+
+            const limit = maxWidth - margin;              // 行末の安全マージン
+            const glyphs = Array.from(String(text || '')); // サロゲート対策
+
+            let line = '';
+            for (let i = 0; i < glyphs.length; i++) {
+                const ch = glyphs[i];
+                const test = line + ch;
+
+                // 次の文字が禁則文字なら、今の行で折る余地を少し残す
+                const next = glyphs[i + 1];
+                const softLimit = forbidBreakBefore.has(next) ? limit - 10 : limit;
+
+                if (ctx.measureText(test).width > softLimit && line !== '') {
+                    // 直前が「好ましい改行位置」ならそこで折る
+                    if (preferBreakAfter.has(line.at(-1))) {
+                        // そのまま
+                    }
+                    ctx.fillText(line, x, y);
+                    y += lineHeight;
+                    line = ch; // 新しい行は現在の文字から
+                } else {
+                    line = test;
+                }
+            }
+            if (line) ctx.fillText(line, x, y);
+        }
+
+
+
+
+        // 方角のサイクル配列（0..7）
+        const DIRS = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
+
+        function _renderDoorInput() { renderCanvasRoom(); }
+
+        function _checkDoorSolved() {
+            const s = gameState.doorInput.slots;
+            const v = [s[1], s[2], s[3], s[0]].map(i => DIRS[i]); // 右上→右下→左下→左上
+            const target = ['s', 'w', 'n', 'sw'];
+            const ok = v.every((k, i) => k === target[i]);
+            if (ok) {
+                gameState.main.flags.unlockDoor = true;
+                playSE('se-gacha');
+                showModal(
+                    'ドアのロックが解除されたようだ',
+                    '',
+                    [{ text: '閉じる', action: 'close' }]
+                );
+                updateMessage('ドアのロックが解除されたようだ');
+                // changeRoom('mainDoor');
+            }
+        }
+
+        function _cycleDoorSlot(i) {
+            gameState.doorInput.slots[i] = (gameState.doorInput.slots[i] + 1) % DIRS.length;
+            _renderDoorInput();
+            _checkDoorSolved();
+        }
+
+        let emakiSequence = "";
+        const emakiTarget = "SHUGO";
+
+        function proceedLetter(letter, action) {
+            const expectedLetter = emakiTarget[emakiSequence.length];
+            console.log(expectedLetter);
+            console.log(emakiSequence);
+
+            if (letter !== expectedLetter) {
+                // 間違えたら即アウト
+                gameState.emakiRiver.flags.badCount++;
+                emakiSequence = "";
+                playSE('se-uwa');
+                showModal(
+                    "チャレンジ失敗！あなたは川に飲み込まれた",
+                    `<img src="${IMAGES.modals.riverDive}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                    [
+                        {
+                            text: "展示室に戻る",
+                            action: () => {
+                                closeModal();
+                                changeRoom("mainWall");
+                            }
+                        }
+                    ]
+                );
+                renderCanvasRoom();
+                return false;
+            }
+            // 正しい順なら追加
+            emakiSequence += letter;
+
+            // 正解チェック
+            if (emakiSequence === emakiTarget && !gameState.main.flags.clearAtraction) {
+                gameState.main.flags.clearAtraction = true;
+                gameState.emakiRiver.flags.backgroundState = 1;
+                playSE('se-clear');
+                playSE('se-omedeto');
+                addItem('badge');
+                showModal(
+                    "あなたは残りを駆け抜け、川渡り体験に成功した！",
+                    `認証バッジを手に入れた。<br><img src="${IMAGES.items.badge}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                    [
+                        {
+                            text: "展示室に戻る",
+                            action: () => {
+                                // 状態リセット
+                                emakiSequence = "";
+                                closeModal();
+                                changeRoom("mainWall");
+                            }
+                        }
+                    ]
+                );
+
+            } else if (emakiSequence === emakiTarget && gameState.main.flags.clearAtraction) {
+
+                playSE('se-clear');
+                showModal(
+                    "あなたは残りを駆け抜け、川渡り体験に成功した！",
+                    "報酬はすでに獲得済みです",
+                    [
+                        {
+                            text: "展示室に戻る",
+                            action: () => {
+                                // 状態リセット
+                                emakiSequence = "";
+                                closeModal();
+                                changeRoom("mainWall");
+                            }
+                        }
+                    ]
+                );
+
+            } else if (!emakiTarget.startsWith(emakiSequence)) {
+                // 間違えたらリセット
+                emakiSequence = "";
+                rooms.emakiRiver.clickableAreas.forEach(a => {
+                    if (a.item && a.item.img === "blueBack") {
+                        a.item.visibleT = false;
+                    }
+                });
+            }
+            renderCanvasRoom();
+            return true;
+        }
+
+        function badEnd(msg) {
+            showModal({
+                title: "BAD END",
+                message: msg,
+                buttons: [
+                    {
+                        label: "展示室に戻る",
+                        action: () => {
+                            emakiSequence = "";
+                            rooms.emakiRiver.clickableAreas.forEach(a => {
+                                if (a.item && a.item.img === "blueBack") {
+                                    a.item.visibleT = false;
+                                }
+                            });
+                            closeModal();
+                            changeRoom("main");
+                        }
+                    }
+
+                ]
+            });
+        }
+
+        function openOldMapPopup(title, subtitle = '') {
+            const t0 = performance.now();
+            gameState.oldMap.popup = { title, subtitle, t0 };
+            const end = t0 + 140;  // 0.14sくらい
+            function tick() {
+                renderCanvasRoom();
+                if (performance.now() < end) requestAnimationFrame(tick);
+            }
+            tick();
+        }
+        function closeOldMapPopup() {
+            gameState.oldMap.popup = null;
+            renderCanvasRoom();                   // ← 同上
+        }
+
+
+
+        // エリアクリック処理
+        function handleAreaClick(action, event) {
+            const f = gameState.main.flags;
+            switch (action) {
+                case 'examine_main_case_oldmap':
+                    changeRoom('oldMap');
+                    break;
+                // oldMap
+                case 'examine_case_back':
+                    changeRoom('mainCase');
+                    break;
+                case 'examine_main_case_fossil':
+                    changeRoom('fossil');
+                    break;
+                case 'examine_main_case_fossil_reader':
+                    if (gameState.selectedItem == 'badgeGod') {
+                        window._nextModal = {
+                            title: '化石が光に包まれていく…',
+                            content: `<img src="${IMAGES.modals.fossilDisappear}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            buttons: [{ text: '閉じる', action: 'close' }],
+                        };
+                        const onClosed = () => playSE('se-god');
+                        window.addEventListener('modal:closed', onClosed, { once: true });
+                        showModal(
+                            '読み取り装置に神のバッジをかざした',
+                            '',
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        gameState.flags.trueEndUnlocked = true;
+                        gameState.main.flags.showTrueDoor = true;
+                        removeItem('badgeGod');
+                        updateMessage('化石とバッジは光に包まれ消え去った。');
+                    } else {
+                        updateMessage('何かの読み取り装置のようだ');
+                    }
+
+                    break;
+                case 'examine_main_case_emaki':
+                    changeRoom('emaki1');
+                    break;
+                // door
+                case 'examine_main_door_poster_rental':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.items.posterRental}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('レンタル品の案内だ');
+                    break;
+                case 'examine_main_door_poster_voice':
+                    showModal(
+                        '',
+                        `<img src="${IMAGES.items.posterVoice}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('ずいぶん評価が低いようだ');
+                    break;
+                case 'examine_main_door_door': {
+                    if (gameState.flags.trueEndUnlocked) {
+                        updateMessage('光るドアから脱出しよう');
+                        break;
+                    }
+                    if (!gameState.main.flags.unlockDoor) {
+                        // 入力画面へ
+                        changeRoom('doorInput');
+                    } else {
+                        handleDoor();
+                    }
+                    break;
+                }
+                // wall
+                case 'examine_main_wall_input':
+                    changeRoom('wallInput');
+                    break;
+                case 'examine_main_wall_robo_face':
+                    if (!gameState.main.flags.roboWakeup) {
+                        updateMessage('冷蔵庫かな？開かないみたい');
+                        break;
+                    }
+                    if (gameState.selectedItem == 'omamoriSuinan') {
+                        window._nextModal = {
+                            title: 'BAD END\nスプリンクラーが動作した。<br>弁償を…',
+                            content: `<img src="${IMAGES.modals.badendSuinan}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            buttons: [{ text: '閉じる', action: 'restart' }],
+
+
+                        };
+
+                        const onClosed = () => playSE('se-water');
+                        window.addEventListener('modal:closed', onClosed, { once: true });
+                        showModal(
+                            '信号を受信。ピ……スプリンクラー動作します。ガチャ',
+                            `<img src="${IMAGES.modals.roboFace3}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+
+                        break;
+                    }
+                    if (gameState.selectedItem === 'omamori') {
+                        // ロボの冷却システム解除
+                        playSE('se-gacha');
+                        updateMessage('信号を受信。コンパートメントロック解除シマス。');
+                        gameState.main.flags.unlockRoboBody = true;
+                        gameState.selectedItem = null;
+                        break;
+                    }
+
+                    if (gameState.main.flags.unlockRental && !gameState.main.flags.unlockJinjaAr && hasItem('badge')) {
+                        showRoboPuzzle2();
+
+                    } else if (gameState.flags.trueEndUnlocked) {
+                        talkToHintCharacter('main', 'robo2');
+
+                    } else if (gameState.main.flags.unlockRental) {
+                        talkToHintCharacter('main', 'robo');
+
+                    } else {
+                        showRoboPuzzle1();
+                    }
+                    break;
+                case 'examine_main_wall_robo_body':
+                    if (gameState.main.flags.unlockRoboBody && !gameState.main.flags.gotOhuseCup) {
+                        addItem('ofuseCup');
+                        showModal(
+                            'お土産を手に入れた！',
+                            `<img src="${IMAGES.items.ofuseCup}" style="width:300px;display:block;margin:12px auto 0;">
+         <p>神前で供えられる御神酒を小瓶に詰めたもの。<br>要冷蔵</p>`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        gameState.main.flags.gotOhuseCup = true;
+                        updateMessage('お土産を手に入れた');
+                        break;
+                    } else if (gameState.main.flags.unlockRoboBody && gameState.main.flags.gotOhuseCup) {
+                        updateMessage('何も入っていない');
+                        break;
+                    }
+                    if (!gameState.main.flags.roboWakeup) {
+                        updateMessage('開かない');
+                        break;
+                    }
+                    if (gameState.main.flags.unlockRental) {
+                        updateMessage('開かない');
+
+                    }
+                    break;
+                case 'examine_main_wall_ar_door':
+                    if (gameState.main.flags.unlockJinjaAr === true) {
+                        showModal(
+                            "アトラクションの行き先を選択",
+                            "どちらへ行きますか？",
+                            [
+                                { text: "神社", action: () => { closeModal(); changeRoom("emakiJinja"); } },
+                                { text: "川渡り", action: () => { closeModal(); changeRoom("emakiRiver"); } },
+                                { text: "やめる", action: "close" }
+                            ]
+                        );
+                    } else if (gameState.main.flags.clearAtraction) {
+                        showModal(
+                            "アトラクションはクリア済みだ。",
+                            "もう一度試してみますか？",
+                            [
+                                { text: "はい", action: () => { closeModal(); changeRoom("emakiRiver"); } },
+                                { text: "いいえ", action: "close" }
+                            ]
+                        );
+
+                    } else {
+                        showModal(
+                            "絵巻物のシーンを体験できるアトラクションのようだ",
+                            "試してみますか？",
+                            [
+                                { text: "はい", action: () => { closeModal(); changeRoom("emakiRiver"); } },
+                                { text: "いいえ", action: "close" }
+                            ]
+                        );
+                    }
+
+                // wallInput
+                case 'wallinput_cycle_L':
+                    gameState.wallInput.slots[0] = gameState.wallInput.slots[0] % 4 + 1;
+                    renderCanvasRoom();
+                    break;
+
+                case 'wallinput_cycle_M':
+                    gameState.wallInput.slots[1] = gameState.wallInput.slots[1] % 4 + 1;
+                    renderCanvasRoom();
+                    break;
+
+                case 'wallinput_cycle_R':
+                    gameState.wallInput.slots[2] = gameState.wallInput.slots[2] % 4 + 1;
+                    renderCanvasRoom();
+                    break;
+                case 'wallinput_ok': {
+                    const [L, M, R] = gameState.wallInput.slots;
+                    if (L === 4 && M === 2 && R === 3) {
+                        gameState.main.flags.roboWakeup = true;
+                        playSE('se-open');
+                        showModal(
+                            'ロボが起動したようだ',
+                            `<video src="${IMAGES.modals.roboWakeUp}" autoplay muted style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        updateMessage('ロボが起動したようだ');
+                        renderCanvasRoom();
+                    } else {
+                        playSE('se-error');
+                        updateMessage('…違うようだ');
+                    }
+                    break;
+                }
+                case 'examine_wallinput_back':
+                    changeRoom('mainWall');
+                    break;
+                case 'examine_main_picture_stone':
+                    if (gameState.main.flags.unlockRental) {
+                        showModal(
+                            'ゴーグルで見やすく表示された',
+                            `<img src="${IMAGES.modals.stone}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                    } else {
+                        updateMessage('良く分からない石板だ');
+                    }
+                // doorInput
+                case 'doorinput_cycle_0': _cycleDoorSlot(0); break;
+                case 'doorinput_cycle_1': _cycleDoorSlot(1); break;
+                case 'doorinput_cycle_2': _cycleDoorSlot(2); break;
+                case 'doorinput_cycle_3': _cycleDoorSlot(3); break;
+                case 'doorinput_back': changeRoom('mainDoor'); break;
+                // emakiRiver --- AR文字クリック処理 ---
+                case "examine_ar_bear":
+                    if (gameState.main.flags.clearAtraction) {
+                        showModal(
+                            'なにか練習しているみたいだ',
+                            `<video src="${IMAGES.modals.fairyMove}" autoplay muted style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                    } else {
+                        updateMessage('がんばれー');
+                    }
+                    break;
+                case "examine_ar_back":
+                    changeRoom('mainWall');
+                    break;
+                // --- AR文字クリック処理 ---
+                case "examine_ar_s":
+                case "examine_ar_h":
+                case "examine_ar_u":
+                case "examine_ar_g":
+                case "examine_ar_o":
+                case "examine_ar_a":
+                case "examine_ar_r":
+                case "examine_ar_o": {
+                    const letter = action.split("_").pop().toUpperCase();
+                    // 通常の文字処理
+                    if (!proceedLetter(letter, action)) return;
+                    // 特殊イベント：Uをクリックしたとき
+                    if (letter === 'U') {
+                        playSE('se-monstar');
+                        showModal(
+                            "水面がざわめいた…！",
+                            `<img src="${IMAGES.modals.monstar}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [
+                                {
+                                    text: "SARE",
+                                    action: () => {
+                                        playSE('se-sare');
+                                        emakiSequence = '';
+                                        gameState.emakiRiver.flags.badCount++;
+                                        showModal(
+                                            "チャレンジ失敗！呪文が効かなかった…",
+                                            `<img src="${IMAGES.modals.badendJumon}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                                            [{
+                                                text: "展示室に戻る",
+                                                action: () => {
+                                                    closeModal();
+                                                    changeRoom("mainWall");
+                                                }
+                                            }]
+                                        );
+                                    }
+                                },
+                                {
+                                    text: "HIKARI",
+                                    action: () => {
+                                        // 撃退して続行
+                                        gameState.emakiRiver = gameState.emakiRiver || { flags: {} };
+                                        gameState.emakiRiver.flags.monsterDefeated = true;
+                                        playSE('se-hikari');
+                                        playSE('se-jumon');
+                                        window._nextModal = {
+                                            title: '光の呪文でモンスターを倒した！',
+                                            content: `<img src="${IMAGES.modals.monstarDefeat}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                                            buttons: [{ text: '閉じる', action: 'close' }],
+
+
+                                        };
+                                        closeModal();
+                                    }
+                                },
+                                {
+                                    text: "POWER",
+                                    action: () => {
+                                        playSE('se-power');
+                                        emakiSequence = '';
+                                        gameState.emakiRiver.flags.badCount++;
+                                        showModal(
+                                            "チャレンジ失敗！力押しは通じなかった…",
+                                            `<img src="${IMAGES.modals.badendEaten}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                                            [{
+                                                text: "展示室に戻る",
+                                                action: () => {
+                                                    closeModal();
+                                                    changeRoom("mainWall");
+                                                }
+                                            }]
+                                        );
+                                    }
+                                }
+                            ]
+                        );
+                    }
+
+                    break;
+                }
+                // emakiJinja
+                case 'examine_emaki_jinja_input':
+                    changeRoom('jinjaInput');
+                    break;
+                case 'examine_emaki_jinja_gacha':
+                    changeRoom('gachaInput');
+                    break;
+
+                case 'examine_oldmap_yamasatojo':
+                    openOldMapPopup('① 山里城', '尾根筋に築かれた小規模山城');
+                    updateMessage('① 山里城 尾根筋に築かれた小規模山城');
+                    break;
+                case 'examine_oldmap_yamanaka_jinja':
+                    openOldMapPopup('② 山中神社', '山裾に立つ鮮やかな鳥居は、遠くからでも旅人の目印となった');
+                    updateMessage('② 山中神社 山裾に立つ鮮やかな鳥居は、遠くからでも旅人の目印となった');
+                    break;
+                case 'examine_oldmap_kawanaka_mura':
+                    openOldMapPopup('③ 川中村', '田畑に囲まれ、四季ごとに違う彩りを見せる集落');
+                    updateMessage('③ 川中村 田畑に囲まれ、四季ごとに違う彩りを見せる集落');
+                    break;
+                case 'examine_oldmap_morimoto_mura':
+                    openOldMapPopup('④ 森元村', '森の中の神秘の村');
+                    updateMessage('④ 森元村 森の中の神秘の村');
+                    break;
+                case 'examine_oldmap_seikou_mura':
+                    openOldMapPopup('⑤ 静光村', '春先には新緑の柳が風にそよぎ、川辺を歩く人を迎える');
+                    updateMessage('⑤ 静光村 春先には新緑の柳が風にそよぎ、川辺を歩く人を迎える');
+                    break;
+                case 'examine_oldmap_seikou_oka':
+                    openOldMapPopup('⑥ 静光の丘', '不思議な光が見られるという伝説がある丘');
+                    updateMessage('⑥ 静光の丘 不思議な光が見られるという伝説がある丘');
+                    break;
+                case 'examine_oldmap_seikou_jinja':
+                    openOldMapPopup('⑦ 静光神社', '境内の小さな泉は、旅人に清らかな水を与えた');
+                    updateMessage('⑦ 静光神社 境内の小さな泉は、旅人に清らかな水を与えた');
+                    break;
+                case 'examine_oldmap_sankaku_oka':
+                    openOldMapPopup('⑧ 三角の丘', '三角の形が特徴で、昔は物見台として使われた');
+                    updateMessage('⑧ 三角の丘 三角の形が特徴で、昔は物見台として使われた');
+                    break;
+                case 'examine_oldmap_ono_jinja':
+                    openOldMapPopup('⑨ 小野神社', '古い御神木は、幹に触れると温かいと語り継がれる');
+                    updateMessage('⑨ 小野神社 古い御神木は、幹に触れると温かいと語り継がれる');
+                    break;
+                case 'examine_oldmap_hosokawa_mura':
+                    openOldMapPopup('⑩ 細川村', '茅葺き屋根の家が並び、夕暮れにはかまどの煙が立ちのぼる');
+                    updateMessage('⑩ 細川村 茅葺き屋根の家が並び、夕暮れにはかまどの煙が立ちのぼる');
+                    break;
+                case 'examine_oldmap_tukimi_oka':
+                    openOldMapPopup('⑬ 月見の丘', '満月の夜には人々が集い、杯を掲げて月を愛でたという');
+                    updateMessage('⑬ 月見の丘 満月の夜には人々が集い、杯を掲げて月を愛でたという');
+                    break;
+                case 'examine_oldmap_hirabara_jinja':
+                    openOldMapPopup('⑭ 平原神社', '旅人が安全を祈り、銭を供えた小さな神社');
+                    updateMessage('⑭ 平原神社 旅人が安全を祈り、銭を供えた小さな神社');
+                    break;
+                case 'examine_oldmap_anahoti_mura':
+                    openOldMapPopup('⑪ 穴掘村', '穴を掘って住居にしていた村');
+                    updateMessage('⑪ 穴掘村 穴を掘って住居にしていた村');
+                    break;
+                case 'examine_oldmap_mizuhara_jo':
+                    openOldMapPopup('⑫ 水原城', '重厚な白壁が残り、米や酒を蓄えていた名残が見える');
+                    updateMessage('⑫ 水原城 重厚な白壁が残り、米や酒を蓄えていた名残が見える');
+                    break;
+                case 'examine_oldmap_back':
+                    closeOldMapPopup();
+                    changeRoom('mainCase');
+                    break;
+                // fossil
+                case 'examine_fossil':
+                    playSE('se-fossil');
+                    updateMessage('かすかに声が聞こえる');
+                    break;
+                // janjaInput
+                case 'jinja_press_L':
+                case 'jinja_press_M':
+                case 'jinja_press_R': {
+                    if (gameState.jinjaInput.solved) {
+                        playSE('se-click');
+                        updateMessage('もう加護は宿っている。');
+                        break;
+                    }
+                    if (!hasItem('badge')) {
+                        updateMessage('先に川渡りで認証バッジを手に入れよう。');
+                        break;
+                    }
+
+
+                    const key = ({ jinja_press_L: 'L', jinja_press_M: 'M', jinja_press_R: 'R' })[action];
+                    const seq = gameState.jinjaInput.seq;
+
+                    // 正解パターン（順番厳密）
+                    const TARGET = ['L', 'L', 'M', 'M', 'M', 'R'];
+
+                    // 入力
+                    seq.push(key);
+
+                    if (key === 'L') playSE('se-rei');
+                    if (key === 'M') playSE('se-hakushu');
+                    if (key === 'R') playSE('se-suzu');
+
+                    // 途中不一致ならリセットしてバイブ（ブー音）
+                    for (let i = 0; i < seq.length; i++) {
+                        if (seq[i] !== TARGET[i]) {
+                            playSE('se-error');             
+                            gameState.jinjaInput.seq = [];
+                            updateMessage('作法が違うようだ…はじめからやり直そう。');
+                            renderCanvasRoom();
+                            break;
+                        }
+                    }
+
+                    // ここで一致してたら分岐（for を抜けた後に判定）
+                    if (gameState.jinjaInput.seq.length &&
+                        gameState.jinjaInput.seq.every((v, i) => v === TARGET[i])) {
+
+                        // 全入力完了
+                        if (seq.length === TARGET.length) {
+                            gameState.jinjaInput.solved = true;
+                            gameState.main.flags.clearJinjaAr = true;   // 加護付与フラグ
+
+                            // 光あふれる→加護付与モーダル
+                            playSE('se-god');
+                            playSE('se-clear');
+                            startFlash({ color: '#fff', duration: 900, pulses: 3, maxAlpha: 0.9 });
+
+                            showModal(
+                                '神前に光が満ちた！',
+                                `認証バッジに神の力が宿った。<br>
+         <img src="${IMAGES.items.badgeGod}" style="width:300px;display:block;margin:12px auto 0;">`,
+                                [
+                                    { text: '閉じる', action: () => { closeModal(); } }
+                                ]
+                            );
+                            removeItem('badge');
+                            addItem('badgeGod');
+                        }
+                    }
+                    break;
+                }
+                case 'examine_jinja_input_back':
+                    changeRoom('emakiJinja');
+                    break;
+                // gachaInput
+                case 'jinja_press_star':
+                case 'jinja_press_enter': {
+                    // 安全に初期化（セーブ互換のため）
+                    gameState.emakiJinja = gameState.emakiJinja || { flags: { unlockGacha: false, gotGacha: false }, gachaSeq: [] };
+
+                    // 既に解放済みなら案内だけ
+                    if (gameState.emakiJinja.flags.unlockGacha) {
+                        playSE('se-click');
+                        updateMessage('準備OK。ハンドルを回そう。');
+                        break;
+                    }
+
+                    const key = (action === 'jinja_press_star') ? 'S' : 'E';
+                    const seq = gameState.emakiJinja.gachaSeq;
+                    const TARGET = ['S', 'E', 'E', 'S', 'S', 'S', 'E']; // ★1 → Enter2 → ★3 → Enter1
+
+                    // 入力
+                    seq.push(key);
+
+                    // 途中不一致→リセット
+                    for (let i = 0; i < seq.length; i++) {
+                        if (seq[i] !== TARGET[i]) {
+                            playSE('se-error');
+                            gameState.emakiJinja.gachaSeq = [];
+                            updateMessage('ちがうようだ… はじめからやり直そう。');
+                            renderCanvasRoom();
+                            break;
+                        }
+                    }
+
+                    // 全一致で起動
+                    if (gameState.emakiJinja.gachaSeq.length &&
+                        gameState.emakiJinja.gachaSeq.every((v, i) => v === TARGET[i])) {
+
+                        if (seq.length === TARGET.length) {
+                            gameState.emakiJinja.flags.unlockGacha = true;
+                            playSE('se-open');
+                            startFlash({ color: '#fff', duration: 600, pulses: 2, maxAlpha: 0.85 });
+                            updateMessage('カプセルが出てきたようだ。');
+                            renderCanvasRoom();
+                        }
+                    }
+                    break;
+                }
+                case 'jinja_gacha_handle': {
+                    gameState.emakiJinja = gameState.emakiJinja || { flags: { unlockGacha: false, gotGacha: false }, gachaSeq: [] };
+
+                    if (!gameState.emakiJinja.flags.unlockGacha) {
+                        playSE('se-buzz');
+                        updateMessage('回らない');
+                    } else if (!gameState.emakiJinja.flags.gotGacha) {
+                        playSE('se-click');
+                        updateMessage('カプセルが出てきた！');
+                    } else {
+                        updateMessage('もういらないな');
+                    }
+                    break;
+                }
+
+                case 'jinja_gacha_capsule': {
+                    gameState.emakiJinja = gameState.emakiJinja || { flags: { unlockGacha: false, gotGacha: false }, gachaSeq: [] };
+
+                    if (!gameState.emakiJinja.flags.unlockGacha) {
+                        updateMessage('まだ起動していないようだ。');
+                        break;
+                    }
+                    if (gameState.emakiJinja.flags.gotGacha) {
+                        updateMessage('すでに受け取った。');
+                        break;
+                    }
+
+                    const badCnt = ((gameState.emakiRiver && gameState.emakiRiver.flags && gameState.emakiRiver.flags.badCount) || 0);
+                    const itemId = (badCnt >= 3) ? 'omamoriSuinan' : 'omamori';
+
+                    gameState.emakiJinja.flags.gotGacha = true;
+                    addItem(itemId);
+
+                    showModal(
+                        'お守りを手に入れた',
+                        `<img src="${IMAGES.items[itemId]}" style="width:300px;display:block;margin:12px auto 0;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('お守りを手に入れた');
+                    break;
+                }
+                case 'examine_main_case_bear':
+                    if (gameState.selectedItem == 'badge') {
+                        updateMessage('すごいねえ');
+                        break;
+                    } else if (gameState.selectedItem == 'badgeGod') {
+                        updateMessage('キラキラだねえ');
+                        break;
+                    } else {
+                        talkToHintCharacter('main', 'bear');
+                    }
+                    break;
+                case 'examine_main_true_door':
+                    handleDoor();
+                    break;
+
+                // 移動
+
+                case 'examine_main_case_right':
+                    changeRoom('mainPicture');
+                    break;
+                case 'examine_main_case_left':
+                    changeRoom('mainWall');
+                    break;
+                case 'examine_main_wall_right':
+                    changeRoom('mainCase');
+                    break;
+                case 'examine_main_wall_left':
+                    changeRoom('mainDoor');
+                    break;
+                case 'examine_main_door_right':
+                    changeRoom('mainWall');
+                    break;
+                case 'examine_main_door_left':
+                    changeRoom('mainPicture');
+                    break;
+                case 'examine_main_picture_right':
+                    changeRoom('mainDoor');
+                    break;
+                case 'examine_main_picture_left':
+                    changeRoom('mainCase');
+                    break;
+                // emaki
+                case 'examine_emaki1_left':
+                    changeRoom('emaki2');
+                    break;
+                case 'examine_emaki2_right':
+                    changeRoom('emaki1');
+                    break;
+                case 'examine_emaki2_left':
+                    changeRoom('emaki3');
+                    break;
+                case 'examine_emaki3_right':
+                    changeRoom('emaki2');
+                    break;
+                case 'examine_emaki3_left':
+                    changeRoom('emaki4');
+                    break;
+                case 'examine_emaki4_right':
+                    changeRoom('emaki3');
+                    break;
+                case 'examine_end':
+                    showEndingReport('end');
+                    break;
+
+                case 'examine_true_end':
+                    showEndingReport('trueEnd');
+                    break;
+
+                case 'examine_true_end2':
+                    showEndingReport('trueEnd2');
+                    break;
+
+            }
+            gameState.selectedItem = null;
+            gameState.selectedItemSlot = null;
+
+            playSE('se-click');
+            updateInventoryDisplay();
+        }
+
+        function showEndingReport(endingId) {
+            // --- 基本メタ ---
+            const ana = window.ANA || {};
+            const sec = Math.max(
+                1,
+                (ana.endTimes && ana.endTimes[endingId]) ||
+                Math.round((Date.now() - (ana.start || Date.now())) / 1000)
+            );
+            const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+            const ss = String(sec % 60).padStart(2, '0');
+
+            // --- 今作のフラグ取り出し ---
+            const badCnt = (gameState?.emakiRiver?.flags?.badCount) || 0;
+            const gotGacha = !!(gameState?.emakiJinja?.flags?.gotGacha);
+            // 互換：gotOhuse が無ければ gotOhuseCup を見る
+            const gotOhuse = !!(gameState?.main?.flags?.gotOhuse ?? gameState?.main?.flags?.gotOhuseCup);
+
+            // --- エンド名（必要なら好きに調整して） ---
+            const endingTxt = ({
+                trueEnd: '🌟 TRUE END',
+                trueEnd2: '🌟 TRUE+ END',
+                end: '🔔 NORMAL END',
+                badEnd: '💧 BAD END'
+            })[endingId] || '⭐ END';
+
+            // --- 実績/達成状況の行 ---
+            const rows = [
+                `🌊 川で死んだ回数：${badCnt}回${badCnt >= 3 ? '（水難フラグ）' : ''}`,
+                `⛩ 神社ガチャ　：${gotGacha ? '受け取った' : '未取得'}`,
+                `🍶 おみやげ：${gotOhuse ? '所持' : '未所持'}`,
+                `🔍 ヒント使用　：${ana.hintCount || 0}回`,
+                `⌛ プレイ時間　：${mm}:${ss}`,
+            ];
+
+            const html = `
+    <div style="text-align:left;max-width:560px">
+      <div style="font-size:1.4em;margin-bottom:10px">${endingTxt}</div>
+      <ul style="line-height:1.8;margin:0;padding-left:1.1em">
+        ${rows.map(r => `<li>${r}</li>`).join('')}
+      </ul>
+      <div style="margin-top:14px;font-size:.95em;opacity:.9">
+        プレイありがとう！ご意見が次回の改善に直結します🙏
+      </div>
+    </div>
+  `;
+
+            // シェア文（短縮版）
+            const shareText = (() => {
+                const short = ({
+                    trueEnd: 'TRUE END',
+                    trueEnd2: 'TRUE+ END',
+                    end: 'NORMAL END',
+                    badEnd: 'BAD END'
+                })[endingId] || 'END';
+                return `『展示室からの脱出』${short} を達成！ ⌛${mm}:${ss} / 失敗${badCnt}回 / ガチャ${gotGacha ? '取得' : '未'} / OFUSE ${gotOhuse ? '所持' : '無'} #脱出ゲーム`;
+            })();
+
+            showModal('', html, [
+                { text: '感想フォームを開く', action: () => openFeedbackForm(endingId, { mm, ss }) },
+                { text: '閉じる', action: 'close' },
+            ]);
+
+        }
+
+
+
+        const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLScO2OUUD11LspzTXNQuF9rkTRtrtsTK8m8RnlQwGAzgVv428A/viewform?";
+        const FORM_FIELDS = {
+            ending: 'entry.666725843',
+            badCount: 'entry.1172590680',
+            gotGacha: 'entry.532076419',
+            gotOhuse: 'entry.1527631173',
+
+
+        };
+
+        function openFeedbackForm(endingId, meta = {}) {
+            const badCnt = gameState?.emakiRiver?.flags?.badCount || 0;
+            const gotGacha = !!(gameState?.emakiJinja?.flags?.gotGacha);
+            const gotOhuse = !!(gameState?.main?.flags?.gotOhuse ?? gameState?.main?.flags?.gotOhuseCup);
+
+            const sec = Math.max(
+                1,
+                (window.ANA?.endTimes && window.ANA.endTimes[endingId]) ||
+                Math.round((Date.now() - (window.ANA?.start || Date.now())) / 1000)
+            );
+            const mm = meta.mm || String(Math.floor(sec / 60)).padStart(2, '0');
+            const ss = meta.ss || String(sec % 60).padStart(2, '0');
+
+            const endingLabel = ({
+                trueEnd: "トゥルーエンド",
+                trueEnd2: "トゥルーエンド+",
+                end: "ノーマルエンド",
+                end2: "ノーマルエンド+",
+                badEnd: "BAD END"
+            })[endingId] || "";
+
+            const params = new URLSearchParams();
+            params.set("usp", "pp_url");
+
+            // 各項目が定義されていれば送信パラメータに追加
+            if (FORM_FIELDS.ending && endingLabel) params.set(FORM_FIELDS.ending, endingLabel);
+            if (FORM_FIELDS.playtime) params.set(FORM_FIELDS.playtime, `${mm}:${ss}`);
+            if (FORM_FIELDS.badCount) params.set(FORM_FIELDS.badCount, `${badCnt}回`);
+            if (FORM_FIELDS.gotGacha) params.set(FORM_FIELDS.gotGacha, gotGacha ? "yes" : "no");
+            if (FORM_FIELDS.gotOhuse) params.set(FORM_FIELDS.gotOhuse, gotOhuse ? "yes" : "no");
+            if (FORM_FIELDS.hintCount) params.set(FORM_FIELDS.hintCount, `${window.ANA?.hintCount || 0}回`);
+
+            // フォームを新しいタブで開く
+            window.open(`${FEEDBACK_URL}${params.toString()}`, "_blank", "noopener,noreferrer");
+        }
+
+        function talkToHintCharacter(roomId, charId) {
+            // flags取得
+            let flags = gameState[roomId].flags;
+            // まだカウント無ければ初期化
+            if (!flags.talkTo) flags.talkTo = {};
+            if (!flags.talkTo[charId]) flags.talkTo[charId] = 0;
+
+            // カウントアップ
+            flags.talkTo[charId]++;
+
+            // セリフリスト取得
+            const messages = hintMessages[roomId][charId];
+            if (roomId == 'main' && charId == 'bear' && flags.talkTo[charId] == 3) {
+                gameState.main.flags.canRemovePoster = true;
+            }
+            // 範囲外なら最後のメッセージ
+            const idx = (flags.talkTo[charId] - 1) % messages.length;
+
+            // 表示
+            updateMessage(messages[idx]);
+        }
+
+        // レンタル品解除パズルを表示
+        function showRoboPuzzle1() {
+            const modalContent = `
+                <h3>ようこそ来館者さま。<br>解説用ゴーグルの貸し出しには、パスコードが必要です。</h3>
+                <p><img src="${IMAGES.modals.roboFace}" style="width:300px;display:block;margin:0 auto 20px;"></p>
+                <input type="text" class="puzzle-input" id="robo1Input" placeholder="英字3桁">
+                <br>
+                <button onclick="checkRoboPuzzle1()">貸出</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // レンタル品解除パズルの答えをチェック
+        function checkRoboPuzzle1() {
+            const v = document.getElementById('robo1Input').value.trim();
+            // 全角対策
+            const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+            const val = z2h(v).toLowerCase();
+            if (val === 'SUN' || val === 'sun') {
+                closeModal();
+                gameState.main.flags.unlockRental = true;
+                gameState.emaki1.flags.backgroundState = 1;
+                gameState.emaki2.flags.backgroundState = 1;
+                gameState.emaki3.flags.backgroundState = 1;
+                gameState.emaki4.flags.backgroundState = 1;
+                gameState.oldMap.flags.backgroundState = 1;
+                markProgress('rental_unlock');
+                window._nextModal = {
+                    title: '体験ゴーグルを装備した',
+                    content: `<img src="${IMAGES.modals.goggleOn}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                    buttons: [{ text: '閉じる', action: 'close' }],
+
+
+                };
+                showModal(
+                    'レンタルコード認証。これをどうぞ',
+                    `<img src="${IMAGES.items.goggle}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                    [{ text: '閉じる', action: 'close' }]
+                );
+                playSE('se-open');
+                addItem('goggle');
+                updateMessage('体験ゴーグルを装備した。');
+                renderCanvasRoom();
+
+            } else {
+                playSE('se-error');
+                updateMessage('ちがうようだ');
+            }
+        }
+
+        // レンタル品解除パズルを表示
+        function showRoboPuzzle2() {
+            const modalContent = `
+                <h3>ピピ。認証バッジを検出。<br>PINコード？</h3>
+                <p><img src="${IMAGES.modals.roboFace2}" style="width:300px;display:block;margin:0 auto 20px;"></p>
+                <input type="text" class="puzzle-input" id="robo2Input" placeholder="数字">
+                <br>
+                <button onclick="checkRoboPuzzle2()">認証</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // レンタル品解除パズルの答えをチェック
+        function checkRoboPuzzle2() {
+            const v = document.getElementById('robo2Input').value.trim();
+            // 全角対策
+            const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+            const val = z2h(v).toLowerCase();
+            if (val === '1098') {
+                closeModal();
+                gameState.main.flags.unlockJinjaAr = true;
+
+                markProgress('jinja_ar_unlock');
+
+                showModal(
+                    'PINコード認証。追加の体験アトラクションをアンロックしました',
+                    `<img src="${IMAGES.modals.roboFace3}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                    [{ text: '閉じる', action: 'close' }]
+                );
+                playSE('se-open');
+                updateMessage('体験アトラクションが追加されたようだ');
+                renderCanvasRoom();
+
+            } else {
+                playSE('se-error');
+                updateMessage('ちがうようだ');
+            }
+        }
+
+        function handleDoor() {
+
+            // 分岐：trueEndUnlocked が立っていればトゥルーENDへ
+            if (gameState.flags.trueEndUnlocked && hasItem('ofuseCup')) {
+                gameState.endings.true = true;
+                changeRoom('trueEnd2');
+            } else if (gameState.flags.trueEndUnlocked) {
+                gameState.endings.true = true;
+                changeRoom('trueEnd');
+            } else {
+                changeRoom('end');
+            }
+        }
+
+        // アイテム管理
+        function addItem(itemId) {
+            playSE('se-item');
+            if (gameState.inventory.length < 8) {
+                gameState.inventory.push(itemId);
+                updateInventoryDisplay();
+            }
+        }
+
+        function removeItem(itemId) {
+            const index = gameState.inventory.indexOf(itemId);
+            if (index !== -1) {
+                gameState.inventory.splice(index, 1);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+
+        }
+
+        function hasItem(itemId) {
+            return gameState.inventory.includes(itemId);
+        }
+
+        function useItem(slotIndex) {
+            if (gameState.inventory[slotIndex]) {
+                const item = gameState.inventory[slotIndex];
+                updateMessage(`${getItemName(item)}を選択しました。使用したい場所をクリックしてください。`);
+                gameState.selectedItem = item;
+                gameState.selectedItemSlot = slotIndex;
+                updateInventoryDisplay();
+            }
+        }
+
+        function getItemName(itemId) {
+            const names = {
+                coin: 'クマコイン',
+                bear: 'クマ妖精',
+                omamoriSuinan: '水難除けのお守り',
+                omamori: 'お守り',
+                badge: '認証バッジ',
+                badgeGod: '神の力バッジ',
+                goggle: '体験ゴーグル',
+                ofuseCup: 'オフセカップ（御神酒ミニボトル）',
+
+
+            };
+            return names[itemId] || itemId;
+        }
+
+        function renderNavigation() {
+            const navDiv = document.querySelector('.navigation');
+            navDiv.innerHTML = '';
+            gameState.openRooms.forEach(roomId => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = rooms[roomId].name;
+                btn.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(btn);
+            });
+        }
+
+        // インベントリ表示更新
+        function updateInventoryDisplay() {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                if (gameState.inventory[index]) {
+                    const img = document.createElement('img');
+                    img.src = IMAGES.items[gameState.inventory[index]];
+                    img.onerror = function () {
+                        // 画像が読み込めない場合はプレースホルダーを表示
+                        this.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder';
+                        placeholder.textContent = getItemName(gameState.inventory[index]);
+                        placeholder.style.width = '60px';
+                        placeholder.style.height = '60px';
+                        slot.appendChild(placeholder);
+                    };
+                    slot.appendChild(img);
+                    const magBtn = document.createElement('div');
+                    magBtn.className = 'magnifier-btn';
+                    magBtn.title = '拡大表示';
+                    magBtn.innerHTML = '<img src="images/magnifier.png" alt="拡大">';
+                    magBtn.onclick = (e) => {
+                        e.stopPropagation();
+
+                        showModal(
+                            getItemName(gameState.inventory[index]),
+                            `<img src="${img.src}" style="max-width: 300px; max-height: 300px; width: auto; height: auto; object-fit: contain; display:block;margin:0 auto 16px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                    };
+                    slot.appendChild(magBtn);
+                }
+                // ★選択中ならselectedクラス追加
+                if (gameState.selectedItemSlot === index) {
+                    slot.classList.add('selected');
+                } else {
+                    slot.classList.remove('selected');
+                }
+            });
+        }
+
+        // メッセージ更新
+        function updateMessage(message) {
+            //document.getElementById('messageArea').innerHTML = message;
+            document.getElementById('msgText').textContent = message;
+        }
+
+        function updateMessageHTML(html) {
+            const el = document.getElementById('msgText');
+            el.innerHTML = html;
+            el.querySelectorAll('a').forEach(a => {
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.style.color = '#d4af37';
+                a.style.textDecoration = 'underline';
+            });
+        }
+
+        // モーダル表示
+        function showModal(title, content, buttons, onSequenceSuccess) {
+            let modalHtml = `<h3>${title}</h3><p>${content}</p>`;
+            if (buttons && buttons.length > 0) {
+                modalHtml += `<div id="modalButtons" style="text-align:center;"></div>`;
+                modalHtml += `<div id="modalClose" style="margin-top:25px;text-align:center;"></div>`;
+            }
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modal').style.display = 'flex';
+
+            if (!buttons || buttons.length === 0) return;
+
+            let pressed = [];
+            let heartCnt = 0;
+            let checkCnt = 0;
+            let houseCnt = 0;
+
+            // 画像/通常ボタンとcloseボタンで分ける
+            const modalButtons = document.getElementById('modalButtons');
+            const modalClose = document.getElementById('modalClose');
+
+            buttons.forEach((button, idx) => {
+                // 閉じるボタンは下へ
+                if (button.action === 'close') {
+                    const btn = document.createElement('button');
+                    btn.textContent = button.text || '閉じる';
+                    btn.className = 'modal-close-btn';
+                    btn.onclick = function () {
+                        closeModal();
+                        if (typeof onSequenceSuccess === "function") {
+                            onSequenceSuccess();
+                        }
+                    };
+                    modalClose.appendChild(btn);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.style.margin = "0 10px 10px 0";
+                    if (button.img) {
+                        btn.innerHTML = `<img src="${button.img}" alt="${button.text || ''}" style="width:80px;height:80px;vertical-align:middle;">`;
+                    } else {
+                        btn.textContent = button.text;
+                        btn.className = 'text-btn';
+                    }
+                    btn.onclick = function () {
+                        if (button.action === 'restart') {
+                            restartGame();
+                        } else if (typeof button.action === "function") {
+                            button.action();
+                        } else if (typeof button.action === 'string') {
+                            closeModal();
+                            handleAreaClick(button.action);
+                        }
+                    };
+                    modalButtons.appendChild(btn);
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            // 次のモーダルが登録されていれば表示
+            if (window._nextModal) {
+                // 登録内容は {title, content, buttons, after} オブジェクト
+                let modal = window._nextModal;
+                window._nextModal = null; // クリア
+                if (modal.before) modal.before();
+                showModal(modal.title, modal.content, modal.buttons);
+                if (modal.after) modal.after();
+            }
+            window.dispatchEvent(new Event('modal:closed'));
+        }
+
+        function startFlash({ color = '#fff', duration = 900, pulses = 3, maxAlpha = 0.85 } = {}) {
+            // duration 全体で pulses 回点滅
+            gameState.fx.flash = { color, duration, pulses, maxAlpha, t0: performance.now() };
+            requestAnimationFrame(flashTick);
+        }
+
+        function flashTick() {
+            const f = gameState.fx.flash;
+            if (!f) return;
+            const t = performance.now() - f.t0;
+            if (t >= f.duration) {
+                gameState.fx.flash = null;
+                renderCanvasRoom(); // 後始末の最終描画
+                return;
+            }
+            renderCanvasRoom();   // 毎フレーム描画
+            requestAnimationFrame(flashTick);
+        }
+
+
+        // ゲームリスタート
+        function restartGame() {
+            gameState = getDefaultGameState();
+            closeModal();
+            initGame();
+            updateInventoryDisplay();
+        }
+
+        let isBGMPlaying = false;
+        let isBGMInitialized = false; // 初回クリック判定用
+
+        // 初回クリック時にだけBGMを再生
+        function initBGMOnce() {
+            if (!isBGMInitialized) {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.2;
+                bgm.play();
+                isBGMPlaying = true;
+                isBGMInitialized = true;
+                document.getElementById('bgm-toggle').textContent = "🔊 BGM";
+            }
+        }
+        window.addEventListener('click', initBGMOnce, { once: true });
+
+        function toggleBGM() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('bgm-toggle');
+            if (!isBGMPlaying) {
+                bgm.play();
+                isBGMPlaying = true;
+                btn.textContent = "🔊 BGM";
+            } else {
+                bgm.pause();
+                isBGMPlaying = false;
+                btn.textContent = "🔇 BGM";
+            }
+        }
+
+        function changeBGM(newSrc) {
+            const bgm = document.getElementById('bgm');
+            // ファイル名のみで比較
+            const current = bgm.src.split('/').pop();
+            const next = newSrc.split('/').pop();
+            if (current === next) return; // すでにそのBGMなら何もしない
+
+            const isPlaying = isBGMPlaying;
+            bgm.pause();
+            bgm.src = newSrc;
+            bgm.load();
+            if (isPlaying) {
+                bgm.play();
+            }
+        }
+
+        function pauseBGM() {
+            const bgm = document.getElementById('bgm');
+            bgm.src = "";
+            bgm.pause();
+        }
+
+        function playSE(id) {
+            const se = document.getElementById(id);
+            se.currentTime = 0;
+            se.play();
+        }
+
+        // どこかで最初に一度だけ呼ぶ
+        let loadedImages = {};
+        function preloadImages() {
+            // 部屋画像
+            Object.values(IMAGES.rooms).forEach(val => {
+                if (Array.isArray(val)) {
+                    val.forEach(src => {
+                        if (!loadedImages[src]) {
+                            const img = new Image();
+                            img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                            img.src = src;
+                            loadedImages[src] = img;
+
+
+
+                        }
+                    });
+                } else if (typeof val === "string") {
+                    if (!loadedImages[val]) {
+                        const img = new Image();
+                        img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                        img.src = val;
+                        loadedImages[val] = img;
+                    }
+                }
+            });
+            // アイテム画像
+            Object.values(IMAGES.items).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+            // モーダル画像
+            Object.values(IMAGES.modals).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+        }
+
+        function saveGame() {
+            const toSave = { ...gameState, __version: SAVE_VERSION };
+            localStorage.setItem(SAVE_KEY, JSON.stringify(toSave));
+            updateMessage('セーブしました！');
+        }
+
+        function loadGame() {
+            const raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) {
+                updateMessage('セーブデータがありません');
+                return;
+            }
+            const saved = JSON.parse(raw);
+
+            // デフォルトとマージして不足キーを補完
+            const def = getDefaultGameState();
+            const merged = deepMerge(def, saved);
+
+            if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
+            if (!merged.currentRoom || !rooms[merged.currentRoom]) merged.currentRoom = def.currentRoom;
+
+            gameState = merged;
+
+            changeRoom(gameState.currentRoom);
+            updateInventoryDisplay?.();
+            renderNavigation?.();
+            updateMessage('ロードしました！');
+        }
+
+
+        function deepMerge(target, source) {
+            if (source === undefined || source === null) return target;
+            if (Array.isArray(source)) return source.slice();
+            if (typeof source === 'object') {
+                const out = (target && typeof target === 'object') ? { ...target } : {};
+                for (const k of Object.keys(source)) {
+                    out[k] = deepMerge(target ? target[k] : undefined, source[k]);
+                }
+                return out;
+            }
+            return source;
+        }
+
+
+        // ゲーム開始
+        preloadImages();
+        initGame();
+    </script>
+</body>
+
+</html>
