@@ -598,8 +598,7 @@
             </div>
         </div>
         <div class="notice">当サイトの音源は<a href="https://otologic.jp/" target="blank">OtoLogic</a>,<a
-                href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a>、<a href="https://maou.audio/"
-                target="blank">魔王魂</a>の素材を使用しています 作者:<a href="index.html">スラセブン</a>
+                href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a>の素材を使用しています 作者:<a href="index.html">スラセブン</a>
         </div>
     </div>
 
@@ -2242,6 +2241,8 @@
                         gameState.main.flags.showTrueDoor = true;
                         removeItem('badgeGod');
                         updateMessage('化石とバッジは光に包まれ消え去った。');
+                    } else if (gameState.selectedItem == 'badge') {
+                        updateMessage('反応しない');
                     } else {
                         updateMessage('何かの読み取り装置のようだ');
                     }
