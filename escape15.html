@@ -2728,11 +2728,10 @@
                     gameState.emakiJinja = gameState.emakiJinja || { flags: { unlockGacha: false, gotGacha: false }, gachaSeq: [] };
 
                     if (!gameState.emakiJinja.flags.unlockGacha) {
-                        playSE('se-buzz');
                         updateMessage('回らない');
                     } else if (!gameState.emakiJinja.flags.gotGacha) {
                         playSE('se-click');
-                        updateMessage('カプセルが出てきた！');
+                        updateMessage('カプセルが出てきている');
                     } else {
                         updateMessage('もういらないな');
                     }
