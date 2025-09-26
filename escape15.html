@@ -2700,6 +2700,7 @@
                 case 'jinja_press_star':
                 case 'jinja_press_enter': {
                     // 安全に初期化（セーブ互換のため）
+                    updateMessage('');
                     gameState.emakiJinja = gameState.emakiJinja || { flags: { unlockGacha: false, gotGacha: false }, gachaSeq: [] };
 
                     // 既に解放済みなら案内だけ
