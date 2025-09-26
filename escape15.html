@@ -653,6 +653,8 @@
     <audio id="se-omedeto" src="sounds/15/omedeto.wav"></audio>
     <audio id="se-fossil" src="sounds/15/fossil.wav"></audio>
     <audio id="se-water" src="sounds/15/water.mp3"></audio>
+    <audio id="se-glich" src="sounds/common/glich.mp3"></audio>
+    <audio id="se-android" src="sounds/common/android.mp3"></audio>
     <script>
         // --- Analytics helper ---
         window.ANA = {
@@ -776,9 +778,11 @@
                 monstar: 'images/15/monstar.png',
                 monstarDefeat: 'images/15/monstar_defeat.png',
                 riverDive: 'images/15/river_dive.jpeg',
+                riverDive2: 'images/15/river_dive2.png',
                 badendEaten: 'images/15/badend_eaten.jpeg',
                 badendJumon: 'images/15/badend_magic.jpeg',
                 badendSuinan: 'images/15/badend_water.jpeg',
+                badendVR: 'images/15/badend_vr.png',
                 fairyMove: 'images/15/fairy_move.mp4',
                 fossilDisappear: 'images/15/fossil_disappear.png',
                 // bearBoard: 'images/15/bear_board.png',
@@ -2098,19 +2102,44 @@
                 gameState.emakiRiver.flags.badCount++;
                 emakiSequence = "";
                 playSE('se-uwa');
-                showModal(
-                    "チャレンジ失敗！あなたは川に飲み込まれた",
-                    `<img src="${IMAGES.modals.riverDive}" style="width:300px;display:block;margin:0 auto 20px;">`,
-                    [
-                        {
-                            text: "展示室に戻る",
-                            action: () => {
-                                closeModal();
-                                changeRoom("mainWall");
+                if (gameState.emakiRiver.flags.badCount > 3) {
+                    playSE('se-android');
+                    showModal(
+                        'BAD END\nあなたはVR世界に飲み込まれてしまった。',
+                        `<img src="${IMAGES.modals.badendVR}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '最初から', action: 'restart' }]
+                    );
+                } else if (gameState.emakiRiver.flags.badCount == 3) {
+                    playSE('se-glich');
+                    showModal(
+                        "チャレンジ失敗！あなたは川に飲み込まれた",
+                        `<img src="${IMAGES.modals.riverDive2}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [
+                            {
+                                text: "展示室に戻る",
+                                action: () => {
+                                    closeModal();
+                                    changeRoom("mainWall");
+                                }
                             }
-                        }
-                    ]
-                );
+                        ]
+                    );
+                } else {
+                    showModal(
+                        "チャレンジ失敗！あなたは川に飲み込まれた",
+                        `<img src="${IMAGES.modals.riverDive}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [
+                            {
+                                text: "展示室に戻る",
+                                action: () => {
+                                    closeModal();
+                                    changeRoom("mainWall");
+                                }
+                            }
+                        ]
+                    );
+                }
+
                 renderCanvasRoom();
                 return false;
             }
@@ -2170,29 +2199,6 @@
             }
             renderCanvasRoom();
             return true;
-        }
-
-        function badEnd(msg) {
-            showModal({
-                title: "BAD END",
-                message: msg,
-                buttons: [
-                    {
-                        label: "展示室に戻る",
-                        action: () => {
-                            emakiSequence = "";
-                            rooms.emakiRiver.clickableAreas.forEach(a => {
-                                if (a.item && a.item.img === "blueBack") {
-                                    a.item.visibleT = false;
-                                }
-                            });
-                            closeModal();
-                            changeRoom("main");
-                        }
-                    }
-
-                ]
-            });
         }
 
         function openOldMapPopup(title, subtitle = '') {
@@ -2650,7 +2656,7 @@
                     // 途中不一致ならリセットしてバイブ（ブー音）
                     for (let i = 0; i < seq.length; i++) {
                         if (seq[i] !== TARGET[i]) {
-                            playSE('se-error');             
+                            playSE('se-error');
                             gameState.jinjaInput.seq = [];
                             updateMessage('作法が違うようだ…そういえば誰かが練習していたような…');
                             renderCanvasRoom();
