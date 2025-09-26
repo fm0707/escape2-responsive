@@ -2704,9 +2704,14 @@
                     gameState.emakiJinja = gameState.emakiJinja || { flags: { unlockGacha: false, gotGacha: false }, gachaSeq: [] };
 
                     // 既に解放済みなら案内だけ
+                    if (gameState.emakiJinja.flags.gotGacha) {
+                        playSE('se-click');
+                        updateMessage('もう手に入れたな');
+                        break;
+                    }
                     if (gameState.emakiJinja.flags.unlockGacha) {
                         playSE('se-click');
-                        updateMessage('準備OK。ハンドルを回そう。');
+                        updateMessage('カプセルを取ろう');
                         break;
                     }
 
