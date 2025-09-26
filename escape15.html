@@ -720,7 +720,7 @@
                 jinjaInput: ['images/15/jinja_input.png'],
                 gachaInput: ['images/15/gacha_input.png'],
                 end: ['images/15/end.jpeg'],
-                // end2: ['images/15/end2.png'],
+                end2: ['images/15/end2.jpeg'],
                 trueEnd: ['images/15/true_end.png'],
                 trueEnd2: ['images/15/true_end2.jpeg'],
 
@@ -1590,6 +1590,17 @@
                     },
                 ]
             },
+            end2: {
+                name: 'ノーマルエンド+',
+                description: '無事に評判の悪い展示室からお土産付きで脱出できました。おめでとう！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end2',
+                        description: 'ノーマルエンド'
+                    },
+                ]
+            },
 
             trueEnd: {
                 name: 'トゥルーエンド',
@@ -1730,8 +1741,12 @@
                 changeBGM("sounds/15/White_ice_snowing.mp3");
                 gameState.openRooms = [];
                 renderNavigation();
-            } else if (roomId === "end" || roomId === "end2") {
+            } else if (roomId === "end") {
                 changeBGM("sounds/14/minorinokisetsu.mp3");
+                gameState.openRooms = [];
+                renderNavigation();
+            } else if (roomId === "end2") {
+                changeBGM("sounds/15/Feel_at_Ease.mp3");
                 gameState.openRooms = [];
                 renderNavigation();
             } else if (roomId === "emakiRiver") {
@@ -2794,6 +2809,9 @@
                     } else if (gameState.selectedItem == 'badgeGod') {
                         updateMessage('キラキラだねえ');
                         break;
+                    } else if (gameState.selectedItem == 'ofuseCup') {
+                        updateMessage('日本酒は飲めないの');
+                        break;
                     } else if (gameState.flags.trueEndUnlocked) {
                         talkToHintCharacter('main', 'bearTrueEnd');
                         break;
@@ -2853,7 +2871,9 @@
                 case 'examine_end':
                     showEndingReport('end');
                     break;
-
+                case 'examine_end2':
+                    showEndingReport('end2');
+                    break;
                 case 'examine_true_end':
                     showEndingReport('trueEnd');
                     break;
@@ -2892,6 +2912,7 @@
                 trueEnd: '🌟 TRUE END',
                 trueEnd2: '🌟 TRUE+ END',
                 end: '🔔 NORMAL END',
+                end2: '🔔 NORMAL END2',
                 badEnd: '💧 BAD END'
             })[endingId] || '⭐ END';
 
@@ -2922,6 +2943,7 @@
                     trueEnd: 'TRUE END',
                     trueEnd2: 'TRUE+ END',
                     end: 'NORMAL END',
+                    end2: 'NORMAL END2',
                     badEnd: 'BAD END'
                 })[endingId] || 'END';
                 return `『展示室からの脱出』${short} を達成！ ⌛${mm}:${ss} / 失敗${badCnt}回 / ガチャ${gotGacha ? '取得' : '未'} / OFUSE ${gotOhuse ? '所持' : '無'} #脱出ゲーム`;
@@ -3108,6 +3130,8 @@
             } else if (gameState.flags.trueEndUnlocked) {
                 gameState.endings.true = true;
                 changeRoom('trueEnd');
+            } else if (hasItem('ofuseCup')) {
+                changeRoom('end2');
             } else {
                 changeRoom('end');
             }
