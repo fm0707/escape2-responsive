@@ -2168,6 +2168,7 @@
                 playSE('se-clear');
                 playSE('se-omedeto');
                 addItem('badge');
+                markProgress('badge_got');
                 showModal(
                     "あなたは残りを駆け抜け、川渡り体験に成功した！",
                     `認証バッジを手に入れた。<br><img src="${IMAGES.items.badge}" style="width:300px;display:block;margin:0 auto 20px;">`,
@@ -2701,6 +2702,7 @@
                                     { text: '閉じる', action: () => { closeModal(); } }
                                 ]
                             );
+                            markProgress('godBadge_got');
                             updateMessage('認証バッジに神の力が宿った。');
                             removeItem('badge');
                             addItem('badgeGod');
