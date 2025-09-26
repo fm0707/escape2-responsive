@@ -770,6 +770,7 @@
                 roboFace: 'images/15/robo_face.png',
                 roboFace2: 'images/15/robo_bluetooth.png',
                 roboFace3: 'images/15/robo_check.png',
+                roboFace4: 'images/15/robo_bluetooth2.png',
                 stone: 'images/15/stone.png',
                 goggleOn: 'images/15/goggle_on.png',
                 monstar: 'images/15/monstar.png',
@@ -2315,6 +2316,11 @@
                     if (gameState.selectedItem === 'omamori') {
                         // ロボの冷却システム解除
                         playSE('se-gacha');
+                        showModal(
+                            '信号を受信。コンパートメントロック解除シマス。ガチャ',
+                            `<img src="${IMAGES.modals.roboFace4}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
                         updateMessage('信号を受信。コンパートメントロック解除シマス。');
                         gameState.main.flags.unlockRoboBody = true;
                         gameState.selectedItem = null;
@@ -2624,10 +2630,6 @@
                     if (gameState.jinjaInput.solved) {
                         playSE('se-click');
                         updateMessage('もう加護は宿っている。');
-                        break;
-                    }
-                    if (!hasItem('badge')) {
-                        updateMessage('先に川渡りで認証バッジを手に入れよう。');
                         break;
                     }
 
