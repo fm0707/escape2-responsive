@@ -7,144 +7,77 @@
   <title>スラセブンの脱出ゲーム作品集</title>
   <link rel="stylesheet" href="css/main.css">
   <style>
-    body {
-      background: #f7f4ef;
-      font-family: 'Arial', sans-serif;
-      color: #222;
-      margin: 0;
-      padding: 0;
+    body { background:#f7f4ef; font-family:'Arial',sans-serif; color:#222; margin:0 }
+    h1 { text-align:center; margin:32px auto 8px; max-width:80%; font-size:2rem; letter-spacing:2px }
+    .sub { text-align:center; color:#5a4c33; margin:0 0 24px; font-size:0.95rem }
+
+    .section { max-width:980px; margin:0 auto 18px; padding:0 12px }
+    .section-title { display:flex; align-items:center; gap:10px; font-size:1.2rem; color:#3d311d; margin:10px 0 6px }
+    .section-title .pill { font-size:0.8rem; padding:2px 8px; border-radius:999px; border:1px solid #d4af37; background:#fffbe8; color:#5a4c33 }
+
+    .games-list { display:flex; flex-wrap:wrap; gap:32px; justify-content:center; margin:0 auto; max-width:900px; padding:10px 6px }
+    .game-card { position:relative; background:linear-gradient(135deg,#fffbe8 70%,#faebd7 100%); border:2px solid #d4af37; border-radius:18px; box-shadow:0 4px 16px #d4af3720; width:320px; padding:18px 16px 14px; display:flex; flex-direction:column; align-items:center; transition:transform .2s }
+    .game-card:hover { transform:translateY(-6px) scale(1.03); box-shadow:0 8px 24px #b8941f44 }
+    .game-thumb { width:160px; height:120px; object-fit:cover; border-radius:10px; border:1.5px solid #d4af37; margin-bottom:14px; background:#eee }
+    .game-title { font-weight:bold; font-size:1.13rem; margin-bottom:5px; text-align:center }
+    .game-desc { font-size:.98rem; margin-bottom:10px; text-align:center; color:#5a4c33 }
+    .game-update { font-size:.78rem; margin-bottom:10px; text-align:center; color:#5a4c33 }
+    .game-link { background:linear-gradient(135deg,#d4af37 80%,#b8941f 100%); color:#1a0f08; font-weight:bold; border:none; border-radius:6px; padding:8px 18px; text-decoration:none; font-size:1rem; box-shadow:0 1px 4px #b8941f33; transition:background .2s; margin-top:5px; display:inline-block }
+    .game-link:hover { background:linear-gradient(135deg,#b8941f 70%,#d4af37 100%); color:#fff }
+
+    /* NEWバッジ */
+    .badge-new { position:absolute; top:-10px; right:-10px; background:#e60033; color:#fff; font-weight:bold; font-size:.78rem; padding:6px 10px; border-radius:10px; box-shadow:0 4px 10px #00000025; transform:rotate(8deg) }
+
+    /* ハンバーガー/メニュー（既存と互換） */
+    .hamburger{position:fixed;top:14px;left:14px;width:36px;height:28px;background:transparent;border:none;z-index:1001}
+    .hamburger span{display:block;height:3px;background:#3d311d;margin:6px 0}
+    .menu-overlay{position:fixed;inset:0;background:#00000066;opacity:0;pointer-events:none;transition:.2s;z-index:1000}
+    .menu-overlay.open{opacity:1;pointer-events:auto}
+    .side-menu{position:fixed;top:0;left:-260px;width:240px;height:100%;background:#fffbe8;border-right:2px solid #d4af37;box-shadow:4px 0 16px #b8941f33;transition:.25s;z-index:1002;display:flex;flex-direction:column;padding:18px}
+    .side-menu a{color:#3d311d;text-decoration:none;margin:8px 0}
+    .side-menu.open{left:0}
+
+    @media (max-width:700px){
+      .games-list{flex-direction:column;gap:18px;max-width:98vw;padding:6px}
+      .game-card{width:96vw;max-width:370px;padding:13px 5px 11px}
+      .game-thumb{width:94vw;max-width:340px;height:22vw;min-height:100px}
     }
-    h1 {
-      text-align: center;
-      margin: 32px auto 24px auto;
-      max-width:80%;
-      font-size: 2rem;
-      letter-spacing: 2px;
-    }
-    .games-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 32px;
-      justify-content: center;
-      margin: 0 auto;
-      max-width: 900px;
-      padding: 16px;
-    }
-    .game-card {
-      background: linear-gradient(135deg, #fffbe8 70%, #faebd7 100%);
-      border: 2px solid #d4af37;
-      border-radius: 18px;
-      box-shadow: 0 4px 16px #d4af3720;
-      width: 320px;
-      min-width: 0;
-      padding: 18px 16px 14px 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.2s;
-    }
-    .game-card:hover {
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 8px 24px #b8941f44;
-    }
-    .game-thumb {
-      width: 160px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 1.5px solid #d4af37;
-      margin-bottom: 14px;
-      background: #eee;
-    }
-    .game-title {
-      font-weight: bold;
-      font-size: 1.13rem;
-      margin-bottom: 5px;
-      text-align: center;
-    }
-    .game-desc {
-      font-size: 0.98rem;
-      margin-bottom: 10px;
-      text-align: center;
-      color: #5a4c33;
-    }
-    .game-update {
-      font-size: 0.78rem;
-      margin-bottom: 10px;
-      text-align: center;
-      color: #5a4c33;
-    }
-    .game-link {
-      background: linear-gradient(135deg, #d4af37 80%, #b8941f 100%);
-      color: #1a0f08;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 18px;
-      text-decoration: none;
-      font-size: 1rem;
-      box-shadow: 0 1px 4px #b8941f33;
-      transition: background 0.2s;
-      margin-top: 5px;
-      display: inline-block;
-    }
-    .game-link:hover {
-      background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
-      color: #fff;
-    }
-    .ohuse-area {
-        max-width: 320px;
-        flex: 1;
-        padding: 18px 16px 14px 16px;
-    }
-    @media (max-width: 700px) {
-      .games-list {
-        flex-direction: column;
-        gap: 18px;
-        max-width: 98vw;
-        padding: 6px;
-      }
-      .game-card {
-        width: 96vw;
-        max-width: 370px;
-        min-width: 0;
-        padding: 13px 5px 11px 5px;
-      }
-      .game-thumb {
-        width: 94vw;
-        max-width: 340px;
-        height: 22vw;
-        min-height: 100px;
-      }
-    }
-    
   </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G9BX4FBF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-F2G9BX4FBF');
+  function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-F2G9BX4FBF');
 </script>
 <body>
   <!-- ハンバーガー & メニュー -->
   <button class="hamburger" id="hamburgerBtn" aria-label="メニューを開く">
-    <span></span>
-    <span></span>
-    <span></span>
+    <span></span><span></span><span></span>
   </button>
   <div class="menu-overlay" id="menuOverlay"></div>
   <nav class="side-menu" id="sideMenu">
     <a href="index.html">脱出ゲーム一覧</a>
     <a href="wallpaper.html">今月の壁紙</a>
-    <!-- ここにメニュー項目追加可能 -->
   </nav>
+
   <h1>スラセブンの脱出ゲーム作品集</h1>
-  <div class="games-list">
-    <div class="game-card">
+  <p class="sub">最新作は上／過去作は下にあります。</p>
+
+  <div class="section" id="new-section">
+    <div class="section-title">🆕 新作 <span class="pill">最新3作</span></div>
+    <div class="games-list" id="newList"></div>
+  </div>
+
+  <div class="section" id="all-section">
+    <div class="section-title">📚 すべての作品 <span class="pill">新しい順</span></div>
+    <div class="games-list" id="allList"></div>
+  </div>
+
+  <!-- ここにカード原本を置いてJSで整列（非表示） -->
+  <div id="sourceList" style="display:none">
+    <!-- 各カードに data-date="YYYY-MM-DD" を付与 -->
+    <div class="game-card" data-date="2025-06-09">
       <img class="game-thumb" src="images/genkan_1.jpg" alt="家宝を探せサムネイル">
       <div class="game-title">家宝を探せ - 畳の屋敷からの脱出</div>
       <div class="game-desc">古い和風屋敷が舞台の、第1作。3END。</div>
@@ -152,7 +85,8 @@
       <a href="escape1_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="https://fm0707.github.io/escape1_responsive/" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-07-02">
       <img class="game-thumb" src="images/genkan.jpg" alt="謎の洋館サムネイル">
       <div class="game-title">謎の洋館から脱出せよ</div>
       <div class="game-desc">洋館×謎解き、4END+extraの第2作。</div>
@@ -160,15 +94,14 @@
       <a href="escape2_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape2.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <!-- <div class="game-card" data-date="">
       <img class="game-thumb" src="images//bear.jpg" alt="部屋サムネイル">
       <div class="game-title">調整中</div>
       <div class="game-desc"></div>
-      <!-- <div class="game-update">2025.7.7 update</div> -->
-      <!-- <a href="escape4_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a> -->
-      <!-- <a class="game-link" href="escape4.html" target="_blank">プレイする</a> -->
-    </div>
-    <div class="game-card">
+    </div> -->
+
+    <div class="game-card" data-date="2025-07-07">
       <img class="game-thumb" src="images/4/office.jpg" alt="見知らぬオフィスサムネイル">
       <div class="game-title">見知らぬオフィスから脱出せよ</div>
       <div class="game-desc">シンプル謎解き、2ENDの第4作。</div>
@@ -176,7 +109,8 @@
       <a href="escape4_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape4.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-07-10">
       <img class="game-thumb" src="images/5/kitchen.jpg" alt="謎のレストランサムネイル">
       <div class="game-title">謎のレストランから脱出せよ</div>
       <div class="game-desc">レストランが舞台、3ENDの第5作。</div>
@@ -184,7 +118,8 @@
       <a href="escape5_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape5.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-07-16">
       <img class="game-thumb" src="images/6/counter.png" alt="部屋サムネイル">
       <div class="game-title">ハローワークからの脱出</div>
       <div class="game-desc">3ENDの第6作</div>
@@ -192,7 +127,8 @@
       <a href="escape6_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape6.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-07-25">
       <img class="game-thumb" src="images/7/yatai.png" alt="屋台サムネイル">
       <div class="game-title">夏祭りからの脱出</div>
       <div class="game-desc">雰囲気を楽しむ第7作。5END</div>
@@ -200,7 +136,8 @@
       <a href="escape7_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape7.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-08-01">
       <img class="game-thumb" src="images/8/entrance.jpg" alt="出入口サムネイル">
       <div class="game-title">喫茶店からの脱出</div>
       <div class="game-desc">第8作。</div>
@@ -208,7 +145,8 @@
       <a href="escape8_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape8.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-08-10">
       <img class="game-thumb" src="images/9/shakyobeya.jpg" alt="写経部屋サムネイル">
       <div class="game-title">写経部屋からの脱出</div>
       <div class="game-desc">第9作。</div>
@@ -216,7 +154,8 @@
       <a href="escape9_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape9.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-08-19">
       <img class="game-thumb" src="images/10/dining.png" alt="ラーメン屋さんサムネイル">
       <div class="game-title">ラーメン屋さんからの脱出</div>
       <div class="game-desc">第10作。</div>
@@ -224,7 +163,8 @@
       <a href="escape10_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape10.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-08-26">
       <img class="game-thumb" src="images/11/main.png" alt="居酒屋個室サムネイル">
       <div class="game-title">居酒屋個室からの脱出</div>
       <div class="game-desc">シンプル脱出の第11作。</div>
@@ -232,7 +172,8 @@
       <a href="escape11_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape11.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-09-05">
       <img class="game-thumb" src="images/12/main_window.png" alt="子供部屋サムネイル">
       <div class="game-title">子供部屋からの脱出</div>
       <div class="game-desc">ロマンティック脱出の第12作。</div>
@@ -240,7 +181,8 @@
       <a href="escape12_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">ヒント/攻略</a>
       <a class="game-link" href="escape12.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-09-10">
       <img class="game-thumb" src="images/13/main.png" alt="夜空が見える部屋サムネイル">
       <div class="game-title">夜空が見える部屋からの脱出</div>
       <div class="game-desc">シンプル脱出の第13作。</div>
@@ -248,7 +190,8 @@
       <a href="escape13_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">info</a>
       <a class="game-link" href="escape13.html" target="_blank">プレイする</a>
     </div>
-     <div class="game-card">
+
+    <div class="game-card" data-date="2025-09-16">
       <img class="game-thumb" src="images/14/main_piano.png" alt="音楽室サムネイル">
       <div class="game-title">音楽室からの脱出</div>
       <div class="game-desc">秋の芸術脱出の第14作。6END</div>
@@ -256,7 +199,8 @@
       <a href="escape14_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">info</a>
       <a class="game-link" href="escape14.html" target="_blank">プレイする</a>
     </div>
-    <div class="game-card">
+
+    <div class="game-card" data-date="2025-09-26">
       <img class="game-thumb" src="images/15/main_case.png" alt="展示室サムネイル">
       <div class="game-title">展示室からの脱出</div>
       <div class="game-desc">秋の芸術脱出第2弾の第15作。6END</div>
@@ -264,59 +208,63 @@
       <a href="escape15_hint.html" style="font-size:0.95rem;color:#d4af37;text-decoration:underline;" target="_blank">info</a>
       <a class="game-link" href="escape15.html" target="_blank">プレイする</a>
     </div>
-    <!-- ここに新作をどんどん追加！ -->
-     <div class="ohuse-area" style="display: flex; flex-direction: column; align-items: center; margin: 32px 0 18px 0;">
-        <a data-ofuse-widget-button href="https://ofuse.me/o?uid=101365"
-            data-ofuse-id="101365" data-ofuse-size="large"
-            data-ofuse-color="dark" data-ofuse-style="rectangle">
-            OFUSEで応援を送る
-        </a>
-        <div class="ohuse-message" style="margin-top: 10px; font-size: 1.1rem; color: #5a4c33;">
-            ※支援なしレターを選んでください！
-        </div>
-        </div>
-        <script async src="https://ofuse.me/assets/platform/widget.js" charset="utf-8"></script>
-        <div>
-        <div style="margin: 20px 0 8px; font-size: 1rem; color: #5a4c33; text-align:center;">
-            For international supporters:
-        </div>
-
-        <!-- Buy Me a Coffee -->
-        <script type="text/javascript" 
-            src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
-            data-name="bmc-button"
-            data-slug="suraseven"
-            data-color="#FFDD00"
-            data-emoji="☕"
-            data-font="Arial"
-            data-text="Buy me a coffee"
-            data-outline-color="#000"
-            data-font-color="#000"
-            data-coffee-color="#ffffff">
-        </script>
-        </div>
-  </a>
   </div>
-</body>
-<script>
-  const hamburger = document.getElementById('hamburgerBtn');
-  const sideMenu = document.getElementById('sideMenu');
-  const overlay = document.getElementById('menuOverlay');
 
-  hamburger.onclick = function() {
-    sideMenu.classList.add('open');
-    overlay.classList.add('open');
-  }
-  overlay.onclick = function() {
-    sideMenu.classList.remove('open');
-    overlay.classList.remove('open');
-  }
-  // ESCキーでも閉じる
-  window.addEventListener('keydown', (e) => {
-    if(e.key === "Escape"){
-      sideMenu.classList.remove('open');
-      overlay.classList.remove('open');
-    }
-  });
-</script>
+  <!-- 支援ボタン（既存流用） -->
+  <div class="section" style="display:flex; flex-direction:column; align-items:center; margin: 16px auto 18px;">
+    <a data-ofuse-widget-button href="https://ofuse.me/o?uid=101365"
+      data-ofuse-id="101365" data-ofuse-size="large" data-ofuse-color="dark" data-ofuse-style="rectangle">OFUSEで応援を送る</a>
+    <div class="ohuse-message" style="margin-top: 10px; font-size: 1.1rem; color: #5a4c33;">※支援なしレターを選んでください！</div>
+    <script async src="https://ofuse.me/assets/platform/widget.js" charset="utf-8"></script>
+
+    <div style="margin: 20px 0 8px; font-size: 1rem; color: #5a4c33; text-align:center;">For international supporters:</div>
+    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="suraseven" data-color="#FFDD00" data-emoji="☕" data-font="Arial" data-text="Buy me a coffee" data-outline-color="#000" data-font-color="#000" data-coffee-color="#ffffff"></script>
+  </div>
+
+  <script>
+    // ハンバーガー開閉
+    const hamburger = document.getElementById('hamburgerBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('menuOverlay');
+    hamburger.onclick = () => { sideMenu.classList.add('open'); overlay.classList.add('open'); };
+    overlay.onclick = () => { sideMenu.classList.remove('open'); overlay.classList.remove('open'); };
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape'){ sideMenu.classList.remove('open'); overlay.classList.remove('open'); }});
+
+    // 自動ソート＆NEWバッジ付与
+    (function(){
+      const src = document.getElementById('sourceList');
+      const cards = Array.from(src.querySelectorAll('.game-card'));
+
+      // 有効日付で降順に並べ替え（未設定は末尾）
+      const parse = (el)=>{
+        const d = el.dataset.date || '';
+        return d ? new Date(d) : new Date(0);
+      };
+      cards.sort((a,b)=> parse(b) - parse(a));
+
+      const newList = document.getElementById('newList');
+      const allList = document.getElementById('allList');
+
+      const today = new Date();
+      const daysDiff = (d1,d2)=> Math.floor((d1 - d2) / (1000*60*60*24));
+
+      cards.forEach((card, idx)=>{
+        const d = parse(card);
+        if (d.getTime() > 0 && daysDiff(today, d) <= 14){
+          const badge = document.createElement('div');
+          badge.className = 'badge-new';
+          badge.textContent = 'NEW';
+          card.appendChild(badge);
+        }
+        // 最初の3枚は新作欄にも複製ではなくクローンを置く
+        const clone = card.cloneNode(true);
+        if(idx < 3){ newList.appendChild(clone); }
+        allList.appendChild(card);
+      });
+
+      // 原本コンテナは不要
+      src.remove();
+    })();
+  </script>
+</body>
 </html>
