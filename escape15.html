@@ -2105,7 +2105,7 @@
                 if (gameState.emakiRiver.flags.badCount > 3) {
                     playSE('se-android');
                     showModal(
-                        'BAD END\nあなたはVR世界に飲み込まれてしまった。',
+                        'BAD END\nあなたはVR世界に飲み込まれ、<br>……接続が失われました',
                         `<img src="${IMAGES.modals.badendVR}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '最初から', action: 'restart' }]
                     );
