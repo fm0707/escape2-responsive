@@ -1451,7 +1451,7 @@
                     "封印がとけたよ",
                     "いい気分ー",
                 ],
-                
+
             },
             heaven: {
                 bear: [
@@ -1459,7 +1459,7 @@
                     "呼んだ？",
                     "えへへ",
                 ],
-                
+
             },
         };
 
@@ -1772,6 +1772,7 @@
         // ドア入力の4マス：インデックス対応
         // 0: 左上(TL) - 数字, 1: 右上(TR) - 文字, 2: 右下(BR) - 数字, 3: 左下(BL) - 文字
         function _cycleDoorSlot(idx) {
+            if (gameState.main.flags.doorPuzzleSolved) return;
             const v = gameState.doorInput.slots[idx];
             let pool = null;
 
@@ -2276,26 +2277,23 @@
                                     action: () => {
                                         closeModal();
 
-                                        if (gameState.main.flags.whichIsBurn == 'bear') gameState.main.flags.visibleSkyArrow = true;
-
-                                        const overlay = document.getElementById("roomEffectOverlay");
-                                        overlay.classList.add("warp-active");
-
-                                        addTrunkGlow();
-                                        playSE('se-balloon');
-
-                                        showModal(
-                                            '気球は上昇し始めた！',
-                                            `<img src="${IMAGES.modals.balloonUp}" style="width:300px;display:block;margin:0 auto 20px;">`,
-                                            [{ text: '閉じる', action: 'close' }]
-                                        );
-
-                                        setTimeout(() => {
-                                            removeTrunkGlow();
-                                            changeRoom('sky');
-                                            updateMessage('空中に出た');
-                                        }, 1200);
-
+                                        // ★ ぬいぐるみを持っている場合は先にモーダルを出す
+                                        if (hasItem('bearDoll')) {
+                                            showModal(
+                                                'クマのぬいぐるみを気球に載せた',
+                                                `<img src="${IMAGES.items.bearDoll}" style="width:200px;display:block;margin:0 auto 20px;">`,
+                                                [{
+                                                    text: '次へ',
+                                                    action: () => {
+                                                        closeModal();
+                                                        removeItem('bearDoll');
+                                                        proceedBalloonLaunch();
+                                                    }
+                                                }]
+                                            );
+                                        } else {
+                                            proceedBalloonLaunch();
+                                        }
                                     }
                                 },
                                 { text: "いいえ", action: "close" }
@@ -2419,6 +2417,31 @@
             playSE('se-click');
             updateInventoryDisplay();
         }
+
+        function proceedBalloonLaunch() {
+            if (gameState.main.flags.whichIsBurn == 'bear') {
+                gameState.main.flags.visibleSkyArrow = true;
+            }
+
+            const overlay = document.getElementById("roomEffectOverlay");
+            overlay.classList.add("warp-active");
+
+            addTrunkGlow();
+            playSE('se-balloon');
+
+            showModal(
+                '気球は上昇し始めた！',
+                `<img src="${IMAGES.modals.balloonUp}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                [{ text: '閉じる', action: 'close' }]
+            );
+
+            setTimeout(() => {
+                removeTrunkGlow();
+                changeRoom('sky');
+                updateMessage('空中に出た');
+            }, 1200);
+        }
+
 
         function showEndingReport(endingId) {
             // --- プレイ時間だけ簡易取得（不要なら削除OK） ---
