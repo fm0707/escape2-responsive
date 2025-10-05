@@ -670,6 +670,7 @@
     <audio id="se-robo-wakeup" src="sounds/common/Retro_Anime-Robot05-2(Low).mp3"></audio>
     <audio id="se-balloon" src="sounds/16/Scene_Change10-4(Long-Stereo_Pan).mp3"></audio>
     <audio id="se-change-to-bear" src="sounds/16/Scene_Change10-3(Long-Delay).mp3"></audio>
+    <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
     <script>
         // --- Analytics helper ---
         window.ANA = {
@@ -2348,6 +2349,7 @@
                     break;
                 case 'examine_heaven_big_bear':
                     if (gameState.main.flags.whichIsBurn == 'leaf') {
+                        playSE('se-angel');
                         showModal(
                             'クマ大賢者',
                             `<p>ふむ。地上に戻りたいのだな。姿の元に戻してしんぜよう</p>
