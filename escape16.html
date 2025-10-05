@@ -671,6 +671,7 @@
     <audio id="se-balloon" src="sounds/16/Scene_Change10-4(Long-Stereo_Pan).mp3"></audio>
     <audio id="se-change-to-bear" src="sounds/16/Scene_Change10-3(Long-Delay).mp3"></audio>
     <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
+    <audio id="se-negative" src="sounds/16/Onoma-Negative13-1(Low).mp3"></audio>
     <script>
         // --- Analytics helper ---
         window.ANA = {
@@ -790,6 +791,7 @@
                 bearBigBad: 'images/16/bear_big_bad.png',
                 bearBigGood: 'images/16/bear_big_good.png',
                 balloonUp: 'images/16/balloon_up.png',
+                beadBad: 'images/16/bear_bad.png',
 
             },
 
@@ -1816,7 +1818,7 @@
             switch (action) {
                 case 'examine_main_desk_ceiling':
 
-                    updateMessage('空が見える。通り抜けるのは難しそうだ');
+                    updateMessage('空が見える。このままでは通り抜けるのは難しそうだ');
                     break;
                 case 'examine_main_desk_elephant':
                     playSE('se-paon');
@@ -2020,15 +2022,30 @@
                         `<img src="${IMAGES.items.pic}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
-                    updateMessage('何かのグラフだ');
+                    updateMessage('猫の写真だ');
                     break;
                 case 'examine_main_door_window':
                     updateMessage('光が差し込んでいる');
                     break;
                 case 'examine_main_door_window2':
-                    updateMessage('外は良く見えない');
+                    updateMessage('外はよく見えない');
                     break;
                 case 'examine_main_door_mini_door':
+                    if (gameState.selectedItem == 'bearDoll') {
+                        window._nextModal = {
+                            title: '[BAD END]ぬいぐるみの最後っ屁',
+                            content: `<p>あまりの臭さに意識が遠のいた。<br>薄れゆく意識の中、ぬいぐるみはずるずると自分で外に出ていくように見えた…</p><img src="${IMAGES.modals.beadBad}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            buttons: [{ text: '最初から', action: 'restart' }],
+                        };
+                        const onClosed = () => playSE('se-negative');
+                        window.addEventListener('modal:closed', onClosed, { once: true });
+                        showModal(
+                            'ペット用の出入口からぬいぐるみを押し出してみた',
+                            '引っかかってしまったようだ…あ、あれ？',
+                            [{ text: '次へ', action: 'close' }]
+                        );
+
+                    }
                     updateMessage('ペット用の出入り口だろうか？');
                     break;
                 case 'examine_main_door_key':
