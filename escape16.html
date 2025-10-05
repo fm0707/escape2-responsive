@@ -2349,8 +2349,9 @@
                 case 'examine_heaven_big_bear':
                     if (gameState.main.flags.whichIsBurn == 'leaf') {
                         showModal(
-                            'ふむ。地上に戻りたいのだな。姿の元に戻してしんぜよう',
-                            `<img src="${IMAGES.modals.bearBigGood}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            'クマ大賢者',
+                            `<p>ふむ。地上に戻りたいのだな。姿の元に戻してしんぜよう</p>
+                            <img src="${IMAGES.modals.bearBigGood}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
                         gameState.flags.trueEndUnlocked = true;
@@ -2358,8 +2359,8 @@
                     } else {
                         playSE('se-change-to-bear');
                         showModal(
-                            'ふむ。犠牲にしたのだな…そなたも一員となり埋め合わせよ',
-                            `<img src="${IMAGES.modals.bearBigBad}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            'クマ大賢者',
+                            `<p>ふむ。犠牲にしたのだな…そなたも一員となり埋め合わせよ</p><img src="${IMAGES.modals.bearBigBad}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
                         changeRoom('endBear');
@@ -2438,7 +2439,7 @@
             setTimeout(() => {
                 removeTrunkGlow();
                 changeRoom('sky');
-                updateMessage('空中に出た');
+                updateMessage('上空に出ました');
             }, 1200);
         }
 
