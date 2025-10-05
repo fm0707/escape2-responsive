@@ -672,6 +672,7 @@
     <audio id="se-change-to-bear" src="sounds/16/Scene_Change10-3(Long-Delay).mp3"></audio>
     <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
     <audio id="se-negative" src="sounds/16/Onoma-Negative13-1(Low).mp3"></audio>
+    <audio id="se-gas" src="sounds/16/gas.mp3"></audio>
     <script>
         // --- Analytics helper ---
         window.ANA = {
@@ -2044,6 +2045,7 @@
                             '引っかかってしまったようだ…あ、あれ？',
                             [{ text: '次へ', action: 'close' }]
                         );
+                        playSE('se-gas');
 
                     }
                     updateMessage('ペット用の出入り口だろうか？');
