@@ -1823,7 +1823,7 @@
                     break;
                 case 'examine_main_desk_elephant':
                     playSE('se-paon');
-                    updateMessage('鳴き声：― ・ ・ ―,  ・ ・ ・ ・ ―');
+                    updateMessage('ゾウの鳴き声：― ・ ・ ―,  ・ ・ ・ ・ ―');
                     break;
                 case 'examine_main_desk_elephant_door':
                     if (gameState.main.flags.roboWakeup) {
@@ -1977,16 +1977,16 @@
                 // desktop
                 case 'examine_desktop_elephant':
                     if (gameState.main.flags.roboWakeup) {
-                        updateMessage('象マシンは起動中だ');
+                        updateMessage('ゾウマシンは起動中だ');
                     } else {
                         gameState.main.flags.roboWakeup = true;
                         playSE('se-robo-wakeup');
                         showModal(
-                            '象マシンを起動した',
+                            'ゾウマシンを起動した',
                             '',
                             [{ text: '閉じる', action: 'close' }]
                         );
-                        updateMessage('象マシンを起動した');
+                        updateMessage('ゾウマシンを起動した');
                     }
                     break;
                 case 'examine_desktop_img':
