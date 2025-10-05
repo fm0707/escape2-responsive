@@ -1895,6 +1895,11 @@
                     } else if (gameState.main.flags.bearOnBalloon) {
                         gameState.main.flags.bearOnBalloon = !gameState.main.flags.bearOnBalloon;
                         gameState.balloon.flags.backgroundState = 1;
+                        showModal(
+                            'クマのぬいぐるみを手に入れた',
+                            `<img src="${IMAGES.items.bearDoll}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
                         addItem('bearDoll');
                         updateMessage('クマのぬいぐるみを手に入れた');
                     }
