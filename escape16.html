@@ -659,7 +659,6 @@
     <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
     <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
     <audio id="se-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
-    <audio id="se-bad-space" src="sounds/13/Single_Accent18-1(Mid).mp3"></audio>
     <audio id="se-pen" src="sounds/16/Felt_Tip_Pen02-1.mp3"></audio>
     <audio id="se-fire" src="sounds/common/fire.mp3"></audio>
     <audio id="se-paon" src="sounds/16/paon.wav"></audio>
@@ -673,6 +672,7 @@
     <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
     <audio id="se-negative" src="sounds/16/Onoma-Negative13-1(Low).mp3"></audio>
     <audio id="se-gas" src="sounds/16/gas.mp3"></audio>
+    <audio id="se-tadaima" src="sounds/16/Anime_Motion34-2(Short-Low).mp3"></audio>
     <script>
         // --- Analytics helper ---
         window.ANA = {
@@ -791,6 +791,7 @@
                 desktopImg: 'images/16/desktop_img.png',
                 bearBigBad: 'images/16/bear_big_bad.png',
                 bearBigGood: 'images/16/bear_big_good.png',
+                bearBigGoodBear: 'images/16/bear_big_good_bear.png',
                 balloonUp: 'images/16/balloon_up.png',
                 beadBad: 'images/16/bear_bad.png',
 
@@ -2373,13 +2374,23 @@
                     break;
                 case 'examine_heaven_big_bear':
                     if (gameState.main.flags.whichIsBurn == 'leaf') {
-                        playSE('se-angel');
-                        showModal(
-                            'クマ大賢者',
-                            `<p>ふむ。地上に戻りたいのだな。姿の元に戻してしんぜよう</p>
+
+                        window._nextModal = {
+                            title: 'クマ大賢者',
+                            content: `<p>そうかそうか。地上に戻りたいのだな。<br>元のサイズに戻してしんぜよう</p>
                             <img src="${IMAGES.modals.bearBigGood}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            buttons: [{ text: '閉じる', action: 'close' }],
+                        };
+                        const onClosed = () => playSE('se-angel');
+                        window.addEventListener('modal:closed', onClosed, { once: true });
+                        showModal(
+                            'ただいまー！',
+                            `<img src="${IMAGES.modals.bearBigGoodBear}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
+                        playSE('se-tadaima');
+
+
                         gameState.flags.trueEndUnlocked = true;
                         changeRoom('trueEnd');
                     } else {
