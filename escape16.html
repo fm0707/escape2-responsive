@@ -793,7 +793,7 @@
                 bearBigGood: 'images/16/bear_big_good.png',
                 bearBigGoodBear: 'images/16/bear_big_good_bear.png',
                 balloonUp: 'images/16/balloon_up.png',
-                beadBad: 'images/16/bear_bad.png',
+                bearBad: 'images/16/bear_bad.png',
 
             },
 
@@ -802,7 +802,7 @@
 
 
         // ゲーム状態
-        const SAVE_KEY = 'escapeGameState15';
+        const SAVE_KEY = 'escapeGameState16';
         const SAVE_VERSION = 1;
 
         function getDefaultGameState() {
@@ -1775,7 +1775,10 @@
         const ROT_DIGITS = '0123456789'.split('');
 
         // ドア入力の4マス：インデックス対応
-        // 0: 左上(TL) - 数字, 1: 右上(TR) - 文字, 2: 右下(BR) - 数字, 3: 左下(BL) - 文字
+        // 0: TR - 英字 (E)
+        // 1: BR - 数字 (8)
+        // 2: BL - 英字 (V)
+        // 3: TL - 数字 (3)
         function _cycleDoorSlot(idx) {
             if (gameState.main.flags.doorPuzzleSolved) return;
             const v = gameState.doorInput.slots[idx];
@@ -2041,7 +2044,7 @@
                     if (gameState.selectedItem == 'bearDoll') {
                         window._nextModal = {
                             title: '[BAD END]ぬいぐるみの最後っ屁',
-                            content: `<p>あまりの臭さに意識が遠のいた。<br>薄れゆく意識の中、ぬいぐるみはずるずると自分で外に出ていくように見えた…</p><img src="${IMAGES.modals.beadBad}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            content: `<p>あまりの臭さに意識が遠のいた。<br>薄れゆく意識の中、ぬいぐるみはずるずると自分で外に出ていくように見えた…</p><img src="${IMAGES.modals.bearBad}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             buttons: [{ text: '最初から', action: 'restart' }],
                         };
                         const onClosed = () => playSE('se-negative');
