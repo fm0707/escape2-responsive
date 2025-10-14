@@ -1681,6 +1681,11 @@
                     "うふふ",
                     "もうお菓子くれないの？",
                 ],
+                bear2: [
+                    "少し前から誰も居なくなっちゃったんだ",
+                    "せっかく移住者さんも来てたのにね",
+                    "まあ、お菓子もらえたからいいや",
+                ],
 
             },
         };
@@ -2467,8 +2472,11 @@
                             `<img src="${IMAGES.modals.bearOnigiri}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
+                    } else if (gameState.main.flags.bearSweetsCnt==2) {
+                        talkToHintCharacter('main', 'bear2');
+                    } else {
+                        talkToHintCharacter('main', 'bear');
                     }
-                    talkToHintCharacter('main', 'bear');
                     break;
                 // busStation
                 case 'examine_bus_station_clock':
