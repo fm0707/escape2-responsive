@@ -2608,6 +2608,8 @@
                 case 'examine_main_snack_planter_inter_phone':
                     if (gameState.snack.flags.phonePuzzleSolved) {
                         updateMessage('もう使う必要はない');
+                    } else if (!gameState.main.flags.setTanshin) {
+                        updateMessage('まだ使えないようだ…');
                     } else {
                         changeRoom('interPhone');
                     }
