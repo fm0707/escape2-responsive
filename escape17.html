@@ -1443,6 +1443,7 @@
                         x: 15.3, y: 70.1, width: 12.2, height: 13.3,
                         action: 'examine_main_snack_planter_flower',
                         description: 'プランター左の花',
+                        usable: () => gameState.snack.flags.phonePuzzleSolved,
                         item: {
                             img: 'flower', visible: () => gameState.snack.flags.phonePuzzleSolved,
                         },
