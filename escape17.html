@@ -990,6 +990,7 @@
                 busError: 'images/17/modal_bus_error.png',
                 momoyo: 'images/17/modal_momoyo.png',
                 posterAircon: 'images/17/poster_aircon.png',
+                posterBeer: 'images/17/poster_beer.png',
                 clock: 'images/17/modal_clock.png',
                 flower: 'images/17/modal_flower.png',
                 flowerWithTanshin: 'images/17/modal_flower_with_tanshin.png',
@@ -997,6 +998,7 @@
                 badEnd: 'images/17/bad_end.png',
                 kumaNewRice: 'images/17/kuma_newrice.jpeg',
                 toroTicket: 'images/17/modal_toro.png',
+                endingRoad: 'images/17/modal_end_road.png',
 
 
             },
@@ -2666,10 +2668,15 @@
                     updateMessage('店のポスターだ');
                     break;
                 case 'examine_snack_momoko_poster_menu':
-                    updateMessage('店名のポスターだ');
+                    showModal(
+                        `<img src="${IMAGES.modals.posterBeer}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                        '',
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    updateMessage('ビールのポスターだ');
                     break;
                 case 'examine_snack_momoko_poster_menu_blue':
-                    updateMessage('店名のポスターだ');
+                    updateMessage('餃子、ローストビーフ、おにぎりやラーメンなどのメニューがあるようだ');
                     break;
                 case 'examine_snack_machine_switch':
                     if (gameState.snack.flags.machinePowerOn) {
