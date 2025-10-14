@@ -1313,7 +1313,7 @@
 
                     },
                     {
-                        x: 70.4, y: 59.7, width: 8.1, height: 8.1,
+                        x: 70.4, y: 60.7, width: 8.1, height: 8.1,
                         action: 'examine_ido_trash',
                         description: '紙くず',
                         usable: () => gameState.main.flags.bearSweetsCnt > 0 && !gameState.main.flags.foundNote2,
@@ -1596,6 +1596,12 @@
                         x: 27.5, y: 23.4, width: 60.2, height: 31.2,
                         action: 'examine_bus_front',
                         description: 'バスのフロントガラスの景色',
+
+                    },
+                    {
+                        x: 75.8, y: 58.3, width: 23.7, height: 26.0,
+                        action: 'examine_bus_seat',
+                        description: 'バスの運転席',
 
                     },
                     {
@@ -2848,6 +2854,9 @@
                 // busIn
                 case 'examine_bus_front':
                     updateMessage('のどかな景色だ');
+                    break;
+                case 'examine_bus_seat':
+                    updateMessage('ハンドルはあるけど、自動運転式のようだ');
                     break;
                 case 'examine_bus_face_authorization':
                     if (gameState.selectedItem == 'muradayoriShiwa') {
