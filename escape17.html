@@ -2220,7 +2220,6 @@
 
                 playSE('se-angel');
                 screenFlash('white', 1200);
-                screenFlash('white', 1600);
 
                 setTimeout(() => {
                     if (hasItem('sweets2')) {
@@ -2230,10 +2229,6 @@
                     } else {
                         changeRoom('trueEnd');
                     }
-
-                    // if (hasItem('rice')) {
-                    //     setTimeout(playRiceDaydream, 1500);
-                    // }
 
                     playSE('se-bus-start');
                     renderCanvasRoom();
