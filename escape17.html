@@ -2470,7 +2470,7 @@
                             `<img src="${IMAGES.modals.bearOnigiri}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
-                    } else if (gameState.main.flags.bearSweetsCnt==2) {
+                    } else if (gameState.main.flags.bearSweetsCnt == 2) {
                         talkToHintCharacter('main', 'bear2');
                     } else {
                         talkToHintCharacter('main', 'bear');
@@ -2712,14 +2712,15 @@
                         `<img src="${IMAGES.modals.note}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
+                    updateMessage('売り上げノートかな？');
                     break;
                 case 'examine_snack_trash':
                     showModal(
-                        '紙くずをひろげた。むらだよりだ。',
+                        '紙くずをひろげた。村だよりだ。',
                         `<img src="${IMAGES.items.muradayoriShiwa}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
-
+                    updateMessage('村だよりを手に入れた');
                     gameState.snack.flags.foundMuradayori = true;
                     addItem('muradayoriShiwa');
                     renderCanvasRoom();
