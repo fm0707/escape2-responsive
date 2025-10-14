@@ -2455,6 +2455,7 @@
                     if (gameState.selectedItem == 'sweets2') {
                         removeItem('sweets2');
                         addItem('rice');
+                        gameState.main.flags.bearSweetsCnt++;
                         window._nextModal = {
                             title: 'これあげる！村で作ったんだよ',
                             content: `<img src="${IMAGES.items.rice}" style="width:300px;display:block;margin:0 auto 20px;">`,
