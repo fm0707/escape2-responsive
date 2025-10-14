@@ -1546,6 +1546,7 @@
                         action: 'examine_snack_trash',
                         description: '紙くず',
                         zIndex: 5,
+                        usable: () => !gameState.snack.flags.foundMuradayori,
                         item: {
                             img: 'trash', visible: () => !gameState.snack.flags.foundMuradayori,
                         },
