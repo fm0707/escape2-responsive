@@ -873,6 +873,8 @@
     <audio id="se-kirakira" src="sounds/17/kirakira.mp3"></audio>
     <audio id="se-vending" src="sounds/common/vendingmachine.mp3"></audio>
     <audio id="se-siren" src="sounds/common/siren.mp3"></audio>
+    <audio id="se-fire" src="sounds/common/barner.mp3"></audio>
+    <audio id="se-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
     <script>
         // --- Analytics helper ---
         window.ANA = {
@@ -957,6 +959,7 @@
                 bearMagic: 'images/17/bear_magic.png',
                 sweets: 'images/17/sweets.jpeg',
                 sweets2: 'images/17/sweets2.jpeg',
+                karaage: 'images/17/karaage.jpeg',
                 tanshin: 'images/17/tanshin.png',
                 tanshinTrue: 'images/17/tanshin_true.png',
                 trash: 'images/17/dust.png',
@@ -965,6 +968,7 @@
                 paper: 'images/17/paper.png',
                 ticket: 'images/17/ticket.png',
                 ticket2: 'images/17/ticket2.png',
+                ticket3: 'images/17/ticket3.png',
                 flower: 'images/17/flower.png',
                 note2: 'images/17/note2.png',
                 rice: 'images/17/newrice.png',
@@ -999,6 +1003,8 @@
                 kumaNewRice: 'images/17/kuma_newrice.jpeg',
                 toroTicket: 'images/17/modal_toro.png',
                 endingRoad: 'images/17/modal_end_road.png',
+                bearKaraage: 'images/17/modal_bear_karaage.jpeg',
+                bearFire: 'images/17/modal_bear_fire.jpeg',
 
 
             },
@@ -1248,7 +1254,16 @@
                             img: 'blueBack', visible: () => true,
                         },
                     },
-
+{
+                        x: 87.6, y: 66.2, width: 4.6, height: 3.0,
+                        action: 'examine_main_forest_ticket',
+                        description: '森チケット',
+                        zIndex: 5,
+                        usable: () => !gameState.main.flags.foundTicket3,
+                        item: {
+                            img: 'ticket3', visible: () => !gameState.main.flags.foundTicket3,
+                        },
+                    },
                     {
                         x: 90.6, y: 90.6, width: 9.4, height: 9.4,
                         action: 'examine_main_forest_road_back',
@@ -2465,13 +2480,31 @@
                         const onClosed = () => playSE('se-angel');
                         window.addEventListener('modal:closed', onClosed, { once: true });
 
-                        //playSE('se-');
+                        playSE('se-eat');
                         showModal(
                             'お菓子だ！ありがとう！',
                             `<img src="${IMAGES.modals.bearOnigiri}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
                         updateMessage('新米をもらった');
+                    } else if (gameState.selectedItem == 'karaage') {
+                        removeItem('karaage');
+
+                        window._nextModal = {
+                            title: '[BAD END]辛さに負けたクマ妖精によって、村は滅びました。',
+                            content: `<img src="${IMAGES.modals.bearFire}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            buttons: [{ text: '最初から', action: 'restart' }],
+                        };
+                        const onClosed = () => playSE('se-fire');
+                        window.addEventListener('modal:closed', onClosed, { once: true });
+
+                        playSE('se-eat');
+                        showModal(
+                            'お菓子じゃないじゃん！でも美味しそう！…ん？',
+                            `<img src="${IMAGES.modals.bearKaraage}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+
                     } else if (gameState.main.flags.bearSweetsCnt == 2) {
                         talkToHintCharacter('main', 'bear2');
                     } else {
@@ -2573,6 +2606,16 @@
                             updateMessage('お菓子が出てきた');
                             removeItem('ticket2');
                             addItem('sweets2');
+                        } else if (gameState.selectedItem == 'ticket3') {
+                            playSE('se-vending');
+                            showModal(
+                                'お菓子?が出てきた',
+                                `<img src="${IMAGES.items.karaage}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                [{ text: '閉じる', action: 'close' }]
+                            );
+                            updateMessage('お菓子?が出てきた');
+                            removeItem('ticket3');
+                            addItem('karaage');
                         } else {
                             updateMessage('チケットと引き換えに品物が出てくる仕組みのようだ。チケットを持っていたら入れてみよう');
                         }
@@ -2866,6 +2909,22 @@
                     break;
                 case 'examine_ido_water':
                     updateMessage('水たまりだ');
+                    break;
+                // forestRoad
+                case 'examine_main_forest_ticket':
+                    if (gameState.main.flags.foundTicket3) {
+
+                    } else {
+                        gameState.main.flags.foundTicket3 = true;
+                        addItem('ticket3');
+                        showModal(
+                            '何か落ちていた',
+                            `<img src="${IMAGES.items.ticket3}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                            [{ text: '閉じる', action: 'close' }]
+                        );
+                        updateMessage('チケットを手に入れた');
+                    }
+
                     break;
                 // busIn
                 case 'examine_bus_front':
@@ -3309,6 +3368,7 @@
                 ticket2: '引き換えチケット',
                 sweets: '餃子チョコ',
                 sweets2: 'おにぎりチョコ',
+                karaage: 'お菓子？',
                 rice: '新米',
                 note2: '誰かのメモ'
 
