@@ -2605,11 +2605,11 @@
                         } else if (gameState.selectedItem == 'ticket3') {
                             playSE('se-vending');
                             showModal(
-                                'お菓子?が出てきた',
+                                'ホットチキンが出てきた',
                                 `<img src="${IMAGES.items.karaage}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                                 [{ text: '閉じる', action: 'close' }]
                             );
-                            updateMessage('お菓子?が出てきた');
+                            updateMessage('ホットチキンが出てきた');
                             removeItem('ticket3');
                             addItem('karaage');
                         } else {
