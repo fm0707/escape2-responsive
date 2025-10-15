@@ -2495,7 +2495,10 @@
                             content: `<img src="${IMAGES.modals.bearFire}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             buttons: [{ text: '最初から', action: 'restart' }],
                         };
-                        const onClosed = () => playSE('se-fire');
+                        const onClosed = () => {
+                            playSE('se-fire');
+                            screenFlash('red', 600);
+                        }
                         window.addEventListener('modal:closed', onClosed, { once: true });
 
                         playSE('se-eat');
