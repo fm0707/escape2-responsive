@@ -2471,6 +2471,7 @@
                             `<img src="${IMAGES.modals.bearOnigiri}" style="width:300px;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
+                        updateMessage('新米をもらった');
                     } else if (gameState.main.flags.bearSweetsCnt == 2) {
                         talkToHintCharacter('main', 'bear2');
                     } else {
