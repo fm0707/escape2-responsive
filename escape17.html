@@ -1001,6 +1001,7 @@
                 endingAnime: 'images/17/ending_anime.mp4',
                 badEnd: 'images/17/bad_end.png',
                 kumaNewRice: 'images/17/kuma_newrice.jpeg',
+                kumaNewRice2: 'images/17/kuma_newrice2.jpeg',
                 toroTicket: 'images/17/modal_toro.png',
                 endingRoad: 'images/17/modal_end_road.png',
                 bearKaraage: 'images/17/modal_bear_karaage.jpeg',
@@ -2346,6 +2347,7 @@
 
         // 炊き立て新米を妄想する小演出
         function playRiceDaydream() {
+            const modalImg = hasItem('karaage')? IMAGES.modals.kumaNewRice2:IMAGES.modals.kumaNewRice;
 
             const html = `
     <div style="position:relative;text-align:center">
@@ -2353,7 +2355,7 @@
                   background:rgba(255,245,225,.25);border-radius:16px"></div>
 
       <div style="position:relative;padding:12px 12px 4px">
-        <img src="${IMAGES.modals.kumaNewRice}"
+        <img src="${modalImg}"
              alt="くま印の新米"
              style="width:min(300px);max-height:60vh;object-fit:contain;border-radius:12px;">
       </div>
