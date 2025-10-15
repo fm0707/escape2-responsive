@@ -1246,7 +1246,7 @@
                             img: 'blueBack', visible: () => true,
                         },
                     },
-{
+                    {
                         x: 87.6, y: 66.2, width: 4.6, height: 3.0,
                         action: 'examine_main_forest_ticket',
                         description: '森チケット',
@@ -2338,7 +2338,7 @@
 
         // 炊き立て新米を妄想する小演出
         function playRiceDaydream() {
-            const modalImg = hasItem('karaage')? IMAGES.modals.kumaNewRice2:IMAGES.modals.kumaNewRice;
+            const modalImg = hasItem('karaage') ? IMAGES.modals.kumaNewRice2 : IMAGES.modals.kumaNewRice;
 
             const html = `
     <div style="position:relative;text-align:center">
@@ -2408,7 +2408,7 @@
                         `<img src="${IMAGES.modals.tobanhyo}" style="width:300px;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
-                    updateMessage('古そうな石碑だ');
+                    updateMessage('村の当番表のようだ');
                     break;
                 case 'examine_main_houses_ticket':
                     if (gameState.main.flags.foundTicket2) {
@@ -3070,6 +3070,10 @@
                     break;
                 case 'examine_true_end_rice':
                     showEndingReport('trueEndRice');
+                    break;
+                default:
+                    console.warn('Unknown action:', action);
+                    updateMessage('……特に変化はない');
                     break;
 
             }
