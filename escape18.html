@@ -1228,7 +1228,7 @@
                         setEyepiece: false, foundEyePiece: false, drawerLPuzzleSolved: false,
                         cabinetUnlocked: false, foundWatch: false, drawerRPuzzleSolved: false,
                         foundFingerPrint: false, unlockSafe: false, unlockSafeTrue: false, foundKey: false,
-                        watchDetectiveMemo: false, birdGone: false, drawerBPuzzleSolved: false, foundHoney: false,
+                        watchDetectiveMemo: false, birdGone: false, drawerBPuzzleSolved: false, foundHoney: false,giveHoneyToBear: false,
                         talkTo: { bear: 0 }, backgroundState: 0,
                     }
                 },
@@ -1631,7 +1631,13 @@
                     '',
                 clickableAreas: [
                     { x: 0, y: 0, width: 100, height: 100, action: 'examine_true_end', description: 'トゥルーエンド' },
-                    { x: 59.4, y: 55.2, width: 35.7, height: 30.3, action: 'examine_true_end_bear', description: 'トゥルーエンドのクマ', zIndex: 5 }
+                    { 
+                        x: 59.4, y: 55.2, width: 35.7, height: 30.3, 
+                        action: 'examine_true_end_bear', 
+                        description: 'トゥルーエンドのクマ', 
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.giveHoneyToBear,
+                     }
                 ]
             },
 
