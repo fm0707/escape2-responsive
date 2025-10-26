@@ -2783,8 +2783,8 @@
 
                     k.flags.solved = true;
                     playSE('se-clear'); screenFlash('white', 600);
-                    k.msg = 'ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。green ✚と読める';
-                    updateMessage('ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。green ✚と読める');
+                    k.msg = 'ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。[green ✚]と読める';
+                    updateMessage('ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。[green ✚]と読める');
                     b.querySelector('#scopeMsg').textContent = k.msg;
                     markProgress('microscope_read_18');
                 } else if (diff === 0 && !k.light) {
