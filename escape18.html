@@ -2129,7 +2129,7 @@
                     showMicroscopeUI();
                     break;
                 case 'examine_kenbikyo_object':
-                    updateMessage('青い繊維のようなものがプレパラートにセットされている');
+                    updateMessage('【青】い繊維のようなものがプレパラートにセットされている');
                     break;
                 case 'examine_kenbikyo_lamp': {
                     if (gameState.selectedItem === 'memo') {
@@ -2796,6 +2796,9 @@
                 } else if (diff === 2) {
                     k.msg = 'もう少しピントを調整しよう';
                     updateMessage('顕微鏡をのぞきこんだ');
+                } else if (k.flags.solved) {
+                    k.msg = 'ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。[green ✚]と読める';
+                    updateMessage('ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。[green ✚]と読める');
                 } else {
                     k.msg = 'ぼやけている。ダイヤルを回してみよう。';
                     updateMessage('顕微鏡をのぞきこんだ');
