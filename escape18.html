@@ -1836,9 +1836,9 @@
 
         }
 
-        const END_IDS = new Set(['end', 'trueEnd']);
+        const END_IDS = new Set(['end', 'trueEnd', 'veryBad']);
 
-        // ===== changeRoom フック：forest でUI表示 / それ以外で非表示 =====
+        // ===== changeRoom フック：=====
         const _changeRoom_custom = changeRoom;
         changeRoom = function (roomId) {
             _changeRoom_custom.apply(this, arguments);
