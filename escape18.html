@@ -1049,7 +1049,7 @@
         </div>
     </div>
 
-    <audio id="bgm" src="sounds/18/kietakaiga.mp3" loop></audio>
+    <audio id="bgm" src="sounds/18/Buddy_and_cigarettes.mp3" loop></audio>
     <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
     <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
     <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
@@ -1167,6 +1167,7 @@
                 end: ['images/18/end.jpeg'],
                 trueEndBefore: ['images/18/true_end_before.jpeg'],
                 trueEnd: ['images/18/true_end.jpeg'],
+                veryBad: ['images/18/very_bad.png'],
 
             },
             items: {
@@ -1215,6 +1216,8 @@
         const SAVE_KEY = 'escapeGameState18';
         const SAVE_VERSION = 1;
 
+        let mistakeCnt = 0;
+
         function getDefaultGameState() {
             return {
                 currentRoom: 'mainDesk',
@@ -1226,7 +1229,7 @@
                         cabinetUnlocked: false, foundWatch: false, drawerRPuzzleSolved: false,
                         foundFingerPrint: false, unlockSafe: false, unlockSafeTrue: false, foundKey: false,
                         watchDetectiveMemo: false, birdGone: false, drawerBPuzzleSolved: false, foundHoney: false, giveHoneyToBear: false,
-                        talkTo: { bear: 0 }, backgroundState: 0,
+                        talkTo: { bear: 0 }, backgroundState: 0, 
                     }
                 },
 
@@ -1637,6 +1640,17 @@
                     }
                 ]
             },
+            veryBad: {
+                name: '助手失格END',
+                description: '探偵の部屋からは脱出できました。おめでとう！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_very_bad',
+                        description: 'ベリーバッドエンド'
+                    },
+                ]
+            },
 
         };
 
@@ -1810,6 +1824,10 @@
                 renderNavigation();
             } else if (roomId === "end") {
                 changeBGM("sounds/18/mayonakano_aoiame.mp3");
+                gameState.openRooms = [];
+                renderNavigation();
+            } else if (roomId === "veryBad") {
+                changeBGM("sounds/18/kakureta_tsumori.mp3");
                 gameState.openRooms = [];
                 renderNavigation();
             } else {
@@ -2481,6 +2499,9 @@
 
                         [{ text: '閉じる', action: 'close' }]
                     );
+                    break;
+                case 'examine_very_bad':
+                    updateMessage('新しい職を探そう…');
                     break;
                 default:
                     console.warn('Unknown action:', action);
@@ -3417,11 +3438,19 @@
                 gameState.flags.trueEndUnlocked = true;
                 runTrueCinematicAndGo();
             } else {
-                try { playSE('se-gaan'); } catch (e) { }
-                showModal('BAD END:信頼の失墜<br>裏付け捜査により、無実が立証された',
-                    `<img src="${IMAGES.modals.badEnd}" style="width:300px;display:block;margin:0 auto 20px;">`,
-                    [{ text: '最初から', action: 'restart' }]
-                );
+                mistakeCnt++;
+                if (mistakeCnt > 3) {
+                    setTimeout(() => {
+                        screenFlash('red', 600);
+                        changeRoom('veryBad');
+                    }, 600);
+                } else {
+                    try { playSE('se-gaan'); } catch (e) { }
+                    showModal('BAD END:信頼の失墜<br>裏付け捜査により、無実が立証された',
+                        `<img src="${IMAGES.modals.badEnd}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                        [{ text: '最初から', action: 'restart' }]
+                    );
+                }
             }
             renderCanvasRoom();
         }
