@@ -1411,7 +1411,7 @@
             },
             kenbikyo: {
                 name: '顕微鏡台',
-                description: '青い繊維がスライドに載っている。',
+                description: '【青】い繊維がスライドに載っている。',
                 clickableAreas: [
                     {
                         x: 26, y: 6.9, width: 31.4, height: 34.2,
@@ -2200,7 +2200,7 @@
                     break;
                 case 'examine_main_door_jewel':
                     if (gameState.lightCalib.flags.solved) {
-                        updateMessage('絵が紫色に発光している');
+                        updateMessage('絵が【紫】色に発光している');
                     } else {
                         updateMessage('絵が掛かっている');
                     }
@@ -2216,7 +2216,7 @@
                     } else if (gameState.main.flags.unlockSafe && !gameState.main.flags.foundKey) {
                         addItem('key');
                         gameState.main.flags.foundKey = true;
-                        updateMessage('鍵を見つけた。ドアが開けられそうだ');
+                        updateMessage('オレンジ色の鍵を見つけた。ドアが開けられそうだ');
 
                     } else if (gameState.main.flags.unlockSafe && gameState.main.flags.foundKey) {
                         showSafePuzzle2();
@@ -2335,7 +2335,7 @@
                     addItem('key');
                     showModal(
                         `<img src="${IMAGES.items.key}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                        '鍵を手に入れた',
+                        'オレンジ色の鍵を手に入れた',
                         [{ text: '閉じる', action: 'close' }]
                     );
                     updateMessage('鍵を手に入れた。これで脱出できそうだ');
@@ -2377,12 +2377,12 @@
 
                 case 'examine_main_door_num':
                     showModal(
-                        '光で数字が浮かび上がった',
+                        '光で【藍】色の数字が浮かび上がった',
                         `<img src="${IMAGES.modals.modalNum}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
 
                         [{ text: '閉じる', action: 'close' }]
                     );
-                    updateMessage('光で数字が浮かび上がった');
+                    updateMessage('光で【藍】色の数字が浮かび上がった');
                     break;
 
                 case 'examine_main_door_cabinet': {
@@ -2412,7 +2412,7 @@
                 // cabinet
                 case 'examine_cabinet_watch':
                     addItem('watch');
-                    updateMessage('壊れた懐中時計を見つけた。時刻は10:05を指している');
+                    updateMessage('壊れた懐中時計を見つけた。秒針は【黄】色だ。時刻は10:05を指している');
                     gameState.main.flags.foundWatch = true;
                     renderCanvasRoom();
                     break;
@@ -2783,8 +2783,8 @@
 
                     k.flags.solved = true;
                     playSE('se-clear'); screenFlash('white', 600);
-                    k.msg = 'ピントが合い、繊維の隙間に隠れた文字を読み取れた。green ✚と読める';
-                    updateMessage('ピントが合い、繊維の隙間に隠れた文字を読み取れた。green ✚と読める');
+                    k.msg = 'ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。green ✚と読める';
+                    updateMessage('ピントが合い、【青】い繊維の隙間に隠れた文字を読み取れた。green ✚と読める');
                     b.querySelector('#scopeMsg').textContent = k.msg;
                     markProgress('microscope_read_18');
                 } else if (diff === 0 && !k.light) {
@@ -3633,7 +3633,7 @@
             const names = {
                 coin: 'クマコイン',
                 bear: 'クマ妖精',
-                watch: '10:05を指した懐中時計',
+                watch: '10:05を指した黄色い秒針の懐中時計',
                 eyePiece: '接眼レンズ',
                 fingerPrint: '懐中時計の指紋',
                 honey: 'ハチミツ',
