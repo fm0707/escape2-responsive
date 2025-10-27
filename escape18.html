@@ -705,7 +705,6 @@
         }
 
         .casefile-modal {
-            background: url('paper_texture.jpg') repeat;
             background-color: #f6f2e8;
             color: #2c2c2c;
             width: 80%;
@@ -969,7 +968,7 @@
                         <td>1</td>
                         <td>壊れた懐中時計</td>
                         <td>展示室の床</td>
-                        <td>針は10:05で停止</td>
+                        <td>針は壊れたタイミングで停止したようだ</td>
                     </tr>
                     <tr>
                         <td>2</td>
@@ -1180,7 +1179,6 @@
                 redBack: 'images/common/red_back.png',
                 greenBack: 'images/common/green_back.png',
                 blueBack: 'images/common/blue_back.png',
-                noteHardman: 'images/18/note_hardman.png',
                 jewel: 'images/18/jewel.png',
                 num: 'images/18/num.png',
                 scope: 'images/18/scope.png',
@@ -1641,8 +1639,8 @@
                 ]
             },
             veryBad: {
-                name: '助手失格END',
-                description: '探偵の部屋からは脱出できました。おめでとう！',
+                name: '事務所倒産END',
+                description: '探偵事務所の評価は地に落ちました。遊んでくれてありがとうございます！',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -1827,7 +1825,7 @@
                 gameState.openRooms = [];
                 renderNavigation();
             } else if (roomId === "veryBad") {
-                changeBGM("sounds/18/kakureta_tsumori.mp3");
+                changeBGM("sounds/18/kanashitoki.mp3");
                 gameState.openRooms = [];
                 renderNavigation();
             } else {
@@ -2280,7 +2278,7 @@
                         '',
                         [{ text: '閉じる', action: 'close' }]
                     );
-                    updateMessage('伝言のようだ。自分は助手なのかな？');
+                    updateMessage('伝言のようだ');
                     break;
                 case 'examine_main_desk_fingerprint': {
                     if (gameState.main.flags.foundFingerPrint) {
