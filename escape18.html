@@ -2436,53 +2436,6 @@
                     changeRoom('mainDoor');
                     break;
 
-
-                // 移動
-                case 'examine_main_road_right':
-                    changeRoom('mainHouses');
-                    break;
-                case 'examine_main_road_above':
-                    changeRoom('busStation');
-                    break;
-                case 'examine_main_houses_above':
-                    changeRoom('mainSquare');
-                    break;
-                case 'examine_main_houses_back':
-                    changeRoom('mainRoad');
-                    break;
-                case 'examine_main_square_back':
-                    changeRoom('mainHouses');
-                    break;
-                case 'examine_bus_station_back':
-                    changeRoom('mainRoad');
-                    break;
-                case 'examine_main_square_forest':
-                    changeRoom('forest');
-                    break;
-                case 'examine_main_forest_back':
-                    changeRoom('mainSquare');
-                    break;
-                case 'examine_main_forest_deep':
-                    changeRoom('shine');
-                    break;
-                case 'examine_main_forest_road_back':
-                    changeRoom('forest');
-                    break;
-                case 'examine_main_shine_back':
-                    changeRoom('forestRoad');
-                    break;
-                case 'examine_main_snack_back':
-                    changeRoom('snack');
-                    break;
-                case 'examine_ido_back':
-                    changeRoom('forest');
-                    break;
-                case 'examine_bus_back':
-                    changeRoom('busStation');
-                    break;
-                case 'examine_inter_phone_back':
-                    changeRoom('snack');
-                    break;
                 // endings
                 case 'examine_end':
                     showEndingReport('end');
@@ -3444,8 +3397,8 @@
                     }, 600);
                 } else {
                     try { playSE('se-gaan'); } catch (e) { }
-                    showModal('BAD END:信頼の失墜<br>裏付け捜査により、無実が立証された',
-                        `<img src="${IMAGES.modals.badEnd}" style="width:300px;display:block;margin:0 auto 20px;">`,
+                    showModal('BAD END:信頼の失墜<br>裏付け捜査により、その人物は無実が立証された',
+                        `<img src="${IMAGES.modals.badEnd}" style="width:400px;display:block;margin:0 auto 20px;">`,
                         [{ text: '最初から', action: 'restart' }]
                     );
                 }
