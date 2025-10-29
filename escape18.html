@@ -843,7 +843,7 @@
             <button class="close-btn">×</button>
             <div class="casefile-scroll">
 
-                <h1>事件ファイル No.0417</h1>
+                <h1>事件ファイル No.XXXX</h1>
                 <h2>《ハリントン邸のルビー盗難事件》</h2>
 
                 <p><strong>発生日時：</strong>1897年11月2日（火）夜<br>
@@ -1655,7 +1655,9 @@
         const hintMessages = {
 
             main: {
-                bear: [
+                poster: [
+                    '古いポスターだ',
+                    'モノクロだが、虹がかかっている光景だ'
 
                 ],
 
@@ -2117,7 +2119,7 @@
                         '古いポスターだ',
                         [{ text: '閉じる', action: 'close' }]
                     );
-                    updateMessage('古いポスターだ');
+                    talkToHintCharacter('main', 'poster');
                     break;
                 case 'go_kenbikyo':
                     if (gameState.main.flags.setEyepiece) {
