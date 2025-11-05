@@ -1788,7 +1788,31 @@
             const val = gameState.motivation ?? 0;
             const fill = document.getElementById('motivationFill');
             const txt = document.getElementById('motivationVal');
-            if (fill) fill.style.width = (val / MOTIVATION_MAX * 100) + '%';
+            if (fill) {
+                fill.style.width = (val / MOTIVATION_MAX * 100) + '%';
+                // デフォルト
+
+                let grad = "linear-gradient(90deg, #6ecaff, #a9e4ff)";
+                // 初期: 眠そうな空色
+
+                if (val >= 20) grad = "linear-gradient(90deg, #70d8ff, #64ffda)";
+                // ちょっとしゃきっ
+
+                if (val >= 40) grad = "linear-gradient(90deg, #42e695, #3bb2b8)";
+                // やる気でてきた緑青
+
+                if (val >= 60) grad = "linear-gradient(90deg, #f8e71c, #ffe55c)";
+                // 前向きな黄色
+
+                if (val >= 80) grad = "linear-gradient(90deg, #ffa751, #ff7c39)";
+                // ほぼ火力：オレンジ
+
+                if (val >= 100) grad = "linear-gradient(90deg, #ff4e50, #ff0000)";
+                // MAX: 燃えている、物理的に
+
+                fill.style.background = grad;
+
+            }
             if (txt) txt.textContent = String(val);
             // しきい値ごとの見た目を将来的に分けたい場合はここでclass付け替え
         }
@@ -2986,7 +3010,7 @@
                 params.set(FORM_FIELDS.elapsed_sec, String(elapsedSec));
             if (FORM_FIELDS.ending_id)
                 params.set(FORM_FIELDS.ending_id, endingId);
-            
+
             // 新規タブでフォームを開く
             window.open(`${FEEDBACK_URL}${params.toString()}`, "_blank", "noopener,noreferrer");
         }
