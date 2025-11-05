@@ -3255,16 +3255,16 @@
 
       <!-- 赤い糸を描くキャンバス（SVG） -->
       <div style="display:flex;justify-content:center;margin:8px 0 10px;">
-        <svg id="sewCanvas" width="240" height="240" viewBox="0 0 240 240" style="background: rgba(255,255,255,.06); border:2px solid #d4af37; border-radius:10px;">
-          <!-- 目安の格子(薄灰) -->
-          <g stroke="rgba(255,255,255,.15)" stroke-width="1">
-            ${[60, 120, 180].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="240"/>`).join('')}
-            ${[60, 120, 180].map(y => `<line x1="0" y1="${y}" x2="240" y2="${y}"/>`).join('')}
-          </g>
-          <!-- 糸(赤) -->
-          <path id="sewPath" d="M120 120" fill="none" stroke="#d31b1b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- 始点マーク -->
-          <circle cx="120" cy="120" r="5" fill="#ffd1d1" stroke="#d31b1b" stroke-width="2"/>
+        <svg id="sewCanvas" width="240" height="240" viewBox="0 0 240 240"
+     style="background: rgba(255,255,255,0.06); border:2px solid #d4af37; border-radius:10px;">
+        <!-- 格子は削除 or コメントアウト -->
+        <!-- <g stroke="rgba(255,255,255,.15)" stroke-width="1"> ... </g> -->
+
+        <!-- 糸(赤) 開始点を左上寄りに -->
+        <path id="sewPath" d="M90 100" fill="none" stroke="#d31b1b"
+                stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- 始点マークも同じ座標へ -->
+        <circle cx="90" cy="100" r="5" fill="#ffd1d1" stroke="#d31b1b" stroke-width="2"/>
         </svg>
       </div>
 
@@ -3297,13 +3297,18 @@
             // 入力履歴と描画
             const hist = []; // 例: ['R','D','U','L']
             const pathEl = document.getElementById('sewPath');
-            let cx = 120, cy = 120;   // 中心からスタート
-            const step = 50;          // 一針の移動量
+            const START_X = 90;
+            const START_Y = 100;
+
+            // 1ストロークを約2倍に
+            const step = 90;
+
+            let cx = START_X, cy = START_Y;
 
             function redraw() {
                 // 現在の履歴からパスを再生成
-                let d = `M${120} ${120}`;
-                let x = 120, y = 120;
+                let d = `M${START_X} ${START_Y}`;
+                let x = START_X, y = START_Y;
                 hist.forEach(dir => {
                     if (dir === 'U') y -= step;
                     if (dir === 'D') y += step;
