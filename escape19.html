@@ -1963,7 +1963,7 @@
 
             // 足音を鳴らす
             try {
-                const se = document.getElementById('se-ashioto');
+                const se = document.getElementById('se-scene-change');
                 if (se) { se.currentTime = 0; se.play(); }
             } catch (e) { }
 
@@ -2152,7 +2152,7 @@
                 gameState.openRooms = [];
                 renderNavigation();
             } else if (roomId === "exEnd") {
-                changeBGM("sounds/19/halloween.mp3");
+                changeBGM("sounds/19/necropolitan.mp3");
                 gameState.openRooms = [];
                 renderNavigation();
             } else {
