@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="勇者志望者の部屋を舞台にした分岐エンド付きの無料脱出ゲーム。全4エンドのマルチエンディング。スマホ＆PC対応。">
+    <meta name="description" content="勇者志望者の部屋を舞台にした分岐エンド付きの無料脱出ゲーム。全5エンドのマルチエンディング。スマホ＆PC対応。">
     <title>勇者志望者の部屋からの脱出</title>
     <style>
         body {
@@ -1958,6 +1958,50 @@
             }, 260);
         }
 
+        function travelWithStepsTrueEnd(destRoom = 'trueEnd') {
+            const overlay = document.getElementById('roomEffectOverlay');
+
+            // 足音を鳴らす
+            try {
+                const se = document.getElementById('se-ashioto');
+                if (se) { se.currentTime = 0; se.play(); }
+            } catch (e) { }
+
+            // 画面を黒フェードに
+            if (overlay) {
+                overlay.style.background = '#000';  // 黒スクリーン
+                overlay.style.opacity = 1;          // しっかり黒
+            }
+
+            let step = 0;
+            const stepTimer = setInterval(() => {
+                step++;
+                
+
+                if (step >= 3) {
+                    clearInterval(stepTimer);
+
+                    // 黒→ワープ光へ切替
+                    if (overlay) {
+                        overlay.classList.add('warp-active');
+                        changeRoom(destRoom);
+                        overlay.style.background = '';   // warp の白発光に戻す
+                    }
+
+                    setTimeout(() => {
+
+
+                        // 演出後に綺麗に消す
+                        if (overlay) {
+                            overlay.classList.remove('warp-active');
+                            overlay.style.opacity = 0;
+                        }
+
+                    }, 900);
+                }
+            }, 260);
+        }
+
         function travelToExEnd(destRoom = 'exEnd') {
             const canvasEl = document.getElementById('gameCanvas');
             const overlay = document.getElementById('roomEffectOverlay');
@@ -2591,6 +2635,8 @@
                         gameState.main.flags.setCandle = true;
                         renderCanvasRoom();
                         updateMessage('ろうそくを置いた');
+                    } else if (gameState.main.flags.setCandle) {
+                        updateMessage('ろうそく立てだ。')
                     } else {
                         updateMessage('ろうそく立てだ。ろうそくは無い')
                     }
@@ -2784,7 +2830,7 @@
                     addItem('sewingKit');
                     renderCanvasRoom();
                     showModal(
-                        '裁縫セットを手に入れ手に入れ、作業台に置いた。',
+                        '裁縫セットを手に入れ、作業台に置いた。',
                         `<img src="${IMAGES.items.sewingKit}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
@@ -3611,7 +3657,7 @@
                 changeRoom('boss');
             } else if (gameState.flags.trueEndUnlocked) {
                 gameState.endings.true = true;
-                changeRoom('trueEnd');
+                travelWithStepsTrueEnd();
             } else {
                 changeRoom('end');
             }
