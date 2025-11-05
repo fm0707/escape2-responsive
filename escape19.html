@@ -1180,6 +1180,7 @@
                 bearMagic: 'images/19/modal_bear_magic.png',
                 bossDeath: 'images/19/modal_boss_death.png',
                 badEnd: 'images/19/badend.jpeg',
+                badEndBear: 'images/19/badend_bear.png',
             },
         };
 
@@ -2486,6 +2487,13 @@
                         playSE('se-ita');
                         updateMessage('...');
                         gameState.main.flags.bearNeedleCnt++;
+                        if (gameState.main.flags.bearNeedleCnt > 2) {
+                            try { playSE('se-boss'); } catch (e) { }
+                            showModal('BAD END:突然ぬいぐるみは全身の毛を逆立て、襲い掛かってきた！あなたは気を失った…',
+                                `<img src="${IMAGES.modals.badEndBear}" style="width:400px;display:block;margin:0 auto 20px;">`,
+                                [{ text: '最初から', action: 'restart' }]
+                            );
+                        }
                     } else if (gameState.selectedItem == 'surikogi') {
                         playSE('se-ita');
                         gameState.main.flags.bearSurikogiCnt++;
