@@ -3340,6 +3340,7 @@
                 if (ok) {
                     closeModal();
                     gameState.main.flags.cloakRepaired = true;
+                    ANA.send('sewing_success_19', {});
                     removeItem('cloak');
                     addItem('cloakRepaired');
                     addMotivation(15);
@@ -3466,6 +3467,7 @@
                     closeModal();
                     playSE('se-change'); screenFlash('white', 220);
                     gameState.main.flags.gotMagicPowder = true;
+                    ANA.send('magicpowder_success_19', {});
                     showModal(
                         `<img src="${IMAGES.items.magicPowder}" class='sleepy-wiggle' style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                         '生命の粉を作った',
@@ -3566,6 +3568,7 @@
                     closeModal();
                     if (typeof playSE === 'function') playSE('se-change'); screenFlash('white', 220);
                     gameState.main.flags.gotChocolate = true;
+                    ANA.send('choko_success_19', {});
                     removeItem('cacao');
                     addItem('chokolate');
                     showModal(
