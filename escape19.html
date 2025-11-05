@@ -2753,11 +2753,11 @@
                     addItem('surikogi');
                     renderCanvasRoom();
                     showModal(
-                        'すりこぎを手に入れた',
+                        'すりこぎを手に入れ、作業台に置いた。',
                         `<img src="${IMAGES.items.surikogi}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
-                    updateMessage('すりこぎを手に入れた。なぜかやる気が湧いてきた。やる気+10');
+                    updateMessage('すりこぎを手に入れ、作業台に置いた。なぜかやる気が湧いてきた。やる気+10');
                     addMotivation(10);
                     break;
                 case 'examine_cabinet_memo':
@@ -2776,11 +2776,11 @@
                     addItem('sewingKit');
                     renderCanvasRoom();
                     showModal(
-                        '裁縫セットを手に入れた',
+                        '裁縫セットを手に入れ手に入れ、作業台に置いた。',
                         `<img src="${IMAGES.items.sewingKit}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
-                    updateMessage('裁縫セットを手に入れた。');
+                    updateMessage('裁縫セットを手に入れ、作業台に置いた。');
                     break;
                 case 'examine_drawerR_candle':
                     gameState.main.flags.foundCandle = true;
