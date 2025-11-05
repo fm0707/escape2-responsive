@@ -2523,23 +2523,6 @@
                     updateMessage('古いポスターだ');
                     break;
 
-
-                case 'examine_main_desk_left_drawer':
-                    if (gameState.main.flags.drawerLPuzzleSolved) {
-                        changeRoom('drawerInnerL');
-                    } else {
-                        showDrawerLeftPuzzle();
-                    }
-                    break;
-                case 'examine_main_desk_right_drawer':
-                    if (gameState.main.flags.drawerRPuzzleSolved) {
-                        changeRoom('drawerInnerR');
-                    } else {
-                        openRightDrawerClockPuzzle();
-                    }
-                    break;
-
-
                 case 'examine_desk':
                     if (gameState.main.flags.candleStatus == 1) gameState.main.flags.candleStatus++;
                     changeRoom('deskZoom');
@@ -3031,60 +3014,6 @@
             // 表示
             updateMessage(messages[idx]);
         }
-
-
-
-
-        // 引き出しパズルを表示
-        function showDrawerLeftPuzzle() {
-            const modalContent = `
-                <div class="login-container">
-                    <h3 class="login-title">ロックがかかっている</h3>
-                    <div class="login-form">
-                        
-                        <p><img src="${IMAGES.modals.drawerL}" style="width:300px;display:block;margin:0 auto 20px;"></p>
-                        <input type="text" class="puzzle-input" id="drawerLInput" placeholder="数字4桁を入力">
-
-                        <div class="login-buttons">
-                            <button class="login-btn" onclick="checkDrawerLPuzzle()">OK</button>
-                            <button class="cancel-btn" onclick="closeModal()">閉じる</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('modalContent').innerHTML = modalContent;
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        // 引き出しパズルの答えをチェック
-        function checkDrawerLPuzzle() {
-
-            const v = document.getElementById('drawerLInput').value.trim();
-            // 全角対策
-            const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
-            const val = z2h(v).toLowerCase();
-            console.log(val);
-            if (val == '8592') {
-                closeModal();
-                gameState.main.flags.drawerLPuzzleSolved = true;
-                showModal(
-                    'ロックが解除されたようだ。中を調べよう',
-                    '',
-                    [{ text: '閉じる', action: 'close' }]
-                );
-                playSE('se-gacha');
-                renderCanvasRoom();
-                updateMessage('ロックが解除されたようだ。中を調べよう');
-                ANA.send('drawer_left_success_18', {});
-
-            } else {
-                playSE('se-error');
-                updateMessage('ロックが解除できませんでした');
-                ANA.send('drawer_left_failed_18', {});
-            }
-        }
-
 
         // 金庫パズルを表示
         function showSafePuzzle() {
