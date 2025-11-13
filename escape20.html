@@ -2689,7 +2689,13 @@
                                             `<img src="${IMAGES.items.statue}" style="width:400px;max-width:100%;max-height:400px;display:block;margin:0 auto 20px;">`,
                                             [{ text: '閉じる', action: 'close' }]
                                         );
-                                        updateMessage('金ぴかの像を手に入れた。あたりは暗くなった');
+                                        let meg;
+                                        if (gameState.main.flags.setTorch) {
+                                            msg = '金ぴかの像を手に入れた。';
+                                        } else {
+                                            msg = '金ぴかの像を手に入れた。あたりは暗くなった';
+                                        }
+                                        updateMessage(msg);
                                     }
                                 },
                                 { text: "いいえ", action: "close" }
@@ -2903,6 +2909,7 @@
                         };
                         const onClosed = () => {
                             playSE('se-angel');
+                            screenFlash('white', 420);
                             gameState.tresureHouse.flags.backgroundState++;
                             gameState.entrance.flags.backgroundState = 0;
                             gameState.main.flags.curseBroken = true;
@@ -2916,6 +2923,7 @@
                             `<img src="${IMAGES.modals.battle}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
+                        screenFlash('red', 260);
                         playSE('se-noroi');
                     } else {
                         showModal(
@@ -3014,7 +3022,6 @@
                             `<img src="${IMAGES.items.gyoza}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                             [
                                 { text: 'OK', action: 'close' },
-                                // { text: '様子を見る', action: 'close' }
                             ]
                         );
                     } else {
@@ -3033,7 +3040,6 @@
                             `<img src="${IMAGES.modals.bearGyoza}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                             [
                                 { text: 'OK', action: 'close' },
-                                // { text: '様子を見る', action: 'close' }
                             ]
                         );
                         updateMessage('クマ妖精は嬉しそうだ');
