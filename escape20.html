@@ -2931,6 +2931,7 @@
                             `<img src="${IMAGES.modals.battle}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                             [{ text: '閉じる', action: 'close' }]
                         );
+                        screenFlash('red', 260);
                         playSE('se-noroi');
                         ANA.send('bad_end_20', {});
                         window._nextModal = {
