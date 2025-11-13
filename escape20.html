@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="石室を舞台にした分岐エンド付きの無料脱出ゲーム。全5エンドのマルチエンディング。スマホ＆PC対応。">
+    <meta name="description" content="石室を舞台にした分岐エンド付きの無料脱出ゲーム。全4エンドのマルチエンディング。スマホ＆PC対応。">
     <title>石室からの脱出</title>
     <style>
         body {
@@ -769,6 +769,22 @@
             100% {
                 transform: translateY(0);
             }
+        }
+
+        .modal-content {
+            max-width: min(96vw, 640px);
+            max-height: calc(100vh - 64px);
+            /* 画面に収める */
+            overflow: auto;
+            /* はみ出したらスクロール */
+            padding: 20px;
+            /* ちょい圧縮 */
+        }
+
+        /* モーダルの画像ボタンは固定80px→可変に */
+        #modalButtons button img {
+            width: clamp(56px, 18vw, 96px);
+            height: clamp(56px, 18vw, 96px);
         }
 
 
@@ -2981,7 +2997,7 @@
                     break;
                 case 'examine_true_end_next':
                     gameState.trueEnd.flags.backgroundState++;
-                    setTimeout(() => { renderCanvasRoom(); updateMessage('オアシスで一休みしていきましょう') }, 600);
+                    setTimeout(() => { renderCanvasRoom(); updateMessage('オアシスで一休みしていきましょう') }, 200);
                     break;
                 case 'examine_true_end':
                     showEndingReport('trueEnd');
@@ -3257,34 +3273,36 @@
 
             const modalContent = `
     <div id="doorPuzzleWrap" style="
-      display:flex; width:100%; height:260px; border-radius:12px; overflow:hidden;">
+      display:flex; width:100%;
+   height: clamp(160px, 38vh, 320px);     /* 画面に応じて伸縮 */
+   border-radius:12px; overflow:hidden;">
       <!-- 赤 -->
       <div class="door-area" data-idx="0" style="
         flex:1; display:flex; justify-content:center; align-items:center;
         background: linear-gradient(180deg, rgba(150,25,25,.85), rgba(90,15,15,.8)),
                     url('images/common/stone_texture.png'); background-size:cover;">
-        <img id="door-img-0" src="${IMAGES.items[itemKeys[gameState.startDoorState[0]]]}" style="width:120px;">
+        <img id="door-img-0" src="${IMAGES.items[itemKeys[gameState.startDoorState[0]]]}" style="width: clamp(72px, 22vw, 120px);">
       </div>
       <!-- 緑 -->
       <div class="door-area" data-idx="1" style="
         flex:1; display:flex; justify-content:center; align-items:center;
         background: linear-gradient(180deg, rgba(25,140,40,.85), rgba(15,70,25,.8)),
                     url('images/common/stone_texture.png'); background-size:cover;">
-        <img id="door-img-1" src="${IMAGES.items[itemKeys[gameState.startDoorState[1]]]}" style="width:120px;">
+        <img id="door-img-1" src="${IMAGES.items[itemKeys[gameState.startDoorState[1]]]}" style="width: clamp(72px, 22vw, 120px);">
       </div>
       <!-- 青 -->
       <div class="door-area" data-idx="2" style="
         flex:1; display:flex; justify-content:center; align-items:center;
         background: linear-gradient(180deg, rgba(25,45,150,.85), rgba(15,30,90,.8)),
                     url('images/common/stone_texture.png'); background-size:cover;">
-        <img id="door-img-2" src="${IMAGES.items[itemKeys[gameState.startDoorState[2]]]}" style="width:120px;">
+        <img id="door-img-2" src="${IMAGES.items[itemKeys[gameState.startDoorState[2]]]}" style="width: clamp(72px, 22vw, 120px);">
       </div>
       <!-- 白 -->
       <div class="door-area" data-idx="3" style="
         flex:1; display:flex; justify-content:center; align-items:center;
         background: linear-gradient(180deg, rgba(235,235,235,.95), rgba(210,210,210,.9)),
                     url('images/common/stone_texture.png'); background-size:cover;">
-        <img id="door-img-3" src="${IMAGES.items[itemKeys[gameState.startDoorState[3]]]}" style="width:120px;">
+        <img id="door-img-3" src="${IMAGES.items[itemKeys[gameState.startDoorState[3]]]}" style="width: clamp(72px, 22vw, 120px);">
       </div>
     </div>
 
@@ -3348,13 +3366,13 @@
             // Build grid of buttons (4 x 2)
             const btns = keys.map((k, i) => {
                 return `<button class="stone-btn" data-key="${k}" style="
-            width:calc(25% - 10px); height:110px; margin:5px;
+            width:calc(25% - 10px); height: clamp(80px, 18vh, 120px); margin:5px;
             border:2px solid #bbb; border-radius:10px;
             background:#f7f7f7 url('images/common/stone_texture.png'); background-size:cover;
             display:flex; align-items:center; justify-content:center;
             box-shadow: 0 2px 0 rgba(0,0,0,0.35), inset 0 2px 3px rgba(255,255,255,0.45);
         ">
-            <img src="${IMAGES.items[k]}" alt="${k}" style="max-width:80px; max-height:80px;">
+            <img src="${IMAGES.items[k]}" alt="${k}" style="max-width: clamp(56px, 16vw, 96px); max-height: clamp(56px, 16vw, 96px);">
         </button>`
             }).join('');
 
@@ -3456,25 +3474,40 @@
             const pressedSequence = [];
 
             const body = `
-    <div id="entranceWallWrap"
-         style="width:min(520px, 90vw);
-                border-radius:12px;
-                overflow:hidden;
-                background:#2e2b26;">
+  <div id="entranceWallWrap"
+       style="
+        width:min(540px, 96vw);
+        max-height:calc(100vh - 64px);   /* 画面内に収める */
+        display:flex;                     /* 縦レイアウト */
+        flex-direction:column;
+        border-radius:12px;
+        overflow:hidden;
+        background:#2e2b26;">
 
+    <!-- 下：ボタン＆操作エリア（縦に縮む／中はスクロール） -->
+    <div style="
+        background:#3d3b36;
+        padding: clamp(12px, 2.5vh, 18px);
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        flex:1;                           /* 余白はここで受ける */
+        overflow:auto;">
       
+      <div id="modalButtons"
+           style="
+             display:flex; flex-wrap:wrap;
+             gap:10px;
+             justify-content:center;">
+      </div>
 
-      <!-- 下：ボタンエリア -->
-      <div style="background:#3d3b36; padding:20px; text-align:center;">
-        <div id="modalButtons"
-             style="display:flex; flex-wrap:wrap; gap:12px;
-                    justify-content:center; margin-bottom:10px;">
-        </div>
-        <button id="wall-ok" class="text-btn">OK</button>
-        <button class="text-btn" onclick="closeModal()">閉じる</button>
+      <!-- 操作ボタン列は常に見えるように“sticky” -->
+      <div style="position:sticky; bottom:0; background:#3d3b36; padding-top:4px; text-align:center;">
+        <button id="wall-ok" class="text-btn" style="padding:clamp(6px,2vh,10px) 14px; font-size:clamp(14px,2.6vw,16px);">OK</button>
+        <button class="text-btn" onclick="closeModal()" style="padding:clamp(6px,2vh,10px) 14px; font-size:clamp(14px,2.6vw,16px);">閉じる</button>
       </div>
     </div>
-  `;
+  </div>`;
 
             document.getElementById('modalContent').innerHTML = body;
             document.getElementById('modal').style.display = 'flex';
@@ -3482,12 +3515,18 @@
             const btnContainer = document.getElementById('modalButtons');
             triKeys.forEach((key) => {
                 const btn = document.createElement('button');
-                btn.innerHTML = `<img src="${IMAGES.items[key]}" alt="${key}" style="
-            width:120px; height:110px; margin:5px;
-            border:2px solid #bbb; border-radius:10px;
-            background:#f7f7f7 url('images/common/stone_texture.png'); background-size:cover;
-            display:flex; align-items:center; justify-content:center;
-            box-shadow: 0 2px 0 rgba(0,0,0,0.35), inset 0 2px 3px rgba(255,255,255,0.45);">`;
+                // ここを“固定120×110px”から可変＆正方形へ
+                btn.innerHTML = `
+      <img src="${IMAGES.items[key]}" alt="${key}" style="
+        width: clamp(64px, 22vw, 104px);
+        height: clamp(64px, 22vw, 104px);
+        aspect-ratio:1/1;                 /* 正方形キープ */
+        margin:0;
+        border:2px solid #bbb; border-radius:10px;
+        background:#f7f7f7 url('images/common/stone_texture.png'); background-size:cover;
+        display:block;
+        box-shadow: 0 2px 0 rgba(0,0,0,0.35), inset 0 2px 3px rgba(255,255,255,0.45);
+      ">`;
                 btn.addEventListener('click', () => {
                     pressedSequence.push(key);
                     btn.classList.add('pressed');
@@ -3511,13 +3550,15 @@
                     showModal(
                         '仕掛けが作動した',
                         `<img src="${IMAGES.modals.entranceWallClear}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;filter: drop-shadow(0 0 6px rgba(255,64,64,.6));">`,
-                        [{ text: '閉じる', action: 'close' }]);
+                        [{ text: '閉じる', action: 'close' }]
+                    );
                 } else {
                     playSE?.('se-error');
                     pressedSequence.length = 0;
                 }
             });
         }
+
 
         function handleTorchExamined(id) {
             let f = gameState.main.flags;
