@@ -3431,8 +3431,9 @@
                     gameState.main.flags.unlockCorridorDoor = true;
                     renderCanvasRoom();
                     playSE && playSE('se-gogogo');
-                    showModal('ロックが解除された', '', [{ text: '閉じる', action: 'close' }]);
+                    showModal('ドアが開いた', '', [{ text: '閉じる', action: 'close' }]);
                     ANA.send('corridor_door_success_20', {});
+                    updateMessage('ドアが開いた');
                 } else {
                     playSE && playSE('se-error');
                     updateMessage('ちがうようだ');
@@ -3552,6 +3553,7 @@
                         `<img src="${IMAGES.modals.entranceWallClear}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;filter: drop-shadow(0 0 6px rgba(255,64,64,.6));">`,
                         [{ text: '閉じる', action: 'close' }]
                     );
+                    updateMessage('仕掛けが作動した');
                 } else {
                     playSE?.('se-error');
                     pressedSequence.length = 0;
