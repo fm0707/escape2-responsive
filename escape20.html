@@ -1097,6 +1097,26 @@
         // ゲーム状態
         const SAVE_KEY = 'escapeGameState20';
         const SAVE_VERSION = 1;
+        const SAVE_KEYS = [
+            SAVE_KEY + '_1',
+            SAVE_KEY + '_2'
+        ];
+
+        // 旧1スロットセーブがあれば、自動でスロット1に移行
+        (function migrateOldSave() {
+            try {
+                const old = localStorage.getItem(SAVE_KEY);
+                const slot1 = localStorage.getItem(SAVE_KEYS[0]);
+                if (old && !slot1) {
+                    localStorage.setItem(SAVE_KEYS[0], old);
+                    // 必要なら古いキーは消してもOK
+                    // localStorage.removeItem(SAVE_KEY);
+                    console.log('旧セーブデータをスロット1に移行しました');
+                }
+            } catch (e) {
+                console.warn('セーブデータ移行に失敗', e);
+            }
+        })();
 
         function getDefaultGameState() {
             return {
@@ -4043,21 +4063,42 @@
             });
         }
 
-        function saveGame() {
+        // save&load
+        function saveGameToSlot(slotIndex) {
             const toSave = { ...gameState, __version: SAVE_VERSION };
-            localStorage.setItem(SAVE_KEY, JSON.stringify(toSave));
-            updateMessage('セーブしました！');
+
+            const payload = {
+                data: toSave,
+                savedAt: Date.now()
+            };
+
+            localStorage.setItem(SAVE_KEYS[slotIndex], JSON.stringify(payload));
+            updateMessage(`セーブ${slotIndex + 1}に保存しました！`);
         }
 
-        function loadGame() {
-            const raw = localStorage.getItem(SAVE_KEY);
+        function loadGameFromSlot(slotIndex) {
+            const raw = localStorage.getItem(SAVE_KEYS[slotIndex]);
             if (!raw) {
-                updateMessage('セーブデータがありません');
+                updateMessage(`セーブ${slotIndex + 1}のデータがありません`);
                 return;
             }
-            const saved = JSON.parse(raw);
 
-            // デフォルトとマージして不足キーを補完
+            let saved;
+            try {
+                const parsed = JSON.parse(raw);
+                // 新形式：{ data: {...}, savedAt: ... }
+                if (parsed && parsed.data) {
+                    saved = parsed.data;
+                } else {
+                    // 旧形式：そのまま gameState が入っている
+                    saved = parsed;
+                }
+            } catch (e) {
+                console.error(e);
+                updateMessage('セーブデータの読み込みに失敗しました');
+                return;
+            }
+
             const def = getDefaultGameState();
             const merged = deepMerge(def, saved);
 
@@ -4069,9 +4110,75 @@
             changeRoom(gameState.currentRoom);
             updateInventoryDisplay?.();
             renderNavigation?.();
-            updateMessage('ロードしました！');
+            updateMessage(`セーブ${slotIndex + 1}をロードしました！`);
         }
 
+        function getSaveSlotLabel(slotIndex) {
+            const raw = localStorage.getItem(SAVE_KEYS[slotIndex]);
+            if (!raw) {
+                return `セーブ${slotIndex + 1}（空）`;
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                const savedAt = parsed.savedAt;
+                if (!savedAt) {
+                    return `セーブ${slotIndex + 1}（日時不明）`;
+                }
+                const d = new Date(savedAt);
+                const jp = d.toLocaleString('ja-JP');
+                return `セーブ${slotIndex + 1}（${jp}）`;
+            } catch {
+                return `セーブ${slotIndex + 1}（読み込みエラー）`;
+            }
+        }
+
+        function openLoadMenu() {
+            const buttons = [
+                {
+                    text: getSaveSlotLabel(0),
+                    action: () => {
+                        loadGameFromSlot(0);
+                        closeModal();
+                    }
+                },
+                {
+                    text: getSaveSlotLabel(1),
+                    action: () => {
+                        loadGameFromSlot(1);
+                        closeModal();
+                    }
+                },
+                { text: 'やめる', action: 'close' }
+            ];
+
+            showModal('ロードするデータを選んでください', '', buttons);
+        }
+
+        function saveGame() {
+            const buttons = [
+                {
+                    text: 'セーブ1に保存',
+                    action: () => {
+                        saveGameToSlot(0);
+                        closeModal();
+                    }
+                },
+                {
+                    text: 'セーブ2に保存',
+                    action: () => {
+                        saveGameToSlot(1);
+                        closeModal();
+                    }
+                },
+                { text: 'やめる', action: 'close' }
+            ];
+
+            showModal('セーブ先を選んでください', '', buttons);
+        }
+
+        function loadGame() {
+            openLoadMenu();
+        }
 
         function deepMerge(target, source) {
             if (source === undefined || source === null) return target;
