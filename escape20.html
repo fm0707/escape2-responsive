@@ -2900,6 +2900,7 @@
 
                 case 'examine_tresure_house_box_closed':
                     if (gameState.tresureHouse.flags.tresureBoxOpened) return;
+
                     if (gameState.selectedItem == 'statue') {
 
                         window._nextModal = {
@@ -2927,23 +2928,36 @@
                         playSE('se-noroi');
                     } else {
                         showModal(
-                            '仮面から不気味な光が発せられた！',
-                            `<img src="${IMAGES.modals.battle}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                            [{ text: '閉じる', action: 'close' }]
+                            '箱を調べますか？',
+                            '',
+                            [
+                                {
+                                    text: "はい",
+                                    action: () => {
+                                        showModal(
+                                            '仮面から不気味な光が発せられた！',
+                                            `<img src="${IMAGES.modals.battle}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                            [{ text: '閉じる', action: 'close' }]
+                                        );
+                                        screenFlash('red', 260);
+                                        playSE('se-noroi');
+                                        ANA.send('bad_end_20', {});
+                                        window._nextModal = {
+                                            title: 'BAD END:あなたは、ミイラになりました。',
+                                            content: `<img src="${IMAGES.modals.badEnd}" style="width:400px;display:block;margin:0 auto 20px;">`,
+                                            buttons: [{ text: '閉じる', action: 'restart' }],
+                                        };
+                                        const onClosed = () => {
+                                            playSE('se-mini-monstar');
+                                            updateMessage('BAD END:あなたは、ミイラになりました。');
+                                        };
+                                        window.addEventListener('modal:closed', onClosed, { once: true });
+                                    }
+                                },
+                                { text: "いいえ", action: "close" }
+                            ]
                         );
-                        screenFlash('red', 260);
-                        playSE('se-noroi');
-                        ANA.send('bad_end_20', {});
-                        window._nextModal = {
-                            title: 'BAD END:あなたは、ミイラになりました。',
-                            content: `<img src="${IMAGES.modals.badEnd}" style="width:400px;display:block;margin:0 auto 20px;">`,
-                            buttons: [{ text: '閉じる', action: 'restart' }],
-                        };
-                        const onClosed = () => {
-                            playSE('se-mini-monstar');
-                            updateMessage('BAD END:あなたは、ミイラになりました。');
-                        };
-                        window.addEventListener('modal:closed', onClosed, { once: true });
+
                     }
                     break;
                 case 'examine_tresure_house_box_opened':
