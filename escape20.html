@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="石室を舞台にした分岐エンド付きの無料脱出ゲーム。全4エンドのマルチエンディング。スマホ＆PC対応。">
+    <meta name="description" content="石室を舞台にした分岐エンド付きの無料脱出ゲーム。全5エンドのマルチエンディング。スマホ＆PC対応。">
     <title>石室からの脱出</title>
     <style>
         body {
@@ -993,6 +993,7 @@
                 tresureHouse: ['images/20/tresure_house.png', 'images/20/tresure_house2.png'],
 
                 end: ['images/20/end.jpeg'],
+                end2: ['images/20/end2.png'],
                 trueEnd: ['images/20/true_end.jpeg', 'images/20/true_end2.png'],
 
 
@@ -1085,7 +1086,7 @@
                 keyOpen: 'images/20/modal_key_open.png',
                 statuePlaced: 'images/20/modal_statue_placed.jpeg',
 
-                bearGyoza: 'images/20/modal_gyoza_bear.jpeg',
+                bearGyoza: 'images/20/modal_gyoza_bear.png',
 
                 badEnd: 'images/20/badend.jpeg',
                 badEndBear: 'images/20/badend_bear.png',
@@ -1849,6 +1850,17 @@
                     },
                 ]
             },
+            end2: {
+                name: 'ノーマルエンド2',
+                description: '無事に石室から脱出できました。おめでとうございます！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        action: 'examine_end2',
+                        description: 'ノーマルエンド2'
+                    },
+                ]
+            },
             trueEnd: {
                 name: 'トゥルーエンド',
                 description: '無事に脱出、空を飛んで帰りましょう。おめでとうございます',
@@ -2154,7 +2166,7 @@
             if (roomId === "trueEnd") {
                 changeBGM("sounds/20/Neon_Garden.mp3");
 
-            } else if (roomId === "end") {
+            } else if (roomId === "end" || roomId === "end2") {
                 changeBGM("sounds/20/Scirocco.mp3");
 
             } else {
@@ -2179,7 +2191,7 @@
 
         }
 
-        const END_IDS = new Set(['end', 'trueEnd', 'exEnd']);
+        const END_IDS = new Set(['end', 'trueEnd', 'end2']);
 
         // ===== changeRoom フック：=====
         const _changeRoom_custom = changeRoom;
@@ -3018,6 +3030,9 @@
                 case 'examine_end':
                     showEndingReport('end');
                     break;
+                case 'examine_end2':
+                    showEndingReport('end2');
+                    break;
                 case 'examine_true_end_next':
                     gameState.trueEnd.flags.backgroundState++;
                     setTimeout(() => { renderCanvasRoom(); updateMessage('オアシスで一休みしていきましょう') }, 200);
@@ -3082,7 +3097,6 @@
 
 
 
-        // ★ 今作用エンディングレポート（bearNeedleCnt / bearSurikogiCnt）
         function showEndingReport(endingId) {
             const ana = window.ANA || {};
             const sec = Math.max(
@@ -3096,7 +3110,7 @@
             const endingTxt = ({
                 trueEnd: "🌟 TRUE END",
                 end: "🔔 NORMAL END",
-                exEnd: "👑 EXTRA END"
+                end2: "🔔 NORMAL END2 END"
             }[endingId]) || "⭐ END";
 
 
@@ -3131,6 +3145,7 @@
             const endingLabel = ({
                 trueEnd: "トゥルーエンド",
                 end: "ノーマルエンド",
+                end2: "ノーマルエンド2",
             })[endingId] || "エンド";
 
             // クリア時間(秒)は ANA.endTimes から、無ければ開始時刻から算出
@@ -3643,22 +3658,15 @@
             }
         }
 
-        // function handleDoor() {
-        //     if (gameState.flags.trueEndUnlocked) {
-        //         gameState.endings.true = true;
-        //         travelWithStepsTrueEnd();
-        //     } else {
-        //         changeRoom('end');
-        //     }
-        // }
 
-        // 既存の handleDoor を置き換え
         function handleDoor() {
             // エンディング遷移共通ハンドラ
             const goEnding = () => {
                 if (gameState.flags.trueEndUnlocked) {
                     gameState.endings.true = true;
                     travelWithStepsTrueEnd();
+                } else if (gameState.main.flags.curseBroken && !gameState.main.flags.foundCarpet) {
+                    changeRoom('end2');
                 } else {
                     changeRoom('end');
                 }
