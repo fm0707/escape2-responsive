@@ -3855,10 +3855,15 @@
         }
 
         // モーダル表示
-        function showModal(title, content, buttons, onSequenceSuccess) {
+        function showModal(title, content, buttons, onSequenceSuccess, options) {
+            options = options || {};
             let modalHtml = `<h3>${title}</h3><p>${content}</p>`;
             if (buttons && buttons.length > 0) {
-                modalHtml += `<div id="modalButtons" style="text-align:center;"></div>`;
+                const columnStyle = options.columnButtons
+                    ? 'display:flex; flex-direction:column; gap:12px; align-items:stretch;'
+                    : 'text-align:center; display:flex; gap:10px; justify-content:center;';
+
+                modalHtml += `<div id="modalButtons" style="${columnStyle}"></div>`;
                 modalHtml += `<div id="modalClose" style="margin-top:25px;text-align:center;"></div>`;
             }
             document.getElementById('modalContent').innerHTML = modalHtml;
@@ -4133,7 +4138,7 @@
                 { text: 'やめる', action: 'close' }
             ];
 
-            showModal('ロードするデータを選んでください', '', buttons);
+            showModal('ロードするデータを選んでください', '', buttons, null, { columnButtons: true  });
         }
 
         function saveGame() {
@@ -4155,7 +4160,7 @@
                 { text: 'やめる', action: 'close' }
             ];
 
-            showModal('セーブ先を選んでください', '', buttons);
+            showModal('セーブ先を選んでください', '', buttons, null, { columnButtons: true  });
         }
 
         function loadGame() {
