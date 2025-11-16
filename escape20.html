@@ -1877,7 +1877,7 @@
             },
             end2: {
                 name: 'ノーマルエンド2',
-                description: '無事に石室から脱出できました。おめでとうございます！',
+                description: '無事に石室から脱出できました。クマ妖精も助けられました。おめでとうございます！',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -1888,7 +1888,7 @@
             },
             trueEnd: {
                 name: 'トゥルーエンド',
-                description: '無事に脱出、空を飛んで帰りましょう。おめでとうございます',
+                description: 'おめでとうございます。無事に脱出、空を飛んで帰ります。',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -1920,35 +1920,6 @@
                     },
                 ]
             },
-            boss: {
-                name: '魔王戦',
-                description: '魔王との対決だ。一人でも倒してやるぞ',
-                clickableAreas: [
-                    {
-                        x: 5.9, y: 5.6, width: 89.6, height: 42.1,
-                        action: 'examine_boss',
-                        description: 'boss',
-                        usable: () => gameState.boss.flags.backgroundState == 0,
-                    },
-                    {
-                        x: 53.5, y: 79.4, width: 11.7, height: 10.0,
-                        action: 'examine_bear',
-                        description: 'クマ妖精',
-                        usable: () => gameState.boss.flags.backgroundState == 0,
-                    },
-                ]
-            },
-            exEnd: {
-                name: 'エクストラエンド',
-                description: '無事に脱出、あなたは新たな魔王として覚醒しました。おめでとうございます',
-                clickableAreas: [
-                    {
-                        x: 0, y: 0, width: 100, height: 100,
-                        action: 'examine_ex_end',
-                        description: 'エクストラエンド'
-                    },
-                ]
-            },
 
         };
 
@@ -1964,6 +1935,7 @@
                 bear: [
                     'おはよう',
                     'えへへ',
+                    'え？ミイラ？',
                 ],
                 bearMummy: [
                     'クマのような形のミイラだ',
@@ -2212,7 +2184,7 @@
             } else if (roomId === "tresureHouse") {
                 addNaviItem('tresureHouse');
                 // renderNavigation();
-            } else if (roomId === "trueEnd" || roomId === "end") {
+            } else if (roomId === "trueEnd" || roomId === "end" || roomId === "end2") {
                 gameState.openRooms = [];
                 // renderNavigation();
             }
