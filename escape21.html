@@ -1078,7 +1078,9 @@
                 elixirModern: 'images/21/elixir_modern.png',
                 elixirPut: 'images/21/elixir_put.png',
                 bearBack: 'images/21/bear_back.png',
-                statue:'images/21/statue.png',
+                statue: 'images/21/statue.png',
+                newspaper: 'images/21/newspaper.png',
+                posterWani: 'images/21/poster_wani.png'
 
 
             },
@@ -2710,6 +2712,17 @@
                         item: { img: 'memo', visible: () => true }
                     },
                     {
+                        x: 83.8, y: 85.6, width: 14.6, height: 11.8,
+                        onClick() {
+                            showObj(null, '新聞記事だ', IMAGES.items.newspaper, 'ワニグループが拡大中という内容だ');
+
+                        },
+                        description: '新聞',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'newspaper', visible: () => true }
+                    },
+                    {
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
                         onClick() {
                             changeRoom('nowDoor');
@@ -2764,6 +2777,17 @@
                         },
                         description: 'ドア右タブレット',
 
+                    },
+                    {
+                        x: 79.6, y: 33.1, width: 13.4, height: 13.4,
+                        onClick() {
+                            showObj(null, '', IMAGES.items.posterWani, 'ワニグループのポスターだ');
+
+                        },
+                        description: 'ワニポスター',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'posterWani', visible: () => true }
                     },
                     {
                         x: 8.8, y: 48.6, width: 9.8, height: 14.5,
