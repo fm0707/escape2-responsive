@@ -1495,7 +1495,7 @@
                     {
                         x: 53.5, y: 74.0, width: 27.6, height: 15.8,
                         onClick() {
-                            updateMessage('シェイカーなどがある');
+                            updateMessage('シェイカーなどがある。よくお手入れされているようだ');
 
                         },
                         description: 'シェイカーなど手前',
@@ -1543,17 +1543,17 @@
                                 window._nextModal = {
                                     title: 'ドアの向こうから声が聞こえる',
                                     content: `
-猫A（低く抑えた声）<br><br>
+A（低く抑えた声）<br><br>
 「……ミラクル金柑の新しいロット、また入ったらしい。」<br><br>
-猫B（慎重な声）<br><br>
+B（慎重な声）<br><br>
 「密輸元はまだ割れていないんだろ？<br>
-　港の監視も強化したはずだ。」`,
+　港の監視も強化したはずだ。<br>金色の斑点があるというし目立ちそうなものだが…」`,
                                     buttons: [
                                         { text: '離れる', action: 'close' }
                                     ],
                                     before() {
                                         // 会話モーダルが開くときに一度だけ鳴る
-                                        if (typeof playSE === 'function') playSE('se-cat');
+                                        // if (typeof playSE === 'function') playSE('se-cat');
                                     },
                                     after() {
                                         // 会話モーダルを閉じたあとにログへ
