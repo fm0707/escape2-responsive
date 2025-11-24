@@ -972,7 +972,7 @@
 
         window._nextModal = null;
         const canvas = document.getElementById('gameCanvas');
-        let DEV_MODE = true;
+        let DEV_MODE = false;
         // ゲーム設定 - 画像パスをここで管理
         let IMAGES = {
             rooms: {
@@ -1009,7 +1009,6 @@
                 drawer1: ['images/21/drawer_inner.png'],
                 drawer2: ['images/21/drawer_inner.png'],
                 counter: ['images/21/counter.png'],
-                shelf: ['images/21/shelf.jpeg'],
                 cabinet: ['images/21/cabinet.png'],
                 cabinetInner: ['images/21/cabinet_inner.png'],
                 brickWall: ['images/21/brick_wall.png', 'images/21/brick_wall2.png'],
@@ -3943,7 +3942,7 @@
                 return;
             }
 
-            // 10:10 にはなっている → setDecanter フラグをチェック
+            // 10:10 にはなっている → putDecanter フラグをチェック
             if (gameState.main.flags.putDecanter) {
                 gameState.main.flags.unlockSideboardCenterTop = true;
 
