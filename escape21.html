@@ -3466,7 +3466,7 @@
 
             // 「見るフラグ」＝ 至高の一杯を完成させたかどうか
             const flags = (window.gameState && gameState.main && gameState.main.flags) || {};
-            const usableCoupon = !!flags.usableCoupon;
+            const usableCoupon = !!gameState.main.flags.usableCoupon;
 
             const secretText = usableCoupon
                 ? "👑 ワニに正しく提供：欲しがってるドリンクをあげた"
