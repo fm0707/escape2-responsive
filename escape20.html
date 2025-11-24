@@ -1292,17 +1292,7 @@
                             visible: () => gameState.main.flags.setLever && gameState.main.flags.downLever,
                         }
                     },
-                    {
-                        x: 70.3, y: 1.2, width: 7.3, height: 10.4,
-                        action: 'examine_desk_candle',
-                        description: '机のキャンドル',
-                        zIndex: 2,
-                        usable: () => gameState.main.flags.setCandle && gameState.main.flags.candleStatus == 1,
-                        item: {
-                            img: 'candleOn',
-                            visible: () => gameState.main.flags.setCandle && gameState.main.flags.candleStatus == 1
-                        }
-                    },
+                    
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
                         action: 'examine_start_left_left',
