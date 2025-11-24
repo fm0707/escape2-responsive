@@ -1030,6 +1030,7 @@
                 end: ['images/21/end.png'],
                 // end2: ['images/21/end2.png'],
                 trueEnd: ['images/21/true_end.png'],
+                trueEndPlus: ['images/21/true_end_plus.jpeg'],
 
 
 
@@ -1074,6 +1075,7 @@
                 posterBear: 'images/21/poster_bear.png',
                 handover: 'images/21/handover.png',
                 elixir: 'images/21/elixir.png',
+                elixirModern: 'images/21/elixir_modern.png',
                 elixirPut: 'images/21/elixir_put.png',
                 bearBack: 'images/21/bear_back.png',
 
@@ -1103,12 +1105,14 @@
                 crocoDrinkTrue: 'images/21/modal_croco_drink_true.png',
                 crocoDrinkFalse: 'images/21/modal_croco_drink_false.png',
                 goneCroco: 'images/21/modal_croco_gone.png',
+                goneCrocoGood: 'images/21/modal_croco_gone_good.png',
                 cabinetImg: 'images/21/modal_cabinet_color.png',
                 memo: 'images/21/modal_memo.png',
                 bearSurprized: 'images/21/modal_bear_surprize.png',
                 bearElixir: 'images/21/modal_bear_elixir.png',
                 userVoice: 'images/21/user_voice.png',
                 randing: 'images/21/tablet_img.png',
+                randingCoupon: 'images/21/tablet_coupon_img.png',
 
                 badendBear: 'images/21/modal_bear_badend.png',
                 badendBearGun: 'images/21/modal_bear_gun.png',
@@ -1161,7 +1165,7 @@
                         picComplete: false,
                         recordStatus: 0, //0:未セット,1:default,2:time
                         piyoStatus: 0,
-                        unlockNowDoor: false,
+                        unlockNowDoor: false, unlockTablet: false, usableCoupon: false,
 
                         serveToVipRoomDrink: false, serveToVipRoomFood: false, gotSandwich: false, gotMoonHoney: false,
                         foundCitrus: false, foundSyrup: false, foundMemo: false, foundStick: false,
@@ -1732,14 +1736,15 @@
                         onClick() {
                             if (gameState.selectedItem == 'glassFill') {
                                 window._nextModal = {
-                                    title: 'ふむ。満足だ。そろそろ帰るとしよう',
-                                    content: `<img src="${IMAGES.modals.goneCroco}" style="width:400px;display:block;margin:0 auto 20px;">`,
+                                    title: 'ほう、満足だ。（これはぜひとも…）そろそろ帰るとしよう',
+                                    content: `<img src="${IMAGES.modals.goneCrocoGood}" style="width:400px;display:block;margin:0 auto 20px;">`,
                                     buttons: [{ text: 'OK', action: 'close' }],
                                 };
                                 // 質問モーダルを閉じて、次のモーダルを発火
                                 const onClosed = () => {
                                     // playSE('se-negative');
                                     gameState.main.flags.goneCroco = true;
+                                    gameState.main.flags.usableCoupon = true;
                                     renderCanvasRoom();
                                     quickBlackFade();
                                     updateMessage('ワニ紳士は帰っていった');
@@ -1756,7 +1761,7 @@
 
                             } else if (gameState.selectedItem == 'glassFillFalse') {
                                 window._nextModal = {
-                                    title: 'ふむ。そろそろ帰るとしよう',
+                                    title: 'ふむ。（この程度ならわが社のほうが…）<br>そろそろ帰るとしよう',
                                     content: `<img src="${IMAGES.modals.goneCroco}" style="width:400px;display:block;margin:0 auto 20px;">`,
                                     buttons: [{ text: 'OK', action: 'close' }],
                                 };
@@ -1770,7 +1775,7 @@
                                 };
                                 window.addEventListener('modal:closed', onClosed, { once: true });
                                 showModal(
-                                    'おお、これがムーンハニーNo.7かね？…うーん…',
+                                    'おお、これがムーンハニーNo.7かね？…うーん？…',
                                     `<img src="${IMAGES.modals.crocoDrinkFalse}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                                     [{ text: '閉じる', action: 'close' }]
                                 );
@@ -2793,7 +2798,14 @@
                     {
                         x: 75.3, y: 75.0, width: 17.4, height: 14.7,
                         onClick() {
-                            showObj(null, '', IMAGES.modals.randing, '注文端末のようだ');
+                            if (gameState.main.flags.usableCoupon && !gameState.main.flags.unlockTablet) {
+                                showTabletPuzzle();
+                            } else if (gameState.main.flags.usableCoupon && gameState.main.flags.unlockTablet) {
+                                showObj(null, '', IMAGES.modals.randing, 'もうクーポンコードは使えないようだ');
+                            } else {
+                                showObj(null, '', IMAGES.modals.randing, '注文端末のようだ');
+                            }
+
                         },
                         description: 'カウンタータブレット',
                         zIndex: 5,
@@ -2832,6 +2844,21 @@
                         },
                         description: 'トゥルーエンド',
                         usable: () => gameState.trueEnd.flags.backgroundState == 0,
+
+                    },
+
+                ]
+            },
+            trueEndPlus: {
+                name: 'トゥルーエンド+',
+                description: 'おめでとうございます。無事に脱出、現代のエリクサーもGET！【称号：世界線の醸造者】',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        onClick() {
+                            showEndingReport('trueEndPlust');
+                        },
+                        description: 'トゥルーエンド+',
 
                     },
 
@@ -2963,8 +2990,9 @@
             }, 160);
         }
 
-        function travelWithStepsTrueEnd(destRoom = 'trueEnd') {
+        function travelWithStepsTrueEnd() {
             const overlay = document.getElementById('roomEffectOverlay');
+            let destRoom = hasItem('elixirModern')? 'trueEndPlus': 'trueEnd';
 
             // 足音を鳴らす
             try {
@@ -3119,7 +3147,7 @@
             }
 
             // BGM切替はそのまま
-            if (roomId === "trueEnd") {
+            if (roomId === "trueEnd" || roomId === "trueEndPlus") {
                 changeBGM("sounds/21/White_Philosophy.mp3");
 
             } else if (roomId === "end") {
@@ -3422,10 +3450,10 @@
                     label: "NORMAL END",
                     desc: "不思議な時代のバーから無事脱出できました"
                 },
-                end2: {
-                    title: "🔔 NORMAL END 2",
-                    label: "NORMAL END 2",
-                    desc: "別ルートのエンディング。まだ見ていない真実があるかもしれない。"
+                trueEndPlus: {
+                    title: "🌟 TRUE END+",
+                    label: "TRUE END+",
+                    desc: "現代のエリクサーも手にした強者"
                 }
             };
 
@@ -3474,7 +3502,7 @@
             const endingLabel = ({
                 trueEnd: "トゥルーエンド",
                 end: "ノーマルエンド",
-                end2: "ノーマルエンド2",
+                trueEndPlus: "トゥルーエンド+",
             })[endingId] || "エンド";
 
             // クリア時間(秒)は ANA.endTimes から、無ければ開始時刻から算出
@@ -4012,6 +4040,54 @@
                     '',
                     [{ text: '閉じる', action: 'close' }]
                 );
+                playSE('se-clear');
+                renderCanvasRoom();
+
+            } else {
+                playSE('se-error');
+                updateMessage('ちがうようだ');
+            }
+        }
+
+        // タブレットパズルを表示
+        function showTabletPuzzle() {
+
+            // 既に解除済みならその旨だけ
+            if (gameState.main.flags.unlockTablet) {
+                changeRoom('cabinetInner');
+                return;
+            }
+            const modalContent = `
+                <h3>クーポンコードが入力できそうだ</h3>
+                <img src="${IMAGES.modals.randingCoupon}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">
+                <input type="text" class="puzzle-input" id="tabletInput" placeholder="英字">
+                <br>
+                <button onclick="checkTabletPuzzle()">OK</button>
+                <button onclick="closeModal()">閉じる</button>
+            `;
+
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // タブレットパズルの答えをチェック
+        function checkTabletPuzzle() {
+            const v = document.getElementById('tabletInput').value.trim();
+            // 全角対策
+            const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+            const val = z2h(v).toLowerCase();
+            if (val === 'scale-1') {
+                closeModal();
+                gameState.main.flags.unlockTablet = true;
+
+                markProgress('tablet_unlock_21');
+
+                showModal(
+                    'モダンエリクサーを手に入れた',
+                    `<img src="${IMAGES.items.elixirModen}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                    [{ text: '閉じる', action: 'close' }]
+                );
+                addItem('elixirModern')
                 playSE('se-clear');
                 renderCanvasRoom();
 
@@ -4624,6 +4700,7 @@
                 finalSyrup: '最後のシロップ',
                 citrus: 'ミラクル金柑',
                 elixir: 'ゴールデンムーンエリクサー',
+                elixirModen: '現代のゴールデンムーンエリクサー',
                 pic1: 'なにかのパーツ1/3',
                 pic2: 'なにかのパーツ2/3',
                 pic3: 'なにかのパーツ3/3',
