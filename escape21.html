@@ -3466,9 +3466,9 @@
 
             // 「見るフラグ」＝ 至高の一杯を完成させたかどうか
             const flags = (window.gameState && gameState.main && gameState.main.flags) || {};
-            const foundGlassFill = !!flags.foundGlassFill;
+            const usableCoupon = !!flags.usableCoupon;
 
-            const secretText = foundGlassFill
+            const secretText = usableCoupon
                 ? "👑 ワニに正しく提供：欲しがってるドリンクをあげた"
                 : "❓ ワニに違うドリンクを提供：満足してくれたかな？";
 
@@ -4701,7 +4701,7 @@
                 finalSyrup: '最後のシロップ',
                 citrus: 'ミラクル金柑',
                 elixir: 'ゴールデンムーンエリクサー',
-                elixirModen: '現代のゴールデンムーンエリクサー',
+                elixirModern: '現代のゴールデンムーンエリクサー',
                 pic1: 'なにかのパーツ1/3',
                 pic2: 'なにかのパーツ2/3',
                 pic3: 'なにかのパーツ3/3',
