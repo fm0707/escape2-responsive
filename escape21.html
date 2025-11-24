@@ -818,7 +818,7 @@
         <div class="title-wrapper">
             <!-- <div class="title">バーからの脱出</div> -->
             <div style="margin:0 0; text-align:center;">
-                <a href="escape20_hint.html" target="_blank"
+                <a href="escape21_hint.html" target="_blank"
                     style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
                     🔍 ヒントを見る
                 </a>
@@ -3603,7 +3603,7 @@
 
             if (!ok) {
                 if (msg) {
-                    msg.textContent = '…まだロックは外れないようだ。';
+                    msg.textContent = '…違うようだ。';
                 }
                 if (typeof playSE === 'function') {
                     playSE('se-error');
@@ -3798,7 +3798,7 @@
 
             if (!ok) {
                 if (msg) {
-                    msg.textContent = '…まだロックは外れないようだ。';
+                    msg.textContent = '…違うようだ。';
                 }
                 if (typeof playSE === 'function') {
                     playSE('se-error');
@@ -3934,8 +3934,8 @@
             if (!is1010) {
                 closeModal();
                 showModal(
-                    'まだ開かない',
-                    '…まだロックは外れないようだ。',
+                    '開かない',
+                    '…違うようだ。',
                     [{ text: '閉じる', action: 'close' }]
                 );
                 if (typeof playSE === 'function') playSE('se-error');
@@ -4161,7 +4161,7 @@
 
             if (!ok) {
                 if (msg) {
-                    msg.textContent = '…まだロックは外れないようだ。';
+                    msg.textContent = '…違うようだ。';
                 }
                 if (typeof playSE === 'function') {
                     playSE('se-error');
@@ -4280,7 +4280,7 @@
             const msg = document.getElementById('secretDoorMsg');
 
             if (secretDoorInput.length < correct.length) {
-                if (msg) msg.textContent = '…まだ何か足りない気がする。';
+                if (msg) msg.textContent = '…違うようだ。';
                 if (typeof playSE === 'function') playSE('se-error');
                 return;
             }
@@ -4290,7 +4290,7 @@
             const ok = correct.every((v, i) => recent[i] === v);
 
             if (!ok) {
-                if (msg) msg.textContent = '…まだロックは外れないようだ。';
+                if (msg) msg.textContent = '…違うようだ。';
                 if (typeof playSE === 'function') playSE('se-error');
                 return;
             }
