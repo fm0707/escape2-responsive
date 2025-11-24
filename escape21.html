@@ -1078,6 +1078,7 @@
                 elixirModern: 'images/21/elixir_modern.png',
                 elixirPut: 'images/21/elixir_put.png',
                 bearBack: 'images/21/bear_back.png',
+                statue:'images/21/statue.png',
 
 
             },
@@ -1772,7 +1773,7 @@
                                     renderCanvasRoom();
                                     quickBlackFade();
                                     updateMessage('ワニ紳士は帰っていった');
-                                    
+
                                 };
                                 window.addEventListener('modal:closed', onClosed, { once: true });
                                 showModal(
@@ -2812,6 +2813,17 @@
                         zIndex: 5,
                     },
                     {
+                        x: 16.5, y: 60.8, width: 20.0, height: 21.5,
+                        onClick() {
+                            updateMessage('初代発明者の像らしい');
+
+                        },
+                        description: '像',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'statue', visible: () => true }
+                    },
+                    {
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
                         onClick() {
                             changeRoom('trueNowDoor');
@@ -2993,7 +3005,7 @@
 
         function travelWithStepsTrueEnd() {
             const overlay = document.getElementById('roomEffectOverlay');
-            let destRoom = hasItem('elixirModern')? 'trueEndPlus': 'trueEnd';
+            let destRoom = hasItem('elixirModern') ? 'trueEndPlus' : 'trueEnd';
 
             // 足音を鳴らす
             try {
