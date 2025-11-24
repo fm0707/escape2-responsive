@@ -1768,10 +1768,11 @@
                                 // 質問モーダルを閉じて、次のモーダルを発火
                                 const onClosed = () => {
                                     // playSE('se-negative');
+                                    gameState.main.flags.goneCroco = true;
                                     renderCanvasRoom();
                                     quickBlackFade();
                                     updateMessage('ワニ紳士は帰っていった');
-                                    gameState.main.flags.goneCroco = true;
+                                    
                                 };
                                 window.addEventListener('modal:closed', onClosed, { once: true });
                                 showModal(
@@ -4084,7 +4085,7 @@
 
                 showModal(
                     'モダンエリクサーを手に入れた',
-                    `<img src="${IMAGES.items.elixirModen}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                    `<img src="${IMAGES.items.elixirModern}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                     [{ text: '閉じる', action: 'close' }]
                 );
                 addItem('elixirModern')
