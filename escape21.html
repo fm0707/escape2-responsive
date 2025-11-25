@@ -2607,25 +2607,7 @@ B（慎重な声）<br><br>
                         description: '天井照明右',
 
                     },
-                    {
-                        x: 17.6, y: 16.9, width: 9.5, height: 9.9,
-                        onClick() {
-                            updateMessage('照明はつかないようだ');
-                        },
-                        description: '天井照明左',
-                        zIndex: 5,
-                        usable: () => true,
-                        item: { img: 'IMAGE_KEY', visible: () => true }
-                    },
-                    {
-                        x: 77.1, y: 39.1, width: 6.5, height: 5.7,
-                        onClick() {
-                            updateMessage('照明はつかないようだ');
-
-                        },
-                        description: '壁照明右',
-
-                    },
+                    
                     {
                         x: 17.4, y: 39.1, width: 6.6, height: 5.6,
                         onClick() {
@@ -2839,7 +2821,7 @@ B（慎重な声）<br><br>
                     {
                         x: 16.5, y: 60.8, width: 20.0, height: 21.5,
                         onClick() {
-                            updateMessage('初代発明者の像らしい');
+                            showObj(null, '初代発明者の像', IMAGES.items.statue, '初代発明者の像らしい');
 
                         },
                         description: '像',
@@ -2877,10 +2859,21 @@ B（慎重な声）<br><br>
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick() {
+                            updateMessage('おめでとうございます。無事に脱出できました。【称号：歴史の改変者】');
                             showEndingReport('trueEnd');
                         },
                         description: 'トゥルーエンド',
                         usable: () => gameState.trueEnd.flags.backgroundState == 0,
+
+                    },
+                    {
+                        x: 18.6, y: 46.8, width: 17.9, height: 35.2,
+                        onClick() {
+                            updateMessage('飲んだら元気が出るかな？');
+                        },
+                        description: 'ゴールデンムーンエリクサー',
+                        zIndex: 5,
+
 
                     },
 
@@ -3190,22 +3183,13 @@ B（慎重な声）<br><br>
             }
 
             // nav
-            if (roomId === "corridorEntrance") {
-                addNaviItem('corridorEntrance');
-                // renderNavigation();
-            } else if (roomId === "entrance") {
-                addNaviItem('entrance');
-                // renderNavigation();
-            } else if (roomId === "tresureHouse") {
-                addNaviItem('tresureHouse');
-                // renderNavigation();
-            } else if (roomId === "trueEnd" || roomId === "end" || roomId === "end2") {
+            if (roomId === "trueEnd" || roomId === "end" || roomId === "trueEndPlus"|| roomId === "trueNowDoor") {
                 gameState.openRooms = [];
                 // renderNavigation();
             }
 
             renderNavigation();
-            if (roomId !== 'record' && recordSpinTimer) {
+            if (roomId !== 'record' && roomId !== 'recordTime' && recordSpinTimer) {
                 clearInterval(recordSpinTimer);
                 recordSpinTimer = null;
                 if (gameState.record && gameState.record.flags) {
@@ -3960,7 +3944,7 @@ B（慎重な声）<br><br>
     `;
 
             showModal(
-                '時計のロック',
+                '引き出し上のロック',
                 content,
                 [
                     { text: 'OK', action: checkSideboardCenterTopInput },
@@ -4114,6 +4098,7 @@ B（慎重な声）<br><br>
                     [{ text: '閉じる', action: 'close' }]
                 );
                 addItem('elixirModern')
+                updateMessage('現代のゴールデンムーンエリクサーを手に入れた');
                 playSE('se-clear');
                 renderCanvasRoom();
 
