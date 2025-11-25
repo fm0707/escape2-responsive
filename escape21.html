@@ -1115,6 +1115,7 @@
                 bearElixir: 'images/21/modal_bear_elixir.png',
                 userVoice: 'images/21/user_voice.png',
                 randing: 'images/21/tablet_img.png',
+                sustanable: 'images/21/modal_citrus_wani.jpeg',
                 randingCoupon: 'images/21/tablet_coupon_img.png',
 
                 badendBear: 'images/21/modal_bear_badend.png',
@@ -2607,7 +2608,7 @@ B（慎重な声）<br><br>
                         description: '天井照明右',
 
                     },
-                    
+
                     {
                         x: 17.4, y: 39.1, width: 6.6, height: 5.6,
                         onClick() {
@@ -2754,7 +2755,11 @@ B（慎重な声）<br><br>
                     {
                         x: 82.1, y: 51.8, width: 11.7, height: 7.4,
                         onClick() {
-                            showObj(null, '', IMAGES.modals.userVoice, 'ユーザーの声が表示されている');
+                            if (gameState.main.flags.usableCoupon) {
+                                showObj(null, '', IMAGES.modals.userVoice, 'ユーザーの声が表示されている');
+                            } else {
+                                showObj(null, '', IMAGES.modals.sustanable, 'これはミラクル金柑…？');
+                            }
 
                         },
                         description: 'ドア右タブレット',
@@ -2865,7 +2870,7 @@ B（慎重な声）<br><br>
                         description: 'トゥルーエンド',
                         usable: () => gameState.trueEnd.flags.backgroundState == 0,
                     },
-                
+
                 ]
             },
             trueEndPlus: {
@@ -3179,7 +3184,7 @@ B（慎重な声）<br><br>
             }
 
             // nav
-            if (roomId === "trueEnd" || roomId === "end" || roomId === "trueEndPlus"|| roomId === "trueNowDoor") {
+            if (roomId === "trueEnd" || roomId === "end" || roomId === "trueEndPlus" || roomId === "trueNowDoor") {
                 gameState.openRooms = [];
                 // renderNavigation();
             }
