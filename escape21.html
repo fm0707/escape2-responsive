@@ -2864,19 +2864,8 @@ B（慎重な声）<br><br>
                         },
                         description: 'トゥルーエンド',
                         usable: () => gameState.trueEnd.flags.backgroundState == 0,
-
                     },
-                    {
-                        x: 18.6, y: 46.8, width: 17.9, height: 35.2,
-                        onClick() {
-                            updateMessage('飲んだら元気が出るかな？');
-                        },
-                        description: 'ゴールデンムーンエリクサー',
-                        zIndex: 5,
-
-
-                    },
-
+                
                 ]
             },
             trueEndPlus: {
@@ -2889,7 +2878,14 @@ B（慎重な声）<br><br>
                             showEndingReport('trueEndPlus');
                         },
                         description: 'トゥルーエンド+',
-
+                    },
+                    {
+                        x: 18.6, y: 46.8, width: 17.9, height: 35.2,
+                        onClick() {
+                            updateMessage('飲んだら元気が出るかな？');
+                        },
+                        description: 'ゴールデンムーンエリクサー',
+                        zIndex: 5,
                     },
 
                 ]
