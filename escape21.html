@@ -4132,7 +4132,7 @@ B（慎重な声）<br><br>
             // 全角対策
             const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
             const val = z2h(v).toLowerCase();
-            if (val === 'redwine' || val === 'wine' || val === 'wine(red)') {
+            if (val === 'redwine'  || val === 'wine(red)') {
                 closeModal();
                 gameState.main.flags.piyoStatus++;
 
