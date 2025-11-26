@@ -2395,6 +2395,7 @@ B（慎重な声）<br><br>
                                                 };
                                                 window.addEventListener('modal:closed', onClosed, { once: true });
                                                 closeModal();
+                                                markProgress('badend_bear_drink_21');
 
 
                                             }
@@ -2453,6 +2454,7 @@ B（慎重な声）<br><br>
                                     [{ text: '最初から', action: 'restart' }]
                                 );
                                 playSE('se-gun');
+                                markProgress('badend_bear_gun_21');
                             } else {
                                 updateMessage('すごく怪しい機械だ');
                             }
@@ -3850,7 +3852,7 @@ B（慎重な声）<br><br>
             gameState.main.flags.unlockDrawer2 = true;
 
             if (typeof markProgress === 'function') {
-                markProgress('drawer1_unlock_21');
+                markProgress('drawer2_unlock_21');
             }
 
             if (typeof playSE === 'function') {
