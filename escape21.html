@@ -882,6 +882,7 @@
     <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
     <audio id="se-gaan" src="sounds/common/gaan.mp3"></audio>
     <audio id="se-gao" src="sounds/common/gao.mp3"></audio>
+    <audio id="se-gachan" src="sounds/common/Onoma-Impact07-3(Reverb).mp3"></audio>
 
     <audio id="se-god" src="sounds/common/Scene_Change01-1(Up).mp3"></audio>
     <audio id="se-grab" src="sounds/common/Motion-Grab07-1(Dry).mp3"></audio>
@@ -1118,8 +1119,11 @@
                 sustanable: 'images/21/modal_citrus_wani.jpeg',
                 randingCoupon: 'images/21/tablet_coupon_img.png',
 
+                bearIra1: 'images/21/modal_bear_ira1.png',
+                bearIra2: 'images/21/modal_bear_ira2.png',
                 badendBear: 'images/21/modal_bear_badend.png',
                 badendBearGun: 'images/21/modal_bear_gun.png',
+                badendIraira: 'images/21/modal_badend_bear_iraira.png',
                 // badEnd: 'images/21/badend.jpeg',
             },
         };
@@ -1174,6 +1178,7 @@
                         serveToVipRoomDrink: false, serveToVipRoomFood: false, gotSandwich: false, gotMoonHoney: false,
                         foundCitrus: false, foundSyrup: false, foundMemo: false, foundStick: false,
                         passMaterialToBear: false, gotElixir: false, putElixir: false,
+                        bearElixirState: 0,
 
                         talkTo: { bear: 0 }, backgroundState: 0,
                     }
@@ -2424,9 +2429,124 @@ B（慎重な声）<br><br>
                         x: 34.4, y: 61.0, width: 19.5, height: 19.7,
                         onClick() {
 
-                            acquireItemOnce('gotElixir', 'elixir', 'できたよ！すごそう！', IMAGES.modals.bearElixir, 'クマ妖精の傑作を手に入れた');
-                            playSE('se-fanta');
-                            renderCanvasRoom();
+                            // acquireItemOnce('gotElixir', 'elixir', 'できたよ！すごそう！', IMAGES.modals.bearElixir, 'クマ妖精の傑作を手に入れた');
+                            // playSE('se-fanta');
+                            // renderCanvasRoom();
+                            const flags = gameState.main.flags;
+
+                            // 念のための保険：材料渡してない／もうエリクサー持ってる場合
+                            if (!flags.passMaterialToBear) {
+                                updateMessage('まだ材料を渡していない。クマ妖精は何かを待っているようだ');
+                                return;
+                            }
+                            if (flags.gotElixir) {
+                                updateMessage('クマ妖精の傑作はもう手に入れている');
+                                return;
+                            }
+
+                            // 初回は 0 扱い
+                            if (flags.bearElixirState == null) {
+                                flags.bearElixirState = 0;
+                            }
+
+                            // 実際にエリクサーを渡す処理を関数化
+                            const giveElixir = () => {
+                                acquireItemOnce(
+                                    'gotElixir',
+                                    'elixir',
+                                    'できたよ！すごそう！',
+                                    IMAGES.modals.bearElixir,
+                                    'クマ妖精の傑作を手に入れた'
+                                );
+                                playSE('se-fanta');
+                                renderCanvasRoom();
+                                flags.bearElixirState = 99; // 一応終了状態にしておく
+                            };
+
+                            switch (flags.bearElixirState) {
+                                // ★ 1回目クリック：質問「少し待ってて！」
+                                case 0:
+                                    showModal(
+                                        '少し待ってて！',
+                                        `<img src="${IMAGES.modals.bearIra1}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                        [
+                                            {
+                                                text: 'はい',
+                                                action: function () {
+                                                    flags.bearElixirState = 1; // → 次のクリックでエリクサー
+                                                    updateMessage('クマ妖精は仕上げに集中している');
+                                                    closeModal();
+                                                }
+                                            },
+                                            {
+                                                text: 'いいえ',
+                                                action: function () {
+                                                    flags.bearElixirState = 2; // → 次のクリックで2回目の質問
+                                                    updateMessage('クマ妖精は少しむっとしている');
+                                                    closeModal();
+                                                }
+                                            }
+                                        ],
+                                        null,
+                                        { columnButtons: true }
+                                    );
+                                    break;
+
+                                // ★ パターン1：1回目「はい」→ 2回目クリックでエリクサー獲得
+                                case 1:
+                                    giveElixir();
+                                    break;
+
+                                // ★ 1回目「いいえ」の後：2回目クリックで再質問「待っててよ！」
+                                case 2:
+                                    showModal(
+                                        '待っててよ！',
+                                        `<img src="${IMAGES.modals.bearIra2}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                        [
+                                            {
+                                                text: 'はい',
+                                                action: function () {
+                                                    flags.bearElixirState = 3; // → 次のクリックでエリクサー
+                                                    updateMessage('クマ妖精はぶつぶつ言いながら仕上げに戻った');
+                                                    closeModal();
+                                                }
+                                            },
+                                            {
+                                                text: 'いいえ',
+                                                action: function () {
+                                                    flags.bearElixirState = 4; // → 次のクリックでBAD END
+                                                    updateMessage('クマ妖精はイライラしている');
+                                                    closeModal();
+                                                }
+                                            }
+                                        ],
+                                        null,
+                                        { columnButtons: true }
+                                    );
+                                    break;
+
+                                // ★ パターン2：1回目「いいえ」→2回目「はい」→3回目クリックでエリクサー獲得
+                                case 3:
+                                    giveElixir();
+                                    break;
+
+                                // ★ パターン3：1回目「いいえ」→2回目「いいえ」→3回目クリックで怒りのBAD END
+                                case 4:
+                                    screenFlash('red');
+                                    showModal(
+                                        '「もう！完成したけどあげないから！えいっ」<br>…あなたが最後に見たのは振り上げられた輝く瓶だった…<br>【BAD END】',
+                                        `<img src="${IMAGES.modals.badendIraira}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                        [{ text: '最初から', action: 'restart' }]
+                                    );
+                                    playSE('se-gachan');
+                                    markProgress('badend_bear_refuse_21');
+                                    break;
+
+                                // よくわからない状態に入っても、とりあえず渡しておく保険
+                                default:
+                                    giveElixir();
+                                    break;
+                            }
 
 
                         },
@@ -4741,7 +4861,7 @@ B（慎重な声）<br><br>
                                 '元の部屋へ移動しますか？',
                                 `<p>レコードを使わず直接移動します。</p>`,
                                 [
-                                    { text: '移動する', action: () => {changeRoom('door'); closeModal();} },
+                                    { text: '移動する', action: () => { changeRoom('door'); closeModal(); } },
                                     { text: 'とどまる', action: 'close' }
                                 ]
                             );
