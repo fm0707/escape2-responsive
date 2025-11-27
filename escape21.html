@@ -4732,7 +4732,29 @@ B（慎重な声）<br><br>
                 const btn = document.createElement('button');
                 btn.className = 'nav-btn';
                 btn.textContent = rooms[roomId].name;
-                btn.onclick = () => changeRoom(roomId);
+                // ★ バーだけ特別挙動にする
+                if (roomId === 'door') {
+                    btn.onclick = () => {
+                        if (gameState.currentRoom === 'nowDoor' || gameState.currentRoom === 'nowCounter') {
+                            // 現代 → 過去へ行く前に確認
+                            showModal(
+                                '元の部屋へ移動しますか？',
+                                `<p>レコードを使わず直接移動します。</p>`,
+                                [
+                                    { text: '移動する', action: () => {changeRoom('door'); closeModal();} },
+                                    { text: 'とどまる', action: 'close' }
+                                ]
+                            );
+                        } else {
+                            // 過去 or 他の部屋 → 現代へ直行
+                            changeRoom(roomId);
+                        }
+                    };
+                } else {
+                    // その他の部屋は従来通り
+                    btn.onclick = () => changeRoom(roomId);
+                }
+                // btn.onclick = () => changeRoom(roomId);
                 navDiv.appendChild(btn);
             });
         }
