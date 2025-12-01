@@ -1671,6 +1671,9 @@
                                 playSE('se-hasami');
                                 renderCanvasRoom();
                                 updateMessage('はさみで紐を切った');
+
+                                gameState.selectedItem = null;
+                                gameState.selectedItemSlot = null;
                             } else {
                                 updateMessage('ひもで縛られた本だ');
                             }
@@ -1806,6 +1809,8 @@
                                         addItem('map');
                                         gameState.main.flags.gotBearMap = true;
                                         updateMessage('クマサンタから雑な地図をもらった。');
+                                        gameState.selectedItem = null;
+                                        gameState.selectedItemSlot = null;
                                     }
                                 };
 
