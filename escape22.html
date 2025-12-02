@@ -1237,7 +1237,7 @@
                 clickableAreas: [
                     {
                         x: 34.3, y: 30.4, width: 30.8, height: 58.0,
-                        onClick() {
+                        onClick: clickWrap(function () {
                             if (gameState.main.flags.unlockDoor) {
                                 handleDoor();
                             } else {
@@ -1245,7 +1245,7 @@
                             }
 
 
-                        },
+                        }),
                         description: 'ドア',
                         zIndex: 1,
                         usable: () => true,
@@ -1253,27 +1253,27 @@
                     },
                     {
                         x: 37.9, y: 32.9, width: 23.4, height: 22.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showObj(null, 'クリスマスリースだ', IMAGES.modals.wreath, 'クリスマスリースだ');
 
-                        },
+                        }),
                         description: 'リース',
                         zIndex: 5,
                     },
                     {
                         x: 65.0, y: 43.8, width: 8.4, height: 12.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showDoorPuzzle();
-                        },
+                        }),
                         description: 'ドア操作パネル',
                         zIndex: 5,
                     },
                     {
                         x: 74.6, y: 31.7, width: 12.7, height: 12.9,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showObj(null, '', IMAGES.items.memo, '何かのメモだ');
 
-                        },
+                        }),
                         description: 'ドア横メモ',
                         zIndex: 5,
                         usable: () => true,
@@ -1281,9 +1281,9 @@
                     },
                     {
                         x: 68.1, y: 45.6, width: 2.3, height: 1.8,
-                        onClick() {
+                        onClick: clickWrap(function() {
 
-                        },
+                        }),
                         description: 'ドア操作パネルインジケーター',
                         zIndex: 5,
                         usable: () => false,
@@ -1291,9 +1291,9 @@
                     },
                     {
                         x: 68.1, y: 45.6, width: 2.3, height: 1.8,
-                        onClick() {
+                        onClick: clickWrap(function() {
 
-                        },
+                        }),
                         description: 'ドア操作パネルインジケーター',
                         zIndex: 5,
                         usable: () => false,
@@ -1301,9 +1301,9 @@
                     },
                     {
                         x: 71.8, y: 72.8, width: 23.5, height: 24.0,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showDoorBoxColorPuzzle();
-                        },
+                        }),
                         description: '木箱閉じ',
                         zIndex: 1,
                         usable: () => !gameState.main.flags.unlockBox,
@@ -1311,9 +1311,9 @@
                     },
                     {
                         x: 70.8, y: 69.8, width: 25.5, height: 26.0,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('開いた木箱だ');
-                        },
+                        }),
                         description: '木箱開き',
                         zIndex: 1,
                         usable: () => gameState.main.flags.unlockBox,
@@ -1321,9 +1321,9 @@
                     },
                     {
                         x: 80.8, y: 78.5, width: 5.5, height: 6.0,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             acquireItemOnce('foundBlockFire', 'blockFire', '炎のブロックを見つけた', IMAGES.items.blockFire, '炎のブロックを見つけた');
-                        },
+                        }),
                         description: '箱の中の炎パーツ',
                         zIndex: 5,
                         usable: () => gameState.main.flags.unlockBox && !gameState.main.flags.foundBlockFire,
@@ -1331,9 +1331,9 @@
                     },
                     {
                         x: 0, y: 32.9, width: 42.6, height: 62.8,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('クリスマスツリーだ');
-                        },
+                        }),
                         description: 'ツリー',
                         zIndex: 3,
                         usable: () => !gameState.main.flags.bearAppear,
@@ -1341,9 +1341,9 @@
                     },
                     {
                         x: 0, y: 32.9, width: 42.6, height: 62.8,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('キラキラのクリスマスツリーだ');
-                        },
+                        }),
                         description: 'ツリー',
                         zIndex: 3,
                         usable: () => gameState.main.flags.bearAppear,
@@ -1351,10 +1351,10 @@
                     },
                     {
                         x: 16.4, y: 63.8, width: 7.4, height: 7.0,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             acquireItemOnce('foundCoin', 'coin', 'クマコインを見つけた', IMAGES.items.coin, 'クマコインを手に入れた');
 
-                        },
+                        }),
                         description: 'クマコイン',
                         zIndex: 5,
                         usable: () => gameState.main.flags.coinAppear && !gameState.main.flags.foundCoin,
@@ -1362,17 +1362,17 @@
                     },
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('bed');
-                        },
+                        }),
                         description: 'ドア面：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
                     {
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('window');
-                        },
+                        }),
                         description: 'ドア面：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -1384,10 +1384,10 @@
                 clickableAreas: [
                     {
                         x: 26.1, y: 10.8, width: 50.5, height: 15.6,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('クリスマスの飾りだ')
 
-                        },
+                        }),
                         description: '電飾',
                         zIndex: 5,
                         usable: () => gameState.main.flags.bearAppear,
@@ -1395,10 +1395,10 @@
                     },
                     {
                         x: 6.5, y: 16.3, width: 15.7, height: 14.1,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showObj(null, '', IMAGES.items.calendar, 'カレンダーだ');
 
-                        },
+                        }),
                         description: 'カレンダー',
                         zIndex: 5,
                         usable: () => true,
@@ -1406,7 +1406,7 @@
                     },
                     {
                         x: 38.8, y: 46.8, width: 25.7, height: 15.5,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             // 頭ブロックを選択している場合だけ「頭セット」イベント
                             if (gameState.selectedItem === 'blockHead') {
 
@@ -1418,7 +1418,6 @@
 
                                 // 頭ブロックを消費＆選択解除
                                 removeItem('blockHead');
-                                gameState.selectedItem = null;
 
                                 // メッセージ＆モーダル表示
                                 updateMessage('ブロックボディに頭をセットした。');
@@ -1436,7 +1435,7 @@
                                 updateMessage('ブロックのようなボディだ。決して〇〇GOではない');
                             }
 
-                        },
+                        }),
                         description: 'ブロックボディ',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 0,
@@ -1444,10 +1443,10 @@
                     },
                     {
                         x: 47.8, y: 53.7, width: 6.5, height: 4.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             acquireItemOnce('foundKey', 'key', '鍵を見つけた', IMAGES.items.key, '鍵を手に入れた');
 
-                        },
+                        }),
                         description: '鍵',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus > 0 && !gameState.main.flags.foundKey,
@@ -1455,7 +1454,7 @@
                     },
                     {
                         x: 74.3, y: 61.1, width: 22.6, height: 33.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             // 帽子を持っていて、ステータスが 1 のときだけ「渡しますか？」
                             if (gameState.selectedItem === 'hat' && gameState.main.flags.blockManStatus === 1) {
                                 showModal(
@@ -1469,7 +1468,6 @@
                                                 if (typeof removeItem === 'function') {
                                                     removeItem('hat');
                                                 }
-                                                gameState.selectedItem = null;
 
                                                 // ステータス進行
                                                 gameState.main.flags.blockManStatus++;
@@ -1554,7 +1552,7 @@
                                 talkToHintCharacter('main', 'blockMan');
                             }
 
-                        },
+                        }),
                         description: 'ブロックマン',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 1,
@@ -1562,7 +1560,7 @@
                     },
                     {
                         x: 64.6, y: 57.5, width: 27.6, height: 40.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.selectedItem == 'scissors') {
                                 removeItem('scissors');
                                 showObj(null, '良いもの持ってるなあ。もらっておくよ', IMAGES.modals.blockManScissors, 'はさみを奪われた');
@@ -1575,7 +1573,7 @@
                                 talkToHintCharacter('main', 'blockMan2');
                             }
 
-                        },
+                        }),
                         description: 'ブロックマン帽子ON',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 2,
@@ -1583,14 +1581,14 @@
                     },
                     {
                         x: 64.6, y: 57.5, width: 34.6, height: 40.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.main.flags.unlockDoor) {
                                 talkToHintCharacter('main', 'blockMan4');
                             } else {
                                 talkToHintCharacter('main', 'blockMan3');
                             }
 
-                        },
+                        }),
                         description: 'ブロックマン帽子ON',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 3,
@@ -1598,7 +1596,7 @@
                     },
                     {
                         x: 78.9, y: 36.8, width: 15.6, height: 17.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.main.flags.foundMaze) {
                                 updateMessage('ジンジャーマンのぬいぐるみだ。');
                             } else {
@@ -1606,7 +1604,7 @@
                             }
 
 
-                        },
+                        }),
                         description: 'ジンジャーマン',
                         zIndex: 5,
                         usable: () => true,
@@ -1617,17 +1615,17 @@
 
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('fireplace');
-                        },
+                        }),
                         description: 'ベッド：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
                     {
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('door');
-                        },
+                        }),
                         description: 'ベッド：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -1639,7 +1637,7 @@
                 clickableAreas: [
                     {
                         x: 43.5, y: 62.8, width: 15.1, height: 13.5,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             // 炎ブロックを選択しているときだけ確認モーダル
                             if (gameState.selectedItem === 'blockFire') {
                                 showModal(
@@ -1654,7 +1652,6 @@
                                                 gameState.main.flags.setBlockFire = true;
 
                                                 removeItem('blockFire');
-                                                gameState.selectedItem = null;
 
                                                 updateMessage('炎ブロックを暖炉にはめた。');
                                                 playSE('se-fire');
@@ -1669,22 +1666,35 @@
                                     ]
                                 );
                             } else if (gameState.main.flags.setBlockFire) {
-                                updateMessage('炎ブロックが発光している。暖かい。');
+                                if (gameState.selectedItem == 'maze') {
+                                    updateMessage('実際の炎ではないので、燃やすことはできなさそうだ');
+                                } else if (gameState.selectedItem == 'map') {
+                                    updateMessage('燃やすことはできなさそうだ。せっかくクマサンタが書いてくれたんだし…');
+                                } else if (gameState.selectedItem == 'hat') {
+                                    updateMessage('燃やすことはできなさそうだ。帽子を少し温めてみた…何か嫌なにおいがする…');
+                                } else if (gameState.selectedItem == 'blockHead') {
+                                    updateMessage('そんなことはやめよう');
+                                } else if (gameState.selectedItem == 'key') {
+                                    updateMessage('鍵を温めても仕方ない');
+                                } else {
+                                    updateMessage('炎ブロックが発光している。暖かい。');
+                                }
+
                             } else {
                                 // 何も持っていないとき
                                 updateMessage('火は消えている');
                             }
 
-                        },
+                        }),
                         description: '暖炉',
 
                     },
                     {
                         x: 51.1, y: 56.6, width: 11.0, height: 7.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showObj(null, '文字が見える…', IMAGES.modals.memory, '文字が見える…');
 
-                        },
+                        }),
                         description: '暖炉文字',
                         zIndex: 5,
                         usable: () => gameState.main.flags.setBlockFire,
@@ -1692,10 +1702,10 @@
 
                     {
                         x: 72.9, y: 75.6, width: 24.3, height: 24.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('木製の椅子だ');
 
-                        },
+                        }),
                         description: 'スツール',
                         zIndex: 1,
                         usable: () => true,
@@ -1703,20 +1713,18 @@
                     },
                     {
                         x: 79.2, y: 71.7, width: 16.4, height: 12.6,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.selectedItem == 'scissors') {
                                 gameState.main.flags.cutDiaryString = true;
                                 playSE('se-hasami');
                                 renderCanvasRoom();
                                 updateMessage('はさみで紐を切った');
 
-                                gameState.selectedItem = null;
-                                gameState.selectedItemSlot = null;
                             } else {
                                 updateMessage('ひもで縛られた本だ');
                             }
 
-                        },
+                        }),
                         description: '日記',
                         zIndex: 5,
                         usable: () => !gameState.main.flags.cutDiaryString,
@@ -1724,7 +1732,7 @@
                     },
                     {
                         x: 79.2, y: 71.7, width: 16.4, height: 12.6,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             const caseModal = document.querySelector('.modal-overlay');
                             if (caseModal) {
                                 caseModal.style.display = 'flex';
@@ -1738,7 +1746,7 @@
                                 console.warn('誰かの日記だモーダルが見つかりません');
                             }
 
-                        },
+                        }),
                         description: '日記',
                         zIndex: 5,
                         usable: () => gameState.main.flags.cutDiaryString,
@@ -1746,7 +1754,7 @@
                     },
                     {
                         x: 43.8, y: 13.7, width: 13.9, height: 19.3,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             // 靴下ブロックを持っている＆まだ設置していないとき
                             if (gameState.selectedItem === 'blockStocking' && !gameState.main.flags.setBlockStocking) {
 
@@ -1755,14 +1763,13 @@
 
                                 // アイテム消費＆選択解除
                                 removeItem('blockStocking');
-                                gameState.selectedItem = null;
                                 playSE('se-switch');
 
                                 // 見た目更新
                                 updateMessage('靴下ブロックを暖炉の上に設置した。');
                                 renderCanvasRoom();
 
-                                // 次に出すモーダル（サンタクマ登場）を予約
+                                // 次に出すモーダル（クマサンタ登場）を予約
                                 window._nextModal = {
                                     title: 'なんだろう？',
                                     content: `<img src="${IMAGES.modals.bearAppear}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
@@ -1772,7 +1779,7 @@
                                     before() {
                                         // クマ登場フラグON
                                         gameState.main.flags.bearAppear = true;
-                                        updateMessage('もくもくした煙からサンタクマが現れた。部屋の雰囲気が少し変わったようだ');
+                                        updateMessage('もくもくした煙からクマサンタが現れた。部屋の雰囲気が少し変わったようだ');
                                         renderCanvasRoom();
                                     },
                                     after() {
@@ -1784,12 +1791,23 @@
                                 showModal(
                                     '靴下ブロックを設置した',
                                     `<img src="${IMAGES.modals.stockingSet}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                                    [{ text: '閉じる', action: 'close' }]
+                                    [{ text: '閉じる', action: 'close' }],
+                                    () => {
+                                        window._nextModal = {
+                                            title: '部屋の雰囲気がかわったようだ',
+                                            content: ``,
+                                            buttons: [
+                                                { text: '閉じる', action: 'close' }
+                                            ],
+
+                                        };
+                                    },
+
                                 );
 
                             } else if (gameState.main.flags.bearAppear) {
                                 // 既にクマが出ている状態
-                                updateMessage('サンタクマがこちらを見ている。');
+                                updateMessage('クマサンタがこちらを見ている。');
                             } else if (gameState.main.flags.setBlockStocking) {
                                 updateMessage('靴下ブロックを飾った。何か起きそうだ…。');
                             } else {
@@ -1797,17 +1815,17 @@
                                 updateMessage('飾りを置けそうなスペースだ。');
                             }
 
-                        },
+                        }),
                         description: '暖炉上の空きスペース',
                         zIndex: 1,
                         usable: () => !gameState.main.flags.setBlockStocking,
                     },
                     {
                         x: 37.2, y: 12.4, width: 21.0, height: 27.3,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('さっき飾った靴下だ');
 
-                        },
+                        }),
                         description: '靴下',
                         zIndex: 5,
                         usable: () => gameState.main.flags.setBlockStocking,
@@ -1815,7 +1833,7 @@
                     },
                     // {
                     //     x: 46.3, y: 18.5, width: 8.4, height: 7.9,
-                    //     onClick() {
+                    //     onClick: clickWrap(function() {
 
                     //     },
                     //     description: '靴下文字',
@@ -1825,7 +1843,7 @@
                     // },
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             // ★ クマコイン → ケーキプレゼント
                             if (gameState.selectedItem === 'coin' && !gameState.main.flags.gotCake) {
                                 // コイン消費
@@ -1877,8 +1895,7 @@
                                         addItem('map');
                                         gameState.main.flags.gotBearMap = true;
                                         updateMessage('クマサンタから雑な地図をもらった。');
-                                        gameState.selectedItem = null;
-                                        gameState.selectedItemSlot = null;
+
                                     }
                                 };
 
@@ -1893,16 +1910,13 @@
                                 );
 
                             } else if (gameState.selectedItem == 'scissors') {
-                                gameState.selectedItem = null;
-                                gameState.selectedItemSlot = null;
+
                                 updateMessage('こっちに向けないでー');
                             } else if (gameState.selectedItem == 'cake') {
-                                gameState.selectedItem = null;
-                                gameState.selectedItemSlot = null;
+
                                 updateMessage('クマ部分も食べられるよ！');
                             } else if (gameState.selectedItem == 'map') {
-                                gameState.selectedItem = null;
-                                gameState.selectedItemSlot = null;
+
                                 updateMessage('なかなかの出来栄えでしょ？早く行こう');
                             } else if (gameState.main.flags.gotBearMap) {
                                 talkToHintCharacter('main', 'bear2');
@@ -1910,7 +1924,7 @@
                                 talkToHintCharacter('main', 'bear');
                             }
 
-                        },
+                        }),
                         description: 'クマ妖精',
                         zIndex: 5,
                         usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2),
@@ -1918,14 +1932,10 @@
                     },
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.selectedItem == 'cake') {
-                                gameState.selectedItem = null;
-                                gameState.selectedItemSlot = null;
                                 updateMessage('クマサンタはおびえていて、言葉が出ないようだ');
                             } else if (gameState.selectedItem === 'coin' && !gameState.main.flags.gotCake) {
-                                gameState.selectedItem = null;
-                                gameState.selectedItemSlot = null;
                                 updateMessage('クマサンタはおびえていて、それどころではないようだ');
                             } else {
                                 updateMessage('クマサンタはおびえている');
@@ -1933,7 +1943,7 @@
 
 
 
-                        },
+                        }),
                         description: 'クマ妖精',
                         zIndex: 5,
                         usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus == 2 || gameState.main.flags.blockManStatus == 3),
@@ -1941,12 +1951,12 @@
                     },
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.main.flags.blockManStatus == 4) {
                                 talkToHintCharacter('main', 'bear3');
                             }
 
-                        },
+                        }),
                         description: 'クマ妖精心配',
                         zIndex: 5,
                         usable: () => gameState.main.flags.bearAppear && gameState.main.flags.blockManStatus == 4,
@@ -1954,17 +1964,18 @@
                     },
                     {
                         x: 2.4, y: 77.1, width: 29.0, height: 19.0,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.selectedItem == 'key') {
                                 gameState.main.flags.unlockBoxWood = true;
                                 renderCanvasRoom();
                                 removeItem('key');
                                 updateMessage('鍵でロックを解除した');
+                                playSE('se-gacha');
                             } else {
                                 updateMessage('鍵がかかっている');
                             }
 
-                        },
+                        }),
                         description: '鍵付き箱閉',
                         zIndex: 5,
                         usable: () => !gameState.main.flags.unlockBoxWood,
@@ -1972,10 +1983,10 @@
                     },
                     {
                         x: 2.4, y: 73.1, width: 29.0, height: 23.2,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('boxInner');
 
-                        },
+                        }),
                         description: '鍵付き箱開',
                         zIndex: 5,
                         usable: () => gameState.main.flags.unlockBoxWood,
@@ -1983,12 +1994,12 @@
                     },
                     {
                         x: 26.2, y: 48.1, width: 6.7, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             buttonSeq.push('L');
                             checkButtonSeq();
                             updateMessage('ボタンを押した');
 
-                        },
+                        }),
                         description: 'ボタン左',
                         zIndex: 5,
                         usable: () => true,
@@ -1996,13 +2007,13 @@
                     },
                     {
                         x: 67.8, y: 48.2, width: 6.4, height: 6.6,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             buttonSeq.push('R');
                             checkButtonSeq();
                             updateMessage('ボタンを押した');
 
 
-                        },
+                        }),
                         description: 'ボタン右',
                         zIndex: 5,
                         usable: () => true,
@@ -2010,17 +2021,17 @@
                     },
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('window');
-                        },
+                        }),
                         description: '暖炉：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
                     {
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('bed');
-                        },
+                        }),
                         description: '暖炉：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -2032,18 +2043,18 @@
                 clickableAreas: [
                     {
                         x: 42.2, y: 39.6, width: 29.1, height: 29.9,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('outside');
 
-                        },
+                        }),
                         description: '窓',
 
                     },
                     {
                         x: 40.3, y: 70.6, width: 30.2, height: 28.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showBoxBigPuzzle();
-                        },
+                        }),
                         description: '大きい箱閉',
                         zIndex: 5,
                         usable: () => !gameState.main.flags.unlockBoxBig,
@@ -2051,7 +2062,7 @@
                     },
                     {
                         x: 40.3, y: 64.6, width: 30.2, height: 34.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.main.flags.unlockBoxBig && gameState.main.flags.foundMiddleBox) {
                                 updateMessage('中はからっぽだ')
 
@@ -2062,7 +2073,7 @@
                             }
 
 
-                        },
+                        }),
                         description: '大きい箱開',
                         zIndex: 5,
                         usable: () => gameState.main.flags.unlockBoxBig,
@@ -2070,10 +2081,10 @@
                     },
                     {
                         x: 43.3, y: 80.6, width: 23.2, height: 5.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
 
 
-                        },
+                        }),
                         description: '大きい箱開の中の赤い箱パーツ',
                         zIndex: 6,
                         usable: () => false,
@@ -2081,9 +2092,9 @@
                     },
                     {
                         x: 74.3, y: 78.6, width: 20.6, height: 19.5,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showMiddleBoxPuzzle();
-                        },
+                        }),
                         description: '中くらいの箱閉',
                         zIndex: 5,
                         usable: () => gameState.main.flags.foundMiddleBox && !gameState.main.flags.unlockBoxMiddle,
@@ -2091,7 +2102,7 @@
                     },
                     {
                         x: 74.3, y: 73.6, width: 20.6, height: 24.5,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.main.flags.unlockBoxMiddle && gameState.main.flags.foundSmallBox) {
                                 updateMessage('中はからっぽだ')
 
@@ -2100,7 +2111,7 @@
                                 acquireItemOnce('foundBlockHead', 'blockHead', '中くらいの赤い箱から小さい箱と頭ブロックが出てきた', IMAGES.modals.boxMiddleOpen, '頭ブロックを手に入れた');
 
                             }
-                        },
+                        }),
                         description: '中くらいの箱開',
                         zIndex: 5,
                         usable: () => gameState.main.flags.unlockBoxMiddle,
@@ -2108,9 +2119,9 @@
                     },
                     {
                         x: 82.3, y: 83.6, width: 10.2, height: 5.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
 
-                        },
+                        }),
                         description: '中くらいの箱開の中の紫箱パーツ',
                         zIndex: 6,
                         usable: () => false,
@@ -2118,10 +2129,10 @@
                     },
                     {
                         x: 21.7, y: 87.2, width: 10.1, height: 7.9,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showSmallBoxPuzzle();
 
-                        },
+                        }),
                         description: '小さい箱閉',
                         zIndex: 5,
                         usable: () => gameState.main.flags.foundSmallBox && !gameState.main.flags.unlockBoxSmall,
@@ -2129,7 +2140,7 @@
                     },
                     {
                         x: 21.7, y: 87.2, width: 10.1, height: 7.9,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.main.flags.unlockBoxSmall && gameState.main.flags.foundHat) {
                                 updateMessage('中はからっぽだ')
 
@@ -2138,7 +2149,7 @@
                                 acquireItemOnce('foundHat', 'hat', '小さい箱から帽子を見つけた', IMAGES.items.hat, '帽子を手に入れた');
 
                             }
-                        },
+                        }),
                         description: '小さい箱開',
                         zIndex: 5,
                         usable: () => gameState.main.flags.foundSmallBox && gameState.main.flags.unlockBoxSmall,
@@ -2146,9 +2157,9 @@
                     },
                     {
                         x: 23.7, y: 94.2, width: 10.1, height: 3.9,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showObj(null, '', IMAGES.modals.boxSmallLid, '小さい箱のふただ');
-                        },
+                        }),
                         description: '小さい箱ふた',
                         zIndex: 5,
                         usable: () => gameState.main.flags.foundSmallBox && gameState.main.flags.unlockBoxSmall,
@@ -2158,10 +2169,10 @@
 
                     {
                         x: 28.1, y: 16.7, width: 56.4, height: 13.8,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('クリスマスの飾りだ')
 
-                        },
+                        }),
                         description: '電飾',
                         zIndex: 5,
                         usable: () => gameState.main.flags.bearAppear,
@@ -2170,17 +2181,17 @@
 
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('door');
-                        },
+                        }),
                         description: '窓：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
                     {
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('fireplace');
-                        },
+                        }),
                         description: '窓：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -2192,15 +2203,36 @@
                 description: '',
                 clickableAreas: [
                     {
+                        x: 10.5, y: 8.2, width: 40.2, height: 63.4,
+                        onClick: clickWrap(function() {
+                            updateMessage('マフラーやボールペンなどが雑多に入っている');
+                        }),
+                        description: 'マフラーなど',
+                        zIndex: 2,
+                        usable: () => true,
+
+                    },
+                    {
+                        x: 54.5, y: 20.3, width: 36.9, height: 55.4,
+                        onClick: clickWrap(function() {
+                            updateMessage('クリスマスの飾り用の靴下だ');
+
+                        }),
+                        description: 'クリスマス靴下',
+                        zIndex: 2,
+                        usable: () => true,
+
+                    },
+                    {
                         x: 41.8, y: 30.2, width: 15.4, height: 23.3,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.main.flags.foundScissors) {
                                 updateMessage('めぼしいものはない');
 
                             } else {
                                 acquireItemOnce('foundScissors', 'scissors', 'はさみを見つけた', IMAGES.items.scissors, 'はさみを手に入れた');
                             }
-                        },
+                        }),
                         description: 'はさみ',
                         zIndex: 5,
                         usable: () => !gameState.main.flags.foundScissors,
@@ -2208,9 +2240,9 @@
                     },
                     {
                         x: 90, y: 90, width: 10, height: 10,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('fireplace');
-                        },
+                        }),
                         description: '箱の中戻る',
                         zIndex: 5,
                         item: { img: 'back', visible: () => true }
@@ -2226,9 +2258,9 @@
 
                     {
                         x: 90, y: 90, width: 10, height: 10,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             changeRoom('window');
-                        },
+                        }),
                         description: '外の景色戻る',
                         zIndex: 5,
                         item: { img: 'back', visible: () => true }
@@ -2241,13 +2273,11 @@
                 clickableAreas: [
                     {
                         x: 34.9, y: 45.0, width: 33.5, height: 16.2,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             if (gameState.selectedItem === 'hat') {
 
                                 // 帽子を祭壇に置く：消費＋選択解除
                                 removeItem('hat');
-                                gameState.selectedItem = null;
-                                updateInventoryDisplay();
                                 updateMessage('怪しい帽子を祭壇にそっと置いた…');
 
                                 // トゥルーエンド解放フラグ
@@ -2288,7 +2318,7 @@
                                 updateMessage('祭壇のような場所だ');
                             }
 
-                        },
+                        }),
                         description: '祭壇',
                         zIndex: 5,
                         usable: () => true,
@@ -2296,10 +2326,10 @@
                     },
                     {
                         x: 8.6, y: 61.2, width: 17.8, height: 17.3,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('そこに帽子をポイっとしちゃおう');
 
-                        },
+                        }),
                         description: 'クマサンタ',
                         zIndex: 5,
                         usable: () => true,
@@ -2308,7 +2338,7 @@
 
                     // {
                     //     x: 90, y: 90, width: 10, height: 10,
-                    //     onClick() {
+                    //     onClick: clickWrap(function() {
                     //         changeRoom('door');
                     //     },
                     //     description: '謎の場所戻る',
@@ -2324,9 +2354,9 @@
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showEndingReport('end');
-                        },
+                        }),
                         description: 'ノーマルエンド'
                     },
                 ]
@@ -2338,9 +2368,9 @@
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             showEndingReport('endWorse');
-                        },
+                        }),
                         description: 'ノーマルエンド-'
                     },
                 ]
@@ -2351,10 +2381,10 @@
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
-                        onClick() {
+                        onClick: clickWrap(function() {
                             updateMessage('おめでとうございます。無事に脱出できました。悪の根源も処分できました');
                             showEndingReport('trueEnd');
-                        },
+                        }),
                         description: 'トゥルーエンド',
                         usable: () => true,
                     },
@@ -2865,6 +2895,15 @@
             updateMessage(msg);
         }
 
+        function clickWrap(fn) {
+            return function (...args) {
+                fn.apply(this, args);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+        }
+
         // アクション名 → 実行関数
         const ACTION_HANDLERS = {
             // --- 移動系 ---
@@ -3157,8 +3196,8 @@
         // 大きい箱パズルを表示
         function showBoxBigPuzzle() {
             const modalContent = `
-                <h3>青い箱のロック部分だ</h3>
-                <input type="text" class="puzzle-input" id="boxBigInput" placeholder="英字">
+                <h3>📅青い箱のロック部分だ</h3>
+                <input type="text" class="puzzle-input" id="boxBigInput" placeholder="数字">
                 <br>
                 <button onclick="checkBoxBigPuzzle()">OK</button>
                 <button onclick="closeModal()">閉じる</button>
@@ -3174,7 +3213,7 @@
             // 全角対策
             const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
             const val = z2h(v).toLowerCase();
-            if (val === 'memory') {
+            if (val === '1231') {
                 closeModal();
                 gameState.main.flags.unlockBoxBig = true;
 
