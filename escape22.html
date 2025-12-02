@@ -1892,8 +1892,16 @@
                                 );
 
                             } else if (gameState.selectedItem == 'scissors') {
+                                gameState.selectedItem = null;
+                                gameState.selectedItemSlot = null;
                                 updateMessage('こっちに向けないでー');
+                            } else if (gameState.selectedItem == 'cake') {
+                                gameState.selectedItem = null;
+                                gameState.selectedItemSlot = null;
+                                updateMessage('クマ部分も食べられるよ！');
                             } else if (gameState.selectedItem == 'map') {
+                                gameState.selectedItem = null;
+                                gameState.selectedItemSlot = null;
                                 updateMessage('なかなかの出来栄えでしょ？早く行こう');
                             } else if (gameState.main.flags.gotBearMap) {
                                 talkToHintCharacter('main', 'bear2');
@@ -1910,7 +1918,18 @@
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
                         onClick() {
-                            updateMessage('クマサンタはおびえている');
+                            if (gameState.selectedItem == 'cake') {
+                                gameState.selectedItem = null;
+                                gameState.selectedItemSlot = null;
+                                updateMessage('クマサンタはおびえていて、言葉が出ないようだ');
+                            } else if (gameState.selectedItem === 'coin' && !gameState.main.flags.gotCake) {
+                                gameState.selectedItem = null;
+                                gameState.selectedItemSlot = null;
+                                updateMessage('クマサンタはおびえていて、それどころではないようだ');
+                            } else {
+                                updateMessage('クマサンタはおびえている');
+                            }
+
 
 
                         },
@@ -3877,13 +3896,24 @@
         }
 
         function useItem(slotIndex) {
-            if (gameState.inventory[slotIndex]) {
-                const item = gameState.inventory[slotIndex];
-                updateMessage(`${getItemName(item)}を選択しました。使用したい場所をクリックしてください。`);
-                gameState.selectedItem = item;
-                gameState.selectedItemSlot = slotIndex;
+            const clickedItem = gameState.inventory[slotIndex];
+
+            if (!clickedItem) return;
+
+            // ★すでに選択中のスロットを再クリック → 解除
+            if (gameState.selectedItemSlot === slotIndex) {
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateMessage('アイテム選択を解除しました。');
                 updateInventoryDisplay();
+                return;
             }
+
+            // ★通常の選択
+            gameState.selectedItem = clickedItem;
+            gameState.selectedItemSlot = slotIndex;
+            updateMessage(`${getItemName(clickedItem)}を選択しました。使用したい場所をクリックしてください。`);
+            updateInventoryDisplay();
         }
 
         function getItemName(itemId) {
