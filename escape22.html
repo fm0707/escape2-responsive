@@ -1122,6 +1122,8 @@
                 memo: 'images/22/memo.png',
                 button: 'images/22/button.png',
                 cake: 'images/22/cake.png',
+                calendar: 'images/22/calendar.png',
+                maze: 'images/22/maze.png',
 
 
 
@@ -1145,6 +1147,9 @@
                 bearCoin: 'images/22/modal_bear_coin.jpeg',
                 bearBox: 'images/22/modal_bear_box.png',
                 blockManGone: 'images/22/modal_blockman_gone.png',
+                dollPaper: 'images/22/modal_doll_paper.png',
+                mazeReverse: 'images/22/modal_maze_reverse.png',
+                compass: 'images/22/modal_compass.jpeg',
                 mvEnding: 'images/22/ending.mp4',
                 // badEnd: 'images/22/badend.jpeg',
             },
@@ -1185,7 +1190,7 @@
                     flags: {
                         unlockBox: false, foundBlockFire: false, setBlockFire: false,
                         unlockBoxBig: false, unlockBoxMiddle: false, unlockBoxSmall: false,
-                        cutDiaryString: false,
+                        cutDiaryString: false, foundMaze: false,
                         foundMiddleBox: false, foundSmallBox: false,
                         foundScissors: false, foundBlockStocking: false, setBlockStocking: false,
                         foundBlockHead: false, foundHat: false, foundKey: false,
@@ -1388,6 +1393,17 @@
                         item: { img: 'wallLight2', visible: () => gameState.main.flags.bearAppear }
                     },
                     {
+                        x: 6.5, y: 16.3, width: 15.7, height: 14.1,
+                        onClick() {
+                            showObj(null, '', IMAGES.items.calendar, 'カレンダーだ');
+
+                        },
+                        description: 'カレンダー',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'calendar', visible: () => true }
+                    },
+                    {
                         x: 38.8, y: 46.8, width: 25.7, height: 15.5,
                         onClick() {
                             // 頭ブロックを選択している場合だけ「頭セット」イベント
@@ -1582,7 +1598,13 @@
                     {
                         x: 78.9, y: 36.8, width: 15.6, height: 17.4,
                         onClick() {
-                            updateMessage('ジンジャーマンのぬいぐるみだ。');
+                            if (gameState.main.flags.foundMaze) {
+                                updateMessage('ジンジャーマンのぬいぐるみだ。');
+                            } else {
+                                acquireItemOnce('foundMaze', 'maze', '何か紙がある', IMAGES.modals.dollPaper, 'メモを見つけた');
+                            }
+
+
                         },
                         description: 'ジンジャーマン',
                         zIndex: 5,
@@ -1830,7 +1852,7 @@
                                     `<img src="${IMAGES.modals.bearCoin}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                                     [{ text: '閉じる', action: 'close' }]
                                 );
-                                
+
                                 return;
                             }
                             // 帽子を選択中 ＆ まだ地図をもらっていないとき
@@ -3312,60 +3334,39 @@
         }
 
         // ──────────────────────────────
-        // 小さい箱パズル（星＆松ぼっくりカウンター）
+        // 小さい箱パズル（コンパス：N→E→W→S）
         // ──────────────────────────────
 
-        let smallBoxStarCount = 0;   // 星の数 0〜9
-        let smallBoxPineCount = 0;   // 松ぼっくりの数 0〜9
+        // 押された方角の履歴
+        let smallBoxDirSequence = [];
 
-        function resetSmallBoxCounts() {
-            smallBoxStarCount = 0;
-            smallBoxPineCount = 0;
+        function resetSmallBoxDirections() {
+            smallBoxDirSequence = [];
+            renderSmallBoxDirections();
         }
 
-        function renderSmallBoxIcons() {
-            const starArea = document.getElementById('smallBoxStarArea');
-            const pineArea = document.getElementById('smallBoxPineArea');
-            if (!starArea || !pineArea) return;
+        function renderSmallBoxDirections() {
+            const el = document.getElementById('smallBoxDirDisplay');
+            if (!el) return;
 
-            const buildIcons = (src, count) => {
-                if (count <= 0) {
-                    // 0個のときも高さだけは確保
-                    return '<div style="height:24px;"></div>';
-                }
-                let html = '';
-                for (let i = 0; i < count; i++) {
-                    html += `
-                <div style="
-                    width:22px;
-                    height:22px;
-                    margin:2px;
-                    border-radius:4px;
-                    background:#ffffff;
-                    box-shadow:0 1px 3px rgba(0,0,0,0.4);
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                ">
-                    <img src="${src}" style="width:18px;height:18px;object-fit:contain;">
-                </div>
-            `;
-                }
-                return html;
-            };
-
-            starArea.innerHTML = buildIcons(IMAGES.items.star, smallBoxStarCount);
-            pineArea.innerHTML = buildIcons(IMAGES.items.pineCone, smallBoxPineCount);
+            if (smallBoxDirSequence.length === 0) {
+                el.textContent = '（方角ボタンを押して入力）';
+            } else {
+                el.textContent = smallBoxDirSequence
+                    .slice(-8)
+                    .map(ch => ch.toUpperCase())
+                    .join(' ');
+            }
         }
 
-        function incrementSmallBoxCount(kind) {
-            if (kind === 'star') {
-                smallBoxStarCount = (smallBoxStarCount + 1) % 10;   // 0〜9でループ
-            } else if (kind === 'pine') {
-                smallBoxPineCount = (smallBoxPineCount + 1) % 10;
+        function pushSmallBoxDirection(dir) {
+            // dir: 'n' | 'e' | 'w' | 's'
+            smallBoxDirSequence.push(dir);
+            if (smallBoxDirSequence.length > 16) {
+                smallBoxDirSequence = smallBoxDirSequence.slice(-16);
             }
 
-            renderSmallBoxIcons();
+            renderSmallBoxDirections();
 
             if (typeof playSE === 'function') {
                 playSE('se-click');
@@ -3373,6 +3374,184 @@
         }
 
         function showSmallBoxPuzzle() {
+            // すでに解除済みならメッセージだけ
+            if (gameState.main.flags.unlockBoxSmall) {
+                updateMessage('小さい箱のロックはすでに外れている。');
+                return;
+            }
+
+            resetSmallBoxDirections();
+
+            const modalContent = `
+        <div style="
+            padding:14px;
+            border-radius:12px;
+            background: radial-gradient(circle at 30% 20%, #fdfdfd, #e2ddd5);
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.15),
+                0 4px 10px rgba(0,0,0,0.6);
+            color:#2b1908;
+            text-align:center;
+            max-width:340px;
+            margin:0 auto;
+        ">
+            <h2 style="margin:4px 0 10px 0;font-size:1.1em;">小さい箱のロック</h2>
+
+            <!-- コンパス画像 
+            <div style="
+                background:#ffffff;
+                border-radius:10px;
+                border:2px solid #b5a58a;
+                padding:8px;
+                margin:6px 0 8px 0;
+            ">
+                <img src="${IMAGES.modals.compass}"
+                     style="max-width:100%;height:auto;display:block;margin:0 auto;">
+            </div> -->
+
+            <!-- その下に十字型ボタン -->
+            <div style="
+                margin:6px 0 10px 0;
+                display:flex;
+                justify-content:center;
+            ">
+                <div style="
+                    position:relative;
+                    width:160px;
+                    height:160px;
+                ">
+                    <!-- 中央の基準（飾り） -->
+                    <div style="
+                        position:absolute;
+                        left:50%;
+                        top:50%;
+                        transform:translate(-50%,-50%);
+                        width:48px;
+                        height:48px;
+                        border-radius:50%;
+                        background:radial-gradient(circle, #fdf7e8, #cab79a);
+                        box-shadow:
+                            inset 0 1px 2px rgba(255,255,255,0.8),
+                            0 2px 4px rgba(0,0,0,0.45);
+                        opacity:0.9;
+                    "></div>
+
+                    <!-- 北ボタン -->
+                    <button onclick="pushSmallBoxDirection('n')" style="
+                        position:absolute;
+                        left:44%;
+                        top:10px;
+                        transform:translateX(-50%);
+                        width:46px;
+                        height:34px;
+                        border:none;
+                        border-radius:10px;
+                        background:linear-gradient(#fffdf7,#ded4c4);
+                        box-shadow:0 2px 4px rgba(0,0,0,0.45);
+                        cursor:pointer;
+                    "></button>
+
+                    <!-- 東ボタン -->
+                    <button onclick="pushSmallBoxDirection('e')" style="
+                        position:absolute;
+                        right:0px;
+                        top:70px;
+                        transform:translateY(-50%);
+                        width:46px;
+                        height:34px;
+                        border:none;
+                        border-radius:10px;
+                        background:linear-gradient(#fffdf7,#ded4c4);
+                        box-shadow:0 2px 4px rgba(0,0,0,0.45);
+                        cursor:pointer;
+                    "></button>
+
+                    <!-- 南ボタン -->
+                    <button onclick="pushSmallBoxDirection('s')" style="
+                        position:absolute;
+                        left:44%;
+                        bottom:10px;
+                        transform:translateX(-50%);
+                        width:46px;
+                        height:34px;
+                        border:none;
+                        border-radius:10px;
+                        background:linear-gradient(#fffdf7,#ded4c4);
+                        box-shadow:0 2px 4px rgba(0,0,0,0.45);
+                        cursor:pointer;
+                    "></button>
+
+                    <!-- 西ボタン -->
+                    <button onclick="pushSmallBoxDirection('w')" style="
+                        position:absolute;
+                        left:0px;
+                        top:70px;
+                        transform:translateY(-50%);
+                        width:46px;
+                        height:34px;
+                        border:none;
+                        border-radius:10px;
+                        background:linear-gradient(#fffdf7,#ded4c4);
+                        box-shadow:0 2px 4px rgba(0,0,0,0.45);
+                        cursor:pointer;
+                    "></button>
+                </div>
+            </div>
+
+            <!-- 入力履歴 -->
+            <!-- <div id="smallBoxDirDisplay"
+                  style="min-height:1.4em;font-size:0.9em;margin:0 0 6px 0;"></div> -->
+
+            <p id="smallBoxMsg"
+               style="min-height:1.4em;font-size:0.85em;margin:0 0 8px 0;">&nbsp;</p>
+
+            <div style="margin-top:6px;">
+                <button onclick="checkSmallBoxPuzzle()" class="text-btn">OK</button>
+                <button onclick="closeModal()" class="text-btn">閉じる</button>
+            </div>
+        </div>
+    `;
+
+            const mc = document.getElementById('modalContent');
+            const modal = document.getElementById('modal');
+            if (!mc || !modal) return;
+
+            mc.innerHTML = modalContent;
+            modal.style.display = 'flex';
+
+            renderSmallBoxDirections();
+        }
+
+        function checkSmallBoxPuzzle() {
+            const msg = document.getElementById('smallBoxMsg');
+
+            // 直近4入力だけ見る
+            const seq = smallBoxDirSequence.slice(-4).join('');
+            const ok = (seq === 'news'); // n→e→w→s
+
+            if (!ok) {
+                if (msg) msg.textContent = '…何か違うようだ。';
+                if (typeof playSE === 'function') playSE('se-error');
+                return;
+            }
+
+            // 正解
+            gameState.main.flags.unlockBoxSmall = true;
+
+            if (typeof markProgress === 'function') {
+                markProgress('box_small_unlock_22');
+            }
+            if (typeof playSE === 'function') playSE('se-gacha');
+
+            closeModal();
+            updateMessage('小さい箱のロックが外れた');
+            if (typeof renderCanvasRoom === 'function') {
+                renderCanvasRoom();
+            }
+        }
+
+
+        function showSmallBoxPuzzle_bk() {
             // すでに解除済みならメッセージだけ
             if (gameState.main.flags.unlockBoxSmall) {
                 updateMessage('小さい箱のロックはすでに外れている。');
@@ -3479,7 +3658,7 @@
             renderSmallBoxIcons();
         }
 
-        function checkSmallBoxPuzzle() {
+        function checkSmallBoxPuzzle_bk() {
             const msg = document.getElementById('smallBoxMsg');
 
             // 星6個＆松ぼっくり8個で正解
@@ -3718,7 +3897,8 @@
                 key: '鍵',
                 hat: '帽子',
                 map: '雑な地図',
-                cake: 'ケーキ'
+                cake: 'ケーキ',
+                maze: '迷路のメモ'
 
 
 
@@ -3783,9 +3963,17 @@
                         let buttons = [{ text: '閉じる', action: 'close' }];
 
                         // マントなら「調べる」ボタンを追加（鍵未入手＆未発見フラグ時のみ）
-                        if (itemId === 'cloak' && !hasItem('key') && !gameState.main.flags.foundKey) {
+                        if (itemId === 'maze') {
                             buttons = [
-                                { text: '調べる', action: 'inspectCloak' },
+                                {
+                                    text: '裏返す', action: () => {
+                                        showModal(
+                                            '',
+                                            `<img src="${IMAGES.modals.mazeReverse}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
+                                            [{ text: '閉じる', action: 'close' }]
+                                        );
+                                    }
+                                },
                                 { text: '閉じる', action: 'close' }
                             ];
                         }
