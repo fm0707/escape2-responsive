@@ -1062,6 +1062,7 @@
                 fireplace: ['images/22/fireplace.png', 'images/22/fireplace2.png'],
                 bed: ['images/22/bed.png'],
                 outside: ['images/22/outside22.png'],
+                boxInner: ['images/22/box_inner.png'],
                 saint: ['images/22/saint.jpeg'],
 
                 end: ['images/22/end.jpeg'],
@@ -1812,16 +1813,16 @@
                         usable: () => gameState.main.flags.setBlockStocking,
                         item: { img: 'blockStocking', visible: () => gameState.main.flags.setBlockStocking }
                     },
-                    {
-                        x: 46.3, y: 18.5, width: 8.4, height: 7.9,
-                        onClick() {
+                    // {
+                    //     x: 46.3, y: 18.5, width: 8.4, height: 7.9,
+                    //     onClick() {
 
-                        },
-                        description: '靴下文字',
-                        zIndex: 6,
-                        usable: () => false,
-                        item: { img: 'charaN', visible: () => gameState.main.flags.setBlockStocking }
-                    },
+                    //     },
+                    //     description: '靴下文字',
+                    //     zIndex: 6,
+                    //     usable: () => false,
+                    //     item: { img: 'charaN', visible: () => gameState.main.flags.setBlockStocking }
+                    // },
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
                         onClick() {
@@ -1972,12 +1973,7 @@
                     {
                         x: 2.4, y: 73.1, width: 29.0, height: 23.2,
                         onClick() {
-                            if (gameState.main.flags.foundScissors) {
-                                updateMessage('めぼしいものはない');
-
-                            } else {
-                                acquireItemOnce('foundScissors', 'scissors', 'はさみを見つけた', IMAGES.items.scissors, 'はさみを手に入れた');
-                            }
+                            changeRoom('boxInner');
 
                         },
                         description: '鍵付き箱開',
@@ -2188,6 +2184,37 @@
                         description: '窓：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
+                ]
+            },
+            // inner
+            boxInner: {
+                name: '箱の中',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 41.8, y: 30.2, width: 15.4, height: 23.3,
+                        onClick() {
+                            if (gameState.main.flags.foundScissors) {
+                                updateMessage('めぼしいものはない');
+
+                            } else {
+                                acquireItemOnce('foundScissors', 'scissors', 'はさみを見つけた', IMAGES.items.scissors, 'はさみを手に入れた');
+                            }
+                        },
+                        description: 'はさみ',
+                        zIndex: 5,
+                        usable: () => !gameState.main.flags.foundScissors,
+                        item: { img: 'scissors', visible: () => !gameState.main.flags.foundScissors }
+                    },
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick() {
+                            changeRoom('fireplace');
+                        },
+                        description: '箱の中戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
                 ]
             },
 
