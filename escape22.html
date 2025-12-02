@@ -1066,7 +1066,7 @@
 
                 end: ['images/22/end.jpeg'],
                 endWorse: ['images/22/end_worse.png'],
-                trueEnd: ['images/22/true_end.jpeg'],
+                trueEnd: ['images/22/true_end.jpeg', 'images/22/true_end2.jpeg'],
 
             },
             items: {
@@ -1120,6 +1120,8 @@
                 pineCone: 'images/22/pine_cone.png',
                 hat: 'images/22/hat.png',
                 memo: 'images/22/memo.png',
+                button: 'images/22/button.png',
+                cake: 'images/22/cake.png',
 
 
 
@@ -1140,6 +1142,8 @@
                 blockManScissors: 'images/22/modal_blockman_scissors.jpeg',
                 bearHat: 'images/22/modal_bear_hat.png',
                 bearMemo: 'images/22/modal_bear_memo.png',
+                bearCoin: 'images/22/modal_bear_coin.jpeg',
+                bearBox: 'images/22/modal_bear_box.png',
                 blockManGone: 'images/22/modal_blockman_gone.png',
                 mvEnding: 'images/22/ending.mp4',
                 // badEnd: 'images/22/badend.jpeg',
@@ -1185,7 +1189,7 @@
                         foundMiddleBox: false, foundSmallBox: false,
                         foundScissors: false, foundBlockStocking: false, setBlockStocking: false,
                         foundBlockHead: false, foundHat: false, foundKey: false,
-                        readNewspaper: false,
+                        readNewspaper: false, coinAppear: false, foundCoin: false, gotCake: false,
                         blockManStatus: 0, //0:胴体 1:頭セット 2:帽子セット 3:はさみ 4:外出
                         unlockDoor: false,
                         gotBearMap: false, scissorsTaken: false,
@@ -1338,6 +1342,17 @@
                         zIndex: 3,
                         usable: () => gameState.main.flags.bearAppear,
                         item: { img: 'treeLight', visible: () => gameState.main.flags.bearAppear, }
+                    },
+                    {
+                        x: 16.4, y: 63.8, width: 7.4, height: 7.0,
+                        onClick() {
+                            acquireItemOnce('foundCoin', 'coin', 'クマコインを見つけた', IMAGES.items.coin, 'クマコインを手に入れた');
+
+                        },
+                        description: 'クマコイン',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.coinAppear && !gameState.main.flags.foundCoin,
+                        item: { img: 'coin', visible: () => gameState.main.flags.coinAppear && !gameState.main.flags.foundCoin, }
                     },
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
@@ -1788,6 +1803,36 @@
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
                         onClick() {
+                            // ★ クマコイン → ケーキプレゼント
+                            if (gameState.selectedItem === 'coin' && !gameState.main.flags.gotCake) {
+                                // コイン消費
+                                removeItem('coin');
+                                playSE('se-coin');
+
+
+
+                                window._nextModal = {
+                                    title: 'サンタさんからプレゼント！',
+                                    content: `<img src="${IMAGES.modals.bearBox}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                    buttons: [
+                                        { text: '閉じる', action: 'close' }
+                                    ],
+                                    after() {
+                                        // ケーキ付与
+                                        addItem('cake');
+                                        gameState.main.flags.gotCake = true;
+                                        updateMessage('クマサンタからケーキをもらった。おいしそう。');
+                                    }
+                                };
+
+                                showModal(
+                                    'おっ！コインありがとう',
+                                    `<img src="${IMAGES.modals.bearCoin}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                    [{ text: '閉じる', action: 'close' }]
+                                );
+                                
+                                return;
+                            }
                             // 帽子を選択中 ＆ まだ地図をもらっていないとき
                             if (gameState.selectedItem === 'hat' && !gameState.main.flags.gotBearMap) {
 
@@ -1898,6 +1943,33 @@
                         zIndex: 5,
                         usable: () => gameState.main.flags.unlockBoxWood,
                         item: { img: 'boxWoodOpen', visible: () => gameState.main.flags.unlockBoxWood }
+                    },
+                    {
+                        x: 26.2, y: 48.1, width: 6.7, height: 6.4,
+                        onClick() {
+                            buttonSeq.push('L');
+                            checkButtonSeq();
+                            updateMessage('ボタンを押した');
+
+                        },
+                        description: 'ボタン左',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'button', visible: () => true }
+                    },
+                    {
+                        x: 67.8, y: 48.2, width: 6.4, height: 6.6,
+                        onClick() {
+                            buttonSeq.push('R');
+                            checkButtonSeq();
+                            updateMessage('ボタンを押した');
+
+
+                        },
+                        description: 'ボタン右',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'button', visible: () => true }
                     },
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
@@ -2048,7 +2120,7 @@
 
 
                     {
-                        x: 28.1, y: 16.7, width: 56.4, height: 14.8,
+                        x: 28.1, y: 16.7, width: 56.4, height: 13.8,
                         onClick() {
                             updateMessage('クリスマスの飾りだ')
 
@@ -2113,6 +2185,7 @@
                                 // トゥルーエンド解放フラグ
                                 gameState.flags.trueEndUnlocked = true;
                                 gameState.endings.true = true;
+                                if (hasItem('cake')) gameState.trueEnd.flags.backgroundState++;
 
                                 // エンディングムービー → トゥルーエンド画面
                                 const html = `
@@ -2215,7 +2288,7 @@
                             showEndingReport('trueEnd');
                         },
                         description: 'トゥルーエンド',
-                        usable: () => gameState.trueEnd.flags.backgroundState == 0,
+                        usable: () => true,
                     },
 
                 ]
@@ -2261,32 +2334,42 @@
 
         };
 
-        function returnToPast() {
-            const prev = gameState.main.flags.returnRoom || 'door';
+        let buttonSeq = [];
+        const BUTTON_TARGET_SEQ = ['R', 'R', 'R', 'L', 'L'];
 
-            const overlay = document.getElementById('roomEffectOverlay');
+        function checkButtonSeq() {
+            if (gameState.main.flags.coinAppear) {
+                playSE('se-switch');
+                buttonSeq = [];
+                return;
+            }
+            // 入力が目標以上に長くなったら前から削る
+            if (buttonSeq.length > BUTTON_TARGET_SEQ.length) {
+                buttonSeq.shift();
+            }
+            playSE('se-switch');
+            console.log(buttonSeq);
 
-            // SE
-            try { playSE('se-fanta'); } catch (e) { }
+            // 現在の入力が完全一致した？
+            const ok = BUTTON_TARGET_SEQ.every((v, i) => buttonSeq[i] === v);
 
-            // 演出
-            if (overlay) {
-                overlay.classList.add('warp-active');
-                overlay.style.opacity = 1;
+            if (ok) {
+                // 成功！
+                playSE('se-coin');
+                gameState.main.flags.coinAppear = true;
 
-                setTimeout(() => {
-                    changeRoom(prev);
+                showModal(
+                    'ドアのほうで物音がしたようだ',
+                    '',
+                    [{ text: '閉じる', action: 'close' }]
+                );
 
-                    // 余韻を残して消す
-                    setTimeout(() => {
-                        overlay.classList.remove('warp-active');
-                        overlay.style.opacity = 0;
-                    }, 900);
-                }, 300);
-            } else {
-                changeRoom(prev);
+                // 一度発火したらリセット推奨
+                buttonSeq = [];
             }
         }
+
+
 
         // 足音で数歩→ワープ演出→目的の部屋へ
         function travelWithSteps(destRoom = 'saint') {
