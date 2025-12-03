@@ -1590,11 +1590,12 @@
                     {
                         x: 78.9, y: 36.8, width: 15.6, height: 17.4,
                         onClick: clickWrap(function () {
-                            if (gameState.main.flags.foundMaze) {
-                                updateMessage('ジンジャーマンのぬいぐるみだ。');
-                            } else {
-                                acquireItemOnce('foundMaze', 'maze', '何か紙がある', IMAGES.modals.dollPaper, 'メモを見つけた');
-                            }
+                            updateMessage('ジンジャーマンのぬいぐるみだ。');
+                            // if (gameState.main.flags.foundMaze) {
+                            //     updateMessage('ジンジャーマンのぬいぐるみだ。');
+                            // } else {
+                            //     acquireItemOnce('foundMaze', 'maze', '何か紙がある', IMAGES.modals.dollPaper, 'メモを見つけた');
+                            // }
 
 
                         }),
@@ -3474,6 +3475,7 @@
             margin:0 auto;
         ">
             <h2 style="margin:4px 0 10px 0;font-size:1.1em;">小さい箱のロック</h2>
+            <h3>12/19</h3>
 
             <div style="
                 background:#ffffff;
@@ -3652,6 +3654,7 @@
             margin:0 auto;
         ">
             <h2 style="margin:4px 0 10px 0;font-size:1.1em;">小さい箱のロック</h2>
+            <h3>12/19</h3>
 
             <div style="
                 background:#ffffff;
