@@ -1146,6 +1146,7 @@
                 blockManHat2: 'images/22/modal_blockman_hat2.png',
                 blockManScissors: 'images/22/modal_blockman_scissors.jpeg',
                 blockManSeal: 'images/22/modal_blockman_seal.jpeg',
+                blockManSealAfter: 'images/22/modal_blockman_seal_after.png',
                 bearHat: 'images/22/modal_bear_hat.png',
                 bearMemo: 'images/22/modal_bear_memo.png',
                 bearCoin: 'images/22/modal_bear_coin.jpeg',
@@ -2469,6 +2470,16 @@
                 description: 'おめでとうございます。無事に脱出できました。ブロックマンは幸せに過ごせることでしょう',
                 clickableAreas: [
                     {
+                        x: 17.8, y: 40.9, width: 13.7, height: 10.9,
+                        onClick: clickWrap(function () {
+                            updateMessage('帽子の邪気は、笑顔の効用で消えたようだ');
+                        }),
+                        description: '帽子',
+                        zIndex: 5,
+                        usable: () => true,
+
+                    },
+                    {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
                             updateMessage('おめでとうございます。無事に脱出できました。ブロックマンは幸せに過ごせることでしょう');
@@ -2666,7 +2677,11 @@
         function putSeal() {
             showModal(
                 'ブロックマンの隙をついて顔のシールをペタっと貼った！',
-                `<img src="${IMAGES.modals.blockManSeal}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                `<div class="blockman-hat-anim">
+  <img src="${IMAGES.modals.blockManSeal}">
+  <img src="${IMAGES.modals.blockManSealAfter}">
+</div>`,
+             //   <img src="${IMAGES.modals.blockManSeal}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                 [{ text: '閉じる', action: 'close' }]
             );
             playSE('se-peta');
@@ -3042,7 +3057,7 @@
 
             gameState.main.flags.isNight = !gameState.main.flags.isNight;
             const msg = gameState.main.flags.isNight ? '夜' : '昼';
-            gameState.outside.flags.backgroundState=gameState.main.flags.isNight ?1:0;
+            gameState.outside.flags.backgroundState = gameState.main.flags.isNight ? 1 : 0;
 
             updateMessage(`${msg}になった`);
             quickBlackFade();
@@ -3086,7 +3101,7 @@
                 const src = fn.toString();
                 const isMoveAction =
                     src.includes('changeRoom(') || src.includes('travelWithSteps(') || src.includes('toggleNight(')
-                    || src.includes('blockManHat1')|| src.includes('blockManScissors'|| src.includes('blockMan3')|| src.includes('blockManHappy'));
+                    || src.includes('blockManHat1') || src.includes('blockManScissors' || src.includes('blockMan3') || src.includes('blockManHappy'));
 
                 if (
                     gameState.main.flags.isNight &&
