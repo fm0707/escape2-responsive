@@ -1596,7 +1596,7 @@
                         x: 64.6, y: 57.5, width: 27.6, height: 40.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
-                                updateMessage('良く見えないが、立ったまま、目を開けたまま眠っているようだ');
+                                updateMessage('良く見えないが、怖い顔のまま眠っているようだ');
                                 return;
                             }
                             if (gameState.selectedItem == 'scissors') {
@@ -1623,7 +1623,7 @@
                         x: 64.6, y: 57.5, width: 34.6, height: 40.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
-                                updateMessage('良く見えないが、立ったまま、目を開けたまま眠っているようだ');
+                                updateMessage('良く見えないが、怖い顔のままはさみを持って眠っているようだ');
                                 return;
                             }
                             if (gameState.main.flags.unlockDoor) {
@@ -1641,7 +1641,7 @@
                         item: { img: 'blockManScissors', visible: () => gameState.main.flags.blockManStatus == 3 }
                     },
                     {
-                        x: 64.6, y: 57.5, width: 26.6, height: 40.7,
+                        x: 64.6, y: 57.5, width: 25.6, height: 40.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
                                 updateMessage('良く見えないが、立ったまま、目を開けたまま眠っているようだ');
