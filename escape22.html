@@ -3822,9 +3822,12 @@
         }
 
         function showClockPuzzle() {
+            if (!gameState.main.flags.bearAppear) {
+                updateMessage('まだ反応しないようだ');
+                return;
+            }
             // 既に解除済みならその旨だけ
             if (gameState.main.flags.unlockClock) {
-
                 return;
             }
 
