@@ -1061,7 +1061,7 @@
                 saint: ['images/22/saint.jpeg'],
                 end: ['images/22/end.jpeg'],
                 endWorse: ['images/22/end_worse.png'],
-                endGood: ['images/22/good_end.jpeg', 'images/22/good_end2.jpeg'],
+                endGood: ['images/22/good_end.png', 'images/22/good_end2.png'],
                 trueEnd: ['images/22/true_end.jpeg'],
 
             },
@@ -2427,7 +2427,7 @@
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
                             updateMessage('おめでとうございます。無事に脱出できました。悪の根源も処分できました');
-                            showEndingReport('trueEnd');
+                            showEndingReport('endGood');
                         }),
                         description: 'ノーマルエンド+',
                         usable: () => true,
