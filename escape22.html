@@ -1056,7 +1056,7 @@
                 window: ['images/22/window.png'],
                 fireplace: ['images/22/fireplace.png', 'images/22/fireplace2.png'],
                 bed: ['images/22/bed.png'],
-                outside: ['images/22/outside22.png'],
+                outside: ['images/22/outside22.png', 'images/22/outside22_2.png'],
                 boxInner: ['images/22/box_inner.png'],
                 saint: ['images/22/saint.jpeg'],
                 end: ['images/22/end.jpeg'],
@@ -1216,7 +1216,11 @@
                         backgroundState: 0,
                     }
                 },
-
+                outside: {
+                    flags: {
+                        backgroundState: 0,
+                    }
+                },
                 endGood: {
                     flags: {
                         backgroundState: 0,
@@ -3022,6 +3026,8 @@
 
             gameState.main.flags.isNight = !gameState.main.flags.isNight;
             const msg = gameState.main.flags.isNight ? '夜' : '昼';
+            gameState.outside.flags.backgroundState=gameState.main.flags.isNight ?1:0;
+
             updateMessage(`${msg}になった`);
             quickBlackFade();
             setTimeout(() => {
