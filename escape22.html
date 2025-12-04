@@ -1411,7 +1411,7 @@
                     {
                         x: 51.2, y: 35.1, width: 20.0, height: 19.1,
                         onClick: clickWrap(function () {
-                            toggleNight();
+                            updateMessage('可愛いクッションだ');
                         }),
                         description: 'クッション右',
                         zIndex: 5,
@@ -1613,7 +1613,7 @@
                         item: { img: 'blockManScissors', visible: () => gameState.main.flags.blockManStatus == 3 }
                     },
                     {
-                        x: 64.6, y: 57.5, width: 28.6, height: 40.7,
+                        x: 64.6, y: 57.5, width: 26.6, height: 40.7,
                         onClick: clickWrap(function () {
 
                             talkToHintCharacter('main', 'blockManHappy');
@@ -1625,25 +1625,18 @@
                         usable: () => gameState.main.flags.blockManStatus == 5,
                         item: { img: 'blockManHappy', visible: () => gameState.main.flags.blockManStatus == 5 }
                     },
-                    // {
-                    //     x: 78.9, y: 36.8, width: 15.6, height: 17.4,
-                    //     onClick: clickWrap(function () {
-                    //         updateMessage('ジンジャーマンのぬいぐるみだ。');
-                    //         // if (gameState.main.flags.foundMaze) {
-                    //         //     updateMessage('ジンジャーマンのぬいぐるみだ。');
-                    //         // } else {
-                    //         //     acquireItemOnce('foundMaze', 'maze', '何か紙がある', IMAGES.modals.dollPaper, 'メモを見つけた');
-                    //         // }
-
-
-                    //     }),
-                    //     description: 'ジンジャーマン',
-                    //     zIndex: 5,
-                    //     usable: () => true,
-                    //     item: { img: 'doll', visible: () => true }
-                    // },
                     {
-                        x: 78.3, y: 32.9, width: 18.4, height: 19.7,
+                        x: 64.6, y: 89.2, width: 7.4, height: 8.8,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '落とされたはさみ',
+                        zIndex: 5,
+                        usable: () => false,
+                        item: { img: 'scissors', visible: () => gameState.main.flags.scissorsTaken && gameState.main.flags.blockManStatus == 5}
+                    },
+                    {
+                        x: 76.3, y: 32.9, width: 19.4, height: 20.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.unlockClock) {
                                 toggleNight();
@@ -1878,7 +1871,7 @@
                     {
                         x: 77.3, y: 51.8, width: 17.8, height: 18.6,
                         onClick: clickWrap(function () {
-                            if (gameState.main.flags.blockManStatus==5) {
+                            if (gameState.main.flags.blockManStatus == 5) {
                                 updateMessage('おばけは嬉しそうにふわふわしている');
                             } else if (gameState.main.flags.gotEnvelope) {
                                 updateMessage('おばけはふわふわしている');
@@ -1960,7 +1953,7 @@
                                     ]
                                 );
 
-                            } else if (gameState.main.flags.blockManStatus==5) {
+                            } else if (gameState.main.flags.blockManStatus == 5) {
 
                                 updateMessage('おおおー、すごいね');
                             } else if (gameState.selectedItem == 'scissors') {
@@ -1981,8 +1974,8 @@
                         }),
                         description: 'クマ妖精',
                         zIndex: 5,
-                        usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5) && !gameState.main.flags.isNight,
-                        item: { img: 'bear', visible: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5)  && !gameState.main.flags.isNight }
+                        usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus == 5) && !gameState.main.flags.isNight,
+                        item: { img: 'bear', visible: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus == 5) && !gameState.main.flags.isNight }
                     },
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
@@ -2025,8 +2018,8 @@
                         }),
                         description: 'クマ妖精眠る',
                         zIndex: 5,
-                        usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5) && gameState.main.flags.isNight,
-                        item: { img: 'bearSleep', visible: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5) && gameState.main.flags.isNight }
+                        usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus == 5) && gameState.main.flags.isNight,
+                        item: { img: 'bearSleep', visible: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus == 5) && gameState.main.flags.isNight }
                     },
                     {
                         x: 2.4, y: 77.1, width: 29.0, height: 19.0,
@@ -2648,7 +2641,7 @@
             removeItem('faceSeal');
             playSE('se-angel');
             gameState.flags.trueEndUnlocked = true;
-            gameState.main.flags.blockManStatus=5;
+            gameState.main.flags.blockManStatus = 5;
             renderCanvasRoom();
 
         }
