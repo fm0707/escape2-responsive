@@ -848,13 +848,7 @@
                 <h2>―― 最後の記録と思われるページ ――</h2>
 
                 <p>
-                    この山小屋にひとりで籠もるようになって、どのくらい経っただろうか。<br>
-                    村ではいまだに噂が消えないという。雪が降るたび、赤い帽子をかぶった影を見た、と。
-                </p>
-
-                <p>
-                    だが実際のところ、今その「影」はここで眠っている。<br>
-                    ベッドに寝かせたあのブロックの体は、もう動かない。頭を切り離し、帽子も取り上げた。<br>
+                    ベッドに寝かせたあのブロックの体は、もう動かない。<br>
                     これで少なくとも、村に新しい遺体が増えることはないはずだ。
                 </p>
 
@@ -868,9 +862,13 @@
                     私は頭と体を分離した。<br>
                     体はこの山小屋のベッドに、頭は堅い箱に閉じ込めた。帽子は、さらに別の箱へ。
                 </p>
+
                 <p>
                     ――もしこの日記を読んでいる者がいるなら、覚えておいてほしい。<br>
                     <b>「帽子を被せるな。」</b><br>
+                </p>
+                <p>
+                    …しかし、本当は彼がお気に入りの帽子を何の気兼ねもなくかぶれるようにしてやりたいものだ。<br>
                 </p>
 
                 <hr>
@@ -960,6 +958,7 @@
     <audio id="se-fanta" src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
     <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
     <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
+    <audio id="se-tictac" src="sounds/common/tictac.mp3"></audio>
     <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
 
     <audio id="se-bukimi_piano" src="sounds/common/bukimi_piano.mp3"></audio>
@@ -974,6 +973,8 @@
     <audio id="se-hasami" src="sounds/common/hasami.mp3"></audio>
     <audio id="se-shutter" src="sounds/common/shutter.mp3"></audio>
     <audio id="se-fire" src="sounds/common/fire.mp3"></audio>
+    <audio id="se-peta" src="sounds/common/Anime_Motion19-1(Phrase).mp3"></audio>
+
 
     <script>
         // --- Analytics helper ---
@@ -1060,7 +1061,8 @@
                 saint: ['images/22/saint.jpeg'],
                 end: ['images/22/end.jpeg'],
                 endWorse: ['images/22/end_worse.png'],
-                trueEnd: ['images/22/true_end.jpeg', 'images/22/true_end2.jpeg'],
+                endGood: ['images/22/good_end.jpeg', 'images/22/good_end2.jpeg'],
+                trueEnd: ['images/22/true_end.jpeg'],
 
             },
             items: {
@@ -1105,6 +1107,7 @@
                 blockMan: 'images/22/block_man.png',
                 blockManViolent: 'images/22/block_man_violent.png',
                 blockManScissors: 'images/22/block_man_scissors.png',
+                blockManHappy: 'images/22/block_man_happy.png',
                 doll: 'images/22/doll.png',
                 key: 'images/22/key.png',
                 charaN: 'images/22/chara_n.png',
@@ -1118,6 +1121,11 @@
                 cake: 'images/22/cake.png',
                 calendar: 'images/22/calendar.png',
                 maze: 'images/22/maze.png',
+                bearSleep: 'images/22/bear_sleep.png',
+                ghost: 'images/22/ghost.png',
+                envelope: 'images/22/envelope.jpeg',
+                memoGhost: 'images/22/memo_ghost.png',
+                faceSeal: 'images/22/face_seal.png',
 
 
 
@@ -1136,6 +1144,7 @@
                 blockManHat1: 'images/22/modal_blockman_hat1.png',
                 blockManHat2: 'images/22/modal_blockman_hat2.png',
                 blockManScissors: 'images/22/modal_blockman_scissors.jpeg',
+                blockManSeal: 'images/22/modal_blockman_seal.jpeg',
                 bearHat: 'images/22/modal_bear_hat.png',
                 bearMemo: 'images/22/modal_bear_memo.png',
                 bearCoin: 'images/22/modal_bear_coin.jpeg',
@@ -1144,6 +1153,8 @@
                 dollPaper: 'images/22/modal_doll_paper.png',
                 mazeReverse: 'images/22/modal_maze_reverse.png',
                 compass: 'images/22/modal_compass.jpeg',
+                ghostEnvelope: 'images/22/modal_ghost.jpeg',
+                openEnvelope: 'images/22/modal_open_envelope.png',
                 mvEnding: 'images/22/ending.mp4',
                 // badEnd: 'images/22/badend.jpeg',
             },
@@ -1190,8 +1201,9 @@
                         foundBlockHead: false, foundHat: false, foundKey: false,
                         readNewspaper: false, coinAppear: false, foundCoin: false, gotCake: false,
                         blockManStatus: 0, //0:胴体 1:頭セット 2:帽子セット 3:はさみ 4:外出
-                        unlockDoor: false,
-                        gotBearMap: false, scissorsTaken: false,
+                        unlockDoor: false, unlockClock: false,
+                        gotBearMap: false, scissorsTaken: false, gotEnvelope: false, gotSeal: false,
+                        isNight: false,
 
 
                         talkTo: { bear: 0, blockMan: 0 }, backgroundState: 0,
@@ -1203,8 +1215,7 @@
                     }
                 },
 
-
-                trueEnd: {
+                endGood: {
                     flags: {
                         backgroundState: 0,
                     }
@@ -1398,6 +1409,16 @@
                         item: { img: 'calendar', visible: () => true }
                     },
                     {
+                        x: 51.2, y: 35.1, width: 20.0, height: 19.1,
+                        onClick: clickWrap(function () {
+                            toggleNight();
+                        }),
+                        description: 'クッション右',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
                         x: 38.8, y: 46.8, width: 25.7, height: 15.5,
                         onClick: clickWrap(function () {
                             // 頭ブロックを選択している場合だけ「頭セット」イベント
@@ -1560,6 +1581,8 @@
                                 playSE('se-grab');
                                 gameState.main.flags.scissorsTaken = true;
                                 gameState.main.flags.blockManStatus++;
+                            } else if (gameState.selectedItem == 'faceSeal') {
+                                putSeal();
                             } else if (gameState.main.flags.unlockDoor) {
                                 talkToHintCharacter('main', 'blockMan4');
                             } else {
@@ -1577,35 +1600,62 @@
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.unlockDoor) {
                                 talkToHintCharacter('main', 'blockMan4');
+                            } else if (gameState.selectedItem == 'faceSeal') {
+                                putSeal();
                             } else {
                                 talkToHintCharacter('main', 'blockMan3');
                             }
 
                         }),
-                        description: 'ブロックマン帽子ON',
+                        description: 'ブロックマン帽子ONはさみ持ち',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 3,
                         item: { img: 'blockManScissors', visible: () => gameState.main.flags.blockManStatus == 3 }
                     },
                     {
-                        x: 78.9, y: 36.8, width: 15.6, height: 17.4,
+                        x: 64.6, y: 57.5, width: 28.6, height: 40.7,
                         onClick: clickWrap(function () {
-                            updateMessage('ジンジャーマンのぬいぐるみだ。');
-                            // if (gameState.main.flags.foundMaze) {
-                            //     updateMessage('ジンジャーマンのぬいぐるみだ。');
-                            // } else {
-                            //     acquireItemOnce('foundMaze', 'maze', '何か紙がある', IMAGES.modals.dollPaper, 'メモを見つけた');
-                            // }
+
+                            talkToHintCharacter('main', 'blockManHappy');
 
 
                         }),
-                        description: 'ジンジャーマン',
+                        description: 'ブロックマン帽子ONにこやか',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.blockManStatus == 5,
+                        item: { img: 'blockManHappy', visible: () => gameState.main.flags.blockManStatus == 5 }
+                    },
+                    // {
+                    //     x: 78.9, y: 36.8, width: 15.6, height: 17.4,
+                    //     onClick: clickWrap(function () {
+                    //         updateMessage('ジンジャーマンのぬいぐるみだ。');
+                    //         // if (gameState.main.flags.foundMaze) {
+                    //         //     updateMessage('ジンジャーマンのぬいぐるみだ。');
+                    //         // } else {
+                    //         //     acquireItemOnce('foundMaze', 'maze', '何か紙がある', IMAGES.modals.dollPaper, 'メモを見つけた');
+                    //         // }
+
+
+                    //     }),
+                    //     description: 'ジンジャーマン',
+                    //     zIndex: 5,
+                    //     usable: () => true,
+                    //     item: { img: 'doll', visible: () => true }
+                    // },
+                    {
+                        x: 78.3, y: 32.9, width: 18.4, height: 19.7,
+                        onClick: clickWrap(function () {
+                            if (gameState.main.flags.unlockClock) {
+                                toggleNight();
+                            } else {
+                                showClockPuzzle();
+                            }
+
+                        }),
+                        description: '時計',
                         zIndex: 5,
                         usable: () => true,
-                        item: { img: 'doll', visible: () => true }
                     },
-
-
 
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
@@ -1825,16 +1875,23 @@
                         usable: () => gameState.main.flags.setBlockStocking,
                         item: { img: 'blockStocking', visible: () => gameState.main.flags.setBlockStocking }
                     },
-                    // {
-                    //     x: 46.3, y: 18.5, width: 8.4, height: 7.9,
-                    //     onClick: clickWrap(function() {
+                    {
+                        x: 77.3, y: 51.8, width: 17.8, height: 18.6,
+                        onClick: clickWrap(function () {
+                            if (gameState.main.flags.blockManStatus==5) {
+                                updateMessage('おばけは嬉しそうにふわふわしている');
+                            } else if (gameState.main.flags.gotEnvelope) {
+                                updateMessage('おばけはふわふわしている');
+                            } else {
+                                acquireItemOnce('gotEnvelope', 'envelope', 'おばけは封筒を差し出してきた', IMAGES.modals.ghostEnvelope, '封筒を手に入れた');
+                            }
 
-                    //     },
-                    //     description: '靴下文字',
-                    //     zIndex: 6,
-                    //     usable: () => false,
-                    //     item: { img: 'charaN', visible: () => gameState.main.flags.setBlockStocking }
-                    // },
+                        }),
+                        description: 'おばけ',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.isNight,
+                        item: { img: 'ghost', visible: () => gameState.main.flags.isNight }
+                    },
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
                         onClick: clickWrap(function () {
@@ -1903,6 +1960,9 @@
                                     ]
                                 );
 
+                            } else if (gameState.main.flags.blockManStatus==5) {
+
+                                updateMessage('おおおー、すごいね');
                             } else if (gameState.selectedItem == 'scissors') {
 
                                 updateMessage('こっちに向けないでー');
@@ -1921,8 +1981,8 @@
                         }),
                         description: 'クマ妖精',
                         zIndex: 5,
-                        usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2),
-                        item: { img: 'bear', visible: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2) }
+                        usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5) && !gameState.main.flags.isNight,
+                        item: { img: 'bear', visible: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5)  && !gameState.main.flags.isNight }
                     },
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
@@ -1931,11 +1991,11 @@
                                 updateMessage('クマサンタはおびえていて、言葉が出ないようだ');
                             } else if (gameState.selectedItem === 'coin' && !gameState.main.flags.gotCake) {
                                 updateMessage('クマサンタはおびえていて、それどころではないようだ');
+                            } else if (gameState.main.flags.isNight) {
+                                updateMessage('クマサンタはおびえていて、夜も眠れないようだ');
                             } else {
                                 updateMessage('クマサンタはおびえている');
                             }
-
-
 
                         }),
                         description: 'クマ妖精',
@@ -1955,6 +2015,18 @@
                         zIndex: 5,
                         usable: () => gameState.main.flags.bearAppear && gameState.main.flags.blockManStatus == 4,
                         item: { img: 'bearAfraid', visible: () => gameState.main.flags.bearAppear && gameState.main.flags.blockManStatus == 4 }
+                    },
+                    {
+                        x: 57.9, y: 19.7, width: 23.7, height: 21.7,
+                        onClick: clickWrap(function () {
+                            updateMessage('クマサンタは眠っている')
+
+
+                        }),
+                        description: 'クマ妖精眠る',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5) && gameState.main.flags.isNight,
+                        item: { img: 'bearSleep', visible: () => gameState.main.flags.bearAppear && (gameState.main.flags.blockManStatus < 2 || gameState.main.flags.blockManStatus ==5) && gameState.main.flags.isNight }
                     },
                     {
                         x: 2.4, y: 77.1, width: 29.0, height: 19.0,
@@ -2207,6 +2279,16 @@
 
                     },
                     {
+                        x: 25.3, y: 65.1, width: 21.4, height: 22.4,
+                        onClick: clickWrap(function () {
+                            updateMessage('ジンジャーマンのぬいぐるみだ');
+                        }),
+                        description: 'doll',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'doll', visible: () => true }
+                    },
+                    {
                         x: 54.5, y: 20.3, width: 36.9, height: 55.4,
                         onClick: clickWrap(function () {
                             updateMessage('クリスマスの飾り用の靴下だ');
@@ -2274,10 +2356,7 @@
                                 removeItem('hat');
                                 updateMessage('怪しい帽子を祭壇にそっと置いた…');
 
-                                // トゥルーエンド解放フラグ
-                                gameState.flags.trueEndUnlocked = true;
-                                gameState.endings.true = true;
-                                if (hasItem('cake')) gameState.trueEnd.flags.backgroundState++;
+                                if (hasItem('cake')) gameState.endGood.flags.backgroundState++;
 
                                 // エンディングムービー → トゥルーエンド画面
                                 const html = `
@@ -2300,7 +2379,7 @@
                                             action: () => {
                                                 // モーダルを閉じてからエンド画面へ
                                                 closeModal();
-                                                changeRoom('trueEnd');
+                                                changeRoom('endGood');
                                                 screenFlash('white');
                                                 playSE('se-shutter');
                                             }
@@ -2316,7 +2395,6 @@
                         description: '祭壇',
                         zIndex: 5,
                         usable: () => true,
-                        item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
                         x: 8.6, y: 61.2, width: 17.8, height: 17.3,
@@ -2329,33 +2407,25 @@
                         usable: () => true,
                         item: { img: 'bear', visible: () => true }
                     },
-
-                    // {
-                    //     x: 90, y: 90, width: 10, height: 10,
-                    //     onClick: clickWrap(function() {
-                    //         changeRoom('door');
-                    //     },
-                    //     description: '謎の場所戻る',
-                    //     zIndex: 5,
-                    //     item: { img: 'back', visible: () => true }
-                    // }
                 ]
             },
 
-            end: {
-                name: 'ノーマルエンド',
-                description: '無事に山小屋から脱出できました。おめでとうございます！',
+            endGood: {
+                name: 'ノーマルエンド+',
+                description: 'おめでとうございます。無事に脱出できました。悪の根源も処分できました',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
-                            showEndingReport('end');
+                            updateMessage('おめでとうございます。無事に脱出できました。悪の根源も処分できました');
+                            showEndingReport('trueEnd');
                         }),
-                        description: 'ノーマルエンド'
+                        description: 'ノーマルエンド+',
+                        usable: () => true,
                     },
+
                 ]
             },
-
             endWorse: {
                 name: 'ノーマルエンド-',
                 description: 'あなたは無事に山小屋から脱出できました。しかし、村の運命は…',
@@ -2371,12 +2441,12 @@
             },
             trueEnd: {
                 name: 'トゥルーエンド',
-                description: 'おめでとうございます。無事に脱出できました。悪の根源も処分できました',
+                description: 'おめでとうございます。無事に脱出できました。ブロックマンは幸せに過ごせることでしょう',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
-                            updateMessage('おめでとうございます。無事に脱出できました。悪の根源も処分できました');
+                            updateMessage('おめでとうございます。無事に脱出できました。ブロックマンは幸せに過ごせることでしょう');
                             showEndingReport('trueEnd');
                         }),
                         description: 'トゥルーエンド',
@@ -2420,6 +2490,10 @@
                 blockMan4: [
                     'ドアロックを開けてくれたんだね ',
                     '久しぶりに村に行ってみるのも良いなあ ',
+                ],
+                blockManHappy: [
+                    '帽子、見つけてくれてありがとう ',
+                    '久しぶりに村に行ってみたいな',
                 ]
             },
 
@@ -2564,6 +2638,21 @@
             }, duration);
         }
 
+        function putSeal() {
+            showModal(
+                'ブロックマンの隙をついて顔のシールをペタっと貼った！',
+                `<img src="${IMAGES.modals.blockManSeal}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                [{ text: '閉じる', action: 'close' }]
+            );
+            playSE('se-peta');
+            removeItem('faceSeal');
+            playSE('se-angel');
+            gameState.flags.trueEndUnlocked = true;
+            gameState.main.flags.blockManStatus=5;
+            renderCanvasRoom();
+
+        }
+
 
 
         // ゲーム初期化
@@ -2665,14 +2754,19 @@
             if (roomId === "trueEnd") {
                 changeBGM("sounds/22/seiyanomachi_kuridasou.mp3");
 
-            } else if (roomId === "end") {
+            } else if (roomId === "endGood") {
                 changeBGM("sounds/22/nice_xmas_eve.mp3");
 
             } else if (roomId === "endWorse") {
                 changeBGM("sounds/22/jubaku.mp3");
 
             } else {
-                changeBGM("sounds/22/kimitohitotoki.mp3");
+                if (gameState.main.flags.isNight) {
+                    changeBGM("sounds/22/oyasumi_jikan.mp3");
+                } else {
+                    changeBGM("sounds/22/kimitohitotoki.mp3");
+                }
+
             }
 
             // nav
@@ -2723,7 +2817,14 @@
             // 背景描画
             const bgImg = loadedImages[bgImgSrc];
             if (bgImg && bgImg.complete) {
+                ctx.save();
+                if (gameState.main?.flags?.isNight) {
+                    ctx.filter = 'saturate(0.3) brightness(0.6)'; // 背景はちょい暗め
+                } else {
+                    ctx.filter = 'none';
+                }
                 ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                ctx.restore();
             }
 
             // アイテム描画（未取得のみ）
@@ -2751,6 +2852,10 @@
                     ctx.strokeRect(ax, ay, aw, ah);
                     ctx.restore();
                 }
+            }
+
+            if (roomId === 'fireplace') {
+                drawFireGlow(ctx, canvas);
             }
 
             if (DEV_MODE) {
@@ -2801,12 +2906,49 @@
                         const h = area.height / 100 * canvas.height;
                         ctx.save();
                         ctx.globalAlpha = alpha;
+
+                        // ★ 夜モードなら彩度＋明るさを落とす
+                        if (gameState.main?.flags?.isNight) {
+                            // 値は好みで調整
+                            ctx.filter = 'saturate(0.4) brightness(0.8)';
+                        } else {
+                            ctx.filter = 'none';
+                        }
+
                         ctx.drawImage(img, px, py, w, h);
                         ctx.restore();
                     }
                 }
             });
         }
+
+        function drawFireGlow(ctx, canvas) {
+            if (!gameState.main.flags.isNight) return;
+
+            const cx = canvas.width * 0.5;
+            const cy = canvas.height * 0.75;
+            const r = canvas.width * 0.38; // 少し広めにした
+
+            const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+
+            // 内側：赤に近い強めの温かさ
+            g.addColorStop(0.00, 'rgba(255,140, 60, 0.65)'); // 濃い橙
+            g.addColorStop(0.20, 'rgba(255,160, 80, 0.55)'); // 少し柔らかい橙
+
+            // 中間：暖炉らしいオレンジの“ぽわっ”
+            g.addColorStop(0.55, 'rgba(255,180,100, 0.35)');
+
+            // 外側：壁に反射してるくらいの薄い光
+            g.addColorStop(1.00, 'rgba(255,200,120, 0.05)');
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
+
+
 
 
         function getRoomBackgroundImage(roomId, gameState) {
@@ -2864,7 +3006,29 @@
             setTimeout(() => document.documentElement.classList.remove('fx-shake'), 120);
         }
 
-        function _cycle1to9(v) { return v >= 9 ? 1 : (v + 1); }
+
+        function toggleNight() {
+            if (gameState.main.flags.blockManStatus == 4) {
+                updateMessage('こんなことをしている場合ではない');
+                return;
+            }
+
+            playSE('se-tictac');
+
+            gameState.main.flags.isNight = !gameState.main.flags.isNight;
+            const msg = gameState.main.flags.isNight ? '夜' : '昼';
+            updateMessage(`${msg}になった`);
+            quickBlackFade();
+            setTimeout(() => {
+                if (gameState.main.flags.isNight) {
+                    changeBGM("sounds/22/oyasumi_jikan.mp3");
+                } else {
+                    changeBGM("sounds/22/kimitohitotoki.mp3");
+                }
+                renderCanvasRoom();
+            }, 300);
+
+        }
 
         function acquireItemOnce(flagKey, itemId, title, imgSrc, msg) {
             const f = gameState.main.flags;
@@ -2891,12 +3055,28 @@
 
         function clickWrap(fn) {
             return function (...args) {
-                fn.apply(this, args);
+                // 中身のソースを見て「移動系かどうか」をざっくり判定
+                const src = fn.toString();
+                const isMoveAction =
+                    src.includes('changeRoom(') || src.includes('travelWithSteps(') || src.includes('toggleNight(');
+
+                if (
+                    gameState.main.flags.isNight &&
+                    gameState.currentRoom !== 'fireplace' &&
+                    !isMoveAction // 移動以外だけブロック
+                ) {
+                    updateMessage('暗くてよく見えない');
+                } else {
+                    fn.apply(this, args);
+                }
+
+                // アイテム選択解除は今まで通り
                 gameState.selectedItem = null;
                 gameState.selectedItemSlot = null;
                 updateInventoryDisplay();
-            }
+            };
         }
+
 
         // アクション名 → 実行関数
         const ACTION_HANDLERS = {
@@ -2940,12 +3120,12 @@
                 trueEnd: {
                     title: "🎄 TRUE END",
                     label: "TRUE END",
-                    desc: "呪われた帽子を浄化し、村にも静かなクリスマスが戻ってきました。"
+                    desc: "お気に入りの帽子をかぶれたブロックマンは、幸せに過ごせることでしょう。"
                 },
-                end: {
-                    title: "🔔 NORMAL END 1",
-                    label: "NORMAL END 1",
-                    desc: "不思議な山小屋から無事に脱出できました。"
+                endGood: {
+                    title: "🔔 NORMAL END +",
+                    label: "NORMAL END +",
+                    desc: "呪われた帽子を浄化し、村にも静かなクリスマスが戻ってきました。"
                 },
                 endWorse: {
                     title: "💀 NORMAL END -",
@@ -2960,10 +3140,10 @@
             let secretText = "";
             switch (endingId) {
                 case "trueEnd":
-                    secretText = "🎁 帽子は浄化され、ブロックマンにも頭を守る髪の毛が生えたようだ。";
+                    secretText = "🎁 ブロックマンはしあわせになりました。";
                     break;
                 case "end":
-                    secretText = "⛄ 山小屋からは脱出できたものの、帽子と村の噂の関係はまだ霧の中…。";
+                    secretText = "⛄ 帽子は浄化され、ブロックマンにも頭を守る髪の毛が生えたようだ。";
                     break;
                 case "endWorse":
                     secretText = "⚠️ あの帽子をかぶせて良かったのだろうか。";
@@ -3024,7 +3204,7 @@
 
             const endingLabel = ({
                 trueEnd: "トゥルーエンド",
-                end: "ノーマルエンド",
+                endGood: "ノーマルエンド+",
                 endWorse: "ノーマルエンド-",
             })[endingId] || "エンド";
 
@@ -3630,141 +3810,96 @@
             }
         }
 
+        function showClockPuzzle() {
+            // 既に解除済みならその旨だけ
+            if (gameState.main.flags.unlockClock) {
 
-        function showSmallBoxPuzzle_bk() {
-            // すでに解除済みならメッセージだけ
-            if (gameState.main.flags.unlockBoxSmall) {
-                updateMessage('小さい箱のロックはすでに外れている。');
                 return;
             }
 
-            resetSmallBoxCounts();
-
-            const modalContent = `
+            const content = `
         <div style="
-            padding:14px;
-            border-radius:12px;
-            background: radial-gradient(circle at 30% 20%, #fdfdfd, #e2ddd5);
-            box-shadow:
-                inset 0 2px 4px rgba(0,0,0,0.15),
-                0 4px 10px rgba(0,0,0,0.6);
-            color:#2b1908;
-            text-align:center;
-            max-width:340px;
-            margin:0 auto;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:8px;
+            margin:12px 0;
         ">
-            <h2 style="margin:4px 0 10px 0;font-size:1.1em;">小さい箱のロック</h2>
-            <h3>12/19</h3>
-
-            <div style="
-                background:#ffffff;
-                border-radius:10px;
-                border:2px solid #b5a58a;
-                padding:10px;
-                margin:8px 0 10px 0;
-                display:flex;
-                justify-content:space-between;
-                gap:8px;
-            ">
-                <div style="flex:1;text-align:center;border-right:1px solid #ddd;padding-right:4px;">
-                    <div style="font-size:0.8em;margin-bottom:4px;">星</div>
-                    <div id="smallBoxStarArea"
-                         style="display:flex;flex-wrap:wrap;justify-content:center;min-height:24px;">
-                    </div>
-                </div>
-                <div style="flex:1;text-align:center;padding-left:4px;">
-                    <div style="font-size:0.8em;margin-bottom:4px;">松ぼっくり</div>
-                    <div id="smallBoxPineArea"
-                         style="display:flex;flex-wrap:wrap;justify-content:center;min-height:24px;">
-                    </div>
-                </div>
-            </div>
-
-            <div style="
-                display:flex;
-                justify-content:center;
-                gap:12px;
-                margin:6px 0 10px 0;
-            ">
-                <button onclick="incrementSmallBoxCount('star')" style="
-                    width:70px;
-                    height:70px;
-                    padding:2px;
-                    background:#f5f1e7;
-                    border:none;
-                    border-radius:8px;
-                    box-shadow:0 2px 6px rgba(0,0,0,0.4);
-                    cursor:pointer;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                ">
-                    <img src="${IMAGES.items.star}" style="max-width:90%;max-height:90%;object-fit:contain;">
-                </button>
-                <button onclick="incrementSmallBoxCount('pine')" style="
-                    width:70px;
-                    height:70px;
-                    padding:2px;
-                    background:#f5f1e7;
-                    border:none;
-                    border-radius:8px;
-                    box-shadow:0 2px 6px rgba(0,0,0,0.4);
-                    cursor:pointer;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                ">
-                    <img src="${IMAGES.items.pineCone}" style="max-width:90%;max-height:90%;object-fit:contain;">
-                </button>
-            </div>
-
-            <p id="smallBoxMsg"
-               style="min-height:1.4em;font-size:0.85em;margin:0 0 8px 0;"></p>
-
-            <div style="margin-top:6px;">
-                <button onclick="checkSmallBoxPuzzle()" class="text-btn">OK</button>
-                <button onclick="closeModal()" class="text-btn">閉じる</button>
-            </div>
+            <input id="hourInput"
+                type="text"
+                inputmode="numeric"
+                maxlength="2"
+                style="width:40px;padding:4px;text-align:center;font-size:1.2rem;">
+            <span style="font-size:1.2rem;">:</span>
+            <input id="minuteInput"
+                type="text"
+                inputmode="numeric"
+                maxlength="2"
+                style="width:40px;padding:4px;text-align:center;font-size:1.2rem;">
+                <span style="font-size:1.2rem;">:</span>
+            <input id="secondInput"
+                type="text"
+                inputmode="numeric"
+                maxlength="2"
+                style="width:40px;padding:4px;text-align:center;font-size:1.2rem;">
         </div>
     `;
 
-            const mc = document.getElementById('modalContent');
-            const modal = document.getElementById('modal');
-            if (!mc || !modal) return;
-
-            mc.innerHTML = modalContent;
-            modal.style.display = 'flex';
-
-            // 初期描画
-            renderSmallBoxIcons();
+            showModal(
+                '時計',
+                content,
+                [
+                    { text: 'OK', action: checkClockInput },
+                    { text: '閉じる', action: 'close' }
+                ]
+            );
         }
 
-        function checkSmallBoxPuzzle_bk() {
-            const msg = document.getElementById('smallBoxMsg');
+        function checkClockInput() {
+            const hourEl = document.getElementById('hourInput');
+            const minEl = document.getElementById('minuteInput');
+            const secEl = document.getElementById('secondInput');
+            if (!hourEl || !minEl || !secEl) {
+                // 何かおかしかったらとりあえず閉じる
+                closeModal();
+                return;
+            }
 
-            // 星6個＆松ぼっくり8個で正解
-            const ok = (smallBoxStarCount === 6 && smallBoxPineCount === 8);
+            const hour = hourEl.value.trim();
+            const minute = minEl.value.trim();
+            const second = secEl.value.trim();
 
-            if (!ok) {
-                if (msg) msg.textContent = '…何か違うようだ。';
+            const isOk = (hour === '12' && minute === '23' && second === '23');
+
+            if (!isOk) {
+                closeModal();
+                showModal(
+                    '開かない',
+                    '…違うようだ。',
+                    [{ text: '閉じる', action: 'close' }]
+                );
                 if (typeof playSE === 'function') playSE('se-error');
                 return;
             }
 
-            // 正解時：小さい箱アンロック
-            gameState.main.flags.unlockBoxSmall = true;
+            gameState.main.flags.unlockClock = true;
 
-            if (typeof markProgress === 'function') {
-                markProgress('box_small_unlock_22');
-            }
-            if (typeof playSE === 'function') playSE('se-gacha');
+            if (typeof playSE === 'function') playSE('se-clear');
 
             closeModal();
-            updateMessage('小さい箱のロックが外れた');
+            showModal(
+                'ロックが外れた',
+                'カチリと音がした。',
+                [{ text: '閉じる', action: 'close' }]
+            );
+            updateMessage('ロックが外れた');
+
             if (typeof renderCanvasRoom === 'function') {
                 renderCanvasRoom();
             }
+
         }
+
 
         // ドアパズルを表示
         function showDoorPuzzle() {
@@ -3907,10 +4042,19 @@
                 if (gameState.flags.trueEndUnlocked) {
                     gameState.endings.true = true;
                     travelWithStepsTrueEnd();
-                } else if (gameState.main.flags.blockManStatus >= 2) {
+                } else if (gameState.main.flags.blockManStatus >= 2 && gameState.main.flags.blockManStatus < 5) {
                     changeRoom('endWorse');
+                } else if (hasItem('hat')) {
+                    showModal(
+                        'この帽子を持って帰りたくないな',
+                        `<img src="${IMAGES.items.hat}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                        [{ text: '閉じる', action: 'close' }]
+                    );
+                    return;
+                } else if (gameState.main.flags.isNight) {
+                    updateMessage('夜道は危険なのでやめておこう');
                 } else {
-                    changeRoom('end');
+                    updateMessage('まだ開かないようだ');
                 }
             };
 
@@ -3990,7 +4134,8 @@
                 hat: '帽子',
                 map: '雑な地図',
                 cake: 'ケーキ',
-                maze: '迷路のメモ'
+                memoGhost: 'おばけのメモ',
+                faceSeal: '顔のシール',
 
 
 
@@ -4055,15 +4200,19 @@
                         let buttons = [{ text: '閉じる', action: 'close' }];
 
                         // マントなら「調べる」ボタンを追加（鍵未入手＆未発見フラグ時のみ）
-                        if (itemId === 'maze') {
+                        if (itemId === 'envelope') {
                             buttons = [
                                 {
-                                    text: '裏返す', action: () => {
+                                    text: '開ける', action: () => {
                                         showModal(
-                                            '',
-                                            `<img src="${IMAGES.modals.mazeReverse}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
+                                            '封筒を開けた',
+                                            `<img src="${IMAGES.modals.openEnvelope}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
                                             [{ text: '閉じる', action: 'close' }]
                                         );
+                                        removeItem('envelope');
+                                        addItem('memoGhost');
+                                        addItem('faceSeal');
+                                        updateMessage('封筒を開けた');
                                     }
                                 },
                                 { text: '閉じる', action: 'close' }
