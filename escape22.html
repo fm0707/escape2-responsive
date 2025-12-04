@@ -1153,6 +1153,7 @@
                 dollPaper: 'images/22/modal_doll_paper.png',
                 mazeReverse: 'images/22/modal_maze_reverse.png',
                 compass: 'images/22/modal_compass.jpeg',
+                clock: 'images/22/modal_clock.png',
                 ghostEnvelope: 'images/22/modal_ghost.jpeg',
                 openEnvelope: 'images/22/modal_open_envelope.png',
                 mvEnding: 'images/22/ending.mp4',
@@ -3811,6 +3812,8 @@
             }
 
             const content = `
+            <div><img src="${IMAGES.modals.clock}"
+                     style="max-width:380px;height:auto;display:block;margin:0 auto;"></div>
         <div style="
             display:flex;
             justify-content:center;
@@ -3818,6 +3821,7 @@
             gap:8px;
             margin:12px 0;
         ">
+        
             <input id="hourInput"
                 type="text"
                 inputmode="numeric"
@@ -3867,7 +3871,7 @@
             if (!isOk) {
                 closeModal();
                 showModal(
-                    '開かない',
+                    '',
                     '…違うようだ。',
                     [{ text: '閉じる', action: 'close' }]
                 );
