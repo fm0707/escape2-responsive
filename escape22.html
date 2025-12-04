@@ -3942,6 +3942,7 @@
                 [{ text: '閉じる', action: 'close' }]
             );
             updateMessage('ロックが外れた');
+            markProgress('clock_unlock_22');
 
             if (typeof renderCanvasRoom === 'function') {
                 renderCanvasRoom();
@@ -3989,7 +3990,7 @@
                 closeModal();
                 gameState.main.flags.unlockDoor = true;
 
-                markProgress('door_normal_unlock_21');
+                markProgress('door_normal_unlock_22');
 
                 if (gameState.main.flags.blockManStatus == 2 || gameState.main.flags.blockManStatus == 3) {
                     window._nextModal = {
@@ -4031,6 +4032,7 @@
                 } else {
                     closeModal();
                     travelWithSteps('saint');
+                    markProgress('door_normal_plus_unlock_22');
                 }
 
 
