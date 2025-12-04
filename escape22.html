@@ -4100,6 +4100,8 @@
             if (gameState.inventory.length < 8) {
                 gameState.inventory.push(itemId);
                 updateInventoryDisplay();
+            } else {
+                updateMessage('アイテム欄がいっぱいだ。どこかで減らしてこよう');
             }
         }
 
