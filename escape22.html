@@ -1925,6 +1925,8 @@
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.blockManStatus == 5) {
                                 updateMessage('おばけは嬉しそうにふわふわしている');
+                            } else if (gameState.selectedItem=='hat') {
+                                updateMessage('おばけは、こころなしかうなずいているように見える');
                             } else if (gameState.main.flags.gotEnvelope) {
                                 updateMessage('おばけはふわふわしている');
                             } else {
@@ -3984,11 +3986,11 @@
 
             closeModal();
             showModal(
-                'ロックが外れた',
-                'カチリと音がした。',
+                'ロックが外れたような音がした',
+                '',
                 [{ text: '閉じる', action: 'close' }]
             );
-            updateMessage('ロックが外れた');
+            updateMessage('ロックが外れたような音がした');
             markProgress('clock_unlock_22');
 
             if (typeof renderCanvasRoom === 'function') {
@@ -4238,6 +4240,7 @@
                 cake: 'ケーキ',
                 memoGhost: 'おばけのメモ',
                 faceSeal: '顔のシール',
+                envelope: '封筒'
 
 
 
