@@ -1127,6 +1127,7 @@
                 envelope: 'images/22/envelope.jpeg',
                 memoGhost: 'images/22/memo_ghost.png',
                 faceSeal: 'images/22/face_seal.png',
+                memoCushion: 'images/22/memo_cushion.png',
 
 
 
@@ -1159,6 +1160,7 @@
                 ghostEnvelope: 'images/22/modal_ghost.jpeg',
                 openEnvelope: 'images/22/modal_open_envelope.png',
                 dollBack: 'images/22/modal_doll_back.png',
+                cushionCut: 'images/22/modal_cushion_cut.png',
                 mvEnding: 'images/22/ending.mp4',
                 // badEnd: 'images/22/badend.jpeg',
             },
@@ -1429,12 +1431,28 @@
                     {
                         x: 51.2, y: 35.1, width: 20.0, height: 19.1,
                         onClick: clickWrap(function () {
-                            updateMessage('可愛いクッションだ');
+                            if (gameState.selectedItem == 'scissors' && !gameState.main.flags.cutCushion) {
+                                showObj('cutCushion', 'クッションを少し切った', IMAGES.modals.cushionCut, 'クッションを少し切った');
+                                playSE('se-hasami');
+                            } else if (gameState.main.flags.cutCushion) {
+                                updateMessage('可愛いクッションだ。端が少し切られている');
+                            } else {
+                                updateMessage('可愛いクッションだ');
+                            }
                         }),
                         description: 'クッション右',
                         zIndex: 5,
                         usable: () => true,
-                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 67.4, y: 52.5, width: 7.9, height: 5.4,
+                        onClick: clickWrap(function () {
+                            showObj(null, 'クッションから出てきた紙切れ', IMAGES.items.memoCushion, '');
+                        }),
+                        description: 'クッションから出てきたメモ',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.cutCushion,
+                        item: { img: 'memoCushion', visible: () => gameState.main.flags.cutCushion }
                     },
                     {
                         x: 38.8, y: 46.8, width: 25.7, height: 15.5,
@@ -3723,7 +3741,7 @@
             margin:0 auto;
         ">
             <h2 style="margin:4px 0 10px 0;font-size:1.1em;">小さい箱のロック</h2>
-            <h3>🍪🙂📅</h3>
+            <h3></h3>
 
             <div style="
                 background:#ffffff;
