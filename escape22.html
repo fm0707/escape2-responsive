@@ -1158,6 +1158,7 @@
                 clock: 'images/22/modal_clock.png',
                 ghostEnvelope: 'images/22/modal_ghost.jpeg',
                 openEnvelope: 'images/22/modal_open_envelope.png',
+                dollBack: 'images/22/modal_doll_back.png',
                 mvEnding: 'images/22/ending.mp4',
                 // badEnd: 'images/22/badend.jpeg',
             },
@@ -1978,7 +1979,7 @@
 
                                 // 1枚目の「うわあ…なんかいやなかんじ」モーダル
                                 showModal(
-                                    'うわあ…なんかいやなかんじ',
+                                    'うわあ…なんかいやなかんじがする。サンタには分かるんだ',
                                     `<img src="${IMAGES.modals.bearHat}"
                       style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                                     [
@@ -2307,7 +2308,32 @@
                     {
                         x: 25.3, y: 65.1, width: 21.4, height: 22.4,
                         onClick: clickWrap(function () {
-                            updateMessage('ジンジャーマンのぬいぐるみだ');
+                            // ジンジャーマンのぬいぐるみをクリックしたとき
+                            showModal(
+                                'ジンジャーマンのぬいぐるみ',
+                                `<img src="${IMAGES.items.doll}" 
+          style="max-width:380px;max-height:380px;width:auto;height:auto;
+                 object-fit:contain;display:block;margin:0 auto 16px;">`,
+                                [
+                                    {
+                                        text: '調べる',
+                                        action: () => {
+                                            // 2枚目：裏側のモーダル
+                                            showModal(
+                                                'ぬいぐるみの裏側',
+                                                `<img src="${IMAGES.modals.dollBack}" 
+                          style="max-width:380px;max-height:380px;width:auto;height:auto;
+                                 object-fit:contain;display:block;margin:0 auto 16px;">`,
+                                                [
+                                                    { text: '閉じる', action: 'close' }
+                                                ]
+                                            );
+                                        }
+                                    },
+                                    { text: '閉じる', action: 'close' }
+                                ]
+                            );
+
                         }),
                         description: 'doll',
                         zIndex: 5,
@@ -2680,7 +2706,7 @@
   <img src="${IMAGES.modals.blockManSeal}">
   <img src="${IMAGES.modals.blockManSealAfter}">
 </div>`,
-             //   <img src="${IMAGES.modals.blockManSeal}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                //   <img src="${IMAGES.modals.blockManSeal}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                 [{ text: '閉じる', action: 'close' }]
             );
             playSE('se-peta');
@@ -3540,13 +3566,13 @@
                 gap:8px;
             ">
                 <div style="flex:1;text-align:center;border-right:1px solid #ddd;padding-right:4px;">
-                    <div style="font-size:0.8em;margin-bottom:4px;">緑</div>
+                    <div style="font-size:0.8em;margin-bottom:4px;"></div>
                     <div id="middleBoxGreenArea"
                          style="display:flex;flex-wrap:wrap;justify-content:center;min-height:24px;">
                     </div>
                 </div>
                 <div style="flex:1;text-align:center;padding-left:4px;">
-                    <div style="font-size:0.8em;margin-bottom:4px;">水色</div>
+                    <div style="font-size:0.8em;margin-bottom:4px;"></div>
                     <div id="middleBoxLightBlueArea"
                          style="display:flex;flex-wrap:wrap;justify-content:center;min-height:24px;">
                     </div>
@@ -3697,7 +3723,7 @@
             margin:0 auto;
         ">
             <h2 style="margin:4px 0 10px 0;font-size:1.1em;">小さい箱のロック</h2>
-            <h3>12/19</h3>
+            <h3>🍪12/19</h3>
 
             <div style="
                 background:#ffffff;
@@ -3828,8 +3854,9 @@
             const msg = document.getElementById('smallBoxMsg');
 
             // 直近4入力だけ見る
-            const seq = smallBoxDirSequence.slice(-4).join('');
-            const ok = (seq === 'news'); // n→e→w→s
+            const seq = smallBoxDirSequence.slice(-8).join('');
+            const ok = (seq === 'swennews'); // n→e→w→s
+            console.log(seq);
 
             if (!ok) {
                 if (msg) msg.textContent = '…何か違うようだ。';
