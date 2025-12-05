@@ -2467,7 +2467,7 @@
             },
             trueEnd: {
                 name: 'トゥルーエンド',
-                description: 'おめでとうございます。無事に脱出できました。ブロックマンは幸せに過ごせることでしょう',
+                description: 'おめでとうございます。無事に脱出できました。ブロックマンはお気に入りの帽子と共に幸せに過ごせることでしょう',
                 clickableAreas: [
                     {
                         x: 17.8, y: 40.9, width: 13.7, height: 10.9,
@@ -2482,7 +2482,7 @@
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
-                            updateMessage('おめでとうございます。無事に脱出できました。ブロックマンは幸せに過ごせることでしょう');
+                            updateMessage('おめでとうございます。無事に脱出できました。ブロックマンはお気に入りの帽子と共に幸せに過ごせることでしょう');
                             showEndingReport('trueEnd');
                         }),
                         description: 'トゥルーエンド',
@@ -2500,7 +2500,6 @@
                 bear: [
                     '呼んだ？',
                     'サンタさんだよ',
-                    'あれ？ここは…',
                 ],
                 bear2: [
                     '一緒にそこに行こうよ',
@@ -4104,8 +4103,10 @@
                     return;
                 } else if (gameState.main.flags.isNight) {
                     updateMessage('夜道は危険なのでやめておこう');
+                    return;
                 } else {
                     updateMessage('まだ開かないようだ');
+                    return;
                 }
             };
 
