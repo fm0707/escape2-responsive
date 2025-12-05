@@ -1664,7 +1664,7 @@
                         x: 64.6, y: 57.5, width: 25.6, height: 40.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
-                                updateMessage('良く見えないが、立ったまま、目を開けたまま眠っているようだ');
+                                updateMessage('良く見えないが、立ったまま、笑顔のまま眠っているようだ');
                                 return;
                             }
 
@@ -1925,7 +1925,7 @@
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.blockManStatus == 5) {
                                 updateMessage('おばけは嬉しそうにふわふわしている');
-                            } else if (gameState.selectedItem=='hat') {
+                            } else if (gameState.selectedItem == 'hat') {
                                 updateMessage('おばけは、こころなしかうなずいているように見える');
                             } else if (gameState.main.flags.gotEnvelope) {
                                 updateMessage('おばけはふわふわしている');
@@ -3149,8 +3149,13 @@
                 // 中身のソースを見て「移動系かどうか」をざっくり判定
                 const src = fn.toString();
                 const isMoveAction =
-                    src.includes('changeRoom(') || src.includes('travelWithSteps(') || src.includes('toggleNight(')
-                    || src.includes('blockManHat1') || src.includes('blockManScissors' || src.includes('blockMan3') || src.includes('blockManHappy'));
+                    src.includes('changeRoom(') ||
+                    src.includes('travelWithSteps(') ||
+                    src.includes('toggleNight(') ||
+                    src.includes('blockManHat1') ||
+                    src.includes('blockManScissors') ||
+                    src.includes('blockMan3') ||
+                    src.includes('笑顔のまま');
 
                 if (
                     gameState.main.flags.isNight &&
