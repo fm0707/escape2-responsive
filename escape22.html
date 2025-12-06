@@ -1356,7 +1356,7 @@
                     {
                         x: 0, y: 32.9, width: 42.6, height: 62.8,
                         onClick: clickWrap(function () {
-                            updateMessage('キラキラのクリスマスツリーだ');
+                            showObj(null, 'キラキラのクリスマスツリーだ', IMAGES.items.treeLight, 'キラキラのクリスマスツリーだ');
                         }),
                         description: 'ツリー',
                         zIndex: 3,
@@ -3932,18 +3932,18 @@
             <input id="hourInput"
                 type="text"
                 inputmode="numeric"
-                maxlength="2"
+                maxlength="2" placeholder="hh"
                 style="width:40px;padding:4px;text-align:center;font-size:1.2rem;">
             <span style="font-size:1.2rem;">:</span>
             <input id="minuteInput"
                 type="text"
                 inputmode="numeric"
-                maxlength="2"
+                maxlength="2" placeholder="nn"
                 style="width:40px;padding:4px;text-align:center;font-size:1.2rem;">
                 <span style="font-size:1.2rem;">:</span>
             <input id="secondInput"
                 type="text"
-                inputmode="numeric"
+                inputmode="numeric" placeholder="ss"
                 maxlength="2"
                 style="width:40px;padding:4px;text-align:center;font-size:1.2rem;">
         </div>
