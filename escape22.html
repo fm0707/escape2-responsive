@@ -1693,7 +1693,12 @@
                             if (gameState.main.flags.unlockClock) {
                                 toggleNight();
                             } else {
-                                showClockPuzzle();
+                                if (gameState.main.flags.blockManStatus == 4) {
+                                    updateMessage('こんなことをしている場合ではない');
+                                    return;
+                                } else {
+                                    showClockPuzzle();
+                                }
                             }
 
                         }, { allowAtNight: true }),
@@ -3155,7 +3160,7 @@
                     return;
                 }
                 fn.apply(this, args);
-                
+
 
                 // アイテム選択解除は今まで通り
                 gameState.selectedItem = null;
@@ -3316,7 +3321,7 @@
 
             // セリフリスト取得
             const messages = hintMessages[roomId][charId];
-            
+
             // 範囲外なら最後のメッセージ
             const idx = (flags.talkTo[charId] - 1) % messages.length;
             console.log(flags.talkTo[charId]);
