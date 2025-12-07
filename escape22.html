@@ -974,6 +974,8 @@
     <audio id="se-shutter" src="sounds/common/shutter.mp3"></audio>
     <audio id="se-fire" src="sounds/common/fire.mp3"></audio>
     <audio id="se-peta" src="sounds/common/Anime_Motion19-1(Phrase).mp3"></audio>
+    <audio id="se-paper" src="sounds/common/Flyer02-3(Rustle).mp3"></audio>
+
 
 
     <script>
@@ -1121,7 +1123,6 @@
                 cake: 'images/22/cake.png',
                 calendar: 'images/22/calendar.png',
                 poster: 'images/22/poster.png',
-                maze: 'images/22/maze.png',
                 bearSleep: 'images/22/bear_sleep.png',
                 ghost: 'images/22/ghost.png',
                 envelope: 'images/22/envelope.jpeg',
@@ -1154,7 +1155,6 @@
                 bearBox: 'images/22/modal_bear_box.png',
                 blockManGone: 'images/22/modal_blockman_gone.jpeg',
                 dollPaper: 'images/22/modal_doll_paper.png',
-                mazeReverse: 'images/22/modal_maze_reverse.png',
                 compass: 'images/22/modal_compass.jpeg',
                 clock: 'images/22/modal_clock.png',
                 ghostEnvelope: 'images/22/modal_ghost.jpeg',
@@ -1378,7 +1378,7 @@
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('bed');
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ドア面：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
@@ -1386,7 +1386,7 @@
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('window');
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ドア面：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -1606,7 +1606,7 @@
                                 talkToHintCharacter('main', 'blockMan');
                             }
 
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ブロックマン',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 1,
@@ -1633,7 +1633,7 @@
                                 talkToHintCharacter('main', 'blockMan2');
                             }
 
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ブロックマン帽子ON',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 2,
@@ -1654,7 +1654,7 @@
                                 talkToHintCharacter('main', 'blockMan3');
                             }
 
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ブロックマン帽子ONはさみ持ち',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 3,
@@ -1671,14 +1671,14 @@
                             talkToHintCharacter('main', 'blockManHappy');
 
 
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ブロックマン帽子ONにこやか',
                         zIndex: 5,
                         usable: () => gameState.main.flags.blockManStatus == 5,
                         item: { img: 'blockManHappy', visible: () => gameState.main.flags.blockManStatus == 5 }
                     },
                     {
-                        x: 84.6, y: 89.2, width: 7.4, height: 8.8,
+                        x: 84.6, y: 91.2, width: 7.4, height: 8.8,
                         onClick: clickWrap(function () {
 
                         }),
@@ -1696,7 +1696,7 @@
                                 showClockPuzzle();
                             }
 
-                        }),
+                        }, { allowAtNight: true }),
                         description: '時計',
                         zIndex: 5,
                         usable: () => true,
@@ -1706,7 +1706,7 @@
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('fireplace');
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ベッド：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
@@ -1714,7 +1714,7 @@
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('door');
-                        }),
+                        }, { allowAtNight: true }),
                         description: 'ベッド：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -1765,6 +1765,8 @@
                                     updateMessage('そんなことはやめよう');
                                 } else if (gameState.selectedItem == 'key') {
                                     updateMessage('鍵を温めても仕方ない');
+                                } else if (gameState.selectedItem == 'memoGhost') {
+                                    updateMessage('…あぶり出しではないようだ');
                                 } else {
                                     updateMessage('炎ブロックが発光している。暖かい。');
                                 }
@@ -1960,7 +1962,7 @@
                                         // ケーキ付与
                                         addItem('cake');
                                         gameState.main.flags.gotCake = true;
-                                        updateMessage('クマサンタからケーキをもらった。おいしそう。');
+                                        updateMessage('クマサンタからプレゼントをもらった。');
                                     }
                                 };
 
@@ -2136,7 +2138,7 @@
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('window');
-                        }),
+                        }, { allowAtNight: true }),
                         description: '暖炉：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
@@ -2144,7 +2146,7 @@
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('bed');
-                        }),
+                        }, { allowAtNight: true }),
                         description: '暖炉：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -2159,7 +2161,7 @@
                         onClick: clickWrap(function () {
                             changeRoom('outside');
 
-                        }),
+                        }, { allowAtNight: true }),
                         description: '窓',
 
                     },
@@ -2296,7 +2298,7 @@
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('door');
-                        }),
+                        }, { allowAtNight: true }),
                         description: '窓：左', zIndex: 5,
                         item: { img: 'arrowLeft', visible: () => true }
                     },
@@ -2304,7 +2306,7 @@
                         x: 93.6, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
                             changeRoom('fireplace');
-                        }),
+                        }, { allowAtNight: true }),
                         description: '窓：右', zIndex: 5,
                         item: { img: 'arrowRight', visible: () => true }
                     },
@@ -2390,7 +2392,7 @@
                         x: 90, y: 90, width: 10, height: 10,
                         onClick: clickWrap(function () {
                             changeRoom('fireplace');
-                        }),
+                        }, { allowAtNight: true }),
                         description: '箱の中戻る',
                         zIndex: 5,
                         item: { img: 'back', visible: () => true }
@@ -2408,7 +2410,7 @@
                         x: 90, y: 90, width: 10, height: 10,
                         onClick: clickWrap(function () {
                             changeRoom('window');
-                        }),
+                        }, { allowAtNight: true }),
                         description: '外の景色戻る',
                         zIndex: 5,
                         item: { img: 'back', visible: () => true }
@@ -2662,7 +2664,7 @@
 
         function travelWithStepsTrueEnd() {
             const overlay = document.getElementById('roomEffectOverlay');
-            let destRoom = hasItem('elixirModern') ? 'trueEndPlus' : 'trueEnd';
+            let destRoom = 'trueEnd';
 
             // 足音を鳴らす
             try {
@@ -3144,28 +3146,16 @@
             updateMessage(msg);
         }
 
-        function clickWrap(fn) {
+        function clickWrap(fn, { allowAtNight = false } = {}) {
             return function (...args) {
-                // 中身のソースを見て「移動系かどうか」をざっくり判定
-                const src = fn.toString();
-                const isMoveAction =
-                    src.includes('changeRoom(') ||
-                    src.includes('travelWithSteps(') ||
-                    src.includes('toggleNight(') ||
-                    src.includes('blockManHat1') ||
-                    src.includes('blockManScissors') ||
-                    src.includes('blockMan3') ||
-                    src.includes('笑顔のまま');
-
-                if (
-                    gameState.main.flags.isNight &&
+                if (gameState.main.flags.isNight &&
                     gameState.currentRoom !== 'fireplace' &&
-                    !isMoveAction // 移動以外だけブロック
-                ) {
+                    !allowAtNight) {
                     updateMessage('暗くてよく見えない');
-                } else {
-                    fn.apply(this, args);
+                    return;
                 }
+                fn.apply(this, args);
+                
 
                 // アイテム選択解除は今まで通り
                 gameState.selectedItem = null;
@@ -3179,7 +3169,7 @@
         const ACTION_HANDLERS = {
             // --- 移動系 ---
             examine_start_door_left() {
-                changeRoom('startRight');
+                // changeRoom('startRight');
             },
 
         };
@@ -3217,7 +3207,7 @@
                 trueEnd: {
                     title: "🎄 TRUE END",
                     label: "TRUE END",
-                    desc: "お気に入りの帽子をかぶれたブロックマンは、幸せに過ごせることでしょう。"
+                    desc: "お気に入りの帽子をかぶれたブロックマンは、嬉しそうです。"
                 },
                 endGood: {
                     title: "🔔 NORMAL END +",
@@ -3239,11 +3229,11 @@
                 case "trueEnd":
                     secretText = "🎁 ブロックマンはしあわせになりました。";
                     break;
-                case "end":
+                case "endGood":
                     secretText = "⛄ 帽子は浄化され、ブロックマンにも頭を守る髪の毛が生えたようだ。";
                     break;
                 case "endWorse":
-                    secretText = "⚠️ あの帽子をかぶせて良かったのだろうか。";
+                    secretText = "⚠️ あの帽子をかぶせて外に出して良かったのだろうか。";
                     break;
                 default:
                     secretText = "";
@@ -3888,7 +3878,7 @@
             console.log(seq);
 
             if (!ok) {
-                if (msg) msg.textContent = '…何か違うようだ。';
+                if (msg) msg.textContent = '…違うようだ。';
                 if (typeof playSE === 'function') playSE('se-error');
                 return;
             }
@@ -4100,7 +4090,7 @@
 
 
         function showNewspaperModal() {
-            // playSE('paper'); // あれば最高
+            playSE('se-paper');
 
             showModal(
                 '古い新聞の切れ端',
