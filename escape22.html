@@ -1061,8 +1061,8 @@
                 saint: ['images/22/saint.jpeg'],
                 end: ['images/22/end.jpeg'],
                 endWorse: ['images/22/end_worse.png'],
-                endGood: ['images/22/good_end.png', 'images/22/good_end2.png'],
-                trueEnd: ['images/22/true_end.jpg'],
+                endGood: ['images/22/good_end.jpeg', 'images/22/good_end2.jpeg'],
+                trueEnd: ['images/22/true_end.jpeg'],
 
             },
             items: {
@@ -1143,16 +1143,16 @@
                 stockingSet: 'images/22/modal_stocking_set.png',
                 headSet: 'images/22/modal_head_set.png',
                 boxSmallLid: 'images/22/modal_box_small_lid.png',
-                blockManHat1: 'images/22/modal_blockman_hat1.png',
+                blockManHat1: 'images/22/modal_blockman_hat1.jpeg',
                 blockManHat2: 'images/22/modal_blockman_hat2.png',
                 blockManScissors: 'images/22/modal_blockman_scissors.jpeg',
-                blockManSeal: 'images/22/modal_blockman_seal.jpeg',
+                blockManSeal: 'images/22/modal_blockman_seal.png',
                 blockManSealAfter: 'images/22/modal_blockman_seal_after.png',
                 bearHat: 'images/22/modal_bear_hat.png',
                 bearMemo: 'images/22/modal_bear_memo.png',
                 bearCoin: 'images/22/modal_bear_coin.jpeg',
                 bearBox: 'images/22/modal_bear_box.png',
-                blockManGone: 'images/22/modal_blockman_gone.png',
+                blockManGone: 'images/22/modal_blockman_gone.jpeg',
                 dollPaper: 'images/22/modal_doll_paper.png',
                 mazeReverse: 'images/22/modal_maze_reverse.png',
                 compass: 'images/22/modal_compass.jpeg',
@@ -1455,7 +1455,7 @@
                         item: { img: 'memoCushion', visible: () => gameState.main.flags.cutCushion }
                     },
                     {
-                        x: 38.8, y: 46.8, width: 25.7, height: 15.5,
+                        x: 38.8, y: 38.8, width: 25.7, height: 25.5,
                         onClick: clickWrap(function () {
                             // 頭ブロックを選択している場合だけ「頭セット」イベント
                             if (gameState.selectedItem === 'blockHead') {
@@ -1487,7 +1487,7 @@
 
                         }),
                         description: 'ブロックボディ',
-                        zIndex: 5,
+                        zIndex: 7,
                         usable: () => gameState.main.flags.blockManStatus == 0,
                         item: { img: 'blockBody', visible: () => gameState.main.flags.blockManStatus == 0 }
                     },
@@ -1503,7 +1503,7 @@
                         item: { img: 'key', visible: () => gameState.main.flags.blockManStatus > 0 && !gameState.main.flags.foundKey }
                     },
                     {
-                        x: 74.3, y: 61.1, width: 22.6, height: 33.7,
+                        x: 54.3, y: 61.1, width: 33.6, height: 33.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
                                 updateMessage('良く見えないが、立ったまま、目を開けたまま眠っているようだ');
@@ -1613,7 +1613,7 @@
                         item: { img: 'blockMan', visible: () => gameState.main.flags.blockManStatus == 1 }
                     },
                     {
-                        x: 64.6, y: 57.5, width: 27.6, height: 40.7,
+                        x: 54.6, y: 57.5, width: 40.6, height: 40.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
                                 updateMessage('良く見えないが、怖い顔のまま眠っているようだ');
@@ -1640,7 +1640,7 @@
                         item: { img: 'blockManViolent', visible: () => gameState.main.flags.blockManStatus == 2 }
                     },
                     {
-                        x: 64.6, y: 57.5, width: 34.6, height: 40.7,
+                        x: 54.6, y: 57.5, width: 40.6, height: 40.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
                                 updateMessage('良く見えないが、怖い顔のままはさみを持って眠っているようだ');
@@ -1661,7 +1661,7 @@
                         item: { img: 'blockManScissors', visible: () => gameState.main.flags.blockManStatus == 3 }
                     },
                     {
-                        x: 64.6, y: 57.5, width: 25.6, height: 40.7,
+                        x: 54.6, y: 57.5, width: 40.6, height: 40.7,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.isNight) {
                                 updateMessage('良く見えないが、立ったまま、笑顔のまま眠っているようだ');
@@ -1678,7 +1678,7 @@
                         item: { img: 'blockManHappy', visible: () => gameState.main.flags.blockManStatus == 5 }
                     },
                     {
-                        x: 64.6, y: 89.2, width: 7.4, height: 8.8,
+                        x: 84.6, y: 89.2, width: 7.4, height: 8.8,
                         onClick: clickWrap(function () {
 
                         }),
@@ -2516,7 +2516,7 @@
                 description: 'おめでとうございます。無事に脱出できました。ブロックマンはお気に入りの帽子と共に幸せに過ごせることでしょう',
                 clickableAreas: [
                     {
-                        x: 17.8, y: 40.9, width: 13.7, height: 10.9,
+                        x: 16.8, y: 34.7, width: 18.6, height: 18.0,
                         onClick: clickWrap(function () {
                             updateMessage('帽子の邪気は、笑顔の効用で消えたようだ');
                         }),
@@ -2557,9 +2557,9 @@
                 ],
                 blockMan: [
                     'やあ、おはよう。ねぇ、僕の帽子見なかった？ ',
-                    '大事なものなんだ… ',
-                    '帽子がないと僕じゃない感じがするんだよねぇ。ふふっ。',
-                    '頭がむき出しで恥ずかしいよ'
+                    '大事なものなんだ',
+                    '帽子がないと僕じゃない感じがするんだ',
+                    '頭がむき出しで恥ずかしいよ！'
                 ],
                 blockMan2: [
                     'なんだい？ ',
@@ -2573,7 +2573,7 @@
                     '久しぶりに村に行ってみるのも良いなあ ',
                 ],
                 blockManHappy: [
-                    '帽子、見つけてくれてありがとう ',
+                    '帽子、見つけてくれてありがとう！',
                     '久しぶりに村に行ってみたいな',
                 ]
             },
