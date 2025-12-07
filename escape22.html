@@ -3883,8 +3883,8 @@
             const msg = document.getElementById('smallBoxMsg');
 
             // 直近4入力だけ見る
-            const seq = smallBoxDirSequence.slice(-8).join('');
-            const ok = (seq === 'swennews'); // n→e→w→s
+            const seq = smallBoxDirSequence.slice(-4).join('');
+            const ok = (seq === 'wens'); // n→e→w→s
             console.log(seq);
 
             if (!ok) {
