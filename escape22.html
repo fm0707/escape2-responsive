@@ -1153,6 +1153,8 @@
                 bearMemo: 'images/22/modal_bear_memo.png',
                 bearCoin: 'images/22/modal_bear_coin.jpeg',
                 bearBox: 'images/22/modal_bear_box.png',
+                bearCryingCoin: 'images/22/modal_bear_crying_coin.jpeg',
+                bearCryingBox: 'images/22/modal_bear_crying_box.png',
                 blockManGone: 'images/22/modal_blockman_gone.jpeg',
                 dollPaper: 'images/22/modal_doll_paper.png',
                 compass: 'images/22/modal_compass.jpeg',
@@ -2041,10 +2043,37 @@
                     {
                         x: 57.9, y: 19.7, width: 21.7, height: 21.7,
                         onClick: clickWrap(function () {
+                            if (gameState.selectedItem === 'coin' && !gameState.main.flags.gotCake) {
+                                // コイン消費
+                                removeItem('coin');
+                                playSE('se-coin');
+
+
+
+                                window._nextModal = {
+                                    title: 'さ、サンタさんからプレゼント…',
+                                    content: `<img src="${IMAGES.modals.bearCryingBox}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                    buttons: [
+                                        { text: '閉じる', action: 'close' }
+                                    ],
+                                    after() {
+                                        // ケーキ付与
+                                        addItem('cake');
+                                        gameState.main.flags.gotCake = true;
+                                        updateMessage('クマサンタからプレゼントをもらった。');
+                                    }
+                                };
+
+                                showModal(
+                                    'あ、ありがとう…',
+                                    `<img src="${IMAGES.modals.bearCryingCoin}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                    [{ text: '閉じる', action: 'close' }]
+                                );
+
+                                return;
+                            }
                             if (gameState.selectedItem == 'cake') {
                                 updateMessage('クマサンタはおびえていて、言葉が出ないようだ');
-                            } else if (gameState.selectedItem === 'coin' && !gameState.main.flags.gotCake) {
-                                updateMessage('クマサンタはおびえていて、それどころではないようだ');
                             } else if (gameState.main.flags.isNight) {
                                 updateMessage('クマサンタはおびえていて、夜も眠れないようだ');
                             } else {
