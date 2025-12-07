@@ -3316,9 +3316,7 @@
 
             // セリフリスト取得
             const messages = hintMessages[roomId][charId];
-            if (roomId == 'main' && charId == 'bear' && flags.talkTo[charId] == 3) {
-                gameState.main.flags.canRemovePoster = true;
-            }
+            
             // 範囲外なら最後のメッセージ
             const idx = (flags.talkTo[charId] - 1) % messages.length;
             console.log(flags.talkTo[charId]);
