@@ -1434,7 +1434,7 @@
                         unlockCorridorDoor: false,
                         unlockFrozen: false, foundKeyFrozen: false, foundKey: false,
                         unlockRefrigerator: false, foundFoodSet: false, foundSteak: false, completedPlating: false, notebookDeckHintAdded: false,
-                        unloclRoom288: false,
+                        unlockRoom288: false,
 
                         unlockDeckDoor: false, setReceiver: false, unlockStorageDoor: false,
                         goneBird: false,
@@ -3206,9 +3206,7 @@
 
         function clickWrap(fn, { allowAtNight = false } = {}) {
             return function (...args) {
-                if (gameState.main.flags.isNight &&
-                    gameState.currentRoom !== 'fireplace' &&
-                    !allowAtNight) {
+                if (gameState.main.flags.isNight && !allowAtNight) {
                     updateMessage('暗くてよく見えない');
                     return;
                 }
@@ -3721,7 +3719,7 @@
                 if (phoneInput === "312") {
                     gameState.phoneDexFlags[phoneInput] = true;
                     playSE("se-receiver");
-                    registerPhoneCall("312", "スタッフ意見箱の番号", "スタッフの意見が投稿されている。");
+                    registerPhoneCall("312", "スタッフ意見箱の番号", "フェイクグリーンや鳥に関するスタッフの意見が投稿されている。");
                     showModal(
                         "スタッフ意見箱",
                         `<p>『フェイクグリーンは味気ないです。実物の花を置きたいです。』<br>by キッチンスタッフ</p>
@@ -3749,7 +3747,7 @@
                 if (phoneInput === "389") {
                     gameState.phoneDexFlags[phoneInput] = true;
                     playSE("se-receiver");
-                    registerPhoneCall("389", "スタッフ伝言板の番号", "倉庫のパスワードを教えてくれた");
+                    registerPhoneCall("389", "スタッフ伝言板の番号", "倉庫のパスワードを教えてくれた。");
                     showModal(
                         "発信結果",
                         "<p>『スタッフ伝言板です。1件目を再生します。<br>…キッチンの皆さん。倉庫パスをまた更新しました。<br>…今回は 8834。以上。プツッ……』</p>",
@@ -3807,7 +3805,7 @@
                 if (phoneInput === "461") {
                     gameState.phoneDexFlags[phoneInput] = true;
                     playSE("se-receiver");
-                    registerPhoneCall("461", "観光デスクの番号", "満席らしい。");
+                    registerPhoneCall("461", "観光デスクの番号", "ツアーは満席らしい。");
                     showModal(
                         "発信結果",
                         "<p>『こちら、船内ツアー申し込みダイヤル461番です。<br>現在、全てのツアーは満席です。 プツッ……』</p>",
@@ -3820,7 +3818,7 @@
                 // ▼ 505（緊急センター）
                 if (phoneInput === "505") {
                     gameState.phoneDexFlags[phoneInput] = true;
-                    registerPhoneCall("505", "緊急センターの番号", "");
+                    registerPhoneCall("505", "緊急センターの番号", "船室のドアコードを教えてくれた。");
                     if (gameState.main.flags.timePhase === 0) {
                         // 昼だけ応答
                         if (gameState.main.flags.unlockDoor) {
@@ -3831,7 +3829,7 @@
                             );
                             playSE("se-receiver");
                         } else {
-                            const code = "384912";
+                            const code = "3849";
                             showModal(
                                 "発信結果",
                                 "<p>『ドアロック開錠コードをお伝えします。" + code + " です。』</p>",
@@ -5499,7 +5497,7 @@
             // 全角対策
             const z2h = s => s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
             const val = z2h(v).toLowerCase();
-            if (val === '384912') {
+            if (val === '3849') {
                 if (gameState.main.flags.unlockDoor) {
                     if (typeof playSE === 'function') playSE('se-error');
                     updateMessage('すでにドアロックは解除されている');
