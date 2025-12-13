@@ -2585,7 +2585,7 @@
                 ]
             },
             extra: {
-                name: '謎の部屋',
+                name: '開運の部屋',
                 description: '',
                 clickableAreas: [
                     {
@@ -5333,6 +5333,7 @@
             if (!ok) {
                 if (typeof playSE === 'function') playSE('se-error');
                 updateMessage('……この座標ではないようだ。');
+                markProgress('cordinate_mistake_23');
                 return;
             }
 
