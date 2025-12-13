@@ -4192,8 +4192,9 @@
             const ok = correct.every((v, i) => last[i] === v);
 
             if (!ok) {
+                markProgress('cabinet_bottom_mistake_23');
                 if (typeof playSE === 'function') playSE('se-error');
-                updateMessage('…何か違うようだ。');
+                updateMessage('…違うようだ。');
                 return;
             }
 
@@ -4296,6 +4297,7 @@
             const ok = correct.every((v, i) => last[i] === v);
 
             if (!ok) {
+                markProgress('cabinet_top_mistake_23');
                 if (typeof playSE === 'function') playSE('se-error');
                 updateMessage('…ロックは外れないようだ。');
                 return;
@@ -4412,6 +4414,7 @@
                 updateMessage('廊下のドアロックを解除した。');
 
             } else {
+                markProgress('corridor_mistake_23');
                 if (typeof playSE === 'function') playSE('se-error');
                 updateMessage('…違うようだ。');
             }
@@ -4497,6 +4500,7 @@
 
                 updateMessage('冷凍庫のロックを解除した。');
             } else {
+                markProgress('frozen_mistake_23');
                 if (typeof playSE === 'function') playSE('se-error');
                 updateMessage('…違うようだ。');
             }
@@ -4584,6 +4588,7 @@
                 updateMessage('冷蔵庫のロックを解除した。');
 
             } else {
+                markProgress('refrigerator_mistake_23');
                 if (typeof playSE === 'function') playSE('se-error');
                 updateMessage('…違うようだ。');
             }
@@ -4815,6 +4820,7 @@
                     [{ text: '閉じる', action: 'close' }]
                 );
                 updateMessage('Aセットをきれいに盛り付けた。');
+                markProgress('aset_completed_23');
                 startKumaASetEvent();
                 removeItem('foodSet');
                 removeItem('steak');
@@ -4824,6 +4830,7 @@
                 removeItem('foodSet');
                 showShrimpCurseBadEnd();
             } else {
+                markProgress('aset_mistake_23');
                 if (typeof playSE === 'function') playSE('se-error');
                 if (typeof showToast === 'function') {
                     showToast('…この盛り付けではない気がする。');
@@ -5061,7 +5068,7 @@
                 },
                 after() {
                     playSE('se-tirori');
-
+                    markProgress('bad_ebi_23');
 
                 }
             };
@@ -5106,6 +5113,7 @@
                 after() {
                     // エンディング効果音
                     playSE && playSE('se-glich');
+                    markProgress('bad_404_23');
                 }
             };
 
@@ -5428,6 +5436,7 @@
                 }
             } else {
                 if (typeof playSE === 'function') playSE('se-error');
+                markProgress('storage_mistake_23');
                 updateMessage('…ロックは外れないようだ。');
             }
         }
@@ -5469,6 +5478,7 @@
                             drawNewYearGacha();
                             lockUI(2600, 0.22);
                             playSE('se-can');
+                            markProgress('play_gacha_23');
                         }
                     },
                     {
