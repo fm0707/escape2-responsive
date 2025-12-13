@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>画像クリック座標チェッカー</title>
+  <style>
+    #canvas {
+      border: 1px solid #888;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="file" id="imageLoader">
+  <br>
+  <canvas id="canvas"></canvas>
+  <p id="info"></p>
+  <script>
+    const toPercent = v => ((v / 1024) * 100).toFixed(1);
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const info = document.getElementById('info');
+    let img = new Image();
+
+    document.getElementById('imageLoader').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        img.onload = function () {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+        }
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(e.target.files[0]);
+    }, false);
+
+    // クリックエリア用スニペットを作る関数
+    function formatAreaSnippet(sx, sy, w, h) {
+      const px = toPercent(sx);
+      const py = toPercent(sy);
+      const pw = toPercent(w);
+      const ph = toPercent(h);
+
+      return `{
+    x: ${px}, y: ${py}, width: ${pw}, height: ${ph},
+    onClick: clickWrap(function () {
+        
+    }),
+    description: '説明',
+    zIndex: 5,
+    usable: () => true,
+    item: { img: 'IMAGE_KEY', visible: () => true }
+},`;
+    }
+
+    let start = null;
+    let end = null;
+
+    canvas.addEventListener('click', function (e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.round(e.clientX - rect.left);
+      const y = Math.round(e.clientY - rect.top);
+      if (!start) {
+        start = { x, y };
+        info.innerHTML = `左上クリック: (${x}, ${y})`;
+      } else {
+        end = { x, y };
+        const w = end.x - start.x;
+        const h = end.y - start.y;
+
+        // 赤枠描画
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(start.x, start.y, w, h);
+
+        // 出力用コード
+        const snippet = formatAreaSnippet(start.x, start.y, w, h);
+        navigator.clipboard.writeText(snippet).catch(err => console.error(err));
+
+        info.innerHTML = `<pre>${snippet}</pre>
+※ROOM_ID / 説明 / IMAGE_KEY を書き換えて使ってね。`;
+
+        start = null;
+        end = null;
+      }
+    });
+
+    canvas.addEventListener('dblclick', function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      info.innerHTML = "リセットしました";
+      start = null;
+      end = null;
+    });
+  </script>
+</body>
+
+</html>
