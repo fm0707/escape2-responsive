@@ -1205,6 +1205,8 @@
     <audio id="se-ebi" src="sounds/23/ebi.wav"></audio>
     <audio id="se-nami" src="sounds/common/nami.mp3"></audio>
     <audio id="se-announcement" src="sounds/common/pinponpan.mp3"></audio>
+    <audio id="se-can" src="sounds/common/can.mp3"></audio>
+    <audio id="se-kira" src="sounds/common/kira.mp3"></audio>
 
 
 
@@ -1301,6 +1303,7 @@
                 storage: ['images/23/storage.png'],
                 wheelhouse: ['images/23/wheelhouse.png'],
                 room288: ['images/23/room288.png'],
+                extra: ['images/23/extra.png'],
                 map: ['images/23/map.png'],
                 end: ['images/23/end.png'],
                 trueEnd: ['images/23/true_end.png', 'images/23/true_end2.png'],
@@ -1377,7 +1380,8 @@
                 shrimpBad: 'images/23/modal_shrimp_sea.png',
                 corridorSign: 'images/23/modal_corridor_sign.png',
                 // map: 'images/23/modal_map.png',
-                freezerInner: 'images/23/modal_freezer.png'
+                freezerInner: 'images/23/modal_freezer.png',
+                kumaFairy: 'images/23/kuma_fairy.png'
 
                 // badEnd: 'images/22/badend.jpeg',
             },
@@ -2580,6 +2584,32 @@
 
                 ]
             },
+            extra: {
+                name: '?',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 46.3, y: 61.0, width: 18.7, height: 25.2,
+                        onClick: clickWrap(function () {
+                            openGachaModal();
+                        }),
+                        description: 'ガチャ',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick: clickWrap(function () {
+                            changeRoom('wheelhouse');
+                        }, { allowAtNight: true }),
+                        description: 'extra戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
+
+                ]
+            },
             storage: {
                 name: '倉庫',
                 description: '',
@@ -2711,7 +2741,7 @@
 
 
         // 足音で数歩→ワープ演出→目的の部屋へ
-        function travelWithSteps(destRoom = 'saint') {
+        function travelWithSteps(destRoom = 'extra') {
             const canvasEl = document.getElementById('gameCanvas');
             const overlay = document.getElementById('roomEffectOverlay');
 
@@ -2912,6 +2942,9 @@
 
             } else if (roomId === "deck" || roomId === 'wheelhouse') {
                 changeBGM("sounds/23/Aromatum_Chaos.mp3");
+
+            } else if (roomId === "extra") {
+                changeBGM("sounds/23/omoide_anokoro.mp3");
 
             } else {
                 if (gameState.main.flags.isNight) {
@@ -3388,6 +3421,9 @@
             if (gameState.main?.flags?.notebookDeckHintAdded) {
                 addDeckDoorHintNote();
             }
+            if (gameState.main?.flags?.phoneDexBonusAdded) {
+                addPhoneDexBonusNote();
+            }
         }
 
         function closeNotebook() {
@@ -3485,7 +3521,7 @@
 
 
         const PHONE_DEX_LIST = [
-            
+
             { num: "117", label: "時報の番号", desc: "時刻を教えてくれる番号だ。" },
             { num: "212", label: "話し中の番号", desc: "お話し中だった。" },
             { num: "272", label: "採用センターの番号", desc: "キッチンスタッフを募集中だ。" },
@@ -3563,6 +3599,7 @@
                 gameState.phoneDex[num].desc = desc;
             }
             gameState.phoneDex[num].count++;
+            checkPhoneDexCompletionReward();
         }
 
 
@@ -3904,8 +3941,8 @@
 
                     // 放送チャイムっぽいSE
                     if (typeof playSE === "function") {
-                        playSE("se-announcement"); 
-                        playSE("se-noise"); 
+                        playSE("se-announcement");
+                        playSE("se-noise");
                     }
 
                     showModal(
@@ -4934,6 +4971,66 @@
         }
 
 
+
+        // ================================
+        // 電話番号コンプ報酬：NOTES に座標を追加
+        // ================================
+
+        function addPhoneDexBonusNote() {
+            const flags = gameState.main.flags || (gameState.main.flags = {});
+
+            const notesCap = document.querySelector('#notebook-tab-notes .notebook-cap');
+            const notesBody = document.getElementById('notebook-notes-body');
+            if (!notesBody) return;
+
+            // 二重追加防止（ロード後 / 既にDOMにある場合）
+            if (notesBody.querySelector('.notebook-note.phone-dex-bonus')) {
+                flags.phoneDexBonusAdded = true;
+                return;
+            }
+
+            // キャプションが初期状態なら差し替え
+            if (notesCap && notesCap.textContent.includes('空白のページ')) {
+                notesCap.textContent = 'いつの間にか、メモが書き足されている。';
+            }
+
+            // 座標（TREASURE_COORDINATE を流用。無ければデフォ値）
+            const line1 = '37';
+            const line2 = '140';
+
+            const p = document.createElement('p');
+            p.className = 'notebook-note phone-dex-bonus';
+            p.textContent = `🎉【電話番号コンプ特典】特別な座標：東西 ${line1} ／ 南北 ${line2}`;
+            notesBody.appendChild(p);
+
+            flags.phoneDexBonusAdded = true;
+        }
+
+        function checkPhoneDexCompletionReward() {
+            const flags = gameState.main.flags || (gameState.main.flags = {});
+
+            // 既に付与済みなら終了
+            if (flags.phoneDexBonusAdded) return;
+
+            // 発見数を数える（CALL LIST と同じ基準で phoneDexFlags を見る）
+            const total = (typeof PHONE_DEX_LIST !== 'undefined' && PHONE_DEX_LIST) ? PHONE_DEX_LIST.length : 15;
+            let discoveredCount = 0;
+
+            if (typeof PHONE_DEX_LIST !== 'undefined' && PHONE_DEX_LIST) {
+                for (const entry of PHONE_DEX_LIST) {
+                    if (gameState.phoneDexFlags && gameState.phoneDexFlags[entry.num]) discoveredCount++;
+                }
+            } else {
+                // フォールバック：phoneDex のキー数
+                discoveredCount = Object.keys(gameState.phoneDex || {}).length;
+            }
+
+            if (discoveredCount >= total) {
+                showToast('📓 電話番号コンプリート！手帳のNOTESに特典が追記された。');
+                addPhoneDexBonusNote();
+            }
+        }
+
         function showShrimpCurseBadEnd() {
             // 必要ならここで効果音
             playSE && playSE('se-zukkoke');
@@ -5132,11 +5229,14 @@
         // ==== 操舵室：座標入力モーダル ====
 
         // ★正解座標
-        //   1行目・2行目・3行目で判定
+        //   1行目・2行目で判定
         const TREASURE_COORDINATE = {
             line1: '19',
             line2: '162',
-
+        };
+        const EXTRA_COORDINATE = {
+            line1: '37',
+            line2: '140',
         };
 
         // 全角数字→半角数字＆空白除去
@@ -5218,6 +5318,17 @@
             const ok =
                 v1 === TREASURE_COORDINATE.line1 &&
                 (v2 === TREASURE_COORDINATE.line2 || v2 === TREASURE_COORDINATE.line2 + 1);
+
+            const extraOk =
+                v1 === EXTRA_COORDINATE.line1 &&
+                v2 === EXTRA_COORDINATE.line2;
+
+            if (extraOk) {
+                markProgress('extra_ok_23');
+                closeModal();
+                travelWithSteps();
+                return;
+            }
 
             if (!ok) {
                 if (typeof playSE === 'function') playSE('se-error');
@@ -5319,6 +5430,160 @@
                 updateMessage('…ロックは外れないようだ。');
             }
         }
+
+        let gachaBusy = false;
+        function openGachaModal() {
+
+            const html = `
+    <div style="
+      text-align:center;
+      padding:10px;
+      color:#444;
+    ">
+      <div style="
+        font-size:14px;
+        margin-bottom:12px;
+      ">
+        ピンクのガチャ筐体が置かれている。<br>
+        どうやら引けそうだ。
+      </div>
+
+      <div style="
+        font-size:13px;
+        color:#d46a8c;
+      ">
+        （年末の運試し）
+      </div>
+    </div>
+  `;
+
+            showModal(
+                'ガチャがある',
+                html,
+                [
+                    {
+                        text: '引いてみる',
+                        action: () => {
+                            closeModal();
+                            drawNewYearGacha();
+                            lockUI(2600, 0.22);
+                            playSE('se-can');
+                        }
+                    },
+                    {
+                        text: 'やめる',
+                        action: 'close'
+                    }
+                ]
+            );
+        }
+
+
+        function drawNewYearGacha() {
+            if (gachaBusy) return;         // 連打ブロック
+            gachaBusy = true;
+
+            const r = Math.random();
+
+            if (r < 0.05) {
+                showKumaFairyFlash();
+                playSE('se-kira');
+                setTimeout(() => {
+
+                    showModal(
+                        '大当たり！',
+                        '<div style="text-align:center;">クマ妖精が、にこっと笑った気がした。</div>',
+                        [{ text: '戻る', action: 'close' }]
+                    );
+                }, 500);
+            } else if (r < 0.25) {
+                showToast('ちょっと良い一年になりそうな気がする');
+            } else if (r < 0.6) {
+                showToast('ぽわ〜ん……湯気が立った');
+            } else {
+                showToast('……何も起きなかった');
+            }
+
+            setTimeout(() => {
+                gachaBusy = false;
+            }, 2700);
+        }
+
+        function showKumaFairyFlash() {
+            const el = document.createElement('div');
+            el.id = 'kuma-fairy-flash';
+            el.innerHTML = `
+    <img src=${IMAGES.modals.kumaFairy}
+         style="
+           width:240px;
+           image-rendering: pixelated;
+         ">
+  `;
+
+            Object.assign(el.style, {
+                position: 'fixed',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%) scale(0.8)',
+                opacity: '0.8',
+                zIndex: '9999',
+                transition: 'all 0.3s ease'
+            });
+
+            document.body.appendChild(el);
+
+            // フェードイン
+            requestAnimationFrame(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
+
+            // フェードアウト
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transform = 'translate(-50%, -50%) scale(1.1)';
+            }, 900);
+
+            // 完全削除
+            setTimeout(() => {
+                el.remove();
+            }, 1300);
+        }
+
+        function lockUI(ms = 2600, opacity = 0.55) {
+            // 既にあれば作り直さない
+            if (document.getElementById('ui-lock')) return;
+            const prevCursor = document.body.style.cursor;
+            document.body.style.cursor = 'url(images/23/cursor_gacha.png) 16 16, wait';
+
+            setTimeout(() => {
+                document.body.style.cursor = prevCursor;
+                lock.remove();
+            }, ms);
+
+            const lock = document.createElement('div');
+            lock.id = 'ui-lock';
+            Object.assign(lock.style, {
+                position: 'fixed',
+                left: '0',
+                top: '0',
+                width: '100vw',
+                height: '100vh',
+                background: `rgba(0,0,0,${opacity})`,
+                zIndex: '100000',          // 何より前（モーダルより前）に出す
+                pointerEvents: 'auto',
+                cursor: 'url(images/23/cursor_gacha.png) 16 16, wait'
+            });
+
+            document.body.appendChild(lock);
+
+            setTimeout(() => {
+                lock.remove();
+            }, ms);
+        }
+
+
+
 
         let wipeStep = 0;
 
@@ -5677,20 +5942,65 @@
             return names[itemId] || itemId;
         }
 
+        // function renderNavigation() {
+        //     const navDiv = document.querySelector('.navigation');
+        //     navDiv.innerHTML = '';
+        //     if (gameState.currentRoom === 'saint') return;
+        //     gameState.openRooms.forEach(roomId => {
+        //         const btn = document.createElement('button');
+        //         btn.className = 'nav-btn';
+        //         btn.textContent = rooms[roomId].name;
+
+        //         btn.onclick = () => changeRoom(roomId);
+
+        //         // btn.onclick = () => changeRoom(roomId);
+        //         navDiv.appendChild(btn);
+        //     });
+        // }
+
         function renderNavigation() {
             const navDiv = document.querySelector('.navigation');
             navDiv.innerHTML = '';
             if (gameState.currentRoom === 'saint') return;
-            gameState.openRooms.forEach(roomId => {
+
+            const isMobile = window.matchMedia('(max-width: 600px)').matches;
+
+            if (isMobile) {
                 const btn = document.createElement('button');
                 btn.className = 'nav-btn';
-                btn.textContent = rooms[roomId].name;
-
-                btn.onclick = () => changeRoom(roomId);
-
-                // btn.onclick = () => changeRoom(roomId);
+                btn.textContent = 'ナビ';
+                btn.onclick = () => openNavModal();
                 navDiv.appendChild(btn);
+                return;
+            }
+
+            // PCは従来通り（ルームボタン並べる）
+            gameState.openRooms.forEach(roomId => {
+                const b = document.createElement('button');
+                b.className = 'nav-btn';
+                b.textContent = rooms[roomId].name;
+                b.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(b);
             });
+        }
+
+        function openNavModal() {
+            const cur = gameState.currentRoom;
+            const listHtml = `
+    <div style="display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto;">
+      ${gameState.openRooms.map(roomId => {
+                const isHere = roomId === cur;
+                return `
+          <button class="nav-btn" style="width:100%; opacity:${isHere ? 0.5 : 1};"
+            ${isHere ? 'disabled' : ''}
+            onclick="(function(){ closeModal(); changeRoom('${roomId}'); })()">
+            ${rooms[roomId].name}${isHere ? '（ここ）' : ''}
+          </button>
+        `;
+            }).join('')}
+    </div>
+  `;
+            showModal('移動先', listHtml, [{ text: '閉じる', action: 'close' }]);
         }
 
         function addNaviItem(room) {
@@ -6123,6 +6433,8 @@
                 el.style.transform = 'translateX(-50%) translateY(-8px)';
             }, ms);
         }
+
+        window.addEventListener('resize', () => renderNavigation());
 
         window.addEventListener('keydown', e => {
             if (e.key === 'F2') {
