@@ -2663,6 +2663,26 @@
                 description: '',
                 clickableAreas: [
                     {
+                        x: 13.3, y: 43.7, width: 75.7, height: 26.8,
+                        onClick: clickWrap(function () {
+                            updateMessage('温水プールのようだ');
+                        }),
+                        description: 'スパ',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 1.6, y: 60.1, width: 18.2, height: 28.4,
+                        onClick: clickWrap(function () {
+                            updateMessage('元気そうな植物');
+                        }),
+                        description: '元気そうな植物',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
                         x: 46.3, y: 61.0, width: 18.7, height: 25.2,
                         onClick: clickWrap(function () {
                             openGachaModal();
@@ -5536,7 +5556,7 @@
         font-size:13px;
         color:#d46a8c;
       ">
-        （年末の運試し）
+        （運試し）
       </div>
     </div>
   `;
@@ -6167,7 +6187,7 @@
                                         gameState.main.flags.luckyStatus = 1;
                                         return;
                                     },
-                                    
+
                                 },
                                 { text: '閉じる', action: 'close' }
                             ]
