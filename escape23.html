@@ -1205,6 +1205,7 @@
     <audio id="se-ebi" src="sounds/23/ebi.wav"></audio>
     <audio id="se-nami" src="sounds/common/nami.mp3"></audio>
     <audio id="se-announcement" src="sounds/common/pinponpan.mp3"></audio>
+    <audio id="se-nabe" src="sounds/common/nabe.mp3"></audio>
     <audio id="se-can" src="sounds/common/can.mp3"></audio>
     <audio id="se-kira" src="sounds/common/kira.mp3"></audio>
 
@@ -1342,6 +1343,9 @@
                 steak: 'images/23/steak.png',
                 keyFrozen: 'images/23/key_frozen.png',
                 key: 'images/23/key.png',
+                egg: 'images/23/egg.png',
+                boiledEgg: 'images/23/egg_boiled.png',
+                salt: 'images/23/salt.png',
 
 
 
@@ -1381,7 +1385,8 @@
                 corridorSign: 'images/23/modal_corridor_sign.png',
                 // map: 'images/23/modal_map.png',
                 freezerInner: 'images/23/modal_freezer.png',
-                kumaFairy: 'images/23/kuma_fairy.png'
+                kumaFairy: 'images/23/kuma_fairy.png',
+                boiledEgg: 'images/23/modal_boiled_egg.png'
 
                 // badEnd: 'images/22/badend.jpeg',
             },
@@ -1439,6 +1444,7 @@
                         unlockFrozen: false, foundKeyFrozen: false, foundKey: false,
                         unlockRefrigerator: false, foundFoodSet: false, foundSteak: false, completedPlating: false, notebookDeckHintAdded: false,
                         unlockRoom288: false,
+                        gotEgg: false, boiledEdd: false, eatEgg: false, luckyStatus: 0,
 
                         unlockDeckDoor: false, setReceiver: false, unlockStorageDoor: false,
                         goneBird: false,
@@ -2052,6 +2058,42 @@
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
+                        x: 22.4, y: 52.0, width: 4.7, height: 6.8,
+                        onClick: clickWrap(function () {
+                            if (gameState.selectedItem == 'boiledEgg') {
+                                showModal(
+                                    '塩の小瓶がある。',
+                                    '<p>ゆでたまごに塩を付けて食べますか？</p>',
+                                    [
+                                        {
+                                            text: 'はい',
+                                            action: () => {
+                                                playSE('se-eat');
+                                                closeModal();
+                                                updateMessage('美味しい。少し運が良くなった。');
+                                                showToast('少し運が良くなった');
+                                                gameState.main.flags.eatEgg = true;
+                                                gameState.main.flags.luckyStatus = 2;
+                                                removeItem('boiledEgg');
+                                            }
+                                        },
+                                        {
+                                            text: 'いいえ',
+                                            action: 'close'
+                                        }
+                                    ]
+                                );
+                            } else {
+                                updateMessage('塩の小瓶がある');
+                            }
+
+                        }),
+                        description: '塩の小瓶',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'salt', visible: () => true }
+                    },
+                    {
                         x: 75.0, y: 65.1, width: 6.3, height: 1.0,
                         onClick: clickWrap(function () {
 
@@ -2095,6 +2137,27 @@
                                 removeItem('keyFrozen');
                                 addItem('key');
 
+                            } else if (gameState.selectedItem == 'egg') {
+                                showModal(
+                                    'お湯が沸いている…',
+                                    '<p>大きな鳥のたまごを茹でますか？</p>',
+                                    [
+                                        {
+                                            text: 'はい',
+                                            action: () => {
+                                                playSE('se-nabe');
+                                                closeModal();
+                                                showObj('boiledEgg', 'たまごを茹でた。', IMAGES.modals.boiledEgg, '大きな鳥のたまごを茹でた。ゆでたまごを手に入れた');
+                                                removeItem('egg');
+                                                addItem('boiledEgg');
+                                            }
+                                        },
+                                        {
+                                            text: 'いいえ',
+                                            action: 'close'
+                                        }
+                                    ]
+                                );
                             } else {
                                 updateMessage('鍋にはお湯が沸いている');
                             }
@@ -2368,6 +2431,17 @@
                         zIndex: 5,
                         usable: () => false,
                         item: { img: 'feather', visible: () => gameState.main.flags.goneBird }
+                    },
+                    {
+                        x: 37.9, y: 72.8, width: 8.5, height: 12.1,
+                        onClick: clickWrap(function () {
+                            acquireItemOnce('gotEgg', 'egg', 'たまごを見つけた', IMAGES.items.egg, 'たまごを手に入れた');
+
+                        }),
+                        description: 'たまご',
+                        zIndex: 6,
+                        usable: () => !gameState.main.flags.gotEgg,
+                        item: { img: 'egg', visible: () => !gameState.main.flags.gotEgg }
                     },
                     {
                         x: 12.3, y: 21.5, width: 25.6, height: 50.8,
@@ -5494,9 +5568,18 @@
             if (gachaBusy) return;         // 連打ブロック
             gachaBusy = true;
 
+            const lucky = gameState.main.flags.luckyStatus || 0;
+
+            // 基本レア率
+            let rareRate = 0.05; // 5%
+
+            // luckyStatus補正
+            if (lucky === 1) rareRate += 0.02; // 7%
+            if (lucky >= 2) rareRate += 0.05; // 10%
+
             const r = Math.random();
 
-            if (r < 0.05) {
+            if (r < rareRate) {
                 showKumaFairyFlash();
                 playSE('se-kira');
                 setTimeout(() => {
@@ -5944,7 +6027,9 @@
                 steak: '焼きたてステーキ',
                 keyFrozen: '凍った鍵',
                 key: '鍵',
-                cardKey: 'カードキー'
+                cardKey: 'カードキー',
+                egg: '大きい鳥のたまご',
+                boiledEgg: '大きい鳥のゆでたまご'
 
 
 
@@ -6067,6 +6152,25 @@
                                 },
                                 { text: '閉じる', action: 'close' }
                             ];
+                        }
+                        if (itemId === 'boiledEgg') {
+                            buttons = [
+                                {
+                                    text: '食べる', action: () => {
+                                        closeModal();
+                                        playSE('se-bear-eat');
+                                        closeModal();
+                                        updateMessage('美味しいけど塩が欲しいかも。わずかに運が良くなった。');
+                                        showToast('わずかに運が良くなった');
+                                        removeItem('boiledEgg');
+                                        gameState.main.flags.eatEgg = true;
+                                        gameState.main.flags.luckyStatus = 1;
+                                        return;
+                                    },
+                                    
+                                },
+                                { text: '閉じる', action: 'close' }
+                            ]
                         }
 
                         showModal(
