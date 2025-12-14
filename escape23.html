@@ -3832,6 +3832,7 @@
                         `<p>${announceText}</p>`,
                         [{ text: "閉じる", action: "close" }]
                     );
+                    renderNavigation();
 
                     return;
                 }
@@ -6078,7 +6079,7 @@
         function renderNavigation() {
             const navDiv = document.querySelector('.navigation');
             navDiv.innerHTML = '';
-            if (gameState.currentRoom === 'saint') return;
+            if (gameState.main.flags.windowStorm) return;
 
             const isMobile = window.matchMedia('(max-width: 600px)').matches;
 
