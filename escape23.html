@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="客室を舞台にした分岐エンド付きの無料脱出ゲーム。全4エンドのマルチエンディング。スマホ＆PC対応。">
-    <title>客室からの脱出</title>
+    <meta name="description" content="船室を舞台にした分岐エンド付きの無料脱出ゲーム。全4エンドのマルチエンディング。スマホ＆PC対応。">
+    <title>船室からの脱出</title>
     <style>
         body {
             margin: 0;
@@ -1107,7 +1107,7 @@
     <div id="roomEffectOverlay"></div>
     <div class="game-container">
         <div class="title-wrapper">
-            <!-- <div class="title">客室からの脱出</div> -->
+            <!-- <div class="title">船室からの脱出</div> -->
             <div style="margin:0 0; text-align:center;">
                 <a href="escape23_hint.html" target="_blank"
                     style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
@@ -1123,7 +1123,7 @@
         <div class="ui-panel">
             <div class="info-panel">
                 <div class="message-area" id="messageArea">
-                    <span id="msgText">気が付くとあなたは客室に立っていました。</span>
+                    <span id="msgText">気が付くとあなたは船室に立っていました。</span>
                     <div id="statusIconArea" style="position:absolute; bottom:6px; right:12px; display:flex; gap:8px;">
                     </div>
                 </div>
@@ -1474,8 +1474,8 @@
         // 部屋データ
         let rooms = {
             guestRoom: {
-                name: '客室',
-                description: '見知らぬ客室',
+                name: '船室',
+                description: '見知らぬ船室',
                 clickableAreas: [
                     {
                         x: 52.2, y: 53.0, width: 10.6, height: 5.8,
@@ -2759,7 +2759,7 @@
             },
             end: {
                 name: 'ノーマルエンド',
-                description: 'まもなく救助がくるでしょう。あなたは無事に客室から脱出できました。おめでとうございます！',
+                description: 'まもなく救助がくるでしょう。あなたは無事に船室から脱出できました。おめでとうございます！',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -2939,7 +2939,7 @@
         function initGame() {
             renderNavigation();
             changeRoom('guestRoom');
-            updateMessage('気が付くとあなたは客室に立っていました');
+            updateMessage('気が付くとあなたは船室に立っていました');
 
         }
 
@@ -3451,10 +3451,10 @@
         // クリアログ生成（既存のがあればそのまま流用でOK）
         function copyClearLog(label, timeStr) {
             const text =
-                `『客室からの脱出』${label} クリア\n` +
+                `『船室からの脱出』${label} クリア\n` +
                 `プレイ時間：${timeStr}\n` +
                 `ヒント利用：${ANA.hintCount || 0}回\n` +
-                `#脱出ゲーム #客室からの脱出`;
+                `#脱出ゲーム #船室からの脱出`;
             navigator.clipboard.writeText(text).then(() => {
                 alert("クリアログをコピーしました！");
             }).catch(() => {
