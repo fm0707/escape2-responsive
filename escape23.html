@@ -1346,7 +1346,7 @@
                 egg: 'images/23/egg.png',
                 boiledEgg: 'images/23/egg_boiled.png',
                 salt: 'images/23/salt.png',
-
+                gachaCursor: 'images/23/cursor_gacha.png',
 
 
 
@@ -5686,7 +5686,7 @@
                 background: `rgba(0,0,0,${opacity})`,
                 zIndex: '100000',          // 何より前（モーダルより前）に出す
                 pointerEvents: 'auto',
-                cursor: 'url(images/23/cursor_gacha.png) 16 16, wait'
+                cursor: `url(${IMAGES.items.gachaCursor}) 16 16, wait`
             });
 
             document.body.appendChild(lock);
