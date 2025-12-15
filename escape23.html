@@ -1002,6 +1002,13 @@
             font-size: 0.9em;
             color: #b00;
         }
+
+        .notebook-image {
+            max-width: 100%;
+            display: block;
+            margin: 8px auto;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -1347,6 +1354,7 @@
                 boiledEgg: 'images/23/egg_boiled.png',
                 salt: 'images/23/salt.png',
                 gachaCursor: 'images/23/cursor_gacha.png',
+                picture: 'images/23/picture.jpeg',
 
 
 
@@ -2708,8 +2716,8 @@
                 name: '倉庫',
                 description: '',
                 clickableAreas: [
-                    
-                   
+
+
                     {
                         x: 1.5, y: 34.3, width: 29.7, height: 47.7,
                         onClick: clickWrap(function () {
@@ -3581,7 +3589,7 @@
             if (gameState.main?.flags?.notebookDeckHintAdded) {
                 addDeckDoorHintNote();
             }
-            if (gameState.main?.flags?.phoneDexBonusAdded) {
+            if (gameState.main?.flags?.phoneDexBonusAdded && gameState.currentRoom=='trueEnd') {
                 addPhoneDexBonusNote();
             }
         }
@@ -4080,7 +4088,7 @@
                     registerPhoneCall("886", "謎の録音音声の番号", "座標についてつぶやいていた。");
                     showModal(
                         "誰かの録音音声だ",
-                        "<p>『……もう逃げるのは疲れたんだ……。<br>宝さえあれば、日本に帰ってちゃんと店を構えて……花たちと暮らしたい。<br>座標は、と…3つの星の中心。<br>このボートを借りるか。』</p>",
+                        "<p>『……もう逃げるのは疲れたんだ……。<br>宝さえあれば、日本に帰ってちゃんと店を構えて……花たちと暮らしたい。<br>星が……3つ、か。いや……真ん中じゃない。<br>このボートを借りるか。』</p>",
                         [{ text: "閉じる", action: "close" }]
                     );
                     return;
@@ -5141,7 +5149,7 @@
 
 
         // ================================
-        // 電話番号コンプ報酬：NOTES に座標を追加
+        // 電話番号コンプ報酬：NOTES に画像を追加
         // ================================
 
         function addPhoneDexBonusNote() {
@@ -5151,28 +5159,33 @@
             const notesBody = document.getElementById('notebook-notes-body');
             if (!notesBody) return;
 
-            // 二重追加防止（ロード後 / 既にDOMにある場合）
+            // 二重追加防止
             if (notesBody.querySelector('.notebook-note.phone-dex-bonus')) {
                 flags.phoneDexBonusAdded = true;
                 return;
             }
 
-            // キャプションが初期状態なら差し替え
+            // キャプション差し替え
             if (notesCap && notesCap.textContent.includes('空白のページ')) {
                 notesCap.textContent = 'いつの間にか、メモが書き足されている。';
             }
 
-            // 座標（TREASURE_COORDINATE を流用。無ければデフォ値）
-            const line1 = '37';
-            const line2 = '140';
+            // ラッパー
+            const wrapper = document.createElement('div');
+            wrapper.className = 'notebook-note phone-dex-bonus';
 
-            const p = document.createElement('p');
-            p.className = 'notebook-note phone-dex-bonus';
-            p.textContent = `🎉【電話番号コンプ特典】特別な座標：東西 ${line1} ／ 南北 ${line2}`;
-            notesBody.appendChild(p);
+            // 画像
+            const img = document.createElement('img');
+            img.src = IMAGES.items.picture;
+            img.alt = '謎の写真';
+            img.className = 'notebook-image';
+
+            wrapper.appendChild(img);
+            notesBody.appendChild(wrapper);
 
             flags.phoneDexBonusAdded = true;
         }
+
 
         function checkPhoneDexCompletionReward() {
             const flags = gameState.main.flags || (gameState.main.flags = {});
@@ -5194,8 +5207,9 @@
             }
 
             if (discoveredCount >= total) {
-                showToast('📓 電話番号コンプリート！手帳のNOTESに特典が追記された。');
-                addPhoneDexBonusNote();
+                showToast('📓 電話番号コンプリート！おめでとうございます！');
+                flags.phoneDexBonusAdded = true;
+                // addPhoneDexBonusNote();
             }
         }
 
@@ -5488,16 +5502,16 @@
                 v1 === TREASURE_COORDINATE.line1 &&
                 (v2 === TREASURE_COORDINATE.line2 || v2 === TREASURE_COORDINATE.line2 + 1);
 
-            const extraOk =
-                v1 === EXTRA_COORDINATE.line1 &&
-                v2 === EXTRA_COORDINATE.line2;
+            // const extraOk =
+            //     v1 === EXTRA_COORDINATE.line1 &&
+            //     v2 === EXTRA_COORDINATE.line2;
 
-            if (extraOk) {
-                markProgress('extra_ok_23');
-                closeModal();
-                travelWithSteps();
-                return;
-            }
+            // if (extraOk) {
+            //     markProgress('extra_ok_23');
+            //     closeModal();
+            //     travelWithSteps();
+            //     return;
+            // }
 
             if (!ok) {
                 if (typeof playSE === 'function') playSE('se-error');
