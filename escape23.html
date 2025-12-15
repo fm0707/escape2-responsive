@@ -2078,8 +2078,8 @@
                                             action: () => {
                                                 playSE('se-bear-eat');
                                                 closeModal();
-                                                updateMessage('美味しい。少し運が良くなった。');
-                                                showToast('少し運が良くなった');
+                                                updateMessage('美味しかった。');
+                                                showToast('美味しかった。');
                                                 gameState.main.flags.eatEgg = true;
                                                 gameState.main.flags.luckyStatus = 2;
                                                 removeItem('boiledEgg');
@@ -6261,8 +6261,8 @@
                                         closeModal();
                                         playSE('se-bear-eat');
                                         closeModal();
-                                        updateMessage('美味しいけど塩が欲しいかも。わずかに運が良くなった。');
-                                        showToast('わずかに運が良くなった');
+                                        updateMessage('美味しいけど塩が欲しいかも。');
+                                        showToast('ゆでたまごを消費した。');
                                         removeItem('boiledEgg');
                                         gameState.main.flags.eatEgg = true;
                                         gameState.main.flags.luckyStatus = 1;
