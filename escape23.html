@@ -5783,6 +5783,7 @@
         let wipeStep = 0;
 
         function showPlateModal() {
+            console.log(wipeStep);
             const modal = document.getElementById('modal');
             const mc = document.getElementById('modalContent');
 
@@ -5791,7 +5792,7 @@
             mc.innerHTML = `
       <div style="position:relative; width:320px; margin:0 auto;">
          <img src="${IMAGES.items.plateClean}" style="width:100%;">
-         <img id="dirtLayer" src="${IMAGES.items.dirt}"
+         <img id="dirtLayer" src="${wipeStep === 1?IMAGES.items.dirt2:IMAGES.items.dirt}"
               style="position:absolute; top:0; left:0; width:100%;">
       </div>
       <div id="msg"></div>
@@ -5801,6 +5802,7 @@
     `;
 
             modal.style.display = 'flex';
+            
         }
 
         function wipeDirt() {
