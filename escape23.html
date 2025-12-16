@@ -2563,7 +2563,14 @@
                     {
                         x: 66.0, y: 32.3, width: 22.5, height: 24.1,
                         onClick: clickWrap(function () {
-                            talkToHintCharacter('main', 'bear');
+                            if (gameState.selectedItem=='egg') {
+                                updateMessage('大きい卵だねえ');
+                            } else if  (gameState.selectedItem=='boiledEgg') {
+                                updateMessage('ボクいまおなかいっぱいなんだ');
+                            } else {
+                                talkToHintCharacter('main', 'bear');
+                            }
+                            
                         }),
                         description: 'クマ妖精',
                         zIndex: 5,
