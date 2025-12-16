@@ -3539,7 +3539,7 @@
                     secretText = "🎁 手がかりをもとに宝島にたどりつきました。";
                     break;
                 case "end":
-                    secretText = "🚢 救助船がじりじりと近づいてきます。";
+                    secretText = `🚢 救助船がじりじりと近づいてきます。${gameState.main.flags.eatEgg?'到着まで、怒った鳥をやり過ごせるかな？':''}`;
                     break;
 
                 default:
