@@ -1213,6 +1213,7 @@
     <audio id="se-nami" src="sounds/common/nami.mp3"></audio>
     <audio id="se-announcement" src="sounds/common/pinponpan.mp3"></audio>
     <audio id="se-nabe" src="sounds/common/nabe.mp3"></audio>
+    <audio id="se-gril" src="sounds/23/gril.mp3"></audio>
     <audio id="se-can" src="sounds/common/can.mp3"></audio>
     <audio id="se-kira" src="sounds/common/kira.mp3"></audio>
 
@@ -1352,6 +1353,8 @@
                 key: 'images/23/key.png',
                 egg: 'images/23/egg.png',
                 boiledEgg: 'images/23/egg_boiled.png',
+                friedEgg: 'images/23/egg_fried.jpeg', 
+
                 salt: 'images/23/salt.png',
                 gachaCursor: 'images/23/cursor_gacha.png',
                 picture: 'images/23/picture.jpeg',
@@ -1394,7 +1397,8 @@
                 // map: 'images/23/modal_map.png',
                 freezerInner: 'images/23/modal_freezer.png',
                 kumaFairy: 'images/23/kuma_fairy.png',
-                boiledEgg: 'images/23/modal_boiled_egg.png'
+                boiledEgg: 'images/23/modal_boiled_egg.png',
+                friedEgg: 'images/23/modal_fried_egg.jpeg'
 
                 // badEnd: 'images/22/badend.jpeg',
             },
@@ -2068,10 +2072,11 @@
                     {
                         x: 22.4, y: 52.0, width: 4.7, height: 6.8,
                         onClick: clickWrap(function () {
-                            if (gameState.selectedItem == 'boiledEgg') {
+                            if (gameState.selectedItem == 'boiledEgg' || gameState.selectedItem == 'friedEgg') {
+                                const boiled = gameState.selectedItem == 'boiledEgg'?true:false;
                                 showModal(
                                     '塩の小瓶がある。',
-                                    '<p>ゆでたまごに塩を付けて食べますか？</p>',
+                                    `<p>${boiled?'ゆでたまご':'目玉焼き'}に塩を付けて食べますか？</p>`,
                                     [
                                         {
                                             text: 'はい',
@@ -2082,7 +2087,7 @@
                                                 showToast('美味しかった。');
                                                 gameState.main.flags.eatEgg = true;
                                                 gameState.main.flags.luckyStatus = 2;
-                                                removeItem('boiledEgg');
+                                                removeItem(boiled?'boiledEgg':'friedEgg');
                                             }
                                         },
                                         {
@@ -2114,7 +2119,34 @@
                     {
                         x: 71.3, y: 63.1, width: 19.9, height: 5.8,
                         onClick: clickWrap(function () {
-                            acquireItemOnce('foundSteak', 'steak', '焼きたてステーキを見つけた', IMAGES.items.steak, '焼きたてステーキを手に入れた');
+// egg を使うと目玉焼き
+                            if (gameState.selectedItem == 'egg') {
+                                showModal(
+                                    'フライパンがある…',
+                                    '<p>目玉焼きを作りますか？</p>',
+                                    [
+                                        {
+                                            text: 'はい',
+                                            action: () => {
+                                                playSE('se-gril');
+                                                closeModal();
+                                                showObj('friedEgg', '目玉焼きを作った。', (IMAGES.modals.friedEgg), '大きな鳥の目玉焼きを手に入れた');
+                                                removeItem('egg');
+                                                addItem('friedEgg');
+                                            }
+                                        },
+                                        { text: 'いいえ', action: 'close' }
+                                    ]
+                                );
+                                return;
+                            }
+
+                            // 通常はステーキ取得
+                            if (!gameState.main.flags.foundSteak) {
+                                acquireItemOnce('foundSteak', 'steak', '焼きたてステーキを見つけた', IMAGES.items.steak, '焼きたてステーキを手に入れた');
+                            } else {
+                                updateMessage('フライパンだ');
+                            }                        
                         }),
                         description: 'フライパン',
                         zIndex: 5,
@@ -6139,7 +6171,9 @@
                 key: '鍵',
                 cardKey: 'カードキー',
                 egg: '大きい鳥のたまご',
-                boiledEgg: '大きい鳥のゆでたまご'
+                boiledEgg: '大きい鳥のゆでたまご',
+                friedEgg: '大きい鳥の目玉焼き'
+
 
 
 

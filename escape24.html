@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>なぞなぞの村</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        const villagers = [
+            {
+                id: 1,
+                name: 'パン屋のおじさん',
+                problem: '小麦粉が足りなくて困っている',
+                riddle: '朝は4本足、昼は2本足、夜は3本足。これなーんだ?',
+                answer: '人間',
+                hint: 'ヒント: 人の一生を考えてみて',
+                celebration: 'ありがとう!美味しいパンを焼いて宴会に持っていくよ!'
+            },
+            {
+                id: 2,
+                name: '花屋のおばさん',
+                problem: '花が元気がなくて悩んでいる',
+                riddle: '口はあるけど食べられない、頭はあるけど考えられない。これなーんだ?',
+                answer: '川',
+                hint: 'ヒント: 水に関係するもの',
+                celebration: '花が元気になったわ!素敵な花束を作って広場を飾るわね!'
+            },
+            {
+                id: 3,
+                name: '大工のお兄さん',
+                problem: '道具をなくして困っている',
+                riddle: '部屋の中にあるけど、部屋の外にもある。これなーんだ?',
+                answer: '窓',
+                hint: 'ヒント: 部屋と外をつなぐもの',
+                celebration: '道具が見つかった!宴会用のテーブルを作るぞ!'
+            },
+            {
+                id: 4,
+                name: '料理人の女性',
+                problem: 'レシピを思い出せなくて困っている',
+                riddle: '火も使わず、水も使わず、それでも料理ができる。これなーんだ?',
+                answer: '砂',
+                hint: 'ヒント: 子供が遊ぶときに使うもの',
+                celebration: 'レシピを思い出したわ!豪華な料理を作って持っていくわね!'
+            },
+            {
+                id: 5,
+                name: '音楽家の青年',
+                problem: '楽器の音が出なくて困っている',
+                riddle: '叩けば叩くほど喜ぶもの。これなーんだ?',
+                answer: '太鼓',
+                hint: 'ヒント: 楽器の一種',
+                celebration: '楽器が直った!宴会で素敵な音楽を演奏するよ!'
+            }
+        ];
+
+        let currentScreen = 'village';
+        let selectedHouse = null;
+        let solvedRiddles = {};
+        let userAnswer = '';
+        let showFeedback = null;
+
+        function isAllSolved() {
+            return villagers.every(v => solvedRiddles[v.id]);
+        }
+
+        function createHouse(number, solved) {
+            const bgColor = solved ? 'bg-yellow-400' : 'bg-amber-700';
+            const checkMark = solved ? '<div class="absolute -top-2 -right-2 bg-green-500 rounded-full p-1 w-6 h-6 flex items-center justify-center text-white font-bold">✓</div>' : '';
+            
+            return `
+                <div class="relative cursor-pointer transform transition-all hover:scale-110" onclick="openHouse(${number})">
+                    <div class="w-24 h-24 ${bgColor} rounded-t-lg relative">
+                        <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 48px solid transparent; border-right: 48px solid transparent; border-bottom: 30px solid #dc2626;"></div>
+                        <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-8 h-10 bg-amber-900 rounded"></div>
+                        ${checkMark}
+                    </div>
+                    <div class="text-center text-sm mt-1 font-bold">${number}</div>
+                </div>
+            `;
+        }
+
+        function renderVillageScreen() {
+            const solvedCount = Object.keys(solvedRiddles).length;
+            const allSolved = isAllSolved();
+            const plazaButtonClass = allSolved 
+                ? 'bg-yellow-400 hover:bg-yellow-500 text-amber-900 animate-pulse' 
+                : 'bg-gray-300 text-gray-600 cursor-not-allowed';
+
+            return `
+                <div class="min-h-screen bg-gradient-to-b from-sky-300 to-green-200 p-8">
+                    <h1 class="text-4xl font-bold text-center mb-2 text-amber-900">なぞなぞの村</h1>
+                    <p class="text-center mb-8 text-gray-700">家をクリックして住民を助けよう!</p>
+                    
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid grid-cols-3 gap-12 mb-16">
+                            ${createHouse(1, solvedRiddles[1])}
+                            ${createHouse(2, solvedRiddles[2])}
+                            ${createHouse(3, solvedRiddles[3])}
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-12 mb-16 max-w-md mx-auto">
+                            ${createHouse(4, solvedRiddles[4])}
+                            ${createHouse(5, solvedRiddles[5])}
+                        </div>
+
+                        <div class="text-center">
+                            <button onclick="goToPlaza()" class="px-8 py-4 rounded-lg font-bold text-lg transition-all ${plazaButtonClass}">
+                                👥 広場へ ${allSolved ? '🎉' : ''}
+                            </button>
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <p class="text-lg font-semibold">
+                                解決済み: ${solvedCount} / ${villagers.length}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHouseScreen() {
+            const villager = villagers.find(v => v.id === selectedHouse);
+            const isSolved = solvedRiddles[villager.id];
+
+            let content = '';
+            if (!isSolved) {
+                const feedbackHtml = showFeedback === 'correct' 
+                    ? '<div class="mt-4 p-4 bg-green-100 border-2 border-green-500 rounded-lg text-center"><p class="text-xl font-bold text-green-700">🎉 正解!</p></div>'
+                    : showFeedback === 'wrong'
+                    ? '<div class="mt-4 p-4 bg-red-100 border-2 border-red-500 rounded-lg text-center"><p class="text-xl font-bold text-red-700">❌ 違います...</p></div>'
+                    : '';
+
+                content = `
+                    <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                        <p class="text-lg mb-2">😟 <strong>悩み:</strong> ${villager.problem}</p>
+                    </div>
+
+                    <div class="mb-6 p-4 bg-purple-50 rounded-lg">
+                        <p class="text-xl font-bold mb-3">🤔 なぞなぞ:</p>
+                        <p class="text-lg mb-4">${villager.riddle}</p>
+                        <details class="text-sm text-gray-600">
+                            <summary class="cursor-pointer hover:text-gray-800">ヒントを見る</summary>
+                            <p class="mt-2 pl-4">${villager.hint}</p>
+                        </details>
+                    </div>
+
+                    <div class="mb-4">
+                        <input type="text" id="answerInput" value="${userAnswer}" 
+                            placeholder="答えを入力してください"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-lg"
+                            onkeypress="if(event.key==='Enter') submitAnswer()">
+                    </div>
+
+                    <button onclick="submitAnswer()" class="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-bold text-lg hover:bg-green-700">
+                        答える
+                    </button>
+
+                    ${feedbackHtml}
+                `;
+            } else {
+                content = `
+                    <div class="text-center p-8 bg-green-50 rounded-lg">
+                        <div class="text-6xl mb-4">⭐</div>
+                        <p class="text-2xl font-bold mb-4 text-green-700">解決済み!</p>
+                        <p class="text-lg">${villager.celebration}</p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="min-h-screen bg-gradient-to-b from-amber-100 to-amber-200 p-8">
+                    <button onclick="backToVillage()" class="mb-4 px-4 py-2 bg-amber-700 text-white rounded hover:bg-amber-800">
+                        ← 村に戻る
+                    </button>
+
+                    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-xl p-8">
+                        <h2 class="text-3xl font-bold mb-4 text-amber-900">${villager.name}</h2>
+                        ${content}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlazaScreen() {
+            const allSolved = isAllSolved();
+            
+            let content = '';
+            if (allSolved) {
+                const villagersList = villagers.map(v => `
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <p class="font-bold">${v.name}</p>
+                        <p class="text-sm text-gray-600">${v.celebration}</p>
+                    </div>
+                `).join('');
+
+                content = `
+                    <div class="bg-white rounded-lg shadow-xl p-12">
+                        <h1 class="text-5xl font-bold mb-6 text-purple-900 animate-pulse">
+                            🎉 村の宴会 🎉
+                        </h1>
+                        <p class="text-2xl mb-8">みんなの悩みを解決してくれてありがとう!</p>
+                        
+                        <div class="space-y-4 mb-8">
+                            ${villagersList}
+                        </div>
+
+                        <div class="text-6xl mb-4">🎊🎈🎆🎁🍰</div>
+                        <p class="text-xl font-bold text-purple-800">おめでとう!ゲームクリア!</p>
+                        
+                        <button onclick="resetGame()" class="mt-8 px-8 py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700">
+                            最初から遊ぶ
+                        </button>
+                    </div>
+                `;
+            } else {
+                const remaining = villagers.length - Object.keys(solvedRiddles).length;
+                content = `
+                    <div class="bg-white rounded-lg shadow-xl p-12">
+                        <h2 class="text-3xl font-bold mb-6 text-gray-700">広場</h2>
+                        <p class="text-xl mb-4">まだ準備中...</p>
+                        <p class="text-lg text-gray-600">
+                            全ての住民の悩みを解決すると、ここで宴会が始まります!
+                        </p>
+                        <p class="text-lg mt-4 font-semibold">
+                            残り ${remaining} 人
+                        </p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="min-h-screen bg-gradient-to-b from-purple-300 to-pink-200 p-8">
+                    <button onclick="backToVillage()" class="mb-4 px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800">
+                        ← 村に戻る
+                    </button>
+
+                    <div class="max-w-3xl mx-auto text-center">
+                        ${content}
+                    </div>
+                </div>
+            `;
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+            if (currentScreen === 'village') {
+                app.innerHTML = renderVillageScreen();
+            } else if (currentScreen === 'house') {
+                app.innerHTML = renderHouseScreen();
+                if (!solvedRiddles[selectedHouse]) {
+                    const input = document.getElementById('answerInput');
+                    if (input) {
+                        input.addEventListener('input', (e) => {
+                            userAnswer = e.target.value;
+                        });
+                    }
+                }
+            } else if (currentScreen === 'plaza') {
+                app.innerHTML = renderPlazaScreen();
+            }
+        }
+
+        function openHouse(houseNumber) {
+            selectedHouse = houseNumber;
+            currentScreen = 'house';
+            userAnswer = '';
+            showFeedback = null;
+            render();
+        }
+
+        function backToVillage() {
+            currentScreen = 'village';
+            userAnswer = '';
+            showFeedback = null;
+            render();
+        }
+
+        function goToPlaza() {
+            currentScreen = 'plaza';
+            render();
+        }
+
+        function submitAnswer() {
+            const villager = villagers.find(v => v.id === selectedHouse);
+            const input = document.getElementById('answerInput');
+            if (input) {
+                userAnswer = input.value;
+            }
+            
+            const normalized = userAnswer.trim().toLowerCase().replace(/\s/g, '');
+            const correctAnswer = villager.answer.toLowerCase().replace(/\s/g, '');
+            
+            if (normalized === correctAnswer) {
+                solvedRiddles[villager.id] = true;
+                showFeedback = 'correct';
+                render();
+                setTimeout(() => {
+                    showFeedback = null;
+                    userAnswer = '';
+                    render();
+                }, 2000);
+            } else {
+                showFeedback = 'wrong';
+                render();
+                setTimeout(() => {
+                    showFeedback = null;
+                    render();
+                }, 1500);
+            }
+        }
+
+        function resetGame() {
+            solvedRiddles = {};
+            currentScreen = 'village';
+            userAnswer = '';
+            showFeedback = null;
+            render();
+        }
+
+        // 初期表示
+        render();
+    </script>
+</body>
+</html>
