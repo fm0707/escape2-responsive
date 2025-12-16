@@ -2448,8 +2448,8 @@
                         }),
                         description: 'たまご',
                         zIndex: 6,
-                        usable: () => !gameState.main.flags.gotEgg,
-                        item: { img: 'egg', visible: () => !gameState.main.flags.gotEgg }
+                        usable: () => !gameState.main.flags.gotEgg && gameState.main.flags.goneBird,
+                        item: { img: 'egg', visible: () => !gameState.main.flags.gotEgg && gameState.main.flags.goneBird }
                     },
                     {
                         x: 12.3, y: 21.5, width: 25.6, height: 50.8,
