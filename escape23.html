@@ -1734,6 +1734,9 @@
                                 removeItem('key');
                                 playSE('se-gacha');
 
+                            } else if (gameState.selectedItem == 'keyFrozen') {
+                                updateMessage('鍵が凍っていて使えない');
+
                             } else if (gameState.main.flags.unlockRoom288) {
                                 changeRoom('room288');
                             } else {
