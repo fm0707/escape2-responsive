@@ -1353,11 +1353,12 @@
                 key: 'images/23/key.png',
                 egg: 'images/23/egg.png',
                 boiledEgg: 'images/23/egg_boiled.png',
-                friedEgg: 'images/23/egg_fried.jpeg', 
+                friedEgg: 'images/23/egg_fried.jpeg',
 
                 salt: 'images/23/salt.png',
                 gachaCursor: 'images/23/cursor_gacha.png',
                 picture: 'images/23/picture.jpeg',
+                angryBird: 'images/23/angry_bird.png',
 
 
 
@@ -2076,10 +2077,10 @@
                         x: 22.4, y: 52.0, width: 4.7, height: 6.8,
                         onClick: clickWrap(function () {
                             if (gameState.selectedItem == 'boiledEgg' || gameState.selectedItem == 'friedEgg') {
-                                const boiled = gameState.selectedItem == 'boiledEgg'?true:false;
+                                const boiled = gameState.selectedItem == 'boiledEgg' ? true : false;
                                 showModal(
                                     '塩の小瓶がある。',
-                                    `<p>${boiled?'ゆでたまご':'目玉焼き'}に塩を付けて食べますか？</p>`,
+                                    `<p>${boiled ? 'ゆでたまご' : '目玉焼き'}に塩を付けて食べますか？</p>`,
                                     [
                                         {
                                             text: 'はい',
@@ -2090,7 +2091,7 @@
                                                 showToast('美味しかった。');
                                                 gameState.main.flags.eatEgg = true;
                                                 gameState.main.flags.luckyStatus = 2;
-                                                removeItem(boiled?'boiledEgg':'friedEgg');
+                                                removeItem(boiled ? 'boiledEgg' : 'friedEgg');
                                             }
                                         },
                                         {
@@ -2122,7 +2123,7 @@
                     {
                         x: 71.3, y: 63.1, width: 19.9, height: 5.8,
                         onClick: clickWrap(function () {
-// egg を使うと目玉焼き
+                            // egg を使うと目玉焼き
                             if (gameState.selectedItem == 'egg') {
                                 showModal(
                                     'フライパンがある…',
@@ -2149,7 +2150,7 @@
                                 acquireItemOnce('foundSteak', 'steak', '焼きたてステーキを見つけた', IMAGES.items.steak, '焼きたてステーキを手に入れた');
                             } else {
                                 updateMessage('フライパンだ');
-                            }                        
+                            }
                         }),
                         description: 'フライパン',
                         zIndex: 5,
@@ -2598,14 +2599,14 @@
                     {
                         x: 66.0, y: 32.3, width: 22.5, height: 24.1,
                         onClick: clickWrap(function () {
-                            if (gameState.selectedItem=='egg') {
+                            if (gameState.selectedItem == 'egg') {
                                 updateMessage('大きい卵だねえ');
-                            } else if  (gameState.selectedItem=='boiledEgg') {
+                            } else if (gameState.selectedItem == 'boiledEgg') {
                                 updateMessage('ボクいまおなかいっぱいなんだ');
                             } else {
                                 talkToHintCharacter('main', 'bear');
                             }
-                            
+
                         }),
                         description: 'クマ妖精',
                         zIndex: 5,
@@ -2878,7 +2879,18 @@
                         onClick: clickWrap(function () {
                             showEndingReport('end');
                         }),
-                        description: 'ノーマルエンド-'
+                        description: 'ノーマルエンド'
+                    },
+                    {
+                         x: 69.0, y: 20.0, width: 23.7, height: 16.4,
+                        onClick: clickWrap(function () {
+                            updateMessage('さっきデッキに居た鳥だろうか。今にも襲い掛かってきそうだ');
+
+                        }),
+                        description: '怒った鳥',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.eatEgg,
+                        item: { img: 'angryBird', visible: () => gameState.main.flags.eatEgg }
                     },
                 ]
             },
@@ -3631,7 +3643,7 @@
             if (gameState.main?.flags?.notebookDeckHintAdded) {
                 addDeckDoorHintNote();
             }
-            if (gameState.main?.flags?.phoneDexBonusAdded && gameState.currentRoom=='trueEnd') {
+            if (gameState.main?.flags?.phoneDexBonusAdded && gameState.currentRoom == 'trueEnd') {
                 addPhoneDexBonusNote();
             }
         }
@@ -5834,7 +5846,7 @@
             mc.innerHTML = `
       <div style="position:relative; width:320px; margin:0 auto;">
          <img src="${IMAGES.items.plateClean}" style="width:100%;">
-         <img id="dirtLayer" src="${wipeStep === 1?IMAGES.items.dirt2:IMAGES.items.dirt}"
+         <img id="dirtLayer" src="${wipeStep === 1 ? IMAGES.items.dirt2 : IMAGES.items.dirt}"
               style="position:absolute; top:0; left:0; width:100%;">
       </div>
       <div id="msg"></div>
@@ -5844,7 +5856,7 @@
     `;
 
             modal.style.display = 'flex';
-            
+
         }
 
         function wipeDirt() {
