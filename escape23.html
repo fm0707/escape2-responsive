@@ -1314,7 +1314,7 @@
                 room288: ['images/23/room288.png'],
                 extra: ['images/23/extra.png'],
                 map: ['images/23/map.png'],
-                end: ['images/23/end.png'],
+                end: ['images/23/end.png', 'images/23/end2.png'],
                 trueEnd: ['images/23/true_end.png', 'images/23/true_end2.png'],
 
             },
@@ -1466,6 +1466,9 @@
 
                         talkTo: { bear: 0, }, backgroundState: 0,
                     }
+                },
+                end: {
+                    flags: { backgroundState: 0 }
                 },
                 trueEnd: {
                     flags: { backgroundState: 0 }
@@ -2884,15 +2887,15 @@
                         description: 'ノーマルエンド'
                     },
                     {
-                         x: 69.0, y: 20.0, width: 23.7, height: 16.4,
+                        x: 3.3, y: 10.0, width: 38.3, height: 31.9,
                         onClick: clickWrap(function () {
                             updateMessage('さっきデッキに居た鳥だろうか。今にも襲い掛かってきそうだ');
 
                         }),
                         description: '怒った鳥',
                         zIndex: 5,
-                        usable: () => gameState.main.flags.eatEgg,
-                        item: { img: 'angryBird', visible: () => gameState.main.flags.eatEgg }
+                        usable: () => gameState.end.flags.backgroundState==1,
+                        
                     },
                 ]
             },
@@ -3539,7 +3542,7 @@
                     secretText = "🎁 手がかりをもとに宝島にたどりつきました。";
                     break;
                 case "end":
-                    secretText = `🚢 救助船がじりじりと近づいてきます。${gameState.main.flags.eatEgg?'到着まで、怒った鳥をやり過ごせるかな？':''}`;
+                    secretText = `🚢 救助船がじりじりと近づいてきます。${gameState.main.flags.eatEgg?'<br>到着まで、怒った鳥をやり過ごせるかな？':''}`;
                     break;
 
                 default:
@@ -3828,6 +3831,7 @@
 
 
         function callPhoneNumber() {
+            if (!phoneInput) return;
             // 発信音を鳴らす
             playSE("se-call");
 
@@ -5455,6 +5459,7 @@
 
                 setTimeout(() => {
                     closeModal();
+                    if (gameState.main.flags.eatEgg) gameState.end.flags.backgroundState++;
                     changeRoom('end');  // Normal end へ
 
                     // 黒からフェードアウト
