@@ -968,6 +968,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
+            text-align: left;
         }
 
         .notebook-table th,
@@ -3926,7 +3927,7 @@
                 `,
                             [{ text: "閉じる", action: "close" }]
                         );
-                        registerPhoneCall("212", "反応なしの番号", "誰も出なかった");
+                        registerPhoneCall("212", "反応なしの番号", "誰も出なかった。");
                         gameState.main.flags.goneBird = true;
                         return;
                     } else {
