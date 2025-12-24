@@ -4074,7 +4074,7 @@
             if (val === 'もやし' || val === 'moyashi') {
                 if (gameState.main.flags.unlockPc) {
                     if (typeof playSE === 'function') playSE('se-error');
-                    updateMessage('すでにドアロックは解除されている');
+                    updateMessage('すでにロックは解除されている');
                     return;
                 }
                 closeModal();
