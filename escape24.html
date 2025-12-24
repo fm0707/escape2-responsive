@@ -1327,6 +1327,7 @@
                 honey: 'images/24/honey.png',
                 omamori: 'images/24/omamori.png',
 
+
             },
 
             modals: {
@@ -1338,6 +1339,7 @@
                 catWarried: 'images/24/modal_cat_warried.jpeg',
                 catSolved1: 'images/24/modal_cat_solved1.png',
                 catSolved2: 'images/24/modal_cat_solved2.png',
+                catSatisfied: 'images/24/modal_cat_satisfied.png',
                 frogWorried: 'images/24/modal_frog_worried.png',
                 frogInspiration: 'images/24/modal_frog_inspiration.png',
                 frogSinging: 'images/24/modal_frog_singing.png',
@@ -1356,6 +1358,7 @@
                 bookRiverEn: 'images/24/book_river_en.png',
                 spImage: 'images/24/sp_image.png',
                 spImageEn: 'images/24/sp_image_en.png',
+                spImage2: 'images/24/sp_image2.png',
                 cutCitrus: 'images/24/modal_cut_citrus.png',
                 score2: 'images/24/modal_score2.png',
                 posterApple: 'images/24/modal_poster_apple.png',
@@ -1377,11 +1380,13 @@
                 endDog: 'images/24/modal_end_dog.png',
                 endRabit: 'images/24/modal_end_rabit.png',
                 endFrog: 'images/24/modal_end_frog.png',
+                endBear: 'images/24/modal_end_bear.png',
                 bearBad: 'images/24/modal_bear_bad.png',
                 mailRabitEn: 'images/24/mail_rabit_en.png',
                 mailDogEn: 'images/24/mail_dog_en.png',
                 mailFrogEn: 'images/24/mail_frog_en.png',
                 bearFrying: 'images/24/modal_bear_frying.png',
+                posterHorse: 'images/24/poster_horse.png',
 
 
 
@@ -1435,7 +1440,7 @@
                         metMayorAfterAllSolved: false,
                         mayorQuestGiven: false,
                         canVisitHorse: false,
-                        unlockBox: false, foundBrush: false, passBrush: false,
+                        unlockBox: false, foundBrush: false, passBrush: false, unlockDrawerHorse: false,
                         talkToHorse: false,
                         horseSolvedToastShown: false,
                         reportedHorseToMayor: false,
@@ -1852,21 +1857,27 @@
                                 if (typeof renderNotebookTasks === 'function') renderNotebookTasks();
 
                                 showModal(
-                                    'ねこ山村長',
-                                    'ご苦労様じゃ。宴の準備ができたようじゃな',
-                                    [{
-                                        text: 'OK',
-                                        action: function () {
-                                            closeModal();
-                                            if (gameState.flags.trueEndUnlocked) {
-                                                travelWithSteps('trueEnd');
-                                            } else {
-                                                travelWithSteps('end');
+                                    `<img src="${IMAGES.modals.catSatisfied}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                    'ご苦労様じゃ。宴の準備ができたようじゃな？',
+                                    [
+                                        {
+                                            text: 'はい',
+                                            action: () => {
+                                                closeModal();
+                                                if (gameState.flags.trueEndUnlocked) {
+                                                    travelWithSteps('trueEnd');
+                                                } else {
+                                                    travelWithSteps('end');
+                                                }
                                             }
-
+                                        },
+                                        {
+                                            text: 'いいえ',
+                                            action: 'close'
                                         }
-                                    }]
+                                    ]
                                 );
+                                
                                 updateMessage('ご苦労様じゃ。宴の準備ができたようじゃな');
                                 return;
                             }
@@ -1903,7 +1914,7 @@
                                 updateMessage('村長の話を聞こう');
                                 return;
                             }
-                            showObj(null, '', IMAGES.modals.cup, '村長のマグカップだ');
+                            updateMessage('村長のマグカップだ');
                         }),
                         description: 'マグカップ',
                         zIndex: 5,
@@ -2049,7 +2060,7 @@
                             } else {
                                 updateMessage('まだ開かなそうだ');
                             }
-                            
+
                         }),
                         description: '右キャビネット',
                         zIndex: 5,
@@ -2059,12 +2070,7 @@
                     {
                         x: 7.8, y: 57.5, width: 14.9, height: 17.8,
                         onClick: clickWrap(function () {
-                            if (gameState.main.flags.horseSolvedToastShown) {
-                                changeRoom('cabinetCatLeft');
-                                return;
-                            } else {
-                                updateMessage('まだ開かなそうだ');
-                            }
+                            changeRoom('cabinetCatLeft');
                         }),
                         description: '左キャビネット',
                         zIndex: 5,
@@ -2592,7 +2598,11 @@
                                 updateMessage('ワン花さんの話を聞こう');
                                 return;
                             }
-                            showObj(null, '街から来る宅配業者からのメッセージ<br>『ここを渡ったところで道が分からなくなりました』', IMAGES.modals.spImage, '何を示しているんだろう', IMAGES.modals.spImageEn);
+                            if (gameState.main.flags.unlockRoute) {
+                                showObj(null, '', IMAGES.modals.spImage2, '配達完了したようだ');
+                            } else {
+                                showObj(null, '街から来る宅配業者からのメッセージ<br>『ここを渡ったところで道が分からなくなりました』', IMAGES.modals.spImage, '何を示しているんだろう', IMAGES.modals.spImageEn);
+                            }
 
                         }),
                         description: 'ワン花さんのスマホ',
@@ -2682,9 +2692,23 @@
                     {
                         x: 0.5, y: 64.9, width: 17.4, height: 6.2,
                         onClick: clickWrap(function () {
-                            changeRoom('drawerHorse');
+                            if (gameState.main.flags.unlockDrawerHorse) {
+                                changeRoom('drawerHorse');
+                            } else {
+                                showHorseDrawerPuzzle();
+                            }
                         }),
                         description: '引き出し',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 83.6, y: 28.6, width: 13.5, height: 13.1,
+                        onClick: clickWrap(function () {
+                            showObj(null, '', IMAGES.modals.posterHorse, 'ウマ金（かね）さんのポスターだ');
+                        }),
+                        description: '自撮りポスター',
                         zIndex: 5,
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
@@ -2815,7 +2839,7 @@
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
-                        x: 40.0, y: 28.3, width: 40.5, height: 45.4,
+                        x: 46.5, y: 37.6, width: 34.7, height: 35.4,
                         onClick: clickWrap(function () {
                             updateMessage('何か書いてある');
                         }),
@@ -2841,6 +2865,16 @@
                 name: 'ノーマルエンド',
                 description: 'あなたはなぞなぞ村のトラブルを解決し、無事に来年へと脱出させました。おめでとうございます！',
                 clickableAreas: [
+                    {
+                        x: 88.3, y: 5.8, width: 9.8, height: 8.9,
+                        onClick: clickWrap(function () {
+                            updateMessage('幻覚かな？');
+                        }),
+                        description: 'クマ妖精',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
@@ -2922,6 +2956,16 @@
                             showObj(null, 'しあわせ！クマポンも美味しくできて良かったです', IMAGES.modals.endRabit, 'ラビ野さんは、白菜が大好きなようだ');
                         }),
                         description: 'ラビ野さん',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 79.7, y: 0.7, width: 17.6, height: 12.3,
+                        onClick: clickWrap(function () {
+                            showObj(null, '脱出成功！❤', IMAGES.modals.endBear, 'クマ妖精は大胆に参加している');
+                        }),
+                        description: 'クマ妖精',
                         zIndex: 5,
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
@@ -3806,94 +3850,94 @@
         let gachaBusy = false;
 
         // お守りのおみくじ（開封は1回だけ）
-         function drawOmikujiFromOmamori() {
-             // すでに開封済み
-             if (gameState.main.flags.omikujiOpened) {
-                 const r = gameState.main.flags.omikujiResult;
-                 showModal(
-                     'おみくじ（開封済み）',
-                     `<div style="text-align:center;">
+        function drawOmikujiFromOmamori() {
+            // すでに開封済み
+            if (gameState.main.flags.omikujiOpened) {
+                const r = gameState.main.flags.omikujiResult;
+                showModal(
+                    'おみくじ（開封済み）',
+                    `<div style="text-align:center;">
                          ${r ? `結果：<b style="font-size:28px;letter-spacing:0.12em;">${r}</b>` : 'もう開いてある。'}
                       </div>`,
-                     [{ text: '閉じる', action: 'close' }]
-                 );
-                 return;
-             }
+                    [{ text: '閉じる', action: 'close' }]
+                );
+                return;
+            }
 
-             if (gachaBusy) return; // 連打ブロックは共用
-             gachaBusy = true;
+            if (gachaBusy) return; // 連打ブロックは共用
+            gachaBusy = true;
 
-             const lucky = gameState.main.flags.luckyStatus || 0;
+            const lucky = gameState.main.flags.luckyStatus || 0;
 
-             // 基本確率（合計1.0）
-             let table = [
-                 { name: '大吉', p: 0.10 },
-                 { name: '吉', p: 0.26 },
-                 { name: '小吉', p: 0.28 },
-                 { name: '凶', p: 0.26 },
-                 { name: '大凶', p: 0.10 },
-             ];
+            // 基本確率（合計1.0）
+            let table = [
+                { name: '大吉', p: 0.10 },
+                { name: '吉', p: 0.26 },
+                { name: '小吉', p: 0.28 },
+                { name: '凶', p: 0.26 },
+                { name: '大凶', p: 0.10 },
+            ];
 
-             // luckyStatus補正：悪い方を少し削って良い方へ
-             const boost = lucky >= 2 ? 0.08 : lucky === 1 ? 0.04 : 0;
-             if (boost > 0) {
-                 const take = boost / 2;
-                 table[4].p = Math.max(0.02, table[4].p - take); // 大凶
-                 table[3].p = Math.max(0.10, table[3].p - take); // 凶
-                 table[0].p += take; // 大吉
-                 table[1].p += take; // 吉
+            // luckyStatus補正：悪い方を少し削って良い方へ
+            const boost = lucky >= 2 ? 0.08 : lucky === 1 ? 0.04 : 0;
+            if (boost > 0) {
+                const take = boost / 2;
+                table[4].p = Math.max(0.02, table[4].p - take); // 大凶
+                table[3].p = Math.max(0.10, table[3].p - take); // 凶
+                table[0].p += take; // 大吉
+                table[1].p += take; // 吉
 
-                 // 正規化
-                 const sum = table.reduce((s, a) => s + a.p, 0);
-                 table = table.map(a => ({ ...a, p: a.p / sum }));
-             }
+                // 正規化
+                const sum = table.reduce((s, a) => s + a.p, 0);
+                table = table.map(a => ({ ...a, p: a.p / sum }));
+            }
 
-             // 抽選
-             const r = Math.random();
-             let acc = 0;
-             let result = table[table.length - 1].name;
-             for (const o of table) {
-                 acc += o.p;
-                 if (r < acc) { result = o.name; break; }
-             }
+            // 抽選
+            const r = Math.random();
+            let acc = 0;
+            let result = table[table.length - 1].name;
+            for (const o of table) {
+                acc += o.p;
+                if (r < acc) { result = o.name; break; }
+            }
 
-             // 1回限り
-             gameState.main.flags.omikujiOpened = true;
-             gameState.main.flags.omikujiResult = result;
+            // 1回限り
+            gameState.main.flags.omikujiOpened = true;
+            gameState.main.flags.omikujiResult = result;
 
-             // 演出
-             if (result === '大吉') {
-                 showKumaFairyFlash();
-                 playSE && playSE('se-kira');
-             } else if (result === '大凶') {
-                 playSE && playSE('se-error');
-             } else {
-                 playSE && playSE('se-click');
-             }
+            // 演出
+            if (result === '大吉') {
+                showKumaFairyFlash();
+                playSE && playSE('se-kira');
+            } else if (result === '大凶') {
+                playSE && playSE('se-error');
+            } else {
+                playSE && playSE('se-click');
+            }
 
-             const msgMap = {
-                 '大吉': 'きっと良いことがあるでしょう。',
-                 '吉': '良い流れ。油断しなければ勝ちです。',
-                 '小吉': 'じわじわ来るタイプの幸運です。',
-                 '凶': '慎重に。変なフラグは避けましょう。',
-                 '大凶': '今日は寝て起きましょう。'
-             };
+            const msgMap = {
+                '大吉': 'きっと良いことがあるでしょう。',
+                '吉': '良い流れ。油断しなければ勝ちです。',
+                '小吉': 'じわじわ来るタイプの幸運です。',
+                '凶': '慎重に。変なフラグは避けましょう。',
+                '大凶': '今日は寝て起きましょう。'
+            };
 
-             setTimeout(() => {
-                 showModal(
-                     'おみくじ',
-                     `<div style="text-align:center;">
+            setTimeout(() => {
+                showModal(
+                    'おみくじ',
+                    `<div style="text-align:center;">
                          <div style="font-size:32px;font-weight:bold;letter-spacing:0.14em;margin:6px 0 10px;">${result}</div>
                          <div style="font-size:14px;opacity:0.9;">${msgMap[result] || ''}</div>
                       </div>`,
-                     [{ text: '閉じる', action: 'close' }]
-                 );
-             }, 350);
+                    [{ text: '閉じる', action: 'close' }]
+                );
+            }, 350);
 
-             setTimeout(() => {
-                 gachaBusy = false;
-             }, 1200);
-         }
+            setTimeout(() => {
+                gachaBusy = false;
+            }, 1200);
+        }
 
         function showKumaFairyFlash() {
             const el = document.createElement('div');
@@ -4430,6 +4474,131 @@
             }
         }
 
+        // ==== ウマ金さんの引き出し：記号カウンタパズル ====
+        // ★,♪,♥ をそれぞれ 5,3,2 に合わせてOKでアンロック
+        function showHorseDrawerPuzzle() {
+            const mc = document.getElementById('modalContent');
+            const modal = document.getElementById('modal');
+            if (!mc || !modal) return;
+
+            gameState.main = gameState.main || { flags: {} };
+            gameState.main.flags = gameState.main.flags || {};
+            const f = gameState.main.flags;
+
+            // すでに解除済み
+            if (f.unlockDrawerHorse) {
+                mc.innerHTML = `
+          <div style="text-align:center;">
+            <p>引き出しのロックはすでに解除されている。</p>
+            <div style="margin-top:8px;">
+              <button onclick="closeModal()" class="text-btn">閉じる</button>
+            </div>
+          </div>
+        `;
+                modal.style.display = 'flex';
+                return;
+            }
+
+            let star = 0, note = 0, heart = 0;
+
+            mc.innerHTML = `
+      <div style="text-align:center;">
+        <p style="margin:0 0 10px;">引き出しはロックされている。</p>
+
+        <div id="horseDrawerDisplay"
+             style="min-height:120px;border:2px solid #d4af37;border-radius:12px;
+                    padding:10px;margin:0 auto 12px;max-width:420px;
+                    background:rgba(0,0,0,0.25);">
+          <div id="horseDrawerRowStar"  style="min-height:30px;margin:6px 0;"></div>
+          <div id="horseDrawerRowNote"  style="min-height:30px;margin:6px 0;"></div>
+          <div id="horseDrawerRowHeart" style="min-height:30px;margin:6px 0;"></div>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:center;align-items:center;margin-bottom:10px;">
+          <button id="horseDrawerBtnStar"  class="text-btn" style="min-width:90px;">★</button>
+          <button id="horseDrawerBtnNote"  class="text-btn" style="min-width:90px;">♪</button>
+          <button id="horseDrawerBtnHeart" class="text-btn" style="min-width:90px;">♥</button>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button id="horseDrawerOkBtn" class="text-btn">OK</button>
+          <button onclick="closeModal()" class="text-btn">閉じる</button>
+        </div>
+
+        <p style="margin:10px 0 0;opacity:.8;font-size:.9em;">
+          ※押すたびに 0→1→…→9→0 とループする
+        </p>
+      </div>
+    `;
+            modal.style.display = 'flex';
+
+            const rowStar = document.getElementById('horseDrawerRowStar');
+            const rowNote = document.getElementById('horseDrawerRowNote');
+            const rowHeart = document.getElementById('horseDrawerRowHeart');
+
+            const btnStar = document.getElementById('horseDrawerBtnStar');
+            const btnNote = document.getElementById('horseDrawerBtnNote');
+            const btnHeart = document.getElementById('horseDrawerBtnHeart');
+            const okBtn = document.getElementById('horseDrawerOkBtn');
+
+            const pressFx = (btnEl) => {
+                if (!btnEl) return;
+                btnEl.classList.add('pressed');
+                setTimeout(() => btnEl.classList.remove('pressed'), 120);
+            };
+
+            const draw = (el, symbol, n) => {
+                if (!el) return;
+                const s = symbol.repeat(n);
+                el.innerHTML = `<span style="color:#ffd700;font-size:30px;letter-spacing:2px;">${s}</span>`;
+            };
+
+            const render = () => {
+                draw(rowStar, '★', star);
+                draw(rowNote, '♪', note);
+                draw(rowHeart, '♥', heart);
+            };
+
+            const click = (kind) => {
+                if (typeof playSE === 'function') playSE('se-click');
+                if (kind === 'star') star = (star + 1) % 10;
+                if (kind === 'note') note = (note + 1) % 10;
+                if (kind === 'heart') heart = (heart + 1) % 10;
+                render();
+            };
+
+            render();
+
+            if (btnStar) btnStar.onclick = () => { pressFx(btnStar); click('star'); };
+            if (btnNote) btnNote.onclick = () => { pressFx(btnNote); click('note'); };
+            if (btnHeart) btnHeart.onclick = () => { pressFx(btnHeart); click('heart'); };
+
+            if (okBtn) okBtn.onclick = () => {
+                const correct = (star === 5 && note === 3 && heart === 2);
+
+                if (!correct) {
+                    if (typeof playSE === 'function') playSE('se-error');
+                    updateMessage('…違うようだ。');
+                    return;
+                }
+
+                f.unlockDrawerHorse = true;
+
+                if (typeof playSE === 'function') playSE('se-clear');
+
+                closeModal();
+                showModal(
+                    '引き出しのロックが解除された',
+                    '',
+                    [{ text: '閉じる', action: 'close' }]
+                );
+
+                updateMessage('引き出しのロックを解除した。');
+                if (typeof renderCanvasRoom === 'function') renderCanvasRoom();
+            };
+        }
+
+
         // ==== ねこ山村長の右キャビネット：入力パズル ====
         // 入力→honeyed なら unlockCabinet=true
         // 入力→「たかねのはな」or「高嶺の花」なら unlockCabinet=true & unlockCabinetExtra=true
@@ -4778,7 +4947,7 @@
                             ];
                         }
 
-                    // お守り：おみくじを開く（1回だけ）
+                        // お守り：おみくじを開く（1回だけ）
                         if (itemId === 'omamori') {
                             const opened = !!gameState.main.flags.omikujiOpened;
                             const result = gameState.main.flags.omikujiResult;
