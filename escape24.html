@@ -1877,7 +1877,7 @@
                                         }
                                     ]
                                 );
-                                
+
                                 updateMessage('ご苦労様じゃ。宴の準備ができたようじゃな');
                                 return;
                             }
@@ -1888,15 +1888,20 @@
                                 f.canVisitHorse = true;
                                 if (typeof renderNotebookTasks === 'function') renderNotebookTasks();
                                 showObj(null,
-                                    'おお、みんなの困りごとを解決してくれたのじゃな！<br>それはそうと主役のウマ金（うまかね）君は大丈夫じゃろうか？<br>ちょっと見てきてくれんかね',
+                                    'おお、みんなの困りごとを解決してくれたのじゃな！<br>それはそうと主役のウマ金（かね）君は大丈夫じゃろうか？<br>ちょっと見てきてくれんかね',
                                     IMAGES.modals.catSolved1,
                                     'ウマ金さんの様子を見に行こう'
                                 );
                                 return;
                             }
+                            if (f.mayorQuestGiven) {
+                                updateMessage('ウマ金（かね）君の様子を見てきてほしいんじゃ');
+                                return;
+                            }
 
                             if (gameState.main.flags.unlockPc) {
                                 updateMessage('村人が困っておる…わしも忙しくてのお…');
+
 
                             } else {
                                 showObj(null, 'ねこ山村長「困った…カニを注文せねばいかんというのに…<br>パソコンにログインできんのだ」', IMAGES.modals.catWarried, 'ねこ山村長「困った…カニを注文せねばいかんというのに…パソコンにログインできんのだ」')
@@ -4515,9 +4520,9 @@
         </div>
 
         <div style="display:flex;gap:12px;justify-content:center;align-items:center;margin-bottom:10px;">
-          <button id="horseDrawerBtnStar"  class="text-btn" style="min-width:90px;">★</button>
-          <button id="horseDrawerBtnNote"  class="text-btn" style="min-width:90px;">♪</button>
-          <button id="horseDrawerBtnHeart" class="text-btn" style="min-width:90px;">♥</button>
+          <button id="horseDrawerBtnStar"  class="text-btn" style="min-width:90px;font-size:2rem;">★</button>
+          <button id="horseDrawerBtnNote"  class="text-btn" style="min-width:90px;font-size:2rem;">♪</button>
+          <button id="horseDrawerBtnHeart" class="text-btn" style="min-width:90px;font-size:2rem;">♥</button>
         </div>
 
         <div style="display:flex;gap:12px;justify-content:center;">
@@ -4525,9 +4530,9 @@
           <button onclick="closeModal()" class="text-btn">閉じる</button>
         </div>
 
-        <p style="margin:10px 0 0;opacity:.8;font-size:.9em;">
+        <!--<p style="margin:10px 0 0;opacity:.8;font-size:.9em;">
           ※押すたびに 0→1→…→9→0 とループする
-        </p>
+        </p>-->
       </div>
     `;
             modal.style.display = 'flex';
