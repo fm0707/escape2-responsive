@@ -1332,6 +1332,7 @@
             modals: {
                 posterKani: 'images/24/poster_kani.png',
                 posterCat: 'images/24/poster_cat.png',
+                posterCatEn: 'images/24/poster_cat_en.png',
                 memo: 'images/24/modal_memo.png',
                 memoEn: 'images/24/modal_memo_en.png',
                 catWarried: 'images/24/modal_cat_warried.jpeg',
@@ -1377,6 +1378,10 @@
                 endRabit: 'images/24/modal_end_rabit.png',
                 endFrog: 'images/24/modal_end_frog.png',
                 bearBad: 'images/24/modal_bear_bad.png',
+                mailRabitEn: 'images/24/mail_rabit_en.png',
+                mailDogEn: 'images/24/mail_dog_en.png',
+                mailFrogEn: 'images/24/mail_frog_en.png',
+                bearFrying: 'images/24/modal_bear_frying.png',
 
 
 
@@ -1437,7 +1442,8 @@
                         unlockCabinet: false, unlockCabinetExtra: false,
                         foundDonuts: false, passDonuts: false,
                         foundHoney: false, passHoney: false, gotOmamori: false, gotCitrus: false,
-
+                        omikujiOpened: false,
+                        omikujiResult: null,
 
                         talkTo: { bear: 0, }, backgroundState: 0,
                     }
@@ -1573,7 +1579,7 @@
                     {
                         x: 0.6, y: 16.1, width: 9.2, height: 8.3,
                         onClick: clickWrap(function () {
-                            showObj(null, '', IMAGES.modals.posterCat, '何か困りごとがあるようだ');
+                            showObj(null, '', IMAGES.modals.posterCat, '何か困りごとがあるようだ', IMAGES.modals.posterCatEn);
                         }),
                         description: '村長お知らせ',
                         zIndex: 5,
@@ -1747,7 +1753,11 @@
                                 window._nextModal = {
                                     title: '約束通り、実を取ってあげる！ついでにお守りもあげる！',
                                     content: `
-                                        <img src="${IMAGES.modals.cutCitrus}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">,
+                                    <div class="modal-anim">
+                                        <img src="${IMAGES.modals.cutCitrus}">
+                                        <img src="${IMAGES.modals.bearFrying}">
+                                    </div>
+                                        
                                         <p style="margin-top:8px;">
                                             クマの実を取ってもらった。ついでにお守りも降ってきた。<br>そして、クマ妖精は去って行った。
                                         </p>
@@ -2028,13 +2038,18 @@
                                 updateMessage('まず村長の話を聞こう');
                                 return;
                             }
-
                             // 解除済みなら中を確認
                             if (f.unlockCabinet || f.unlockCabibinet) {
                                 changeRoom('cabinetCat');
                                 return;
                             }
-                            showCatCabinetPuzzle();
+                            if (gameState.main.flags.horseSolvedToastShown) {
+                                showCatCabinetPuzzle();
+                                return;
+                            } else {
+                                updateMessage('まだ開かなそうだ');
+                            }
+                            
                         }),
                         description: '右キャビネット',
                         zIndex: 5,
@@ -2153,11 +2168,12 @@
                     {
                         x: 48.6, y: 11.4, width: 48.8, height: 70.8,
                         onClick: clickWrap(function () {
+                            showObj(null, '', IMAGES.items.mailFrog, 'カエル田さんからのメールだ', IMAGES.modals.mailFrogEn);
 
                         }),
                         description: 'メール本文エリアカエル田',
                         zIndex: 5,
-                        usable: () => false,
+                        usable: () => gameState.main.flags.currentMail == 1,
                         item: {
                             img: 'mailFrog',
                             visible: () => gameState.main.flags.currentMail == 1
@@ -2166,11 +2182,11 @@
                     {
                         x: 48.6, y: 11.4, width: 48.8, height: 70.8,
                         onClick: clickWrap(function () {
-
+                            showObj(null, '', IMAGES.items.mailRabit, 'カエル田さんからのメールだ', IMAGES.modals.mailRabitEn);
                         }),
                         description: 'メール本文エリアラビ野さん',
                         zIndex: 5,
-                        usable: () => false,
+                        usable: () => gameState.main.flags.currentMail == 2,
                         item: {
                             img: 'mailRabit',
                             visible: () => gameState.main.flags.currentMail == 2
@@ -2179,11 +2195,11 @@
                     {
                         x: 48.6, y: 11.4, width: 48.8, height: 70.8,
                         onClick: clickWrap(function () {
-
+                            showObj(null, '', IMAGES.items.mailDog, 'カエル田さんからのメールだ', IMAGES.modals.mailDogEn);
                         }),
                         description: 'メール本文エリアワン花',
                         zIndex: 5,
-                        usable: () => false,
+                        usable: () => gameState.main.flags.currentMail == 3,
                         item: {
                             img: 'mailDog',
                             visible: () => gameState.main.flags.currentMail == 3
@@ -2576,7 +2592,7 @@
                                 updateMessage('ワン花さんの話を聞こう');
                                 return;
                             }
-                            showObj(null, '宅配業者からのメッセージ<br>『ここを渡ったところで道が分からなくなりました』', IMAGES.modals.spImage, '何を示しているんだろう', IMAGES.modals.spImageEn);
+                            showObj(null, '街から来る宅配業者からのメッセージ<br>『ここを渡ったところで道が分からなくなりました』', IMAGES.modals.spImage, '何を示しているんだろう', IMAGES.modals.spImageEn);
 
                         }),
                         description: 'ワン花さんのスマホ',
@@ -2667,7 +2683,6 @@
                         x: 0.5, y: 64.9, width: 17.4, height: 6.2,
                         onClick: clickWrap(function () {
                             changeRoom('drawerHorse');
-                            // showObj(null, '引き出しを開けた', IMAGES.modals.horseDrawer, '自分が主役の年賀状だ…試作品かな？');
                         }),
                         description: '引き出し',
                         zIndex: 5,
@@ -3789,92 +3804,96 @@
         }
 
         let gachaBusy = false;
-        function openGachaModal() {
 
-            const html = `
-    <div style="
-      text-align:center;
-      padding:10px;
-      color:#444;
-    ">
-      <div style="
-        font-size:14px;
-        margin-bottom:12px;
-      ">
-        ピンクのガチャ筐体が置かれている。<br>
-        どうやら引けそうだ。
-      </div>
+        // お守りのおみくじ（開封は1回だけ）
+         function drawOmikujiFromOmamori() {
+             // すでに開封済み
+             if (gameState.main.flags.omikujiOpened) {
+                 const r = gameState.main.flags.omikujiResult;
+                 showModal(
+                     'おみくじ（開封済み）',
+                     `<div style="text-align:center;">
+                         ${r ? `結果：<b style="font-size:28px;letter-spacing:0.12em;">${r}</b>` : 'もう開いてある。'}
+                      </div>`,
+                     [{ text: '閉じる', action: 'close' }]
+                 );
+                 return;
+             }
 
-      <div style="
-        font-size:13px;
-        color:#d46a8c;
-      ">
-        （運試し）
-      </div>
-    </div>
-  `;
+             if (gachaBusy) return; // 連打ブロックは共用
+             gachaBusy = true;
 
-            showModal(
-                'ガチャがある',
-                html,
-                [
-                    {
-                        text: '引いてみる',
-                        action: () => {
-                            closeModal();
-                            drawNewYearGacha();
-                            lockUI(2600, 0.22);
-                            playSE('se-can');
-                            markProgress('play_gacha_23');
-                        }
-                    },
-                    {
-                        text: 'やめる',
-                        action: 'close'
-                    }
-                ]
-            );
-        }
+             const lucky = gameState.main.flags.luckyStatus || 0;
 
+             // 基本確率（合計1.0）
+             let table = [
+                 { name: '大吉', p: 0.10 },
+                 { name: '吉', p: 0.26 },
+                 { name: '小吉', p: 0.28 },
+                 { name: '凶', p: 0.26 },
+                 { name: '大凶', p: 0.10 },
+             ];
 
-        function drawNewYearGacha() {
-            if (gachaBusy) return;         // 連打ブロック
-            gachaBusy = true;
+             // luckyStatus補正：悪い方を少し削って良い方へ
+             const boost = lucky >= 2 ? 0.08 : lucky === 1 ? 0.04 : 0;
+             if (boost > 0) {
+                 const take = boost / 2;
+                 table[4].p = Math.max(0.02, table[4].p - take); // 大凶
+                 table[3].p = Math.max(0.10, table[3].p - take); // 凶
+                 table[0].p += take; // 大吉
+                 table[1].p += take; // 吉
 
-            const lucky = gameState.main.flags.luckyStatus || 0;
+                 // 正規化
+                 const sum = table.reduce((s, a) => s + a.p, 0);
+                 table = table.map(a => ({ ...a, p: a.p / sum }));
+             }
 
-            // 基本レア率
-            let rareRate = 0.05; // 5%
+             // 抽選
+             const r = Math.random();
+             let acc = 0;
+             let result = table[table.length - 1].name;
+             for (const o of table) {
+                 acc += o.p;
+                 if (r < acc) { result = o.name; break; }
+             }
 
-            // luckyStatus補正
-            if (lucky === 1) rareRate += 0.02; // 7%
-            if (lucky >= 2) rareRate += 0.05; // 10%
+             // 1回限り
+             gameState.main.flags.omikujiOpened = true;
+             gameState.main.flags.omikujiResult = result;
 
-            const r = Math.random();
+             // 演出
+             if (result === '大吉') {
+                 showKumaFairyFlash();
+                 playSE && playSE('se-kira');
+             } else if (result === '大凶') {
+                 playSE && playSE('se-error');
+             } else {
+                 playSE && playSE('se-click');
+             }
 
-            if (r < rareRate) {
-                showKumaFairyFlash();
-                playSE('se-kira');
-                setTimeout(() => {
+             const msgMap = {
+                 '大吉': 'きっと良いことがあるでしょう。',
+                 '吉': '良い流れ。油断しなければ勝ちです。',
+                 '小吉': 'じわじわ来るタイプの幸運です。',
+                 '凶': '慎重に。変なフラグは避けましょう。',
+                 '大凶': '今日は寝て起きましょう。'
+             };
 
-                    showModal(
-                        '大当たり！',
-                        '<div style="text-align:center;">クマ妖精が、にこっと笑った気がした。</div>',
-                        [{ text: '戻る', action: 'close' }]
-                    );
-                }, 500);
-            } else if (r < 0.25) {
-                showToast('ちょっと良い一年になりそうな気がする');
-            } else if (r < 0.6) {
-                showToast('ぽわ〜ん……湯気が立った');
-            } else {
-                showToast('……何も起きなかった');
-            }
+             setTimeout(() => {
+                 showModal(
+                     'おみくじ',
+                     `<div style="text-align:center;">
+                         <div style="font-size:32px;font-weight:bold;letter-spacing:0.14em;margin:6px 0 10px;">${result}</div>
+                         <div style="font-size:14px;opacity:0.9;">${msgMap[result] || ''}</div>
+                      </div>`,
+                     [{ text: '閉じる', action: 'close' }]
+                 );
+             }, 350);
 
-            setTimeout(() => {
-                gachaBusy = false;
-            }, 2700);
-        }
+             setTimeout(() => {
+                 gachaBusy = false;
+             }, 1200);
+         }
 
         function showKumaFairyFlash() {
             const el = document.createElement('div');
@@ -4328,7 +4347,7 @@
             };
         }
 
-        // ==== ウマ金さんのロック箱：[mane] パズル ====
+        // ==== ウマ金さんのロック箱： パズル ====
 
         function showHorseBoxPuzzle() {
             const mc = document.getElementById('modalContent');
@@ -4355,7 +4374,7 @@
       <input type="text"
              id="horseBoxInput"
              class="puzzle-input"
-             placeholder="英字4文字"
+             placeholder="数字4文字"
              style="max-width:220px;width:70%;">
       <div style="margin-top:8px;">
         <button onclick="checkHorseBoxPuzzle()" class="text-btn">OK</button>
@@ -4378,7 +4397,7 @@
 
             const val = z2hBracket(z2hAlpha(raw)).toLowerCase();
 
-            if (val === 'mane') {
+            if (val === '1536') {
                 if (gameState.main.flags.unlockBox) {
                     if (typeof playSE === 'function') playSE('se-error');
                     updateMessage('箱のロックはすでに解除されている。');
@@ -4636,7 +4655,8 @@
                 brush: 'ブラシ',
                 kumapon: 'クマポン酢',
                 seasoning: '調味料セット',
-                honey: '伝説の七色ハチミツ'
+                honey: '伝説の七色ハチミツ',
+                omamori: 'お守り（おみくじ付き）'
 
 
 
@@ -4757,6 +4777,32 @@
                                 { text: '閉じる', action: 'close' }
                             ];
                         }
+
+                    // お守り：おみくじを開く（1回だけ）
+                        if (itemId === 'omamori') {
+                            const opened = !!gameState.main.flags.omikujiOpened;
+                            const result = gameState.main.flags.omikujiResult;
+
+                            if (opened && result) {
+                                content += `<div style="text-align:center;font-size:18px;margin-top:4px;">おみくじの結果：<b style="font-size:22px;">${result}</b></div>`;
+                            } else {
+                                content += `<div style="text-align:center;font-size:14px;color:#ccc;margin-top:6px;"></div>`;
+                            }
+
+                            buttons = [
+                                ...(opened ? [] : [{
+                                    text: 'おみくじを開く',
+                                    action: () => {
+                                        closeModal();
+                                        drawOmikujiFromOmamori();
+                                        // lockUI(2200, 0.22);
+                                        playSE && playSE('se-can');
+                                    }
+                                }]),
+                                { text: '閉じる', action: 'close' }
+                            ];
+                        }
+
 
                         showModal(
                             getItemName(itemId),
