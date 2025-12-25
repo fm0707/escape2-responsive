@@ -2076,6 +2076,10 @@
                     {
                         x: 7.8, y: 57.5, width: 14.9, height: 17.8,
                         onClick: clickWrap(function () {
+                            if (!f.talkToCat) {
+                                updateMessage('まず村長の話を聞こう');
+                                return;
+                            }
                             changeRoom('cabinetCatLeft');
                         }),
                         description: '左キャビネット',
