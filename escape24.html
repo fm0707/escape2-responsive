@@ -1999,6 +1999,26 @@
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
+                        x: 85.2, y: 34.0, width: 3.4, height: 4.2,
+                        onClick: clickWrap(function () {
+                            updateMessage('「お取り寄せメモ：ナゾスタで見たスイーツ」と書いてある');
+                        }),
+                        description: '右壁小さい貼り紙上',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 86.3, y: 39.5, width: 4.7, height: 5.2,
+                        onClick: clickWrap(function () {
+                            updateMessage('「お取り寄せメモ：テレビで見たすごそうなやつ」と書いてある');
+                        }),
+                        description: '右壁小さい貼り紙右下',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
                         x: 52.1, y: 62.5, width: 11.2, height: 3.4,
                         onClick: clickWrap(function () {
                             if (!gameState.main.flags.talkToCat) {
@@ -2574,7 +2594,7 @@
                             if (!gameState.main.flags.talkToDog) {
                                 gameState.main.flags.talkToDog = true;
                                 showObj(null,
-                                    '飲み物の宅配業者さんに、この村までの道順を伝えないといけないワン',
+                                    '飲み物の宅配業者さんに、<br>この村までの道順を伝えないといけないワン',
                                     IMAGES.modals.dogWorried,
                                     'ワン花さんは困っている。スマホを見てみよう'
                                 );
