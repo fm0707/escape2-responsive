@@ -3844,6 +3844,7 @@
             if (val === 'warm') {
                 gameState.main.flags.unlockSong = true;
                 gameState.roomFrog.flags.backgroundState++;
+                markProgress('kaeruta_clear_24');
                 checkAllVillagersSolved();
                 renderNotebookTasks();
 
@@ -4239,6 +4240,7 @@
                 // 正解 → アンロック
                 gameState.main.flags.unlockVegetables = true;
                 gameState.roomRabit.flags.backgroundState++;
+                markProgress('rabino_clear_24');
                 renderNotebookTasks();
                 renderCanvasRoom();
                 checkAllVillagersSolved();
@@ -4389,6 +4391,7 @@
 
                 // 正解 → アンロック
                 gameState.main.flags.unlockRoute = true;
+                markProgress('wanhana_clear_24');
 
                 // 指示の roomDog.backgroundState++ と、既存表示用 flags を同期
                 gameState.roomDog.flags.backgroundState++;
@@ -4483,6 +4486,7 @@
                 // 念のため（セーブ互換・事故防止）
                 gameState.roomHorse = gameState.roomHorse || { flags: { backgroundState: 0 } };
                 gameState.roomHorse.flags = gameState.roomHorse.flags || { backgroundState: 0 };
+                markProgress('umakane_clear_24');
 
                 // gameState.roomHorse.flags.backgroundState++;
                 // renderCanvasRoom();
@@ -4711,9 +4715,11 @@
 
             // 正解：アンロック
             f.unlockCabinet = true;      // 正式
+            markProgress('cabinet_clear_24');
 
             if (isTakane) {
                 f.unlockCabinetExtra = true;
+                markProgress('takanenohana_clear_24');
             }
 
             if (typeof playSE === 'function') playSE('se-clear');
