@@ -1826,9 +1826,9 @@
                                 renderCanvasRoom();
                                 showObj(
                                     null,
-                                    '…カツヨウ…<br>チリーン…',
+                                    '…カツヨウ…<br>チリーン…<br>ドアのほうで音がした。',
                                     IMAGES.modals.ghost1,
-                                    'カプセル君「…カツヨウ…」チリーンと音がした'
+                                    'カプセル君「…カツヨウ…」ドアのほうでチリーンと音がした。'
                                 );
                                 playSE('se-coin');
                             }
@@ -2266,7 +2266,7 @@
                         }),
                         description: '無地のガチャカプセル取り出し口',
                         zIndex: 5,
-                        usable: () => true,
+                        usable: () => gameState.main.flags.appearCard && !gameState.main.flags.gotCard ,
                         item: { img: 'cardKey', visible: () => gameState.main.flags.appearCard && !gameState.main.flags.gotCard }
                     },
                     {
@@ -3385,6 +3385,7 @@
                 closeModal();
                 renderCanvasRoom();
                 updateMessage('箱のロックを解除した。');
+                markProgress('unlock_box_25');
             } else {
                 if (typeof playSE === 'function') playSE('se-error');
                 updateMessage('…違うみたいだ。');
