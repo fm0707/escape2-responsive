@@ -2862,7 +2862,7 @@
                 changeBGM("sounds/25/dj_kuroneko.mp3");
 
             } else {
-                changeBGM("sounds/25/kimiharetro.mp3");
+                changeBGM("sounds/25/fushiginasekaihe.mp3");
 
             }
 
@@ -4039,9 +4039,7 @@
             addItem(prizeId);
             addItem('emptyCapsuleBlue');
 
-            // showToast && showToast(`${getItemName(prizeId)}を手に入れた`);
             showObj(null, `${getItemName(prizeId)}が入っていた`, IMAGES.items.wetTowel, `${getItemName(prizeId)}を手に入れた`);
-            updateMessage('カプセルを開けた。');
         }
 
         function opencapsuleRedAt(slotIndex) {
@@ -4053,12 +4051,8 @@
             addItem('emptyCapsuleRed');
 
             playSE && playSE('se-item');
-            showToast && showToast(`${getItemName('handleToyPart')}を手に入れた`);
-            updateMessage('カプセルを開けた。');
+            showObj(null, `${getItemName('handleToyPart')}が入っていた`, IMAGES.items.wetTowel, `${getItemName('handleToyPart')}を手に入れた`);
         }
-
-
-
 
         function getItemName(itemId) {
             const names = {
