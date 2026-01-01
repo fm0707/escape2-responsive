@@ -1276,12 +1276,11 @@
 
                 main: ['images/25/main.png'],
                 window: ['images/25/window.png', 'images/25/window2.png', 'images/25/window3.png', 'images/25/window4.png', 'images/25/window5.png'],
-                outside: ['images/25/outside.png'],
                 gachaRight: ['images/25/gacha_right.png'],
                 gachaLeft: ['images/25/gacha_left.png'],
 
                 end: ['images/25/end.png', 'images/25/end2.png'],
-                trueEnd: ['images/25/true_end.png'],
+                trueEnd: ['images/25/true_end.png', 'images/25/true_end2.jpeg'],
 
             },
             items: {
@@ -1345,8 +1344,9 @@
                 posterBear: 'images/25/modal_poster_bear.png',
                 posterBear3d: 'images/25/modal_poster_bear_3d.png',
                 capsuleHeaven: 'images/25/capsule_heaven.mp4',
-                map: 'images/25/map.png',
+                map: 'images/25/map.jpeg',
                 bearGlass: 'images/25/modal_bear_glass.jpeg',
+                glassQuestion: 'images/25/modal_glass_question.png',
                 badEnd: 'images/25/badend.png',
             },
         };
@@ -1529,7 +1529,7 @@
                     {
                         x: 44.7, y: 22.1, width: 10.2, height: 10.1,
                         onClick: clickWrap(function () {
-
+                            updateMessage('時計がある');
                         }),
                         description: '時計',
                         zIndex: 5,
@@ -1645,42 +1645,43 @@
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
-                    {
-                        x: 69.3, y: 41.9, width: 5.9, height: 12.1,
-                        onClick: clickWrap(function () {
-                            updateMessage('何の変哲もない観葉植物だ');
-                        }),
-                        description: '植物右',
-                        zIndex: 1,
-                        usable: () => true,
-                        item: { img: 'IMAGE_KEY', visible: () => true }
-                    },
-                    {
-                        x: 70.5, y: 47.7, width: 3.5, height: 4.0,
-                        onClick: clickWrap(function () {
-                            acquireItemOnce('foundMedal', 'medal', 'メダルを見つけた', IMAGES.items.medal, 'メダルを手に入れた');
-                        }),
-                        description: '植物光、メダル',
-                        zIndex: 5,
-                        usable: () => gameState.main.flags.appearMedal && !gameState.main.flags.foundMedal,
-                        item: { img: 'shine', visible: () => gameState.main.flags.appearMedal && !gameState.main.flags.foundMedal }
-                    },
-                    {
-                        x: 25.4, y: 42.5, width: 6.1, height: 11.1,
-                        onClick: clickWrap(function () {
-                            updateMessage('何の変哲もない観葉植物だ');
-                        }),
-                        description: '植物左',
-                        zIndex: 5,
-                        usable: () => true,
-                        item: { img: 'IMAGE_KEY', visible: () => true }
-                    },
+                    // {
+                    //     x: 69.3, y: 41.9, width: 5.9, height: 12.1,
+                    //     onClick: clickWrap(function () {
+                    //         updateMessage('何の変哲もない観葉植物だ');
+                    //     }),
+                    //     description: '植物右',
+                    //     zIndex: 1,
+                    //     usable: () => true,
+                    //     item: { img: 'IMAGE_KEY', visible: () => true }
+                    // },
+
+                    // {
+                    //     x: 25.4, y: 42.5, width: 6.1, height: 11.1,
+                    //     onClick: clickWrap(function () {
+                    //         updateMessage('何の変哲もない観葉植物だ');
+                    //     }),
+                    //     description: '植物左',
+                    //     zIndex: 5,
+                    //     usable: () => true,
+                    //     item: { img: 'IMAGE_KEY', visible: () => true }
+                    // },
                     {
                         x: 26.7, y: 56.4, width: 6.1, height: 6.4,
                         onClick: clickWrap(function () {
                             updateMessage('「実験のため留守にします。クマ店主」と書いてある');
                         }),
                         description: 'カウンター貼り紙',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 26.2, y: 50.3, width: 8.0, height: 5.1,
+                        onClick: clickWrap(function () {
+                            talkToHintCharacter('main', 'diary');
+                        }),
+                        description: '本',
                         zIndex: 5,
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
@@ -1826,9 +1827,9 @@
                                 renderCanvasRoom();
                                 showObj(
                                     null,
-                                    '…カツヨウ…<br>チリーン…<br>ドアのほうで音がした。',
+                                    '「…カツヨウ…」<br>チリーン…<br>近くで音がした。',
                                     IMAGES.modals.ghost1,
-                                    'カプセル君「…カツヨウ…」ドアのほうでチリーンと音がした。'
+                                    'カプセル君「…カツヨウ…」近くでチリーンと音がした。'
                                 );
                                 playSE('se-coin');
                             }
@@ -1893,9 +1894,24 @@
                         item: { img: 'coinYen', visible: () => !gameState.main.flags.foundYen }
                     },
                     {
+                        x: 60.2, y: 76.5, width: 4.7, height: 2.9,
+                        onClick: clickWrap(function () {
+                            acquireItemOnce('foundMedal', 'medal', 'メダルを見つけた', IMAGES.items.medal, 'メダルを手に入れた');
+                        }),
+                        description: 'メダル',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.appearMedal && !gameState.main.flags.foundMedal,
+                        item: { img: 'shine', visible: () => gameState.main.flags.appearMedal && !gameState.main.flags.foundMedal }
+                    },
+                    {
                         x: 11.3, y: 55.6, width: 29.8, height: 22.4,
                         onClick: clickWrap(function () {
-                            showBoxPuzzle();
+                            if (gameState.main.flags.gachaRight.solved) {
+                                showBoxPuzzle();
+                            } else {
+                                updateMessage('まだ反応がない…');
+                            }
+
                         }),
                         description: '箱閉じる',
                         zIndex: 5,
@@ -2219,6 +2235,16 @@
                         item: { img: 'capsuleBlue', visible: () => gachaLeft_isCapsuleVisible('g2') }
                     },
                     {
+                        x: 27.0, y: 56.1, width: 21.2, height: 14.2,
+                        onClick: clickWrap(function () {
+                            updateMessage('このガチャは無料なのかな？');
+                        }),
+                        description: 'FREEガチャ',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
                         x: 32.0, y: 76.3, width: 10.7, height: 9.8,
                         onClick: clickWrap(function () {
                             if (gameState.selectedItem == 'handleToy') {
@@ -2266,7 +2292,7 @@
                         }),
                         description: '無地のガチャカプセル取り出し口',
                         zIndex: 5,
-                        usable: () => gameState.main.flags.appearCard && !gameState.main.flags.gotCard ,
+                        usable: () => gameState.main.flags.appearCard && !gameState.main.flags.gotCard,
                         item: { img: 'cardKey', visible: () => gameState.main.flags.appearCard && !gameState.main.flags.gotCard }
                     },
                     {
@@ -2565,13 +2591,25 @@
                             if (gameState.selectedItem == 'glass') {
                                 showObj(null, 'クマ妖精に3Dメガネを渡してみた<br>「似合う？」', IMAGES.modals.bearGlass, 'クマ妖精に3Dメガネを渡した');
                                 removeItem('glass');
+                                gameState.trueEnd.flags.backgroundState++;
+                                renderCanvasRoom();
                             } else {
                                 updateMessage('カプセルの分解具合を眺めているようだ');
                             }
                         }),
                         description: 'クマ妖精',
                         zIndex: 5,
-                        usable: () => true,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 0,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 25.2, y: 14.3, width: 48.0, height: 57.5,
+                        onClick: clickWrap(function () {
+                            updateMessage('えへへ');
+                        }),
+                        description: '立ったクマ妖精',
+                        zIndex: 5,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 1,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
@@ -2610,7 +2648,14 @@
                 ghost3: [
                     'カプセル君「…！…」',
                     'カプセル君「…ソンナ、カツヨウホウガ…」',
-                ]
+                ],
+                diary: [
+                    '日記のようだ',
+                    '「12/12 カプセル君が生まれちゃった」',
+                    '「12/15 お客さんから苦情が来ちゃった…」',
+                    '「12/22 分解できるプラスチックがあるんだって。カプセル君喜ぶかな」',
+                ],
+
             },
         };
 
@@ -3036,6 +3081,17 @@
             setTimeout(() => document.documentElement.classList.remove('fx-shake'), 120);
         }
 
+        // 画面揺れ
+        function screenShake(el = document.documentElement, ms = 120, cls = 'fx-shake') {
+            if (!el) return;
+            // 連打でも必ず発火させる
+            el.classList.remove(cls);
+            void el.offsetHeight; // reflow
+            el.classList.add(cls);
+            setTimeout(() => el.classList.remove(cls), ms);
+        }
+
+
 
         function toggleNight() {
 
@@ -3357,7 +3413,7 @@
             }
 
             const modalContent = `
-            <div class="login-container">
+            <div>
                 <div class="login-form">
                     <h3 class="login-title">箱のロック</h3>
                     <label>パスワード</label>
@@ -3397,13 +3453,14 @@
 
             let msg = '';
             const modalContent = `
-            <div class="login-container">
-                <div class="login-form">
+            <div>
+                <div>
                     <img src="${IMAGES.modals.map}" alt="地図" style="max-width: 400px; border-radius: 10px;">
                     <p>${msg}</p>
-                    <label>パスワード</label>
-                    <input type="text" class="puzzle-input" id="cInput" placeholder="数字">
-                    <input type="text" class="puzzle-input" id="cInput2" placeholder="数字">
+                    
+                    <input type="text" class="puzzle-input" id="cInput" placeholder="数字" style="width:50px;">
+                    <label>,</label>
+                    <input type="text" class="puzzle-input" id="cInput2" placeholder="数字" style="width:50px;">
                     <br>
                     <button class="login-btn" onclick="checkCoordinatePuzzle()">OK</button>
                     <button class="cancel-btn" onclick="closeModal()">閉じる</button>
@@ -3433,9 +3490,10 @@
                 gameState.main.flags.unlockCoordinate = true;
 
                 markProgress('coordinate_normal_unlock_25');
+                screenShake(document.documentElement, 120, 'fx-shake');
 
                 showModal(
-                    '反応があった',
+                    'ゴゴゴゴゴ…',
                     '',
                     [{ text: '閉じる', action: 'close' }]
                 );
@@ -3596,48 +3654,71 @@
         }
 
         function tryCombineCapsuleShellWithFrame(targetItemId) {
-            // 対象（表記ゆれ対策で両方対応）
-            const isFrame = (targetItemId === 'glassFrame' || targetItemId === 'grassFrame');
+            const isFrame = (targetItemId === 'glassFrame');
             if (!isFrame) return false;
 
             // 両方の殻が必要（どっちで開始しても両方消費）
             if (!hasItem('emptyCapsuleBlue') || !hasItem('emptyCapsuleRed')) return false;
 
-            // 生成アイテム（表記ゆれ対策）
-            const resultItemId = (targetItemId === 'grassFrame') ? 'grass' : 'glass';
+            // 生成アイテム
+            const resultItemId = 'glass';
 
-            // 消費：フレーム1つ + 殻2つ
-            removeItem(targetItemId);
-            removeItem('emptyCapsuleBlue');
-            removeItem('emptyCapsuleRed');
-
-            addItem(resultItemId);
             showModal(
-                'メガネフレームにカプセルの殻をはめた。',
-                `
+                '<div style="text-align:center;">メガネフレームにカプセルの殻をはめますか？</div>',
+                `<img src="${IMAGES.modals.glassQuestion}" alt="地図" style="max-width: 400px; border-radius: 10px;">`,
+                [
+                    {
+                        text: 'はい',
+                        action: () => {
+                            closeModal();
+                            // 消費：フレーム1つ + 殻2つ
+                            removeItem(targetItemId);
+                            removeItem('emptyCapsuleBlue');
+                            removeItem('emptyCapsuleRed');
+
+                            addItem(resultItemId);
+                            showModal(
+                                'メガネフレームにカプセルの殻をはめた。',
+                                `
                                     <div class="modal-anim fast">
                                     <img src="${IMAGES.modals.glassSet}">
                                     <img src="${IMAGES.items.glass}">
                                     </div>
                                     `,
-                [
+                                [
+                                    {
+                                        text: '閉じる',
+                                        action: () => {
+                                            closeModal();
+                                        },
+                                    }
+                                ]
+                            );
+                            updateMessage('メガネフレームにカプセルの殻をはめた');
+
+
+                            // もし既存フラグがあるなら立てる（無ければ消してOK）
+                            if (gameState.main && gameState.main.flags && typeof gameState.main.flags.found3DGlass !== 'undefined') {
+                                gameState.main.flags.found3DGlass = true;
+                            }
+                            markProgress('3d_success_25');
+
+                            return true;
+                        }
+                    },
                     {
-                        text: '閉じる',
-                        action: () => {
+                        text: 'いいえ', action: () => {
                             closeModal();
-                        },
+                            updateMessage('');
+                            return false;
+                        }
                     }
                 ]
             );
+            return false;
 
 
-            // もし既存フラグがあるなら立てる（無ければ消してOK）
-            if (gameState.main && gameState.main.flags && typeof gameState.main.flags.found3DGlass !== 'undefined') {
-                gameState.main.flags.found3DGlass = true;
-            }
-            markProgress('3d_success_25');
 
-            return true;
         }
 
 
