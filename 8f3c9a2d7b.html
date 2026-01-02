@@ -1545,6 +1545,7 @@
                                     gameState.main.flags.useCapsuleForPoster = true;
                                     gameState.main.flags.ghostFaver++;
                                     gameState.window.flags.backgroundState++;
+                                    markProgress('red_capsule_use_25');
 
                                     showToast('カプセルを活用した！');
                                     renderCanvasRoom();
@@ -2581,7 +2582,7 @@
                     {
                         x: 65.1, y: 9.1, width: 13.5, height: 15.2,
                         onClick: clickWrap(function () {
-                            updateMessage('サヨウナラ…');
+                            updateMessage('(^^)/');
                         }),
                         description: 'カプセル君',
                         zIndex: 5,
