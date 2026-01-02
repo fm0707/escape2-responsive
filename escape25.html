@@ -1647,27 +1647,6 @@
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
-                    // {
-                    //     x: 69.3, y: 41.9, width: 5.9, height: 12.1,
-                    //     onClick: clickWrap(function () {
-                    //         updateMessage('何の変哲もない観葉植物だ');
-                    //     }),
-                    //     description: '植物右',
-                    //     zIndex: 1,
-                    //     usable: () => true,
-                    //     item: { img: 'IMAGE_KEY', visible: () => true }
-                    // },
-
-                    // {
-                    //     x: 25.4, y: 42.5, width: 6.1, height: 11.1,
-                    //     onClick: clickWrap(function () {
-                    //         updateMessage('何の変哲もない観葉植物だ');
-                    //     }),
-                    //     description: '植物左',
-                    //     zIndex: 5,
-                    //     usable: () => true,
-                    //     item: { img: 'IMAGE_KEY', visible: () => true }
-                    // },
                     {
                         x: 26.7, y: 56.4, width: 6.1, height: 6.4,
                         onClick: clickWrap(function () {
@@ -2706,7 +2685,7 @@
 
             // 足音を鳴らす
             try {
-                const se = document.getElementById('se-joyanokane');
+                const se = document.getElementById('se-ashioto');
                 if (se) { se.currentTime = 0; se.play(); }
             } catch (e) { }
 
@@ -3239,7 +3218,7 @@
             let secretText = "";
             switch (endingId) {
                 case "trueEnd":
-                    secretText = "🧸 クマ妖精が居ましたね";
+                    secretText = "🧸 クマ妖精のお店だったみたいです";
                     break;
                 case "end":
                     secretText = `👣 早く帰ろう`;
@@ -3555,7 +3534,8 @@
                     travelWithStepsTrueEnd();
                 } else if (true) {
                     if (gameState.main.flags.ghostToHeaven) gameState.end.flags.backgroundState++;
-                    changeRoom('end');
+                    travelWithSteps('end');
+                    // changeRoom('end');
                 }
             };
 
