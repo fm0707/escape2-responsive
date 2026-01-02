@@ -1281,7 +1281,7 @@
                 gachaLeft: ['images/25/gacha_left.png'],
 
                 end: ['images/25/end.png', 'images/25/end2.png'],
-                trueEnd: ['images/25/true_end.png', 'images/25/true_end2.jpeg'],
+                trueEnd: ['images/25/true_end.png', 'images/25/true_end2.png'],
 
             },
             items: {
@@ -1314,6 +1314,7 @@
                 boxOpen: 'images/25/box_open.png',
                 glassFrame: 'images/25/glass_frame.png',
                 glass: 'images/25/glass.png',
+                fruit:'images/25/fruit.png',
 
 
 
@@ -1347,6 +1348,7 @@
                 capsuleHeaven: 'images/25/capsule_heaven.mp4',
                 map: 'images/25/map.jpeg',
                 bearGlass: 'images/25/modal_bear_glass.jpeg',
+                bearFruit: 'images/25/modal_bear_fruit.png',
                 glassQuestion: 'images/25/modal_glass_question.png',
                 badEnd: 'images/25/badend.png',
             },
@@ -1877,7 +1879,12 @@
                                 updateMessage('反応しないようだ');
                                 return;
                             }
-                            showCoordinatePuzzle();
+                            if (gameState.main.flags.unlockCoordinate) {
+                                updateMessage('もう反応しないようだ');
+                            } else {
+                                showCoordinatePuzzle();
+                            }
+                            
                         }),
                         description: '入力パネル',
                         zIndex: 5,
@@ -2587,15 +2594,35 @@
                 description: 'どこか不思議な場所へ転移しました。脱出おめでとうございます！',
                 clickableAreas: [
                     {
-                        x: 36.7, y: 30.8, width: 29.8, height: 31.5,
+                        x: 62.5, y: 40.0, width: 29.1, height: 32.6,
                         onClick: clickWrap(function () {
                             if (gameState.selectedItem == 'glass') {
-                                showObj(null, 'クマ妖精に3Dメガネを渡してみた<br>「似合う？」', IMAGES.modals.bearGlass, 'クマ妖精に3Dメガネを渡した');
+                                window._nextModal = {
+                                    title: 'お礼にイチゴあげる！',
+                                    content: `
+                                        <img src="${IMAGES.modals.bearFruit}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">,
+
+                                        <p style="margin-top:8px;">
+                                            イチゴをもらった。
+                                        </p>
+                                        `,
+                                    buttons: [
+                                        { text: '閉じる', action: 'close' }
+                                    ],
+
+                                    after() {
+                                        playSE('se-clear');
+                                        markProgress('fruits_get_25');
+                                        addItem('fruit');
+                                        updateMessage('イチゴをもらった。');
+                                    }
+                                };
+                                showObj(null, 'クマ妖精に3Dメガネを渡してみた<br>「くれるの？似合う？」', IMAGES.modals.bearGlass, 'クマ妖精に3Dメガネを渡した');
                                 removeItem('glass');
                                 gameState.trueEnd.flags.backgroundState++;
                                 renderCanvasRoom();
                             } else {
-                                updateMessage('カプセルの分解具合を眺めているようだ');
+                                updateMessage('イチゴを食べている…');
                             }
                         }),
                         description: 'クマ妖精',
@@ -2604,11 +2631,11 @@
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
-                        x: 25.2, y: 14.3, width: 48.0, height: 57.5,
+                        x: 62.5, y: 40.0, width: 29.1, height: 32.6,
                         onClick: clickWrap(function () {
-                            updateMessage('えへへ');
+                            talkToHintCharacter('main', 'bear');
                         }),
-                        description: '立ったクマ妖精',
+                        description: 'メガネクマ妖精',
                         zIndex: 5,
                         usable: () => gameState.trueEnd.flags.backgroundState == 1,
                         item: { img: 'IMAGE_KEY', visible: () => true }
@@ -2630,9 +2657,9 @@
         const hintMessages = {
             main: {
                 bear: [
-                    'ふう、おいしかった',
-                    'え？欲しかったの',
-                    'ふーん',
+                    'イチゴ美味しいね',
+                    'え？何してるのかって？',
+                    'なんだっけ…',
                 ],
                 ghost0: [
                     'カプセル君「…イツモ…ステラレル…」',
@@ -4208,6 +4235,19 @@
                                         removeItem('handleToyPart');
                                         addItem('handleToy');
 
+                                    }
+                                },
+                                { text: '閉じる', action: 'close' }
+                            ];
+                        }
+                        if (itemId === 'fruit') {
+                            buttons = [
+                                {
+                                    text: '食べる',
+                                    action: () => {
+                                        closeModal();
+                                        removeItem('fruit');
+                                        showToast('イチゴは少し酸っぱかった');
                                     }
                                 },
                                 { text: '閉じる', action: 'close' }
