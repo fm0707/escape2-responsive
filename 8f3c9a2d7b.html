@@ -3895,7 +3895,7 @@
             const expected = GACHA_RIGHT_ANSWER[st.seqIndex];
             if (machineNo === expected) {
                 st.seqIndex += 1;
-                updateMessage(`ガチャ${machineNo}を回した。`);
+                updateMessage(`ガチャのハンドルを回した。`);
 
                 if (st.seqIndex >= GACHA_RIGHT_ANSWER.length) {
                     playSE('se-clear');
