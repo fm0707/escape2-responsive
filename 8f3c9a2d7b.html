@@ -2681,7 +2681,7 @@
                     '日記のようだ',
                     '「12/12 お掃除をサボってたら困ったことが起きちゃった」',
                     '「12/15 お客さんから苦情が来ちゃった…」',
-                    '「12/22 分解できるプラスチックがあるんだって。カプセル君喜ぶかな」',
+                    '「12/22 分解できるプラスチックがあるんだって。実験してみようかな」',
                 ],
 
             },
@@ -3909,7 +3909,7 @@
 
             // 外れたらリセット
             st.seqIndex = 0;
-            updateMessage(`ガチャ${machineNo}を回した。`);
+            updateMessage(`ガチャを回した。`);
         }
 
         function gachaRight_isCapsuleVisible(machineNo) {
@@ -3940,7 +3940,7 @@
             if (!m) return;
 
             if (gameState.selectedItem !== 'coinYen') {
-                updateMessage('100円硬貨を入れられそうだ');
+                updateMessage('100円硬貨の投入口だ');
                 return;
             }
 
