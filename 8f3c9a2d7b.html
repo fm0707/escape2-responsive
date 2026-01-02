@@ -1168,10 +1168,8 @@
     <audio id="se-grab" src="sounds/common/Motion-Grab07-1(Dry).mp3"></audio>
     <audio id="se-switch" src="sounds/common/switch.mp3"></audio>
     <audio id="se-glich" src="sounds/common/glich.mp3"></audio>
-    <audio id="se-bear-appear" src="sounds/common/Anime_Motion19-1(Phrase).mp3"></audio>
     <audio id="se-bear-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
-    <audio id="se-bear-flying" src="sounds/common/Motion-Blow_Away02-1(Long).mp3"></audio>
-
+    <audio id="se-mouse" src="sounds/common/PC-Mouse06-1.mp3"></audio>
 
     <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
     <audio id="se-up" src="sounds/common/Inspiration10-1(High).mp3"></audio>
@@ -1314,7 +1312,7 @@
                 boxOpen: 'images/25/box_open.png',
                 glassFrame: 'images/25/glass_frame.png',
                 glass: 'images/25/glass.png',
-                fruit:'images/25/fruit.png',
+                fruit: 'images/25/fruit.png',
 
 
 
@@ -1830,9 +1828,9 @@
                                 renderCanvasRoom();
                                 showObj(
                                     null,
-                                    '「…カツヨウ…」<br>チリーン…<br>近くで音がした。',
+                                    '「…カツヨウ？…」<br>チリーン…<br>近くで音がした。',
                                     IMAGES.modals.ghost1,
-                                    'カプセル君「…カツヨウ…」近くでチリーンと音がした。'
+                                    'カプセル君「…カツヨウ？…」近くでチリーンと音がした。'
                                 );
                                 playSE('se-coin');
                             }
@@ -1884,7 +1882,7 @@
                             } else {
                                 showCoordinatePuzzle();
                             }
-                            
+
                         }),
                         description: '入力パネル',
                         zIndex: 5,
@@ -1902,7 +1900,7 @@
                         item: { img: 'coinYen', visible: () => !gameState.main.flags.foundYen }
                     },
                     {
-                        x: 60.2, y: 76.5, width: 4.7, height: 2.9,
+                        x: 60.2, y: 76.5, width: 6.7, height: 4.9,
                         onClick: clickWrap(function () {
                             acquireItemOnce('foundMedal', 'medal', 'メダルを見つけた', IMAGES.items.medal, 'メダルを手に入れた');
                         }),
@@ -2259,6 +2257,7 @@
                                 gameState.main.flags.setHandle = true;
                                 removeItem('handleToy');
                                 renderCanvasRoom();
+                                playSE('se-mouse');
                                 updateMessage('ハンドルをセットした');
                                 return;
                             }
@@ -2579,6 +2578,16 @@
                 name: 'ノーマルエンド',
                 description: '無事脱出できました。おめでとうございます！',
                 clickableAreas: [
+                    {
+                        x: 65.1, y: 9.1, width: 13.5, height: 15.2,
+                        onClick: clickWrap(function () {
+                            updateMessage('サヨウナラ…');
+                        }),
+                        description: 'カプセル君',
+                        zIndex: 5,
+                        usable: () => gameState.end.flags.backgroundState==1,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
@@ -3909,7 +3918,7 @@
 
             // 外れたらリセット
             st.seqIndex = 0;
-            updateMessage(`ガチャを回した。`);
+            updateMessage(`ガチャのハンドルを回した。`);
         }
 
         function gachaRight_isCapsuleVisible(machineNo) {
