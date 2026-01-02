@@ -2591,7 +2591,7 @@
             },
             trueEnd: {
                 name: 'トゥルーエンド',
-                description: 'どこか不思議な場所へ転移しました。脱出おめでとうございます！',
+                description: 'どこか不思議な場所へ脱出しました。おめでとうございます！',
                 clickableAreas: [
                     {
                         x: 62.5, y: 40.0, width: 29.1, height: 32.6,
@@ -2643,7 +2643,7 @@
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
-                            updateMessage('どこか不思議な場所へ転移しました。脱出おめでとうございます！');
+                            updateMessage('どこか不思議な場所へ脱出しました。脱出おめでとうございます！');
                             showEndingReport('trueEnd');
                         }),
                         description: 'トゥルーエンド',
@@ -3213,7 +3213,7 @@
                 trueEnd: {
                     title: "📍 TRUE END",
                     label: "TRUE END",
-                    desc: "どこかへ転移したみたいです"
+                    desc: "すべて丸く収まったようです"
                 },
                 end: {
                     title: "🏬 NORMAL END ",
@@ -4098,6 +4098,7 @@
                 glassFrame: 'メガネフレーム',
                 glass: '3Dメガネ',
                 wetTowel: 'ウェットティッシュ',
+                fruit: 'イチゴ'
             };
             return names[itemId] || itemId;
         }
