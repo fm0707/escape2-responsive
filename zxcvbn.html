@@ -1347,6 +1347,7 @@
                 calendar12: 'images/26/calendar_12.png',
                 calendar1: 'images/26/calendar_1.png',
                 memo: 'images/26/modal_memo.png',
+                memoEn: 'images/26/modal_memo_en.png',
                 login: 'images/26/modal_login.png',
                 safeHand: 'images/26/modal_safe_hand.png',
                 badend: 'images/26/badend.png',
@@ -2175,7 +2176,7 @@
                     {
                         x: 3.5, y: 82.2, width: 12.1, height: 13.6,
                         onClick: clickWrap(function () {
-                            showObj(null, '', IMAGES.modals.memo, 'メモがある');
+                            showObj(null, '', IMAGES.modals.memo, 'メモがある', IMAGES.modals.memoEn);
                         }),
                         description: 'memo',
                         zIndex: 5,
@@ -3423,7 +3424,7 @@
                 } else {
                     flashTrack(false);
                     playSE('se-error');
-                    setHint('…まだ固い。');
+                    setHint('…うまくヒットしなかった');
                 }
             }
 
@@ -3725,7 +3726,7 @@
             }
 
             const hintHtml = (_pcLoginFailCount >= 3)
-                ? `<div id="pcLoginHint" style="margin-top:8px; color:#ffd36b; font-weight:800;">ヒント：パンフレット</div>`
+                ? `<div id="pcLoginHint" style="margin-top:8px; color:#ffd36b; font-weight:800;">ヒント：開催期間</div>`
                 : `<div id="pcLoginHint" style="margin-top:8px; min-height:1.2em;"></div>`;
 
             const modalContent = `
