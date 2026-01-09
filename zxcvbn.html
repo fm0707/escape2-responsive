@@ -2013,8 +2013,8 @@
                         }),
                         description: 'クマ妖精のお腹',
                         zIndex: 6,
-                        usable: () => true,
-                        item: { img: 'IMAGE_KEY', visible: () => true }
+                        usable: () => gameState.main.flags.bearAppear,
+                        item: { img: 'IMAGE_KEY', visible: () => gameState.main.flags.bearAppear }
                     },
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
