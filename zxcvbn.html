@@ -2289,7 +2289,7 @@
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
-                            updateMessage('どこか不思議な場所へ脱出しました。脱出おめでとうございます！');
+                            updateMessage('上空へ脱出しました。脱出おめでとうございます！');
                             showEndingReport('trueEnd');
                         }),
                         description: 'トゥルーエンド',
@@ -2843,9 +2843,9 @@
             // 今作用エンド情報
             const ENDING_INFO = {
                 trueEnd: {
-                    title: "📍 TRUE END",
+                    title: "🖼️ TRUE END",
                     label: "TRUE END",
-                    desc: "すべて丸く収まったようです"
+                    desc: "OPENを待つ人たちがいるようです"
                 },
                 end: {
                     title: "⛏️ NORMAL END ",
@@ -2871,7 +2871,7 @@
             let secretText = "";
             switch (endingId) {
                 case "trueEnd":
-                    secretText = "🧸 クマ妖精のお店だったみたいです";
+                    secretText = "🧸 クマ妖精と一緒に脱出できました";
                     break;
                 case "end":
                     secretText = `👣 お家でゆっくり休みましょう`;
@@ -2929,10 +2929,12 @@
 
         // アンケート
         function openFeedbackForm(endingId) {
-            const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf4tPxhOysZIu2HeQWgc3P7n0aLzpmZN5i8xOM9VEHqvVcHTw/viewform";
+            const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf90YrfP0p_DFlDx9zw-ragK5CfgNcXLZNJmePKbdwLbT_s6w/viewform";
 
             const endingLabel = ({
                 trueEnd: "トゥルーエンド",
+                endWorse: "ノーマルエンド?",
+                endGood: "ノーマルエンド2",
                 end: "ノーマルエンド",
             })[endingId] || "エンド";
 
