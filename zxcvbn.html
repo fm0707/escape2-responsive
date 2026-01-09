@@ -1304,7 +1304,7 @@
                 end: ['images/26/end.png'],
                 endWorse: ['images/26/end_worse.png'],
                 endGood: ['images/26/end_good.jpeg'],
-                trueEnd: ['images/26/true_end.png'],
+                trueEnd: ['images/26/true_end.png', 'images/26/true_end2.png'],
 
             },
             items: {
@@ -1335,12 +1335,6 @@
                 safeOpen: 'images/26/safe_open.png',
                 key: 'images/26/key.png',
                 sprayBottle: 'images/26/spray_bottle.png',
-
-
-
-
-
-
             },
 
             modals: {
@@ -1355,6 +1349,7 @@
                 picMountainAfter: 'images/26/pic_mountain3.png',
                 bearHair: 'images/26/modal_bear_hair.png',
                 bearWater: 'images/26/pic_mountain_water.png',
+                bearOnigiri: 'images/26/modal_bear_onigiri.jpeg',
 
             },
         };
@@ -1504,7 +1499,7 @@
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
-                        x: 24.2, y: 26.4, width: 44.0, height: 43.8,
+                        x: 27.4, y: 26.7, width: 38.4, height: 36.7,
                         onClick: clickWrap(function () {
                             travelWithStepsTrueEnd();
                         }),
@@ -2284,13 +2279,23 @@
             },
             trueEnd: {
                 name: 'トゥルーエンド',
-                description: '上空へ脱出しました。おめでとうございます！',
+                description: 'どこかへ脱出しました。おめでとうございます！',
                 clickableAreas: [
+                    {
+                        x: 47.9, y: 48.3, width: 40.5, height: 32.6,
+                        onClick: clickWrap(function () {
+                            showObj(null, '', IMAGES.modals.bearOnigiri, '宝を掘り出せたようだ');
+                        }),
+                        description: 'クマおにぎり',
+                        zIndex: 5,
+                        usable: () => gameState.trueEnd.flags.backgroundState==1,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
 
                     {
                         x: 0, y: 0, width: 100, height: 100,
                         onClick: clickWrap(function () {
-                            updateMessage('上空へ脱出しました。脱出おめでとうございます！');
+                            updateMessage('どこかへ脱出しました。脱出おめでとうございます！');
                             showEndingReport('trueEnd');
                         }),
                         description: 'トゥルーエンド',
@@ -2364,6 +2369,9 @@
         function travelWithStepsTrueEnd() {
             const overlay = document.getElementById('roomEffectOverlay');
             let destRoom = 'trueEnd';
+            if (hasItem('bar')) {
+                gameState.trueEnd.flags.backgroundState++;
+            }
 
             // 足音を鳴らす
             try {
@@ -2846,7 +2854,7 @@
                 trueEnd: {
                     title: "🖼️ TRUE END",
                     label: "TRUE END",
-                    desc: "OPENを待つ人たちがいるようです"
+                    desc: "のどかな風景ですね"
                 },
                 end: {
                     title: "⛏️ NORMAL END ",
@@ -3047,11 +3055,11 @@
 
   <h3>展示作品</h3>
   <ul>
-    <li><b>Rhythm</b> (2026) / Acrylic on canvas<details><summary>詳細</summary><span class="red bold">直線</span>でリズムを表現した作品。</details></li>
+    <li><b>Rhythm</b> (2026) / Acrylic on canvas<details><summary>詳細</summary><span class="red bold">直線</span>でリズムを表現したとされる作品。</details></li>
     <li><b>Elements</b> (2026) / Acrylic on canvas<details><summary>詳細</summary><span class="red bold">円</span>で要素を表現した作品。</details></li>
-    <li><b>Mountain</b> (2021) / Acrylic on canvas<details><summary onclick="viewMontainDetail()">詳細</summary><span class="red bold">無人の風景</span>を描いた作品。</details></li>
+    <li><b>Mountain</b> (2021) / Acrylic on canvas<details><summary onclick="viewMontainDetail()">詳細</summary>宝が隠されているという伝承がある<span class="red bold">山</span>の無人の風景を描いた作品。</details></li>
     <li><b>At the Izakaya</b> (2021) / Acrylic on canvas<details><summary>詳細</summary><span class="red bold">日本の居酒屋</span>を描いた作品。</details></li>
-    <li><b>Flow</b> (2021) / Acrylic on canvas<details><summary>詳細</summary><span class="red bold">何かの流れ</span>を表現した作品。</details></li>
+    <li><b>Flow</b> (2021) / Acrylic on canvas<details><summary>詳細</summary><span class="red bold">何かの流れ、方向性</span>を表現した作品。</details></li>
   </ul>
 
   <hr style="margin:16px 0;">
