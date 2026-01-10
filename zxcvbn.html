@@ -3734,7 +3734,7 @@
             }
 
             const hintHtml = (_pcLoginFailCount >= 3)
-                ? `<div id="pcLoginHint" style="margin-top:8px; color:#ffd36b; font-weight:800;">ヒント：開催期間</div>`
+                ? `<div id="pcLoginHint" style="margin-top:8px; color:#ffd36b; font-weight:800;">ヒント：各展示会</div>`
                 : `<div id="pcLoginHint" style="margin-top:8px; min-height:1.2em;"></div>`;
 
             const modalContent = `
@@ -3807,7 +3807,7 @@
             // 3回目以降でヒント表示
             const hintEl = document.getElementById('pcLoginHint');
             if (hintEl && _pcLoginFailCount >= 3) {
-                hintEl.textContent = 'ヒント：展示';
+                hintEl.textContent = 'ヒント：各展示会';
                 hintEl.style.color = '#ffd36b';
                 hintEl.style.fontWeight = '800';
             }
