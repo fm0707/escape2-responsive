@@ -1350,6 +1350,7 @@
                 bearHair: 'images/26/modal_bear_hair.png',
                 bearWater: 'images/26/pic_mountain_water.png',
                 bearOnigiri: 'images/26/modal_bear_onigiri.jpeg',
+                counter: 'images/26/modal_counter.png',
 
             },
         };
@@ -2034,6 +2035,16 @@
                 name: 'ギャラリーのドアがある面',
                 description: '',
                 clickableAreas: [
+                    {
+                        x: 62.4, y: 67.4, width: 25.1, height: 13.0,
+                        onClick: clickWrap(function () {
+                            showObj(null, '', IMAGES.modals.counter, '筆のデザインが描かれている');
+                        }),
+                        description: 'カウンター模様',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
                     {
                         x: 37.1, y: 39.3, width: 8.6, height: 8.7,
                         onClick: clickWrap(function () {
