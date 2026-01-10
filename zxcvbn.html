@@ -1335,6 +1335,7 @@
                 safeOpen: 'images/26/safe_open.png',
                 key: 'images/26/key.png',
                 sprayBottle: 'images/26/spray_bottle.png',
+                bearFlying: 'images/26/bear_flying.png',
             },
 
             modals: {
@@ -1814,6 +1815,7 @@
                                 gameState.main.flags.bearAppear = true;
                                 updateMessage('クマがスポッと抜けて飛んで行った');
                                 renderCanvasRoom();
+                                startBearFlyingFx();     // ← これ追加
                                 return;
                             }
                             talkToHintCharacter('picMountain', 'bear');
@@ -3248,6 +3250,64 @@
                 closeNotebook();
             }
         });
+
+        let fxBearFlying = null;
+
+        function startBearFlyingFx() {
+            // すでに飛行中なら二重起動しない
+            if (fxBearFlying?.frameId) return;
+
+            const src = IMAGES.items.bearFlying;
+            let img = loadedImages?.[src];
+            if (!img) {
+                console.warn('bearFlying image not ready');
+                return;
+            }
+
+            fxBearFlying = {
+                x: canvas.width * 0.45,   // 画面中央やや下から
+                y: canvas.height * 0.62,
+                vx: 8,                    // 右へ
+                vy: -0.8,                 // ちょい上（不要なら0）
+                alpha: 1,
+                frameId: null,
+                last: performance.now(),
+            };
+
+            const step = (now) => {
+                if (!fxBearFlying) return;
+
+                const dt = Math.min(33, now - fxBearFlying.last); // 変な加速防止
+                fxBearFlying.last = now;
+
+                // 速度は “1フレームあたり” じゃなく “dtに応じて” 動かす
+                const k = dt / 16.67; // 60fps基準
+                fxBearFlying.x += fxBearFlying.vx * k;
+                fxBearFlying.y += fxBearFlying.vy * k;
+                fxBearFlying.alpha -= 0.02 * k;
+
+                // まず部屋を描画し直す（背景の上に乗せたい）
+                renderCanvasRoom();
+
+                // その上に飛行クマを重ね描き
+                const ctx = canvas.getContext('2d');
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, fxBearFlying.alpha);
+                ctx.drawImage(img, fxBearFlying.x, fxBearFlying.y);
+                ctx.restore();
+
+                // 終了条件
+                if (fxBearFlying.alpha <= 0 || fxBearFlying.x > canvas.width + 120) {
+                    fxBearFlying = null;
+                    return;
+                }
+
+                fxBearFlying.frameId = requestAnimationFrame(step);
+            };
+
+            fxBearFlying.frameId = requestAnimationFrame(step);
+        }
+
 
         // ================================
         // 金庫：バールこじ開けミニゲーム
