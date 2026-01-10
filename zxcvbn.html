@@ -1209,7 +1209,7 @@
     <audio id="se-kirifuki" src="sounds/common/kirifuki.mp3"></audio>
     <audio id="se-pop" src="sounds/common/Onoma-Pop01-3(Dry).mp3"></audio>
     <audio id="se-pya" src="sounds/26/pya.wav"></audio>
-
+    <audio id="se-anahori" src="sounds/common/anahori.mp3"></audio>
 
 
     <script>
@@ -1304,7 +1304,7 @@
                 end: ['images/26/end.png'],
                 endWorse: ['images/26/end_worse.png'],
                 endGood: ['images/26/end_good.jpeg'],
-                trueEnd: ['images/26/true_end.png', 'images/26/true_end2.png'],
+                trueEnd: ['images/26/true_end.png', 'images/26/true_end2.png', 'images/26/true_end3.png'],
 
             },
             items: {
@@ -1352,6 +1352,7 @@
                 bearWater: 'images/26/pic_mountain_water.png',
                 bearOnigiri: 'images/26/modal_bear_onigiri.jpeg',
                 counter: 'images/26/modal_counter.png',
+                barDigging: 'images/26/modal_bar_digging.png',
 
             },
         };
@@ -1938,7 +1939,7 @@
                                 buttons: [
                                     { text: '閉じる', action: 'close' }
                                 ],
-                                
+
                             };
                             acquireItemOnce('foundKey', 'key', 'こじ開けた金庫に手を差し入れると<br>固いものがある', IMAGES.modals.safeHand, 'カギを手に入れた');
 
@@ -2313,6 +2314,34 @@
                 description: 'どこかへ脱出しました。おめでとうございます！',
                 clickableAreas: [
                     {
+                        x: 64.3, y: 48.6, width: 27.4, height: 19.0,
+                        onClick: clickWrap(function () {
+                            updateMessage('何かを期待するような表情をしている');
+                        }),
+                        description: 'クマ妖精１',
+                        zIndex: 5,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 37.2, y: 74.4, width: 27.6, height: 17.6,
+                        onClick: clickWrap(function () {
+                            if (gameState.selectedItem == 'bar') {
+                                showObj(null, 'バールで地面を掘ってみた', IMAGES.modals.barDigging, '何か掘り出せたようだ');
+                                playSE('se-anahori');
+                                quickBlackFade();
+                                gameState.trueEnd.flags.backgroundState++;
+                                renderCanvasRoom();
+                                return;
+                            }
+                            updateMessage('お宝が埋まっているだろうか？');
+                        }),
+                        description: '地面',
+                        zIndex: 5,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
                         x: 47.9, y: 48.3, width: 40.5, height: 32.6,
                         onClick: clickWrap(function () {
                             updateMessage('宝を掘り出せたようだ');
@@ -2320,7 +2349,7 @@
                         }),
                         description: 'クマおにぎり',
                         zIndex: 5,
-                        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 2,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
 
