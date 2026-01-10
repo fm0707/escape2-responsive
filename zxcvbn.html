@@ -2284,7 +2284,8 @@
                     {
                         x: 47.9, y: 48.3, width: 40.5, height: 32.6,
                         onClick: clickWrap(function () {
-                            showObj(null, '', IMAGES.modals.bearOnigiri, '宝を掘り出せたようだ');
+                            updateMessage('宝を掘り出せたようだ');
+                            // showObj(null, '', IMAGES.modals.bearOnigiri, '宝を掘り出せたようだ');
                         }),
                         description: 'クマおにぎり',
                         zIndex: 5,
@@ -3064,9 +3065,9 @@
 
   <hr style="margin:16px 0;">
 
-  <p style="font-size:.9em;opacity:.75;">
+  <!--<p style="font-size:.9em;opacity:.75;">
     ※この資料はPC内のファイルです。
-  </p>
+  </p>-->
 `;
 
         // それっぽい「紙の資料」モーダルを開く
