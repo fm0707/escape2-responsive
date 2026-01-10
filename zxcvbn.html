@@ -2035,6 +2035,16 @@
                 description: '',
                 clickableAreas: [
                     {
+                        x: 37.1, y: 39.3, width: 8.6, height: 8.7,
+                        onClick: clickWrap(function () {
+                            updateMessage('「絵にはお手を触れないようお願いします」と書いてある');
+                        }),
+                        description: '貼り紙',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
                         x: 9.8, y: 35.7, width: 22.0, height: 49.1,
                         onClick: clickWrap(function () {
                             if (gameState.selectedItem == 'bar') {
@@ -2289,7 +2299,7 @@
                         }),
                         description: 'クマおにぎり',
                         zIndex: 5,
-                        usable: () => gameState.trueEnd.flags.backgroundState==1,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 1,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
 
