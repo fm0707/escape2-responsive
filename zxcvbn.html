@@ -3917,14 +3917,15 @@
             }
 
             f.buttonSeq.push(id);
+            updateMessage('壁のボタンを押した');
 
             const index = f.buttonSeq.length - 1;
 
             // 途中で違ったらリセット
             if (f.buttonSeq[index] !== MAIN_WALL_BUTTON_SEQUENCE[index]) {
                 f.buttonSeq = [];
-                playSE('se-error');
-                updateMessage('何も起こらない');
+                // playSE('se-error');
+                // updateMessage('何も起こらない');
                 return;
             }
 
