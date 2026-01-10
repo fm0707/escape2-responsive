@@ -1932,7 +1932,15 @@
                     {
                         x: 64.2, y: 76.1, width: 23.5, height: 19.5,
                         onClick: clickWrap(function () {
-                            acquireItemOnce('foundKey', 'key', 'こじ開けた金庫に手を差し入れると<br>固いものがある', IMAGES.modals.safeHand, '鍵を手に入れた');
+                            window._nextModal = {
+                                title: 'カギを手に入れた',
+                                content: `<img src="${IMAGES.items.key}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                buttons: [
+                                    { text: '閉じる', action: 'close' }
+                                ],
+                                
+                            };
+                            acquireItemOnce('foundKey', 'key', 'こじ開けた金庫に手を差し入れると<br>固いものがある', IMAGES.modals.safeHand, 'カギを手に入れた');
 
                         }),
                         description: '壊れた金庫',
