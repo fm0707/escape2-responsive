@@ -1396,6 +1396,7 @@
                         foundBar: false, safeBroken: false,
                         foundSpray: false, foundKey: false,
                         viewMoutainDetail: false,
+                        bearAppear: false,
 
 
 
@@ -3951,6 +3952,10 @@
             // クリア後は完全無効
             if (f.buttonSolved) {
                 updateMessage('もう反応しないようだ');
+                return;
+            }
+            if (!gameState.main.flags.bearAppear) {
+                updateMessage('壁のボタンを押した');
                 return;
             }
 
