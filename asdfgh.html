@@ -2169,7 +2169,7 @@
                                 return;
                             }
                             if (gameState.selectedItem == 'ticketIju') {
-                                showObj(null, '「これは…？やりなおせる？<br>…ありがとう」', IMAGES.modals.onnenBHappy, '怨念B「これは…？やりなおせる？…ありがとう」怨念Bは消えていった');
+                                showObj(null, '「この手触り…？やりなおせる？<br>…ありがとう」', IMAGES.modals.onnenBHappy, '怨念B「この手触り…？やりなおせる？…ありがとう」怨念Bは消えていった');
                                 gameState.main.flags.goneOnnenB = true;
                                 removeItem('ticketIju');
                                 renderCanvasRoom();
@@ -2219,7 +2219,7 @@
                                 gameState.main.flags.goneOnnenC = true;
                                 removeItem('yakisoba');
                                 renderCanvasRoom();
-                                const msg = gameState.main.flags.saltToYakisobaCnt>0? 'おお…！焼きそば！…少ししょっぱいな…':'おお…焼きそば！美味しい…'
+                                const msg = gameState.main.flags.saltToYakisobaCnt>0? 'おお…！焼きそば！…良い香り…少ししょっぱいな…':'おお…焼きそば！良い香り！美味しい…'
 
                                 showModal(
                                     msg,
@@ -3738,7 +3738,7 @@
                         renderCanvasRoom();
 
                         // モーダルで「6！そうだったんだね」＋ onnenCHappy を表示
-                        showObj(null, '6！そうだったんだね', IMAGES.modals.onnenAHappy, '怨念A「6！そうだったんだね」怨念Aは消えていった。');
+                        showObj(null, '6！そうだったんだね<br>良いこと聞けたよ', IMAGES.modals.onnenAHappy, '怨念A「6！そうだったんだね。良いこと聞けたよ」怨念Aは消えていった。');
                     } else {
                         if (typeof playSE === 'function') playSE('se-error');
                         updateMessage('ちがうようだ。');
