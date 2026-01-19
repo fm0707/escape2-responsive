@@ -1775,7 +1775,12 @@
                     {
                         x: 39.6, y: 66.1, width: 16.7, height: 15.5,
                         onClick: clickWrap(function () {
-                            showSafePuzzle();
+                            if (gameState.main.flags.setBoard) {
+                                showSafePuzzle();
+                            } else {
+                                updateMessage('まだ反応しないようだ');
+                            }
+                            
                         }),
                         description: '金庫閉',
                         zIndex: 5,
