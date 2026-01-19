@@ -1381,6 +1381,7 @@
                 newspaper2En: 'images/27/newspaper2_en.png',
                 yakisobaSalt: 'images/27/modal_yakisoba_salt.png',
                 outside:'images/27/modal_outside.png',
+                bearSalt:'images/27/modal_bear_salt.png',
 
 
 
@@ -2426,6 +2427,10 @@
                     {
                         x: 55.1, y: 61.2, width: 11.5, height: 11.9,
                         onClick: clickWrap(function () {
+                            if (gameState.selectedItem=='salt') {
+                                showObj(null, '「清めてくれてるの？」', IMAGES.modals.bearSalt, 'クマ妖精に塩を振った。');
+                                return;
+                            }
                             talkToHintCharacter('main', 'bear');
                         }),
                         description: 'クマ妖精',
@@ -4411,7 +4416,7 @@
         // アイテム管理
         function addItem(itemId) {
             playSE('se-item');
-            if (gameState.inventory.length < 8) {
+            if (gameState.inventory.length < 7) {
                 gameState.inventory.push(itemId);
                 updateInventoryDisplay();
             } else {
