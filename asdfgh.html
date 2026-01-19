@@ -2073,6 +2073,10 @@
                                 updateMessage('受付ロボ「現在メンテナンス中です」');
                                 return;
                             }
+                            if (gameState.selectedItem=='salt') {
+                                updateMessage('私には、味覚はありません');
+                                return;
+                            }
                             if (gameState.selectedItem == 'baken' && gameState.main.flags.checkBaken) {
                                 gameState.main.flags.bakenStamped = true;
                                 window._nextModal = {
