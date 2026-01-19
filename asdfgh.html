@@ -1297,7 +1297,7 @@
 
                 end: ['images/27/end.png'],
                 endWorse: ['images/27/end_worse.jpeg'],
-                trueEnd: ['images/27/true_end.png'],
+                trueEnd: ['images/27/true_end.png', 'images/27/true_end2.png'],
 
             },
             items: {
@@ -1380,6 +1380,7 @@
                 newspaper2: 'images/27/newspaper2.png',
                 newspaper2En: 'images/27/newspaper2_en.png',
                 yakisobaSalt: 'images/27/modal_yakisoba_salt.png',
+                outside:'images/27/modal_outside.png',
 
 
 
@@ -1438,7 +1439,7 @@
                         checkElevatorDoorCnt: 0,
                         saltToYakisobaCnt: 0,
                         foundElevatorCard: false,
-                        unlockTrack: false,
+                        unlockTrack: false, watchOutside: false,
 
                         bearAppear: false,
 
@@ -2445,6 +2446,10 @@
                     {
                         x: 70.0, y: 55.5, width: 19.0, height: 9.1,
                         onClick: clickWrap(function () {
+                            if (gameState.selectedItem=='operaGlasses') {
+                                showObj('watchOutside', '', IMAGES.modals.outside, '外の風景だ');
+                                return;
+                            }
                             if (!gameState.main.flags.unlockTrack) {
                                 showModal(
                                     '「待ってー、助けてー」',
@@ -2598,7 +2603,7 @@
         function travelWithStepsTrueEnd() {
             const overlay = document.getElementById('roomEffectOverlay');
             let destRoom = 'trueEnd';
-            if (hasItem('bar')) {
+            if (gameState.main.flags.watchOutside) {
                 gameState.trueEnd.flags.backgroundState++;
             }
 
