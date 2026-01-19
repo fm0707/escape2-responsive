@@ -2525,7 +2525,17 @@
                         }),
                         description: 'クマ妖精',
                         zIndex: 5,
-                        usable: () => true,
+                        usable: () => gameState.trueEnd.flags.backgroundState==0,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 18.8, y: 52.1, width: 41.1, height: 36.5,
+                        onClick: clickWrap(function () {
+                            updateMessage('クマ妖精は、ソフトクリームに喜んでいる');
+                        }),
+                        description: 'クマ妖精',
+                        zIndex: 5,
+                        usable: () => gameState.trueEnd.flags.backgroundState==1,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
 
