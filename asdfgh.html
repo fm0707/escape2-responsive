@@ -2266,7 +2266,8 @@
 
                                 // 通常は「暗転→乗ってる演出→endへ」
                                 updateMessage('エレベーターに乗り込んだ…');
-                                if (gameState.main.flags.dispelOnnenA && gameState.main.flags.dispelOnnenB && gameState.main.flags.dispelOnnenC) {
+                              //  if (gameState.main.flags.dispelOnnenA && gameState.main.flags.dispelOnnenB && gameState.main.flags.dispelOnnenC) {
+                                if (gameState.main.flags.useSalt) {
                                     travelWithElevatorRide('endWorse');
                                 } else {
                                     travelWithElevatorRide('end');
