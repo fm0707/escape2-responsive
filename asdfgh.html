@@ -1339,6 +1339,7 @@
                 saltC: 'images/27/salt_c.png',
                 elevatorCard: 'images/27/elevator_card.png',
                 key: 'images/27/key.png',
+                water2l: 'images/27/water_2l.png',
 
 
 
@@ -1434,7 +1435,7 @@
                         foundTicketIju: false, foundBaken: false,
                         checkBaken: false, bakenStamped: false,
                         callElevator: false,
-                        useSalt: false,
+                        useSalt: false, useSaltToYakisoba: false,
                         checkElevatorDoorCnt: 0,
                         saltToYakisobaCnt: 0,
                         foundElevatorCard: false, useElevatorCard: false,
@@ -2523,6 +2524,16 @@
                             showEndingReport('end');
                         }),
                         description: 'ノーマルエンド'
+                    },
+                    {
+                        x: 90.5, y: 67.7, width: 5.6, height: 8.6,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '水',
+                        zIndex: 5,
+                        usable: () => false,
+                        item: { img: 'water2l', visible: () => gameState.main.flags.useSaltToYakisoba }
                     },
 
                 ]
@@ -4486,6 +4497,7 @@
 
                 if (success) {
                     updateMessage('焼きそばに塩を振った。');
+                    gameState.main.flags.useSaltToYakisoba = true;
                     updateInventoryDisplay();
                 }
                 return;
