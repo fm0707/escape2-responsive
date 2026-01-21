@@ -2044,6 +2044,10 @@
                                 }
                                 return;
                             }
+                            if (gameState.main.flags.useSalt) {
+                                updateMessage('このフロアにただよう塩の力により、ボタンが反応しないようだ');
+                                return;
+                            }
                             if (!(gameState.main.flags.goneOnnenA && gameState.main.flags.goneOnnenB && gameState.main.flags.goneOnnenC)) {
                                 updateMessage('このフロアの怨念により、ボタンが反応しないようだ');
                                 return;
