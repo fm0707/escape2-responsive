@@ -1164,11 +1164,9 @@
     <audio id="se-fanta" src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
     <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
     <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
-    <audio id="se-tictac" src="sounds/common/tictac.mp3"></audio>
+    <audio id="se-gril" src="sounds/common/gril.mp3"></audio>
     <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
-    <audio id="se-gachagacha" src="sounds/25/gacha.mp3"></audio>
-    <audio id="se-coin25" src="sounds/25/coin.mp3"></audio>
-    <audio id="se-coin-return" src="sounds/common/coin-return.mp3"></audio>
+
     <audio id="se-gogogo" src="sounds/common/gogogo.mp3"></audio>
 
     <audio id="se-bukimi_piano" src="sounds/common/bukimi_piano.mp3"></audio>
@@ -2073,7 +2071,7 @@
                     {
                         x: 36.8, y: 39.9, width: 10.4, height: 12.1,
                         onClick: clickWrap(function () {
-                            if (gameState.main.flags.useSalt) {
+                            if (gameState.main.flags.goneOnnenC) {
                                 updateMessage('受付ロボ「現在メンテナンス中です」');
                                 return;
                             }
@@ -2089,6 +2087,11 @@
                                     buttons: [
                                         { text: '閉じる', action: 'close' }
                                     ],
+                                    after() {
+                                        playSE('se-gril');
+                                        markProgress('yakisoba_get_27');
+                                        updateMessage('焼きそばをもらった。');
+                                    }
                                 };
 
                                 showModal(
@@ -2526,7 +2529,7 @@
             },
             endWorse: {
                 name: 'ノーマルエンド2',
-                description: '脱出しました。おめでとうございます。怨念をすべて退治しましたね！',
+                description: '脱出しました。おめでとうございます。塩を活用しましたね！',
                 clickableAreas: [
                     {
                         x: 0, y: 0, width: 100, height: 100,
@@ -3174,7 +3177,7 @@
                 endWorse: {
                     title: "🧂 NORMAL END2 ",
                     label: "NORMAL END2 ",
-                    desc: "塩を使い倒しました！"
+                    desc: "塩の浄化の力を活用しました"
                 },
 
 
@@ -3392,7 +3395,7 @@
 
             // バッドエンドモーダル表示
             showModal(
-                '【BAD END】焼きそば執着',
+                '【BAD END】怨念Cが襲い掛かってきた。',
                 `
                   <div style="text-align:center;">
                     <img src="${IMAGES.modals.badendYakisoba}" alt="bad end yakisoba"
@@ -4532,7 +4535,7 @@
         }
 
         function tryPutSaltOnYakisoba(targetItemId) {
-            if (!targetItemId == 'yakisoba') {
+            if (targetItemId != 'yakisoba') {
                 return false;
             }
             gameState.main.flags.saltToYakisobaCnt++;
