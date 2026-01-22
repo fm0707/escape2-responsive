@@ -1562,17 +1562,6 @@
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
 
-
-
-                    // {
-                    //     x: 90, y: 90, width: 10, height: 10,
-                    //     onClick: clickWrap(function () {
-                    //         changeRoom('window');
-                    //     }, { allowAtNight: true }),
-                    //     description: '壁戻る',
-                    //     zIndex: 5,
-                    //     item: { img: 'back', visible: () => true }
-                    // }
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
                         onClick: clickWrap(function () {
@@ -2289,14 +2278,9 @@
                                 return;
                             }
 
-                            // callElevator==false：3回クリックでBAD END
                             gameState.main.flags.checkElevatorDoorCnt =
                                 (gameState.main.flags.checkElevatorDoorCnt || 0) + 1;
 
-                            // if (gameState.main.flags.checkElevatorDoorCnt >= 3) {
-                            //     showElevatorDoorBadEnd();
-                            //     return;
-                            // }
 
                             talkToHintCharacter('main', 'elevator');
                             // updateMessage('まだエレベーターは来ていない。まず呼び出しボタンを押そう。');
@@ -2716,25 +2700,6 @@
                     if (overlay) overlay.style.opacity = 0;
                 }, 120);
             }, 700);
-        }
-
-        function showElevatorDoorBadEnd() {
-            try { screenFlash && screenFlash('black'); } catch (e) { }
-            try { pauseBGM && pauseBGM(); } catch (e) { }
-            try { playSE && playSE('se-fire'); } catch (e) { }
-
-            try { markProgress && markProgress('bad_elevator_door_27'); } catch (e) { }
-
-            showModal(
-                '【BAD END】エレべータードアの奥から冷気が広がり、<br>あなたも怨念の一人になってしまった。',
-                `
-                                    <div class="modal-anim">
-                                    <img src="${IMAGES.modals.elevatorDoor}">
-                                    <img src="${IMAGES.modals.badend}">
-                                    </div>
-                                    `,
-                [{ text: '最初から', action: 'restart' }]
-            );
         }
 
 
@@ -3359,41 +3324,6 @@
 
         }
 
-        function triggerBadEndByDoorCrowbar() {
-            // 効果音
-            playSE('se-bar');
-
-            setTimeout(() => {
-                playSE('se-siren');
-            }, 400);
-
-            // 赤フラッシュ＋軽く揺らす
-            const fx = document.getElementById('fxFlash');
-            fx.style.animation = 'flashRed 0.9s ease';
-            document.body.classList.add('fx-shake');
-
-            setTimeout(() => {
-                document.body.classList.remove('fx-shake');
-            }, 300);
-
-            pauseBGM();
-
-            // バッドエンドモーダル表示
-            setTimeout(() => {
-                showModal(
-                    '【BAD END】セキュリティ起動',
-                    `
-      <div style="text-align:center;">
-        <img src="${IMAGES.modals.badend}" alt="セキュリティアラーム" style="max-width:420px;width:100%;display:block;margin:0 auto 14px;border-radius:12px;">
-        <p style="margin:0;">警報と共に部屋が赤く染まった…</p>
-      </div>
-    `,
-                    [{ text: '最初から', action: 'restart' }]
-                );
-
-            }, 700);
-        }
-
         // =========================
         // バッドエンド：焼きそば執着怨念（塩を使った）
         // =========================
@@ -3526,63 +3456,6 @@
                 closeNotebook();
             }
         });
-
-        let fxBearFlying = null;
-
-        function startBearFlyingFx() {
-            // すでに飛行中なら二重起動しない
-            if (fxBearFlying?.frameId) return;
-
-            const src = IMAGES.items.bearFlying;
-            let img = loadedImages?.[src];
-            if (!img) {
-                console.warn('bearFlying image not ready');
-                return;
-            }
-
-            fxBearFlying = {
-                x: canvas.width * 0.45,   // 画面中央やや下から
-                y: canvas.height * 0.62,
-                vx: 8,                    // 右へ
-                vy: -0.8,                 // ちょい上（不要なら0）
-                alpha: 1,
-                frameId: null,
-                last: performance.now(),
-            };
-
-            const step = (now) => {
-                if (!fxBearFlying) return;
-
-                const dt = Math.min(33, now - fxBearFlying.last); // 変な加速防止
-                fxBearFlying.last = now;
-
-                // 速度は “1フレームあたり” じゃなく “dtに応じて” 動かす
-                const k = dt / 16.67; // 60fps基準
-                fxBearFlying.x += fxBearFlying.vx * k;
-                fxBearFlying.y += fxBearFlying.vy * k;
-                fxBearFlying.alpha -= 0.02 * k;
-
-                // まず部屋を描画し直す（背景の上に乗せたい）
-                renderCanvasRoom();
-
-                // その上に飛行クマを重ね描き
-                const ctx = canvas.getContext('2d');
-                ctx.save();
-                ctx.globalAlpha = Math.max(0, fxBearFlying.alpha);
-                ctx.drawImage(img, fxBearFlying.x, fxBearFlying.y);
-                ctx.restore();
-
-                // 終了条件
-                if (fxBearFlying.alpha <= 0 || fxBearFlying.x > canvas.width + 120) {
-                    fxBearFlying = null;
-                    return;
-                }
-
-                fxBearFlying.frameId = requestAnimationFrame(step);
-            };
-
-            fxBearFlying.frameId = requestAnimationFrame(step);
-        }
 
         // 金庫パズル（十字キー入力）
         // 入力：右 左 左 上 下 → OK
