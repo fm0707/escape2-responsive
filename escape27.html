@@ -1340,6 +1340,7 @@
                 elevatorCard: 'images/27/elevator_card.png',
                 key: 'images/27/key.png',
                 water2l: 'images/27/water_2l.png',
+                newsPaperItem: 'images/27/item_newspaper.png',
 
 
 
@@ -1684,6 +1685,16 @@
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
+                    {
+                        x: 73.4, y: 55.3, width: 8.7, height: 8.5,
+                        onClick: clickWrap(function () {
+                            showObj(null, '騎手が行方不明という記事だ', IMAGES.modals.newspaper, '騎手が行方不明という記事だ', IMAGES.modals.newspaperEn);
+                        }),
+                        description: '説明',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'newsPaperItem', visible: () => true }
+                    },
 
                     {
                         x: 0, y: 50.6, width: 6.4, height: 6.4,
@@ -1880,11 +1891,11 @@
                 description: '',
                 clickableAreas: [
                     {
-                        x: 11.3, y: 66.5, width: 22.2, height: 16.8,
+                        x: 16.2, y: 65.7, width: 24.4, height: 19.5,
                         onClick: clickWrap(function () {
-                            showObj(null, '騎手が行方不明という記事だ', IMAGES.modals.newspaper, '騎手が行方不明という記事だ', IMAGES.modals.newspaperEn);
+                            updateMessage('騎手のユニフォームだ');
                         }),
-                        description: '新聞',
+                        description: '説明',
                         zIndex: 5,
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
