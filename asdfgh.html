@@ -2069,6 +2069,10 @@
                                 updateMessage('私には、味覚はありません');
                                 return;
                             }
+                            if (gameState.selectedItem == 'yakisoba') {
+                                updateMessage('きっと、美味しいのでしょうね');
+                                return;
+                            }
                             if (gameState.selectedItem == 'baken' && gameState.main.flags.checkBaken) {
                                 if (gameState.main.flags.bakenStamped) {
                                     updateMessage('すでに引き換え済みですね');
