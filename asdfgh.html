@@ -2107,6 +2107,8 @@
                             }
                             if (!gameState.main.flags.goneOnnenB) {
                                 updateMessage('受付ロボがいる。');
+                            } else if (gameState.main.flags.dispelOnnenB) {
+                                updateMessage('受付ロボがいる。');
                             } else {
                                 updateMessage('受付ロボ「チケットはこちらにどうぞ」')
                             }
