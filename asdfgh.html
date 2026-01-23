@@ -2069,7 +2069,11 @@
                                 updateMessage('私には、味覚はありません');
                                 return;
                             }
-                            if (gameState.selectedItem == 'baken' && gameState.main.flags.checkBaken && !gameState.main.flags.bakenStamped) {
+                            if (gameState.selectedItem == 'baken' && gameState.main.flags.checkBaken) {
+                                if (gameState.main.flags.bakenStamped) {
+                                    updateMessage('すでに引き換え済みですね');
+                                    return;
+                                }
                                 gameState.main.flags.bakenStamped = true;
                                 window._nextModal = {
                                     title: '焼きそばをもらった。',
