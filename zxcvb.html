@@ -1431,6 +1431,8 @@
                 key: 'images/28/key.png',
                 kaniHasami: 'images/28/kani_hasami.png',
                 kakiBlue: 'images/28/kaki_blue.png',
+                bearBack: 'images/28/bear_back.png',
+                aura: 'images/28/aura.png',
 
 
 
@@ -1477,6 +1479,10 @@
                 grilOnigiri2: 'images/28/modal_gril_onigiri_2.png',
                 bearAppear: 'images/28/modal_bear_appear.png',
                 bearLeave: 'images/28/modal_bear_leave.png',
+                bearEat: 'images/28/modal_bear_eat.png',
+                bearNotice: 'images/28/modal_bear_notice.png',
+                bearHeal: 'images/28/modal_bear_heal.png',
+                bearFlying: 'images/28/modal_bear_flying.png',
                 badend1: 'images/28/modal_badend1.png',
                 badend2: 'images/28/modal_badend2.png',
 
@@ -1533,7 +1539,8 @@
                         kaniCutString: false,
                         cookedOnigiri: false,
 
-                        bearAppear: false,
+                        kaniHealing: false,
+                        bearAppear: false, bearStandsby: false, bearGone: false,
 
 
 
@@ -2030,8 +2037,8 @@
                         }),
                         description: 'カニ君死後',
                         zIndex: 5,
-                        usable: () => gameState.main.flags.kaniDead,
-                        item: { img: 'kaniDead', visible: () => gameState.main.flags.kaniDead }
+                        usable: () => gameState.main.flags.kaniDead && !gameState.main.flags.kaniHealing,
+                        item: { img: 'kaniDead', visible: () => gameState.main.flags.kaniDead && !gameState.main.flags.kaniHealing }
                     },
                     {
                         x: 7.4, y: 85.3, width: 6.1, height: 4.5,
@@ -2042,6 +2049,62 @@
                         zIndex: 5,
                         usable: () => gameState.main.flags.kaniDead && !gameState.main.flags.foundHasami,
                         item: { img: 'kaniHasami', visible: () => gameState.main.flags.kaniDead && !gameState.main.flags.foundHasami }
+                    },
+                    {
+                        x: 19.3, y: 81.2, width: 14.6, height: 15.3,
+                        onClick: clickWrap(function () {
+                            // 蘇生イベント
+                            // すでに退場済みなら何もしない（保険）
+                            if (gameState.main.flags.bearGone) return;
+
+                            // 1枚目：ヒール宣言
+                            showModal(
+                                'カニ君の命は消えてないよ。ボクのおにぎりパワーで…',
+                                `<img src="${IMAGES.modals.bearHeal}" style="width:100%;max-width:360px;">`,
+                                [{ text: 'つづける', action: 'close' }]
+                            );
+                            playSE('se-angel'); // 好みで（なければ消してOK）
+
+                            // 次モーダル予約
+                            window._nextModal = () => {
+                                showModal(
+                                    'じゃあね！',
+                                    `<img src="${IMAGES.modals.bearFlying}" style="width:100%;max-width:360px;">`,
+                                    [{
+                                        text: '閉じる',
+                                        action: () => {
+                                            gameState.main.flags.bearGone = true;
+                                            gameState.main.flags.kaniHealing = true;
+
+                                            // 画面からクマ妖精（後ろ向き）を消す
+                                            renderCanvasRoom();
+                                            closeModal();
+                                        }
+                                    }]
+                                );
+                                playSE('se-bear-flying');
+                            };
+                        }),
+                        description: 'クマ妖精後ろ向き',
+                        zIndex: 6,
+                        usable: () => gameState.main.flags.bearStandsby && !gameState.main.flags.bearGone,
+                        item: { img: 'bearBack', visible: () => gameState.main.flags.bearStandsby && !gameState.main.flags.bearGone }
+                    },
+                    {
+                        x: 16.5, y: 78.7, width: 15.4, height: 14.6,
+                        onClick: clickWrap(function () {
+                            if (gameState.selectedItem == 'kaniHasami' && gameState.main.flags.foundKey) {
+                                removeItem('kaniHasami');
+                                updateMessage('カニ君のはさみをそっと置いた');
+                                return;
+                            }
+                            updateMessage('癒しのオーラだ');
+
+                        }),
+                        description: 'おにぎりオーラ',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.kaniHealing,
+                        item: { img: 'aura', visible: () => gameState.main.flags.kaniHealing }
                     },
                     {
                         x: 35.7, y: 88.4, width: 5.8, height: 4.9,
@@ -2146,7 +2209,12 @@
                     {
                         x: 73.0, y: 24.2, width: 22.1, height: 53.2,
                         onClick: clickWrap(function () {
+
                             if (gameState.selectedItem == 'key') {
+                                if (gameState.main.flags.kaniHealing && hasItem('kaniHasami')) {
+                                    updateMessage('カニ君のはさみは返しておこう');
+                                    return;
+                                }
                                 removeItem('key');
                                 handleDoor();
                                 return;
@@ -2685,7 +2753,7 @@
                         x: 21.8, y: 31.3, width: 15.4, height: 16.0,
                         onClick: clickWrap(function () {
                             if (gameState.main.flags.powerOn && gameState.selectedItem == 'driver') {
-                                
+
 
                                 window._nextModal = {
                                     title: '【BAD END】焼きおにぎりの呪い',
@@ -2698,7 +2766,7 @@
                                         pauseBGM && pauseBGM();
                                         playSE && playSE('se-fire');
                                     },
-                                    
+
                                 };
 
                                 showModal(
@@ -3720,7 +3788,7 @@
 
         }
 
-    
+
         // ▼ 手帳モーダル 操作用
 
         function openNotebook() {
@@ -4293,21 +4361,47 @@
                             updateInventoryDisplay?.();
 
                             gameState.main.flags.bearAppear = true;
-                            // playSE('se-bear-eat');
-
                             closeModal();
 
-                            // 退場モーダル
+                            // ★分岐：カニ君が死亡している場合は退場しない
+                            if (gameState.main.flags.kaniDead) {
+                                // 先に「食べる」モーダル
+                                showModal(
+                                    'クマ妖精は焼きおにぎりを食べている',
+                                    `<img src="${IMAGES.modals.bearEat}" style="width:100%;max-width:360px;">`,
+                                    [{ text: 'つづける', action: 'close' }]
+                                );
+                                playSE('se-bear-eat');
+
+                                // 次モーダル：気づく（美味しい…ん？）
+                                window._nextModal = () => {
+                                    showModal(
+                                        '美味しい…ん？',
+                                        `<img src="${IMAGES.modals.bearNotice}" style="width:100%;max-width:360px;">`,
+                                        [
+                                            {
+                                                text: '閉じる',
+                                                action: () => {
+                                                    // ★待機状態へ
+                                                    gameState.main.flags.bearStandsby = true;
+                                                    renderCanvasRoom();
+                                                    closeModal();
+                                                }
+                                            }
+                                        ]
+                                    );
+                                };
+                                updateMessage('クマ妖精が現れた。');
+
+                                return;
+                            }
+
+                            // ★通常ルート：退場（今まで通り）
                             setTimeout(() => {
                                 showModal(
                                     'クマ妖精は嬉しそうに去って行った',
                                     `<img src="${IMAGES.modals.bearLeave}" style="width:100%;max-width:360px;">`,
-                                    [
-                                        {
-                                            text: '閉じる',
-                                            action: 'close'
-                                        }
-                                    ]
+                                    [{ text: '閉じる', action: 'close' }]
                                 );
                                 playSE('se-bear-flying');
                             }, 200);
@@ -4316,7 +4410,6 @@
                 ]
             );
         }
-
 
 
 
@@ -4336,6 +4429,9 @@
                     }
 
                 } else {
+                    if (gameState.main.flags.kaniHealing) {
+                        gameState.end.flags.backgroundState++;
+                    }
                     travelWithSteps('end');
                 }
             };
