@@ -1278,6 +1278,7 @@
     <audio id="se-pop" src="sounds/common/Onoma-Pop01-3(Dry).mp3"></audio>
     <audio id="se-power" src="sounds/common/powerup.mp3"></audio>
     <audio id="se-kani" src="sounds/28/kani.wav"></audio>
+    <audio id="se-fire" src="sounds/common/fire.mp3"></audio>
 
 
     <script>
@@ -1476,6 +1477,8 @@
                 grilOnigiri2: 'images/28/modal_gril_onigiri_2.png',
                 bearAppear: 'images/28/modal_bear_appear.png',
                 bearLeave: 'images/28/modal_bear_leave.png',
+                badend1: 'images/28/modal_badend1.png',
+                badend2: 'images/28/modal_badend2.png',
 
 
 
@@ -2628,7 +2631,7 @@
 
                             // もう焼いてたら軽く流す
                             if (f.cookedOnigiri) {
-                                updateMessage('焼きおにぎりの香りがする。');
+                                updateMessage('焼きおにぎりの香りがただよっている。');
                                 return;
                             }
 
@@ -2681,6 +2684,34 @@
                     {
                         x: 21.8, y: 31.3, width: 15.4, height: 16.0,
                         onClick: clickWrap(function () {
+                            if (gameState.main.flags.powerOn && gameState.selectedItem == 'driver') {
+                                
+
+                                window._nextModal = {
+                                    title: '【BAD END】焼きおにぎりの呪い',
+                                    content: `<div>焼きおにぎりは崩れてしまった。</div><img src="${IMAGES.modals.badend2}" alt="ドライバーおにぎり" style="max-width: 400px; border-radius: 10px;">`,
+                                    buttons: [
+                                        { text: '最初から', action: 'restart' }
+                                    ],
+                                    before() {
+                                        screenFlash('black');
+                                        pauseBGM && pauseBGM();
+                                        playSE && playSE('se-fire');
+                                    },
+                                    
+                                };
+
+                                showModal(
+                                    'ドライバーを使っておにぎりを取ろうとした。',
+                                    `<img src="${IMAGES.modals.badend1}" alt="ドライバーおにぎり" style="max-width: 400px; border-radius: 10px;">`,
+                                    [
+                                        {
+                                            text: 'OK',
+                                            action: 'close'
+                                        }
+                                    ]
+                                );
+                            }
                             if (gameState.main.flags.powerOn) {
                                 updateMessage('熱くて触ることができない');
                             } else {
@@ -3689,31 +3720,7 @@
 
         }
 
-        // =========================
-        // バッドエンド：焼きそば執着怨念（塩を使った）
-        // =========================
-        function triggerBadEndYakisoba() {
-            try { screenFlash && screenFlash('black'); } catch (e) { }
-            try { pauseBGM && pauseBGM(); } catch (e) { }
-            try { playSE && playSE('se-fire'); } catch (e) { }
-
-            try { markProgress && markProgress('bad_yakisoba_onnenC'); } catch (e) { }
-
-            // バッドエンドモーダル表示
-            showModal(
-                '【BAD END】怨念Cが襲い掛かってきた。',
-                `
-                  <div style="text-align:center;">
-                    <img src="${IMAGES.modals.badendYakisoba}" alt="bad end yakisoba"
-                      style="max-width:420px;width:100%;display:block;margin:0 auto 14px;border-radius:12px;">
-                    <p style="margin:0;">焼きそば…よこせ…</p>
-                  </div>
-                `,
-                [{ text: '最初から', action: 'restart' }]
-            );
-        }
-
-
+    
         // ▼ 手帳モーダル 操作用
 
         function openNotebook() {
