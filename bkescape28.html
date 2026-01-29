@@ -1,0 +1,4347 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="保育室を舞台にした無料ゲーム。スマホ＆PC対応。">
+    <link rel="icon" href="favicon.ico">
+    <title>保育室からの脱出</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            color: #f4f1e8;
+            width: 100%;
+            overflow-x: hidden;
+            /* ←これ重要 */
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1408px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #gameCanvas {
+            position: relative;
+        }
+
+        #endingShareArea {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 18px;
+            box-shadow: 0 0 24px #fffc;
+            padding: 18px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 99;
+            font-size: 1.2em;
+            gap: 10px;
+            border: 2px solid gold;
+        }
+
+        #endingShareArea button {
+            font-size: 1.1em;
+            padding: 10px 24px;
+            margin: 6px 0;
+            background: gold;
+            color: #333;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px #ffdc;
+            cursor: pointer;
+        }
+
+        .ui-panel {
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1048px;
+            min-height: 120px;
+            background: #2c1810;
+            box-sizing: border-box;
+            display: flex;
+        }
+
+        .inventory {
+            /* flex: 1; */
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            padding: 0 12px;
+            /* width:100%; */
+        }
+
+        .inventory-slot {
+            width: 14vw;
+            height: 14vw;
+            max-width: 80px;
+            max-height: 80px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .inventory-slot.selected {
+            border: 3px solid #9f2b02;
+            /* 金色・太め推奨 */
+            box-shadow: 0 0 12px #ff8c0099;
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .inventory-slot img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+
+        .magnifier-btn {
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px #0002;
+            cursor: pointer;
+            z-index: 10;
+            transition: box-shadow .15s;
+        }
+
+        .magnifier-btn:hover {
+            box-shadow: 0 0 10px #ffd70099;
+        }
+
+        .magnifier-btn img {
+            width: 16px;
+            height: 16px;
+            pointer-events: none;
+        }
+
+        .info-panel {
+            width: 100%;
+            padding: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .message-area {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin-bottom: 2px;
+            height: 65px;
+            min-height: 40px;
+            border: 1px solid #d4af37;
+            position: relative;
+        }
+
+        #msgText {}
+
+        #statusIconArea {
+            position: absolute;
+            bottom: 6px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .status-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid gold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px #0005;
+            font-size: 1.4em;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c1810, #1a0f08);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #d4af37;
+            max-width: calc(100vw - 60px);
+            text-align: center;
+        }
+
+        .modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #d4af37;
+            border: none;
+            border-radius: 5px;
+            color: #1a0f08;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #modalButtons button {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0 10px 10px 0;
+            cursor: pointer;
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            border-radius: 10px;
+        }
+
+        #modalButtons button img {
+            width: 80px;
+            height: 80px;
+            vertical-align: middle;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: filter 0.1s, box-shadow 0.1s, transform 0.08s;
+        }
+
+        #modalButtons button:hover img {
+            filter: brightness(1.08) drop-shadow(0 2px 6px #ffd70050);
+            box-shadow: 0 0 10px #ffd70080;
+            transform: scale(1.05);
+        }
+
+        #modalButtons button:active img,
+        #modalButtons button.pressed img {
+            filter: brightness(0.95) grayscale(20%);
+            box-shadow: 0 0 8px #3332;
+            transform: scale(0.97);
+        }
+
+        #modalButtons button:disabled img {
+            filter: grayscale(90%) opacity(0.5);
+            box-shadow: none;
+        }
+
+        /* テキスト型ボタンも画像ボタン風に */
+        #modalButtons button.text-btn {
+            min-width: 120px;
+            font-size: 1.15em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            margin: 0 10px 10px 0;
+            box-shadow: 0 4px 14px #ffc90022;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s, transform 0.08s;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        #modalButtons button.text-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+            transform: scale(1.05);
+        }
+
+        #modalButtons button.text-btn:active {
+            filter: brightness(0.96);
+            transform: scale(0.97);
+        }
+
+        #modalButtons button.text-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 閉じるボタン */
+        #modalClose .modal-close-btn {
+            display: inline-block;
+            min-width: 160px;
+            font-size: 1.2em;
+            background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+            color: #7b4a00;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            box-shadow: 0 4px 14px #ffc90022;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background 0.12s, filter 0.1s, box-shadow 0.1s;
+        }
+
+        #modalClose .modal-close-btn:hover {
+            background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 20px #ffc90055;
+        }
+
+        .puzzle-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #d4af37;
+            background: rgba(244, 241, 232, 0.9);
+            color: #1a0f08;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border: 2px solid #d4af37;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+        }
+
+        .login-container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            width: 280px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .login-form label {
+            font-size: 14px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .login-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .login-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* 画像プレースホルダー用のスタイル */
+        .image-placeholder {
+            background: linear-gradient(135deg, #444, #666);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .notice {
+            text-overflow: clip;
+        }
+
+        .save-area {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 18px 0 4px 0;
+            /* width: 40%; */
+        }
+
+        @media (max-width: 600px) {
+            #msgText {
+                font-size: .8rem;
+            }
+
+            .save-area {
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin-top: 8px;
+                gap: 16px;
+            }
+
+            .inventory {
+                gap: 16px;
+                align-items: center;
+                padding: 0 2px;
+                width: 100%;
+            }
+        }
+
+        .save-area .nav-btn {
+            min-width: 80px;
+            padding: 10px 18px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+            border-radius: 8px;
+            border: none;
+            color: #1a0f08;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .save-area .nav-btn:hover {
+            background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 12px #d4af3740;
+        }
+
+        #roomEffectOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s;
+            z-index: 9999;
+        }
+
+        .title-wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        @keyframes warpFlash {
+            0% {
+                opacity: 0
+            }
+
+            15% {
+                opacity: .95
+            }
+
+            50% {
+                opacity: .4
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes chroma {
+            0% {
+                filter: none
+            }
+
+            100% {
+                filter: contrast(1.2) saturate(1.2) hue-rotate(20deg)
+            }
+        }
+
+        .warp-active {
+            background: radial-gradient(circle at 50% 50%, #fff, #000 70%);
+            animation: warpFlash 900ms ease-out both, chroma 900ms ease-out both;
+        }
+
+        #hintModal {
+            color: #000;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            60% {
+                opacity: 0.9;
+            }
+
+            100% {
+                opacity: 0;
+            }
+
+            /* 自動でフェードアウト */
+        }
+
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, .45);
+            }
+
+            50% {
+                box-shadow: 0 0 18px 6px rgba(255, 255, 255, .35);
+            }
+        }
+
+
+
+        /* 画面フラッシュ用の全画面レイヤ */
+        #fxFlash {
+            position: fixed;
+            inset: 0;
+            background: transparent;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 9999;
+        }
+
+        /* 白フラッシュ */
+        @keyframes flashWhite {
+            0% {
+                opacity: 0;
+                background: #fff;
+            }
+
+            12% {
+                opacity: .95;
+                background: #fff;
+            }
+
+            100% {
+                opacity: 0;
+                background: #fff;
+            }
+        }
+
+        /* 赤フラッシュ（ミス） */
+        @keyframes flashRed {
+            0% {
+                opacity: 0;
+                background: rgba(255, 0, 0, 0.0);
+            }
+
+            18% {
+                opacity: .85;
+                background: rgba(255, 0, 0, 0.85);
+            }
+
+            100% {
+                opacity: 0;
+                background: rgba(255, 0, 0, 0.0);
+            }
+        }
+
+        /* ほんの少しカメラシェイク（好みで） */
+        @keyframes camShake {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(1px, -1px);
+            }
+
+            50% {
+                transform: translate(-1px, 1px);
+            }
+
+            75% {
+                transform: translate(1px, 1px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .fx-shake {
+            animation: camShake 120ms ease;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .casefile-modal {
+            background-color: #f6f2e8;
+            color: #2c2c2c;
+            width: 80%;
+            max-width: 720px;
+            max-height: 85vh;
+            border: 2px solid #bba;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .casefile-scroll {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: 80vh;
+            font-family: "Noto Serif JP", "Times New Roman", serif;
+            line-height: 1.6;
+        }
+
+        .casefile-modal h1,
+        .casefile-modal h2 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .casefile-modal h3 {
+            margin-top: 20px;
+            border-bottom: 1px solid #999;
+        }
+
+        .person {
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            border-left: 3px solid #b44;
+        }
+
+        .initial-f {
+            font-weight: 900;
+            color: #c9a43d;
+            /* gold */
+            font-size: 1.55em;
+            /* margin-left: 6px; */
+        }
+
+        .initial-l {
+            font-weight: 900;
+            color: #8c8fa1;
+            /* silver/steel */
+            font-size: 1.55em;
+            /* margin-left: 4px; */
+        }
+
+
+        .evidence {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .evidence th,
+        .evidence td {
+            border: 1px solid #bbb;
+            padding: 6px 8px;
+        }
+
+        /* 電話図鑑用の行ハイライト */
+        .evidence tr.phone-discovered td {
+            background: rgba(255, 248, 210, 0.9);
+            /* うすいクリーム色 */
+            font-weight: 600;
+        }
+
+        .evidence tr.phone-undiscovered td {
+            background: rgba(245, 245, 245, 0.7);
+            /* うすグレー */
+            color: #777;
+        }
+
+        blockquote {
+            font-style: italic;
+            color: #444;
+            border-left: 4px solid #888;
+            padding-left: 10px;
+            margin: 10px 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 1.4rem;
+            background: none;
+            border: none;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .group {
+            width: 90%;
+            justify-content: center;
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+
+        @keyframes breathe {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(2px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content {
+            max-width: min(96vw, 640px);
+            max-height: calc(100vh - 64px);
+            /* 画面に収める */
+            overflow: auto;
+            /* はみ出したらスクロール */
+            padding: 20px;
+            /* ちょい圧縮 */
+        }
+
+        /* モーダルの画像ボタンは固定80px→可変に */
+        #modalButtons button img {
+            width: clamp(56px, 18vw, 96px);
+            height: clamp(56px, 18vw, 96px);
+        }
+
+        /* アニメモーダル用 */
+        .modal-anim {
+            position: relative;
+            width: min(400px, 80vw);
+            margin: 0 auto 16px;
+        }
+
+        .modal-anim img {
+            display: block;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        /* 1枚目はだんだん消える */
+        .modal-anim img:nth-child(1) {
+            position: absolute;
+            inset: 0;
+            opacity: 1;
+            animation: blockmanHatFadeOut 2.8s ease forwards 0.1s;
+        }
+
+        /* 2枚目は後からふわっと出てくる */
+        .modal-anim img:nth-child(2) {
+            opacity: 0;
+            animation: blockmanHatFadeIn 3.0s ease forwards 0.4s;
+        }
+
+        /* 1枚目はだんだん消える */
+        .fast img:nth-child(1) {
+            animation: blockmanHatFadeOut 1.2s ease forwards 0.1s;
+        }
+
+        /* 2枚目は後からふわっと出てくる */
+        .fast img:nth-child(2) {
+            animation: blockmanHatFadeIn 1.4s ease forwards 0.4s;
+        }
+
+        @keyframes blockmanHatFadeOut {
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes blockmanHatFadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ▼ クルー手帳モーダル用 */
+
+        .notebook-modal-content {
+            background: #f4f7fb;
+            color: #2c1810;
+            border: 3px solid #d4af37;
+            max-width: min(96vw, 640px);
+            max-height: calc(100vh - 64px);
+            overflow: auto;
+            padding: 18px 18px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        .notebook-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .notebook-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .notebook-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid #c9a43d;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #eaf3ff, #d6e4ff);
+        }
+
+        .notebook-close-btn {
+            border: none;
+            background: transparent;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .notebook-close-btn:hover {
+            color: #000;
+        }
+
+        .notebook-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .notebook-tab {
+            flex: 1;
+            border: 1px solid #c9a43d;
+            background: #fdfaf0;
+            padding: 6px 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 999px;
+            color: #6b4b10;
+            font-weight: bold;
+        }
+
+        .notebook-tab.active {
+            background: linear-gradient(135deg, #ffe9a8, #ffd36b);
+            box-shadow: 0 0 6px rgba(217, 165, 33, 0.6);
+        }
+
+        .notebook-body {
+            background: #fffef8;
+            border-radius: 8px;
+            padding: 10px 12px 12px;
+            border: 1px solid #e0d6b5;
+        }
+
+        .notebook-tab-content {
+            display: none;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .notebook-tab-content.active {
+            display: block;
+        }
+
+        .notebook-cap {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .notebook-note {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #6b6b6b;
+        }
+
+        .notebook-list {
+            margin: 0 0 4px 1.1em;
+            padding: 0;
+        }
+
+        .notebook-list li {
+            margin-bottom: 3px;
+        }
+
+        .notebook-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .notebook-table th,
+        .notebook-table td {
+            border: 1px solid #d5c9a5;
+            padding: 4px 6px;
+        }
+
+        .notebook-table th {
+            background: #faf1d7;
+        }
+
+        /* ▲ クルー手帳モーダル用 */
+        .distress-btn {
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #ff5555, #ff9900);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(255, 64, 64, 0.7);
+        }
+
+        .distress-btn.distress-holding {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 0 18px rgba(255, 0, 0, 0.9);
+        }
+
+        .distress-hint {
+            margin-top: 6px;
+            font-size: 0.9em;
+            color: #b00;
+        }
+
+        .notebook-image {
+            max-width: 100%;
+            display: block;
+            margin: 8px auto;
+            border-radius: 4px;
+        }
+
+        .red {
+            color: red;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G9BX4FBF"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-F2G9BX4FBF');
+</script>
+
+<body>
+    <!-- ▼ モーダル全体 -->
+    <!-- ▼ モーダル全体 -->
+    <div class="modal-overlay" style="display:none;">
+        <div class="casefile-modal">
+            <button class="close-btn">×</button>
+            <div class="casefile-scroll">
+
+
+            </div>
+        </div>
+    </div>
+    <!-- ▼ 手帳モーダル -->
+    <div class="modal" id="notebookModal" style="display:none;">
+        <div class="modal-content notebook-modal-content">
+            <div class="notebook-header">
+                <div class="notebook-title">
+                    <span class="notebook-logo">🏘️</span>
+                    手帳
+                </div>
+                <button class="notebook-close-btn" onclick="closeNotebook()">✕</button>
+            </div>
+
+            <div class="notebook-tabs">
+                <!-- <button class="notebook-tab active" data-tab="memo" onclick="switchNotebookTab('memo')">
+                    MEMO
+                </button> -->
+                <button class="notebook-tab" data-tab="notes" onclick="switchNotebookTab('notes')">
+                    NOTES
+                </button>
+            </div>
+
+            <div class="notebook-body">
+                <!-- MEMOタブ -->
+                <div class="notebook-tab-content active" id="notebook-tab-memo">
+                    <p class="notebook-cap">
+                        何故か持っていた手帳だ。
+                    </p>
+                    <ul class="notebook-list">
+                        <li></li>
+                        <li></li>
+                    </ul>
+                    <p class="notebook-note">
+                        書き込みは、急いで走り書きしたような乱れた字で並んでいる。
+                    </p>
+                </div>
+
+                <!-- NOTESタブ：後から増えるメモ用 -->
+                <div class="notebook-tab-content" id="notebook-tab-notes">
+                    <p class="notebook-cap">
+                        空白のページ。
+                    </p>
+                    <div id="notebook-notes-body">
+                        <!-- 後半のイベントで追記していく想定 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ▲ 手帳モーダル -->
+
+
+    <div id="roomEffectOverlay"></div>
+    <div class="game-container">
+        <div class="title-wrapper">
+            <!-- <div class="title">保育室からの脱出</div> -->
+            <div style="margin:0 0; text-align:center;">
+                <a href="escape27_hint.html" target="_blank"
+                    style="color:#d4af37; font-weight:bold; font-size:1.1em; text-decoration:underline;">
+                    🔍 ヒントを見る
+                </a>
+
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="640" height="640" style="width: 90vw; max-width: 640px;"></canvas>
+
+
+        <div class="ui-panel">
+            <div class="info-panel">
+                <div class="message-area" id="messageArea">
+                    <span id="msgText">気が付くとあなたは保育室に立っていました。</span>
+                    <div id="statusIconArea" style="position:absolute; bottom:6px; right:12px; display:flex; gap:8px;">
+                    </div>
+                </div>
+                <div class="navigation">
+
+                </div>
+            </div>
+            <div class="inventory" id="inventory">
+                <div class="inventory-slot" onclick="useItem(0)"></div>
+                <div class="inventory-slot" onclick="useItem(1)"></div>
+                <div class="inventory-slot" onclick="useItem(2)"></div>
+                <div class="inventory-slot" onclick="useItem(3)"></div>
+                <div class="inventory-slot" onclick="useItem(4)"></div>
+                <div class="inventory-slot" onclick="useItem(5)"></div>
+                <div class="inventory-slot" onclick="useItem(6)"></div>
+            </div>
+            <button id="bgm-toggle" onclick="toggleBGM()" style="position:absolute;top:20px;right:20px;z-index:1000;">
+                🔊 BGM
+            </button>
+            <div class="save-area">
+                <button class="nav-btn" onclick="saveGame()">セーブ</button>
+                <button class="nav-btn" onclick="loadGame()">ロード</button>
+                <!-- <button class="nav-btn" onclick="openNotebook()">
+                    <img src="images/28/notebook.png"
+                        style="width:40px;max-width:100%;display:block;margin:0 auto 0px;">
+                </button> -->
+            </div>
+        </div>
+        <div class="notice">当サイトの音源は<a href="https://otologic.jp/" target="blank">OtoLogic</a>,<a
+                href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a>の素材を使用しています 作者:<a href="index.html">スラセブン</a>
+        </div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <!-- モーダルの内容は動的に生成 -->
+        </div>
+    </div>
+
+    <audio id="bgm" src="sounds/23/Paper_craft.mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-clear" src="sounds/common/Cyber03-1.mp3"></audio>
+    <audio id="se-change" src="sounds/common/Scene_Change01-1(Up).mp3"></audio>
+    <audio id="se-open" src="sounds/common/Short_Accent09-1(Dry).mp3"></audio>
+    <audio id="se-fanta" src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
+    <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
+    <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
+    <audio id="se-gril" src="sounds/common/gril.mp3"></audio>
+    <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
+
+    <audio id="se-gogogo" src="sounds/common/gogogo.mp3"></audio>
+
+    <audio id="se-bukimi_piano" src="sounds/common/bukimi_piano.mp3"></audio>
+    <audio id="se-idea" src="sounds/common/Inspiration11-1(Low).mp3"></audio>
+    <audio id="se-grab" src="sounds/common/Motion-Grab07-1(Dry).mp3"></audio>
+    <audio id="se-switch" src="sounds/common/switch.mp3"></audio>
+    <audio id="se-glich" src="sounds/common/glich.mp3"></audio>
+    <audio id="se-bear-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
+    <audio id="se-bear-flying" src="sounds/common/Motion-Blow_Away02-1(Long).mp3"></audio>
+    <audio id="se-mouse" src="sounds/common/PC-Mouse06-1.mp3"></audio>
+
+    <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
+    <audio id="se-up" src="sounds/common/Inspiration10-1(High).mp3"></audio>
+    <audio id="se-ashioto" src="sounds/common/NES-RPG02-01(Enter).mp3"></audio>
+    <audio id="se-hasami" src="sounds/common/hasami.mp3"></audio>
+    <audio id="se-shutter" src="sounds/common/shutter.mp3"></audio>
+    <audio id="se-fire" src="sounds/common/fire.mp3"></audio>
+
+    <audio id="se-song" src="sounds/24/song.wav"></audio>
+    <audio id="se-song-forget" src="sounds/24/song_forget.wav"></audio>
+    <audio id="se-cyber" src="sounds/common/Cyber20-1.mp3"></audio>
+    <audio id="se-cloth" src="sounds/common/cloth.mp3"></audio>
+    <audio id="se-paper" src="sounds/common/Flyer02-3(Rustle).mp3"></audio>
+    <audio id="se-zukkoke" src="sounds/common/zukkoke.mp3"></audio>
+    <audio id="se-tirori" src="sounds/common/tirori.mp3"></audio>
+    <audio id="se-nami" src="sounds/common/nami.mp3"></audio>
+    <audio id="se-announcement" src="sounds/common/pinponpan.mp3"></audio>
+    <audio id="se-nabe" src="sounds/common/nabe.mp3"></audio>
+    <audio id="se-can" src="sounds/common/can.mp3"></audio>
+    <audio id="se-kira" src="sounds/common/kira.mp3"></audio>
+    <audio id="se-bar" src="sounds/common/bar.mp3"></audio>
+    <audio id="se-sword3" src="sounds/common/sword3.mp3"></audio>
+    <audio id="se-siren" src="sounds/common/Warning-Siren04-09(Reverb-Low-Mid).mp3"></audio>
+    <audio id="se-tea" src="sounds/common/tea.mp3"></audio>
+    <audio id="se-pop" src="sounds/common/Onoma-Pop01-3(Dry).mp3"></audio>
+    <audio id="se-elevator" src="sounds/common/elevator.mp3"></audio>
+    <audio id="se-aaa" src="sounds/27/aaa.wav"></audio>
+
+
+    <script>
+        // --- Analytics helper ---
+        window.ANA = {
+            start: Date.now(),
+            hintCount: 0,
+            send(ev, params = {}) { try { gtag('event', ev, params); } catch (e) { } }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const a = document.querySelector('a[href*="_hint.html"]');
+            if (a) {
+                a.addEventListener('click', () => {
+                    ANA.hintCount++;
+                    ANA.send('open_hint', { count: ANA.hintCount });
+                });
+            }
+        });
+
+        window.ANA = Object.assign(window.ANA || {}, {
+            sid: Math.random().toString(36).slice(2),
+            sent: new Set(),
+            baseParams() {
+                return {
+                    elapsed_sec: Math.round((Date.now() - this.start) / 1000),
+                    hints: this.hintCount || 0,
+                    save_version: (typeof SAVE_VERSION === 'number' ? SAVE_VERSION : null),
+                    room: (window.gameState && gameState.currentRoom) || null,
+                    sid: this.sid,
+                };
+            },
+            once(ev, key = '', params = {}) {
+                const k = `${ev}:${key}`;
+                if (this.sent.has(k)) return;
+                this.sent.add(k);
+                this.send(ev, { ...this.baseParams(), ...params });
+            }
+        });
+
+        // 汎用マイルストーン送信用ヘルパ
+        function markProgress(step, extra = {}) {
+            ANA.once('progress', step, { step, ...extra });
+        }
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.querySelector(".modal-overlay");
+            const openBtn = document.querySelector("#open-casefile");
+            const closeBtn = document.querySelector(".close-btn");
+
+            // 初期状態で非表示
+            modal.style.display = "none";
+
+            // 開く
+            openBtn?.addEventListener("click", () => {
+                modal.style.display = "flex";
+            });
+
+            // 閉じる
+            closeBtn?.addEventListener("click", () => {
+                modal.style.display = "none";
+            });
+
+            // オーバーレイクリックでも閉じる
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) modal.style.display = "none";
+            });
+        });
+
+
+
+        window._nextModal = null;
+        const canvas = document.getElementById('gameCanvas');
+        let DEV_MODE = false;
+        // ゲーム設定 - 画像パスをここで管理
+        let IMAGES = {
+            rooms: {
+
+                ivy: ['images/28/ivy.png'],
+                main: ['images/28/main.png'],
+                book1: ['images/28/book_1.png'],
+                book2: ['images/28/book_2.png'],
+                book3: ['images/28/book_3.png'],
+                book4: ['images/28/book_4.png'],
+
+                // end: ['images/28/end.png'],
+                // endWorse: ['images/28/end_worse.jpeg'],
+                // trueEnd: ['images/28/true_end.png', 'images/28/true_end2.png'],
+
+            },
+            items: {
+                coin: 'images/bear_coin.png',
+                bear: 'images/bear.png',
+                back: 'images/common/back.png',
+                arrowRight: 'images/common/arrow_right.png',
+                arrowLeft: 'images/common/arrow_left.png',
+                arrowAbove: 'images/common/arrow_above.png',
+                redBack: 'images/common/red_back.png',
+                greenBack: 'images/common/green_back.png',
+                blueBack: 'images/common/blue_back.png',
+                blackBack: 'images/common/black_back.png',
+                // safeClose: 'images/28/safe_close.png',
+                face1: 'images/28/face_1.png',
+                face2: 'images/28/face_2.png',
+                face3: 'images/28/face_3.png',
+                face4: 'images/28/face_4.png',
+                kani: 'images/28/kani.png',
+                onigiri: 'images/28/onigiri.png',
+                board: 'images/28/board.png',
+                seed: 'images/28/seed.png',
+
+
+
+
+
+
+            },
+
+            modals: {
+                block: 'images/28/modal_block.png',
+                kaniSong: 'images/28/modal_kani_song.png',
+                kaniReceiveSeed: 'images/28/modal_kani_receive_seed.png',
+                kaniSeed: 'images/28/modal_kani_seed.png',
+
+
+
+            },
+        };
+
+
+        // ゲーム状態
+        const SAVE_KEY = 'escapeGameState28';
+        const SAVE_VERSION = 1;
+        const SAVE_KEYS = [
+            SAVE_KEY + '_1',
+            SAVE_KEY + '_2'
+        ];
+
+        // 旧1スロットセーブがあれば、自動でスロット1に移行
+        (function migrateOldSave() {
+            try {
+                const old = localStorage.getItem(SAVE_KEY);
+                const slot1 = localStorage.getItem(SAVE_KEYS[0]);
+                if (old && !slot1) {
+                    localStorage.setItem(SAVE_KEYS[0], old);
+                    // 必要なら古いキーは消してもOK
+                    // localStorage.removeItem(SAVE_KEY);
+                    console.log('旧セーブデータをスロット1に移行しました');
+                }
+            } catch (e) {
+                console.warn('セーブデータ移行に失敗', e);
+            }
+        })();
+
+        function getDefaultGameState() {
+            return {
+                currentRoom: 'main',
+                openRooms: ['main'],
+                openRoomsTmp: [],
+                inventory: [],
+                main: {
+                    flags: {
+                        ivyLeft: 0,   // 0: face1, 1: face2
+                        ivyRight: 0,  // 0: face3, 1: face4
+                        ivyFaceFrom: 'left', // 最後に押した側
+                        foundSeed: false, passSeed: false,
+                        unlockWallCabLeft: false, unlockWallCabRight: false, unlockBox: false,
+                        foundWater: false, foundManure: false, foundDriver: false,
+                        plantStatus: 0,  // 0: なにもまかれてない, 1:種をまいた, 2:苗が生えた, 3:実が生った
+                        powerOn: false,
+                        kaniDead: false,
+                        removeBoard: false,
+
+                        bearAppear: false,
+
+
+
+                        talkTo: { bear: 0, }, backgroundState: 0,
+                    }
+                },
+
+                end: {
+                    flags: { backgroundState: 0 }
+                },
+                trueEnd: {
+                    flags: { backgroundState: 0 }
+                },
+
+
+                flags: { trueEndUnlocked: false },
+                selectedItem: null,
+                usingItem: null,
+                endings: { true: false, normal2: false, normal: false }
+
+            };
+        }
+
+        let gameState = getDefaultGameState();
+
+
+        // 部屋データ
+        let rooms = {
+            main: {
+                name: '保育室',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 35.4, y: 54.0, width: 7.5, height: 9.4,
+                        onClick: clickWrap(function () {
+                            showModal(
+                                '<div style="text-align:center;">絵本がある。読みますか？</div>',
+                               '',
+                                [
+                                    {
+                                        text: 'はい',
+                                        action: () => {
+                                            changeRoom('book1');
+                                            closeModal();
+                                        }
+                                    },
+                                    {
+                                        text: 'いいえ', action: () => {
+                                            closeModal();
+                                            updateMessage('');
+                                            return false;
+                                        }
+                                    }]
+                            );
+                            
+                        }),
+                        description: 'ベッドの上の本',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 49.1, y: 85.4, width: 17.4, height: 14.1,
+                        onClick: clickWrap(function () {
+                            showObj(null, '積み木が散らばっている', IMAGES.modals.block, '積み木が散らばっている');
+                        }),
+                        description: '床の積み木',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 61.5, y: 79.7, width: 21.4, height: 16.2,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '木箱',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 8.2, y: 56.3, width: 10.0, height: 6.3,
+                        onClick: clickWrap(function () {
+                            if (gameState.main.powerOn) {
+                                changeRoom('ivy');
+                            } else if (gameState.main.flags.plantStatus == 1) {
+                                updateMessage('プランターだ。種がまかれている');
+                            } else {
+                                updateMessage('プランターだ。土が入っている');
+                            }
+
+                        }),
+                        description: 'プランター',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 0.2, y: 59.0, width: 10.0, height: 5.7,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '電源',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.plantStatus > 0,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 2.3, y: 62.5, width: 20.5, height: 22.8,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '棚前面の板',
+                        zIndex: 1,
+                        usable: () => !gameState.main.flags.removeBoard,
+                        item: { img: 'board', visible: () => !gameState.main.flags.removeBoard }
+                    },
+                    {
+                        x: 0.0, y: 55.2, width: 11.1, height: 8.2,
+                        onClick: clickWrap(function () {
+                            if (gameState.selectedItem == 'seed') {
+                                window._nextModal = {
+                                    title: 'カニ君は種をまいている',
+                                    content: `<img src="${IMAGES.modals.kaniSeed}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                                    buttons: [
+                                        {
+                                            text: '閉じる', action: () => {
+                                                closeModal();
+
+                                            }
+                                        }
+                                    ],
+                                    after: () => {
+                                        updateMessage('カニ君は種をまくと、床に移動して歌いだした');
+                                    }
+
+                                };
+                                showObj(null, 'カニ君のおにぎりと柿の種を交換した。', IMAGES.modals.kaniReceiveSeed, 'カニ君のおにぎりと柿の種を交換した。');
+                                gameState.main.flags.passSeed = true;
+                                gameState.main.flags.plantStatus++;
+                                renderCanvasRoom();
+                                removeItem('seed');
+                                addItem('onigiri');
+                                return;
+                            }
+                            updateMessage('カニ君だ。おにぎりを持っている');
+                        }),
+                        description: 'カニ初期位置',
+                        zIndex: 6,
+                        usable: () => gameState.main.flags.plantStatus == 0,
+                        item: { img: 'kani', visible: () => gameState.main.flags.plantStatus == 0 }
+                    },
+                    {
+                        x: 6.6, y: 52.7, width: 4.2, height: 5.2,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: 'カニのおにぎり',
+                        zIndex: 7,
+                        usable: () => false,
+                        item: { img: 'onigiri', visible: () => gameState.main.flags.plantStatus == 0 && !gameState.main.flags.passSeed }
+                    },
+                    {
+                        x: 16.4, y: 77.9, width: 11.4, height: 8.3,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: 'カニ移動後',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'kani', visible: () => gameState.main.flags.plantStatus > 0 }
+                    },
+                    {
+                        x: 0.4, y: 33.1, width: 9.4, height: 10.4,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: 'ウォールシェルフ左',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 10.2, y: 32.6, width: 9.8, height: 9.0,
+                        onClick: clickWrap(function () {
+                            if (gameState.main.flags.unlockWallCabRight) {
+                                acquireItemOnce('foundSeed', 'seed', '柿の種を見つけた', IMAGES.items.seed, '柿の種を手に入れた');
+                            } else {
+                                showWallCabRightPuzzle();
+                            }
+
+                        }),
+                        description: 'ウォールシェルフ右',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+
+                    {
+                        x: 17.2, y: 42.1, width: 7.4, height: 6.5,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '壁の絵１',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 25.9, y: 38.2, width: 7.7, height: 8.4,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '壁の絵２',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 34.6, y: 38.7, width: 8.0, height: 6.5,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '壁の絵３',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 50.3, y: 37.4, width: 6.4, height: 7.7,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '壁の絵４',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 59.1, y: 36.9, width: 7.9, height: 9.9,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '壁の絵５',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 73.0, y: 24.2, width: 22.1, height: 53.2,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: 'ドア',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+
+                ]
+            },
+            book1: {
+                name: '絵本1ページ目',
+                description: '',
+                clickableAreas: [
+
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        onClick: clickWrap(function () {
+                            changeRoom('book2');
+                        }, { allowAtNight: true }),
+                        description: '本１：右', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick: clickWrap(function () {
+                            changeRoom('main');
+                        }, { allowAtNight: true }),
+                        description: '本戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
+                ]
+            },
+            book2: {
+                name: '絵本2ページ目',
+                description: '',
+                clickableAreas: [
+
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        onClick: clickWrap(function () {
+                            changeRoom('book1');
+                        }, { allowAtNight: true }),
+                        description: '本２：左', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        onClick: clickWrap(function () {
+                            changeRoom('book3');
+                        }, { allowAtNight: true }),
+                        description: '本２：右', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick: clickWrap(function () {
+                            changeRoom('main');
+                        }, { allowAtNight: true }),
+                        description: '本戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
+                ]
+            },
+            book3: {
+                name: '絵本3ページ目',
+                description: '',
+                clickableAreas: [
+
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        onClick: clickWrap(function () {
+                            changeRoom('book2');
+                        }, { allowAtNight: true }),
+                        description: '本3：左', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 93.6, y: 50.6, width: 6.4, height: 6.4,
+                        onClick: clickWrap(function () {
+                            changeRoom('book4');
+                        }, { allowAtNight: true }),
+                        description: '本3：右', zIndex: 5,
+                        item: { img: 'arrowRight', visible: () => true }
+                    },
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick: clickWrap(function () {
+                            changeRoom('main');
+                        }, { allowAtNight: true }),
+                        description: '本戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
+                ]
+            },
+            book4: {
+                name: '絵本4ページ目',
+                description: '',
+                clickableAreas: [
+
+                    {
+                        x: 0, y: 50.6, width: 6.4, height: 6.4,
+                        onClick: clickWrap(function () {
+                            changeRoom('book3');
+                        }, { allowAtNight: true }),
+                        description: '本4：左', zIndex: 5,
+                        item: { img: 'arrowLeft', visible: () => true }
+                    },
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick: clickWrap(function () {
+                            changeRoom('main');
+                        }, { allowAtNight: true }),
+                        description: '本戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
+
+                ]
+            },
+            ivy: {
+                name: 'プランター',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 33.1, y: 52.6, width: 34.3, height: 34.3,
+                        onClick: clickWrap(function () {
+                            updateMessage('プランターの顔だ');
+                        }),
+                        description: 'ivyの顔部分',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: {
+                            img: () => {
+                                const f = gameState.main.flags;
+                                if (f.ivyFaceFrom === 'left') {
+                                    return f.ivyLeft === 0 ? 'face1' : 'face2';
+                                } else {
+                                    return f.ivyRight === 0 ? 'face3' : 'face4';
+                                }
+                            }, visible: () => true
+                        }
+                    },
+                    {
+                        x: 9.9, y: 68.7, width: 9.6, height: 8.8,
+                        onClick: clickWrap(function () {
+                            const f = gameState.main.flags;
+                            f.ivyLeft = 1 - f.ivyLeft;   // トグル
+                            f.ivyFaceFrom = 'left';
+                            renderCanvasRoom();
+                            playSE('se-switch');
+                        }),
+                        description: '左スイッチ',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 80.9, y: 68.3, width: 9.4, height: 9.1,
+                        onClick: clickWrap(function () {
+                            const f = gameState.main.flags;
+                            f.ivyRight = 1 - f.ivyRight; // トグル
+                            f.ivyFaceFrom = 'right';
+                            renderCanvasRoom();
+                            playSE('se-switch');
+                        }),
+                        description: '右スイッチ',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick: clickWrap(function () {
+
+                            changeRoom('main');
+                        }, { allowAtNight: true }),
+                        description: 'ivy戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    }
+                ]
+            },
+
+
+
+            end: {
+                name: 'ノーマルエンド',
+                description: '脱出しました。おめでとうございます！',
+                clickableAreas: [
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        onClick: clickWrap(function () {
+                            showEndingReport('end');
+                        }),
+                        description: 'ノーマルエンド'
+                    },
+                    {
+                        x: 90.5, y: 67.7, width: 5.6, height: 8.6,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '水',
+                        zIndex: 5,
+                        usable: () => false,
+                        item: { img: 'water2l', visible: () => gameState.main.flags.useSaltToYakisoba }
+                    },
+
+                ]
+            },
+
+
+            trueEnd: {
+                name: 'トゥルーエンド',
+                description: '囚われの騎手を助けました！おめでとうございます！',
+                clickableAreas: [
+                    {
+                        x: 29.9, y: 58.3, width: 35.0, height: 32.9,
+                        onClick: clickWrap(function () {
+                            updateMessage('クマ妖精は、嬉しそうだ');
+                        }),
+                        description: 'クマ妖精',
+                        zIndex: 5,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 0,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 18.8, y: 52.1, width: 41.1, height: 36.5,
+                        onClick: clickWrap(function () {
+                            updateMessage('クマ妖精は、ソフトクリームに喜んでいる');
+                        }),
+                        description: 'クマ妖精',
+                        zIndex: 5,
+                        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+
+
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        onClick: clickWrap(function () {
+                            updateMessage('囚われの騎手を助けました！おめでとうございます！');
+                            showEndingReport('trueEnd');
+                        }),
+                        description: 'トゥルーエンド',
+                        usable: () => true,
+                    },
+
+                ]
+            },
+        };
+
+        const hintMessages = {
+
+            main: {
+                bear: [
+                    'ありがとう',
+                    'ハムにされるところだったよ',
+                ],
+                elevator: [
+                    'エレベーターは別の階に居るようだ',
+                    '…ドアの隙間から、ヒンヤリした冷気を感じる',
+                ],
+            },
+        };
+
+        // 足音で数歩→ワープ演出→目的の部屋へ
+        function travelWithSteps(destRoom = 'extra', color = '#000') {
+            const canvasEl = document.getElementById('gameCanvas');
+            const overlay = document.getElementById('roomEffectOverlay');
+
+            // 足音を鳴らす
+            try {
+                const se = document.getElementById('se-ashioto');
+                if (se) { se.currentTime = 0; se.play(); }
+            } catch (e) { }
+
+            // 画面を黒フェードに
+            if (overlay) {
+                overlay.style.background = color;  // 黒スクリーン
+                overlay.style.opacity = 1;          // しっかり黒
+            }
+
+            let step = 0;
+            const stepTimer = setInterval(() => {
+                step++;
+
+                if (step >= 3) {
+                    clearInterval(stepTimer);
+
+                    if (overlay) {
+                        changeRoom(destRoom);
+                    }
+
+                    setTimeout(() => {
+
+                        // 演出後に綺麗に消す
+                        if (overlay) {
+                            // overlay.style.background = '';
+                            overlay.style.opacity = 0;
+
+                        }
+
+                    }, 100);
+                }
+            }, 160);
+        }
+
+        function travelWithStepsTrueEnd() {
+            const overlay = document.getElementById('roomEffectOverlay');
+            let destRoom = 'trueEnd';
+            if (gameState.main.flags.watchOutside) {
+                gameState.trueEnd.flags.backgroundState++;
+            }
+
+            // 足音を鳴らす
+            try {
+                const se = document.getElementById('se-ashioto');
+                if (se) { se.currentTime = 0; se.play(); }
+            } catch (e) { }
+
+            // 画面を黒フェードに
+            if (overlay) {
+                overlay.style.background = '#fff';
+                overlay.style.opacity = 1;
+            }
+
+            let step = 0;
+            const stepTimer = setInterval(() => {
+                step++;
+
+
+                if (step >= 3) {
+                    clearInterval(stepTimer);
+
+                    // 黒→ワープ光へ切替
+                    if (overlay) {
+                        overlay.classList.add('warp-active');
+                        changeRoom(destRoom);
+                        overlay.style.background = '';   // warp の白発光に戻す
+                    }
+
+                    setTimeout(() => {
+
+
+                        // 演出後に綺麗に消す
+                        if (overlay) {
+                            overlay.classList.remove('warp-active');
+                            overlay.style.opacity = 0;
+                        }
+
+                    }, 900);
+                }
+            }, 260);
+        }
+
+        function travelWithElevatorRide(destRoom = 'end') {
+            const overlay = document.getElementById('roomEffectOverlay');
+
+            // 暗転 + エレベーターSE
+            try { screenFlash && screenFlash('black'); } catch (e) { }
+            try { playSE && playSE('se-elevator'); } catch (e) { }
+
+            if (overlay) {
+                overlay.style.background = '#000';
+                overlay.style.opacity = 1;
+            }
+
+            // “乗ってる”間を少し作る
+            setTimeout(() => {
+                changeRoom(destRoom);
+                setTimeout(() => {
+                    if (overlay) overlay.style.opacity = 0;
+                }, 120);
+            }, 700);
+        }
+
+
+        function quickBlackFade(duration = 300) {
+            const fade = document.getElementById('roomEffectOverlay');
+            if (!fade) return;
+
+            // まず一瞬で黒くする
+            fade.style.background = '#000';
+            fade.style.opacity = '1';
+
+            // duration ms 後に透明へ戻す
+            setTimeout(() => {
+                fade.style.opacity = '0';
+            }, duration);
+        }
+
+        // ゲーム初期化
+        function initGame() {
+            renderNavigation();
+            changeRoom('main');
+            updateMessage('気が付くとあなたは保育室に立っていました');
+
+        }
+
+        function findHitArea(x, y, clickableAreas, canvas) {
+            // zIndex降順で
+            const sorted = clickableAreas.slice().sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+            for (const area of sorted) {
+                // 必要ならusable判定もここで
+                const usable = area.usable === undefined ? true :
+                    (typeof area.usable === "function" ? area.usable() : area.usable);
+
+                if (!usable) continue; // 使えないエリアは判定しない
+                const ax = area.x / 100 * canvas.width;
+                const ay = area.y / 100 * canvas.height;
+                const aw = area.width / 100 * canvas.width;
+                const ah = area.height / 100 * canvas.height;
+                if (x >= ax && x <= ax + aw && y >= ay && y <= ay + ah) {
+                    return area; // 最初にヒットしたものだけ返す！
+                }
+            }
+            return null;
+        }
+
+        let hoveredAreaIndex = null;  // 今hoverしてるエリア（なければnull）
+        canvas.addEventListener('mousemove', function (e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+            const idx = area ? room.clickableAreas.indexOf(area) : null;
+            if (hoveredAreaIndex !== idx) {
+                hoveredAreaIndex = idx;
+                renderCanvasRoom();
+            }
+        });
+
+        canvas.addEventListener('mouseout', function () {
+            if (hoveredAreaIndex !== null) {
+                hoveredAreaIndex = null;
+                renderCanvasRoom();
+            }
+        });
+
+        canvas.addEventListener('click', function (e) {
+
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // ★今いる部屋のエリアだけ判定！
+            const room = rooms[gameState.currentRoom];
+            const area = findHitArea(x, y, room.clickableAreas, canvas);
+
+            // if (area) {
+            //     handleAreaClick(area.action, e);
+            // }
+            if (area) {
+                if (typeof area.onClick === 'function') {
+                    area.onClick(e);
+                    playSE('se-click');
+                } else if (area.action) {
+                    handleAreaClick(area.action, e); // 互換のために残してもOK
+                }
+            }
+        });
+
+        function changeRoom(roomId) {
+            gameState.currentRoom = roomId;
+            const room = rooms[roomId];
+
+            // 背景＋アイテム＋クリックエリアをcanvasで全部再描画
+            renderCanvasRoom();
+            const msg = (room.name && room.name.trim() !== "")
+                ? `${room.name}です。${room.description}`
+                : room.description;
+            if (roomId === 'trueEnd') {
+                updateMessageHTML(msg);
+            } else {
+                updateMessage(msg);
+            }
+
+            // BGM切替はそのまま
+            if (roomId === "trueEnd") {
+                changeBGM("sounds/27/Happy_News!.mp3");
+
+            } else if (roomId === "end" || roomId === "endGood") {
+                changeBGM("sounds/27/Way_to_home.mp3");
+
+            } else {
+                changeBGM("sounds/28/granpa.mp3");
+
+            }
+
+            // nav
+            // if (roomId === "corridor") {
+            //     addNaviItem(roomId);
+            //     renderNavigation();
+            // }
+            if (roomId === "trueEnd" || roomId === "end") {
+                gameState.openRooms = [];
+                // renderNavigation();
+            }
+            renderNavigation();
+        }
+
+        const END_IDS = new Set(['end', 'trueEnd']);
+
+        // ===== changeRoom フック：=====
+        const _changeRoom_custom = changeRoom;
+        changeRoom = function (roomId) {
+            _changeRoom_custom.apply(this, arguments);
+
+
+            if (END_IDS.has(roomId)) {
+                const elapsed = Math.round((Date.now() - ANA.start) / 1000);
+                ANA.endTimes = ANA.endTimes || {};
+                if (!ANA.endTimes[roomId]) ANA.endTimes[roomId] = elapsed;
+
+                const isTrue = (roomId === 'trueEnd');
+                ANA.send('ending_reached', {
+                    ending_id: roomId,
+                    is_true: isTrue,
+                    elapsed_sec: elapsed,
+                    hints: ANA.hintCount,
+
+                });
+                // setTimeout(() => showFeedbackModal(roomId), 1500);
+            }
+        };
+
+        function renderCanvasRoom() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const roomId = gameState.currentRoom;
+            const room = rooms[roomId];
+            const bgImgSrc = getRoomBackgroundImage(roomId, gameState);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+            // 背景描画
+            const bgImg = loadedImages[bgImgSrc];
+            if (bgImg && bgImg.complete) {
+                ctx.save();
+                const phase = gameState.main?.flags?.timePhase ?? 0;
+                const isNight = (phase === 2);
+                if (isNight) {
+                    ctx.filter = 'saturate(0.3) brightness(0.6)'; // 背景はちょい暗め
+                } else {
+                    ctx.filter = 'none';
+                }
+                ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                ctx.restore();
+            }
+
+            // アイテム描画（未取得のみ）
+            drawRoomItems(ctx, canvas, roomId);
+
+            // ★ ここから重なり優先のhover枠線を描画
+            if (hoveredAreaIndex !== null && hoveredAreaIndex !== undefined) {
+                // zIndex降順でソート
+                const sortedAreas = room.clickableAreas
+                    .map((area, i) => ({ ...area, __idx: i }))
+                    .filter(area => area.usable === undefined ? true :
+                        (typeof area.usable === "function" ? area.usable() : area.usable)
+                    )
+                    .sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+                // hoveredAreaIndexと一致するエリアをzIndex順で1つだけ枠描画
+                const hoverArea = sortedAreas.find(area => area.__idx === hoveredAreaIndex);
+                if (hoverArea) {
+                    const ax = hoverArea.x / 100 * canvas.width;
+                    const ay = hoverArea.y / 100 * canvas.height;
+                    const aw = hoverArea.width / 100 * canvas.width;
+                    const ah = hoverArea.height / 100 * canvas.height;
+                    ctx.save();
+                    ctx.strokeStyle = 'gold';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(ax, ay, aw, ah);
+                    ctx.restore();
+                }
+            }
+
+
+            if (DEV_MODE) {
+                ctx.save();
+                ctx.lineWidth = 2;
+
+
+                room.clickableAreas.forEach(a => {
+
+                    ctx.strokeStyle = 'rgba(255,0,0,0.8)';
+                    ctx.fillStyle = 'rgba(255,0,0,0.35)';
+                    ctx.font = '14px sans-serif';
+                    const px = a.x / 100 * canvas.width;
+                    const py = a.y / 100 * canvas.height;
+                    const pw = a.width / 100 * canvas.width;
+                    const ph = a.height / 100 * canvas.height;
+
+                    // 半透明の枠
+                    ctx.fillRect(px, py, pw, ph);
+                    ctx.strokeRect(px, py, pw, ph);
+
+                    // description 表示
+                    if (a.description) {
+                        ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                        ctx.fillRect(px, py - 18, ctx.measureText(a.description).width + 8, 18);
+
+                        ctx.fillStyle = 'white';
+                        ctx.fillText(a.description, px + 4, py - 4);
+                    }
+                });
+
+                ctx.restore();
+            }
+
+        }
+
+        function drawRoomItems(ctx, canvas, roomId) {
+            const room = rooms[roomId];
+            room.clickableAreas.forEach(area => {
+                if (area.item && area.item.visible && area.item.visible()) {
+                    const key = (typeof area.item.img === 'function') ? area.item.img() : area.item.img;
+                    const img = loadedImages[IMAGES.items[key]];
+                    if (img && img.complete && img.naturalWidth > 0) {
+                        const alpha = area.alpha ? area.alpha : 1;
+                        const px = area.x / 100 * canvas.width;
+                        const py = area.y / 100 * canvas.height;
+                        const w = area.width / 100 * canvas.width;
+                        const h = area.height / 100 * canvas.height;
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+
+                        // ★ 夜モードなら彩度＋明るさを落とす
+                        const phase = gameState.main?.flags?.timePhase ?? 0;
+                        const isNight = (phase === 2);
+                        if (isNight) {
+                            // 値は好みで調整
+                            ctx.filter = 'saturate(0.4) brightness(0.8)';
+                        } else {
+                            ctx.filter = 'none';
+                        }
+
+                        ctx.drawImage(img, px, py, w, h);
+                        ctx.restore();
+                    }
+                }
+            });
+        }
+
+
+        function getRoomBackgroundImage(roomId, gameState) {
+            const imgList = IMAGES.rooms[roomId];
+
+            // 単一画像ならそのまま
+            if (!Array.isArray(imgList)) {
+                return imgList;
+            }
+
+            const state = gameState[roomId]?.flags?.backgroundState ?? 0;
+            return imgList[state] || imgList[0];
+        }
+
+
+        // 小物ユーティリティ
+        function pointInRect(x, y, r) {
+            return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+        }
+
+        function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+            if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+            ctx.beginPath();
+            ctx.moveTo(x + r.tl, y);
+            ctx.lineTo(x + w - r.tr, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+            ctx.lineTo(x + w, y + h - r.br);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+            ctx.lineTo(x + r.bl, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+            ctx.lineTo(x, y + r.tl);
+            ctx.quadraticCurveTo(x, y, x + r.tl, y);
+            ctx.closePath();
+            if (fill) ctx.fill();
+            if (stroke) ctx.stroke();
+        }
+
+        // フラッシュレイヤを用意
+        (function ensureFlashLayer() {
+            if (!document.getElementById('fxFlash')) {
+                const d = document.createElement('div');
+                d.id = 'fxFlash';
+                document.body.appendChild(d);
+            }
+        })();
+
+        // 画面フラッシュ（type: 'white' | 'red'）
+        function screenFlash(type = 'white', durMs = 180) {
+            const f = document.getElementById('fxFlash'); if (!f) return;
+            f.style.animation = 'none'; // 連打対策
+            // 強制reflowでアニメ再適用
+            // eslint-disable-next-line no-unused-expressions
+            f.offsetHeight;
+            const key = type === 'red' ? 'flashRed' : 'flashWhite';
+            f.style.animation = `${key} ${durMs}ms ease`;
+            // ページ全体を極小シェイク
+            document.documentElement.classList.add('fx-shake');
+            setTimeout(() => document.documentElement.classList.remove('fx-shake'), 120);
+        }
+
+        // 画面揺れ
+        function screenShake(el = document.documentElement, ms = 120, cls = 'fx-shake') {
+            if (!el) return;
+            // 連打でも必ず発火させる
+            el.classList.remove(cls);
+            void el.offsetHeight; // reflow
+            el.classList.add(cls);
+            setTimeout(() => el.classList.remove(cls), ms);
+        }
+
+
+
+        function toggleNight() {
+
+            quickBlackFade();
+            setTimeout(() => {
+
+                renderCanvasRoom();
+            }, 300);
+
+        }
+
+        function acquireItemOnce(flagKey, itemId, title, imgSrc, msg) {
+            const f = gameState.main.flags;
+            if (f[flagKey]) {
+                if (itemId == 'glass') {
+                    updateMessage('グラスが沢山ある');
+                } else {
+                    updateMessage('もう何もない');
+                }
+
+                return;
+            }
+            f[flagKey] = true;
+            addItem(itemId);
+            renderCanvasRoom();
+
+            showModal(
+                title,
+                `<img src="${imgSrc}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                [{ text: '閉じる', action: 'close' }]
+            );
+            updateMessage(msg);
+        }
+
+        function clickWrap(fn, { allowAtNight = false } = {}) {
+            return function (...args) {
+                if (gameState.main.flags.isNight && !allowAtNight) {
+                    updateMessage('暗くてよく見えない');
+                    return;
+                }
+                fn.apply(this, args);
+
+
+                // アイテム選択解除は今まで通り
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            };
+        }
+
+
+        // アクション名 → 実行関数
+        const ACTION_HANDLERS = {
+            // --- 移動系 ---
+            examine_start_door_left() {
+                // changeRoom('startRight');
+            },
+
+        };
+
+        // エリアクリック処理
+        function handleAreaClick(action, event) {
+            const handler = ACTION_HANDLERS[action];
+            playSE('se-click');
+
+            // area.onClick 方式（将来のため）
+            if (typeof action === 'function') {
+                action(event);
+                return;
+            }
+
+            // action名（従来の方式）にも対応
+            const fn = ACTION_HANDLERS[action];
+            if (fn) {
+                fn(event);
+                return;
+            }
+            console.warn('未定義のaction:', action);
+        }
+
+
+        // クリアレポート表示
+        function showEndingReport(endingId = 'end') {
+            const elapsedSec = Math.round((Date.now() - (ANA.start || Date.now())) / 1000);
+            const m = Math.floor(elapsedSec / 60);
+            const s = elapsedSec % 60;
+            const timeStr = `${m}分${s.toString().padStart(2, '0')}秒`;
+
+            // 今作用エンド情報
+            const ENDING_INFO = {
+                trueEnd: {
+                    title: "🐻 TRUE END",
+                    label: "TRUE END",
+                    desc: "クマ妖精を救えました！"
+                },
+                end: {
+                    title: "🐎 NORMAL END ",
+                    label: "NORMAL END ",
+                    desc: "保育室から脱出できました！"
+                },
+
+
+
+            };
+
+            const info = ENDING_INFO[endingId] || ENDING_INFO.end;
+
+            // エンド別ひとこと
+            let secretText = "";
+            switch (endingId) {
+                case "trueEnd":
+                    secretText = "🧸 クマ妖精と一緒に脱出できました";
+                    break;
+                case "end":
+                    secretText = `👣 お家でゆっくり休みましょう`;
+                    break;
+
+                default:
+                    secretText = "";
+            }
+
+            // GA送信
+            ANA.once('ending', endingId, {
+                ending: endingId,
+                time_sec: elapsedSec,
+            });
+
+            const html = `
+        <div style="max-width:520px; text-align:center;">
+            <h2 style="margin-top:0;">${info.title}</h2>
+            <p style="margin:6px 0 12px 0; font-weight:bold;">${info.desc}</p>
+            <p style="margin:4px 0;">プレイ時間：<b>${timeStr}</b></p>
+            <p style="margin:4px 0;">ヒント利用：<b>${ANA.hintCount || 0} 回</b></p>
+            ${secretText ? `<p style="margin:12px 0; font-size:.9em; opacity:.85;">${secretText}</p>` : ""}
+            
+            
+        </div>
+    `;
+
+            showModal("エンディング", html, [
+                {
+                    text: "評価はこちら",
+                    action: () => openFeedbackForm(endingId),
+                },
+                {
+                    text: "閉じる",
+                    action: () => {
+                        closeModal();
+                    },
+                },
+            ]);
+        }
+
+        // クリアログ生成（既存のがあればそのまま流用でOK）
+        function copyClearLog(label, timeStr) {
+            const text =
+                `『保育室からの脱出』${label} クリア\n` +
+                `プレイ時間：${timeStr}\n` +
+                `ヒント利用：${ANA.hintCount || 0}回\n` +
+                `#脱出ゲーム #保育室からの脱出`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("クリアログをコピーしました！");
+            }).catch(() => {
+                alert("コピーに失敗しました…");
+            });
+        }
+
+        // アンケート
+        function openFeedbackForm(endingId) {
+            const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfy0jDReyL1dcuIRF3-qsEi6DOCnRplHdfu28wMMtwQrYRkjw/viewform";
+
+            const endingLabel = ({
+                trueEnd: "トゥルーエンド",
+                end: "ノーマルエンド",
+            })[endingId] || "エンド";
+
+            const params = new URLSearchParams({
+                "entry.666725843": endingLabel,
+            });
+
+            window.open(`${FEEDBACK_URL}?${params.toString()}`, "_blank");
+        }
+
+
+
+        function talkToHintCharacter(roomId, charId) {
+            // flags取得
+            let flags = gameState[roomId].flags;
+            // まだカウント無ければ初期化
+            if (!flags.talkTo) flags.talkTo = {};
+            if (!flags.talkTo[charId]) flags.talkTo[charId] = 0;
+
+            // カウントアップ
+            flags.talkTo[charId]++;
+
+            // セリフリスト取得
+            const messages = hintMessages[roomId][charId];
+
+            // 範囲外なら最後のメッセージ
+            const idx = (flags.talkTo[charId] - 1) % messages.length;
+            console.log(flags.talkTo[charId]);
+
+            // 表示
+            updateMessage(messages[idx]);
+        }
+
+        // =========================
+        // 怨念に塩をまく共通処理
+        // =========================
+        function dispelOnnen(letter) {
+            const goneKey = 'goneOnnen' + letter;
+            const dispelKey = 'dispelOnnen' + letter;
+
+            if (gameState.main.flags[goneKey]) {
+                updateMessage('もう、そこにはいない。');
+                return;
+            }
+
+            // 一度でも塩を使ったフラグ
+            gameState.main.flags.useSalt = true;
+            // 各怨念ごとの塩フラグ（塩跡の表示用）
+            gameState.main.flags[dispelKey] = true;
+
+            // 現在の部屋の中から対象の怨念エリアを探す
+            const room = rooms[gameState.currentRoom];
+            const areas = room?.clickableAreas || [];
+            const target = areas.find(a =>
+                a?.description === ('怨念' + letter) ||
+                (a?.item && (a.item.img === ('onnen' + letter)))
+            );
+
+            if (!target) {
+                // 万一見つからなければ、即消滅だけでも成立させる
+                gameState.main.flags[goneKey] = true;
+                renderCanvasRoom();
+                return;
+            }
+
+            // 連打防止：フェード中は触れない
+            const originalUsable = target.usable;
+            target.usable = () => false;
+
+            // フェードアウト（canvas上で透明度を落とす）
+            const duration = 650; // ms
+            const start = performance.now();
+            target.alpha = 1;
+
+            if (typeof playSE === 'function') playSE('se-aaa');
+            updateMessage(`怨念${letter}に塩をまいた。`);
+
+            const step = (now) => {
+                const t = Math.min(1, (now - start) / duration);
+                target.alpha = 1 - t;
+                renderCanvasRoom();
+
+                if (t >= 1) {
+                    // 完了：怨念を消滅扱いにして、alphaを掃除
+                    gameState.main.flags[goneKey] = true;
+                    delete target.alpha;
+                    target.usable = originalUsable;
+                    renderCanvasRoom();
+                    return;
+                }
+                requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+
+        }
+
+        // =========================
+        // バッドエンド：焼きそば執着怨念（塩を使った）
+        // =========================
+        function triggerBadEndYakisoba() {
+            try { screenFlash && screenFlash('black'); } catch (e) { }
+            try { pauseBGM && pauseBGM(); } catch (e) { }
+            try { playSE && playSE('se-fire'); } catch (e) { }
+
+            try { markProgress && markProgress('bad_yakisoba_onnenC'); } catch (e) { }
+
+            // バッドエンドモーダル表示
+            showModal(
+                '【BAD END】怨念Cが襲い掛かってきた。',
+                `
+                  <div style="text-align:center;">
+                    <img src="${IMAGES.modals.badendYakisoba}" alt="bad end yakisoba"
+                      style="max-width:420px;width:100%;display:block;margin:0 auto 14px;border-radius:12px;">
+                    <p style="margin:0;">焼きそば…よこせ…</p>
+                  </div>
+                `,
+                [{ text: '最初から', action: 'restart' }]
+            );
+        }
+
+
+        // ▼ 手帳モーダル 操作用
+
+        function openNotebook() {
+            const m = document.getElementById('notebookModal');
+            if (!m) return;
+            m.style.display = 'flex';
+            switchNotebookTab('notes'); // 毎回noteから開く
+
+            // ★ 進捗タスク（NOTES）も更新しておく
+            renderNotebookTasks();
+
+            if (gameState.main?.flags?.notebookDeckHintAdded) {
+                addDeckDoorHintNote();
+            }
+
+        }
+
+        function switchNotebookTab(tabId) {
+            const tabs = document.querySelectorAll('.notebook-tab');
+            const contents = document.querySelectorAll('.notebook-tab-content');
+
+            tabs.forEach(btn => {
+                const t = btn.getAttribute('data-tab');
+                btn.classList.toggle('active', t === tabId);
+            });
+
+            contents.forEach(c => c.classList.remove('active'));
+
+            const active = document.getElementById('notebook-tab-' + tabId);
+            if (active) active.classList.add('active');
+
+            // ★ タブを開いた瞬間に中身を最新化
+            if (tabId === 'notes') renderNotebookTasks();
+        }
+
+        function closeNotebook() {
+            const m = document.getElementById('notebookModal');
+            if (!m) return;
+            m.style.display = 'none';
+        }
+
+        function renderNotebookTasks() {
+            const notesBody = document.getElementById('notebook-notes-body');
+            if (!notesBody) return;
+
+            const flags = (gameState && gameState.main && gameState.main.flags) ? gameState.main.flags : {};
+
+            // 既存の「タスク枠」だけ差し替える（他の追記メモが将来増えても消さない）
+            const old = document.getElementById('notebook-tasks');
+            if (old) old.remove();
+
+            const tasks = [];
+
+            const allSolved = true;
+            if (allSolved) {
+                tasks.push({ text: 'test', done: false });
+
+
+            }
+
+            // キャプションも進捗用に寄せる（タスクなしなら元のニュアンスに戻す）
+            const cap = document.querySelector('#notebook-tab-notes .notebook-cap');
+            if (cap) {
+                cap.textContent = (tasks.length > 0)
+                    ? '進捗メモが書き足されている。'
+                    : '空白のページ。';
+            }
+
+            const wrap = document.createElement('div');
+            wrap.id = 'notebook-tasks';
+            wrap.className = 'notebook-note';
+
+            if (tasks.length === 0) {
+                wrap.innerHTML = `<p style="margin:0;">まだタスクはない。</p>`;
+                notesBody.prepend(wrap);
+                return;
+            }
+
+            const rows = tasks.map(t => {
+                const mark = t.done ? '✅' : '⬜';
+                const style = t.done ? 'text-decoration:line-through;opacity:0.75;' : '';
+                return `
+      <li style="display:flex;gap:8px;align-items:flex-start;">
+        <span style="width:1.2em;display:inline-block;">${mark}</span>
+        <span style="${style}">${t.text}</span>
+      </li>
+    `;
+            }).join('');
+
+            wrap.innerHTML = `
+    <div style="font-weight:700;margin:0 0 8px 0;">進捗</div>
+    <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+      ${rows}
+    </ul>
+  `;
+
+            notesBody.prepend(wrap);
+        }
+
+        // オーバーレイクリックで閉じたい場合（任意）
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('notebookModal');
+            if (!modal) return;
+            if (modal.style.display === 'flex' && e.target === modal) {
+                closeNotebook();
+            }
+        });
+
+        function showWallCabRightPuzzle() {
+            const f = gameState.main.flags;
+
+            // もう解いてたら、普通にメッセージだけでもOK
+            if (f.unlockWallCabRight) {
+                updateMessage('右のウォールシェルフは、もうアンロックされている。');
+                return;
+            }
+
+            const content = `
+    <div style="margin-top:10px;">
+      
+      <input id="wallCabRightInput" class="puzzle-input" type="text" placeholder="英字" autocomplete="off" />
+      <div>
+        <button id="wallCabRightOk" class="nav-btn" style="margin-top:8px;">OK</button>
+      </div>
+      <div id="wallCabRightHint" style="margin-top:10px; font-size:0.95em; min-height:1.2em;"></div>
+    </div>
+  `;
+
+            showModal('ウォールシェルフ右のロック', content, [{ text: '閉じる', action: 'close' }]);
+
+            // showModalがDOMを書き換えた後にフック
+            setTimeout(() => {
+                const input = document.getElementById('wallCabRightInput');
+                const okBtn = document.getElementById('wallCabRightOk');
+                const hint = document.getElementById('wallCabRightHint');
+
+                if (!input || !okBtn) return;
+
+                const judge = () => {
+                    const v = (input.value || '').trim();
+
+                    // 指定通り：use / USE を許可（ついでに余計な空白は無視）
+                    const isOk = (v === 'use' || v === 'USE');
+
+                    if (isOk) {
+                        f.unlockWallCabRight = true;
+                        playSE?.('se-clear');
+                        closeModal();
+                        updateMessage('カチッ…右のウォールシェルフのロックが外れた。');
+                        renderCanvasRoom?.();
+                        // 進捗ログ欲しければ
+                        // markProgress?.('unlock_wallcab_right_28');
+                    } else {
+                        playSE?.('se-error');
+                        if (hint) hint.textContent = 'ちがうようだ。';
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                    }
+                };
+
+                okBtn.addEventListener('click', judge);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') judge();
+                });
+
+                input.focus();
+            }, 0);
+        }
+
+
+        // 金庫パズル（十字キー入力）
+        // 入力：右 左 左 上 下 → OK
+        const _safeDirAnswer = ['R', 'L', 'L', 'U', 'D'];
+        let _safeDirInput = [];
+
+        function showSafePuzzle() {
+            if (gameState.main.flags.unlockSafe) {
+                updateMessage('すでに金庫のロックは解除されている。');
+                return;
+            }
+
+            _safeDirInput = [];
+
+            const padBtnStyle = `
+    width:64px; height:64px;
+    border:2px solid #d4af37; border-radius:14px;
+    background: rgba(255,255,255,0.92);
+    color:#1a0f08; font-size:26px; font-weight:900;
+    cursor:pointer;
+    box-shadow:0 2px 10px rgba(0,0,0,0.25);
+    transition: transform .06s, filter .1s;
+  `;
+
+            const okStyle = `
+    background:#fff; color:#1a0f08;
+    border:2px solid #d4af37; border-radius:10px;
+    padding:14px 24px; font-weight:800;
+    min-width:180px; cursor:pointer; margin-top:10px;
+  `;
+
+            const content = `
+    <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+
+      <!--<div id="safeDirPreview"
+        style="border:2px solid #d4af37; background: rgba(244,241,232,0.95); color:#1a0f08;
+               border-radius:10px; padding:10px 12px; font-weight:900; letter-spacing:0.12em; min-height:20px;">
+        &nbsp;
+      </div>-->
+
+      <div style="display:grid; grid-template-columns: 64px 64px 64px; grid-template-rows: 64px 64px 64px;
+                  gap:10px; justify-content:center; align-items:center; margin:14px 0 10px;">
+        <div></div>
+        <button id="safeUp" style="${padBtnStyle}">N</button>
+        <div></div>
+
+        <button id="safeLeft" style="${padBtnStyle}"></button>
+        <div style="width:64px; height:64px;  border-radius:14px;"></div>
+        <button id="safeRight" style="${padBtnStyle}"></button>
+
+        <div></div>
+        <button id="safeDown" style="${padBtnStyle}"></button>
+        <div></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap;">
+        <button id="safeOk" style="${okStyle}">OK</button>
+        <button id="safeReset" class="text-btn">リセット</button>
+      </div>
+    </div>
+  `;
+
+            showModal('金庫のロック', content, [{ text: '閉じる', action: 'close' }]);
+
+            setTimeout(() => {
+                const preview = document.getElementById('safeDirPreview');
+                const bU = document.getElementById('safeUp');
+                const bD = document.getElementById('safeDown');
+                const bL = document.getElementById('safeLeft');
+                const bR = document.getElementById('safeRight');
+                const ok = document.getElementById('safeOk');
+                const reset = document.getElementById('safeReset');
+
+                const sym = { U: '↑', D: '↓', L: '←', R: '→' };
+                const render = () => {
+                    if (!preview) return;
+                    preview.textContent = _safeDirInput.map(k => sym[k] || k).join(' ');
+                    if (_safeDirInput.length === 0) preview.innerHTML = '&nbsp;';
+                };
+
+                const push = (k) => {
+                    if (_safeDirInput.length >= _safeDirAnswer.length) return; // 5手まで
+                    _safeDirInput.push(k);
+                    playSE?.('se-click');
+                    render();
+                };
+
+                const clear = () => {
+                    _safeDirInput = [];
+                    playSE?.('se-click');
+                    render();
+                };
+
+                bU?.addEventListener('click', () => push('U'));
+                bD?.addEventListener('click', () => push('D'));
+                bL?.addEventListener('click', () => push('L'));
+                bR?.addEventListener('click', () => push('R'));
+                reset?.addEventListener('click', (e) => { e.preventDefault(); clear(); });
+
+                ok?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const isOk = _safeDirInput.length === _safeDirAnswer.length
+                        && _safeDirInput.every((v, i) => v === _safeDirAnswer[i]);
+
+                    if (isOk) {
+                        gameState.main.flags.unlockSafe = true;
+                        playSE?.('se-clear');
+                        closeModal();
+                        renderCanvasRoom();
+                        updateMessage('金庫のロックを解除した。');
+                        markProgress?.('27_safe_unlock');
+                    } else {
+                        playSE?.('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                        clear();
+                    }
+                });
+
+                render();
+            }, 0);
+        }
+
+
+        // --- 怨念A：数字入力パズル（6） ---
+        function showOnnenAPuzzle() {
+            if (gameState.main.flags.goneOnnenA) {
+                updateMessage('もう、そこにはいない。');
+                return;
+            }
+
+            const inputStyle = `
+    width:220px;
+    padding:12px 10px;
+    border:2px solid #d4af37;
+    background: rgba(244, 241, 232, 0.95);
+    color:#1a0f08;
+    border-radius:10px;
+    text-align:center;
+    font-size:18px;
+    font-weight:800;
+    letter-spacing:0.12em;
+    outline:none;
+  `;
+
+            const okStyle = `
+    background:#fff;
+    color:#1a0f08;
+    border:2px solid #d4af37;
+    border-radius:10px;
+    padding:14px 24px;
+    font-weight:800;
+    min-width:180px;
+    cursor:pointer;
+    margin-top:10px;
+  `;
+
+            const content = `
+    <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+      <img src="${IMAGES.items.onnenA}" style="width:360px;max-width:100%;display:block;margin:0 auto 14px;">
+      <input id="onnenAInput" type="text" inputmode="numeric" autocomplete="one-time-code"
+             style="${inputStyle}" placeholder="_" maxlength="2" />
+      <div style="text-align:center;">
+        <button id="onnenAOk" style="${okStyle}">OK</button>
+      </div>
+    </div>
+  `;
+
+            showModal('今日こそ当てるはずだったのに…<br>伝説のラッキーナンバーが知りたかった…', content, [{ text: '閉じる', action: 'close' }]);
+
+            setTimeout(() => {
+                const el = document.getElementById('onnenAInput');
+                const ok = document.getElementById('onnenAOk');
+
+                const tryUnlock = () => {
+                    const v = (el?.value ?? '').trim();
+                    if (v === '6') {
+                        gameState.main.flags.goneOnnenA = true;
+                        if (typeof playSE === 'function') playSE('se-clear');
+                        closeModal();
+                        markProgress?.('27_onnenA_gone');
+                        renderCanvasRoom();
+
+                        // モーダルで「6！そうだったんだね」＋ onnenCHappy を表示
+                        showObj(null, '6！そうだったんだね<br>良いこと聞けたよ', IMAGES.modals.onnenAHappy, '怨念A「6！そうだったんだね。良いこと聞けたよ」怨念Aは消えていった。');
+                    } else {
+                        if (typeof playSE === 'function') playSE('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                        if (el) { el.value = ''; el.focus(); }
+                    }
+                };
+
+                ok?.addEventListener('click', tryUnlock);
+                el?.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        tryUnlock();
+                    }
+                });
+
+                el?.focus();
+            }, 0);
+        }
+
+        // --- チケットマシン右：上下ボタンパズル ---
+        const _ticketMachineRightAnswer = ['U', 'D', 'D', 'U', 'U']; // 上下下上上
+        let _ticketMachineRightInput = [];
+
+        function showTicketMachineRightPuzzle() {
+            if (gameState.main.flags.unlockTicketMachineRight) {
+                updateMessage('もう、そこは開いている。');
+                return;
+            }
+
+            _ticketMachineRightInput = [];
+
+            const btnStyle = `
+    width: 96px; height: 72px;
+    border:2px solid #d4af37; border-radius:14px;
+    background: rgba(255,255,255,0.92);
+    cursor:pointer;
+    box-shadow:0 2px 10px rgba(0,0,0,0.25);
+    transition: transform .06s, filter .1s;
+  `;
+
+            const okStyle = `
+    background:#fff; color:#1a0f08;
+    border:2px solid #d4af37; border-radius:10px;
+    padding:14px 24px; font-weight:800;
+    min-width:180px; cursor:pointer; margin-top:10px;
+  `;
+
+            const content = `
+    <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+      <div style="font-weight:900; margin-bottom:10px;">ボタンを押してください</div>
+
+      <div style="display:flex; flex-direction:column; gap:12px; align-items:center; margin:12px 0 8px;">
+        <button id="tmRightUp" style="${btnStyle}"></button>
+        <button id="tmRightDown" style="${btnStyle}"></button>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap;">
+        <button id="tmRightOk" style="${okStyle}">OK</button>
+        <button id="tmRightReset" class="text-btn">リセット</button>
+      </div>
+    </div>
+  `;
+
+            showModal('チケットマシン', content, [{ text: '閉じる', action: 'close' }]);
+
+            setTimeout(() => {
+                const up = document.getElementById('tmRightUp');
+                const down = document.getElementById('tmRightDown');
+                const ok = document.getElementById('tmRightOk');
+                const reset = document.getElementById('tmRightReset');
+
+                const push = (v) => {
+                    _ticketMachineRightInput.push(v);
+                    if (typeof playSE === 'function') playSE('se-click');
+                    const el = (v === 'U') ? up : down;
+                    if (el) {
+                        el.style.transform = 'scale(0.97)';
+                        setTimeout(() => { el.style.transform = ''; }, 80);
+                    }
+                };
+
+                up?.addEventListener('click', () => push('U'));
+                down?.addEventListener('click', () => push('D'));
+
+                reset?.addEventListener('click', () => {
+                    _ticketMachineRightInput = [];
+                    if (typeof playSE === 'function') playSE('se-click');
+                });
+
+                ok?.addEventListener('click', () => {
+                    const input = _ticketMachineRightInput.join('');
+                    const ans = _ticketMachineRightAnswer.join('');
+                    if (input === ans) {
+                        gameState.main.flags.unlockTicketMachineRight = true;
+                        if (typeof playSE === 'function') playSE('se-clear');
+                        closeModal();
+                        markProgress?.('27_ticketMachineRight_unlock');
+
+                        // チケット入手（入手時に画像モーダル）
+                        acquireItemOnce('foundTicketIju', 'ticketIju', '移住チケットが出てきた', IMAGES.items.ticketIju, '移住チケットを手に入れた');
+                    } else {
+                        if (typeof playSE === 'function') playSE('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                        _ticketMachineRightInput = [];
+                    }
+                });
+            }, 0);
+        }
+
+        // --- チケットマシン中央：4色ボタン（色サイクル）パズル ---
+        // 色順：白、黒、赤、青、黄、緑、オレンジ、ピンク
+        const _tmCenterColors = [
+            { name: 'white', css: '#ffffff' },
+            { name: 'black', css: '#111111' },
+            { name: 'red', css: '#ff3b30' },
+            { name: 'blue', css: '#0a84ff' },
+            { name: 'yellow', css: '#ffd60a' },
+            { name: 'green', css: '#30d158' },
+            { name: 'orange', css: '#ff9f0a' },
+            { name: 'pink', css: '#ff69b4' },
+        ];
+
+        // 4ボタンの現在色 index（初期は白=0）
+        let _tmCenterState = [0, 0, 0, 0];
+
+        function showTicketMachineCenterPuzzle() {
+            if (gameState.main.flags.unlockTicketMachineCenter) {
+                updateMessage('もう、そこは開いている。');
+                return;
+            }
+
+            _tmCenterState = [0, 0, 0, 0];
+
+            const btnStyle = `
+    width: 76px; height: 76px;
+  max-width: 18vw;
+  max-height: 18vw;
+  border:2px solid #d4af37; border-radius:14px;
+  background: rgba(255,255,255,0.95);
+  cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,0.25);
+  transition: transform .06s, filter .1s;
+  `;
+
+            const okStyle = `
+    background:#fff; color:#1a0f08;
+    border:2px solid #d4af37; border-radius:10px;
+    padding:14px 24px; font-weight:800;
+    min-width:180px; cursor:pointer; margin-top:12px;
+  `;
+
+            const content = `
+    <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+      <img src="${IMAGES.modals.ticketMachineCenter}" style="width:400px;max-width:100%;display:block;margin:0 auto 14px;">
+
+      <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; margin:10px 0 6px;">
+        <button id="tmCenterBtn0" style="${btnStyle}"></button>
+        <button id="tmCenterBtn1" style="${btnStyle}"></button>
+        <button id="tmCenterBtn2" style="${btnStyle}"></button>
+        <button id="tmCenterBtn3" style="${btnStyle}"></button>
+      </div>
+
+      <div style="text-align:center;">
+        <button id="tmCenterOk" style="${okStyle}">OK</button>
+      </div>
+    </div>
+  `;
+
+            showModal('チケットマシン', content, [{ text: '閉じる', action: 'close' }]);
+
+            const refresh = () => {
+                for (let i = 0; i < 4; i++) {
+                    const b = document.getElementById(`tmCenterBtn${i}`);
+                    if (!b) continue;
+                    const c = _tmCenterColors[_tmCenterState[i]]?.css ?? '#fff';
+                    b.style.background = c;
+                    // 黒とか暗色でも縁が見えるように内側にうっすら枠
+                    b.style.boxShadow = 'inset 0 0 0 2px rgba(255,255,255,0.25), 0 2px 10px rgba(0,0,0,0.25)';
+                }
+            };
+
+            const step = (i) => {
+                _tmCenterState[i] = (_tmCenterState[i] + 1) % _tmCenterColors.length;
+                if (typeof playSE === 'function') playSE('se-click');
+                const el = document.getElementById(`tmCenterBtn${i}`);
+                if (el) {
+                    el.style.transform = 'scale(0.97)';
+                    setTimeout(() => { el.style.transform = ''; }, 80);
+                }
+                refresh();
+            };
+
+            setTimeout(() => {
+                refresh();
+
+                for (let i = 0; i < 4; i++) {
+                    document.getElementById(`tmCenterBtn${i}`)?.addEventListener('click', () => step(i));
+                }
+
+                document.getElementById('tmCenterOk')?.addEventListener('click', () => {
+                    // 正解：左から ピンク、赤、緑、白
+                    // index: pink=7, red=2, green=5, white=0
+                    const ok =
+                        _tmCenterState[0] === 7 &&
+                        _tmCenterState[1] === 2 &&
+                        _tmCenterState[2] === 5 &&
+                        _tmCenterState[3] === 0;
+
+                    if (ok) {
+                        gameState.main.flags.unlockTicketMachineCenter = true;
+                        if (typeof playSE === 'function') playSE('se-clear');
+                        closeModal();
+                        markProgress?.('27_ticketMachineCenter_unlock');
+
+                        // カード入手（入手時に画像モーダル）
+                        acquireItemOnce(
+                            'foundElevatorCard',
+                            'elevatorCard',
+                            'エレベーターカードが出てきた',
+                            IMAGES.items.elevatorCard,
+                            'エレベーターカードを手に入れた'
+                        );
+                    } else {
+                        if (typeof playSE === 'function') playSE('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                    }
+                });
+            }, 0);
+        }
+
+        // --- 落とし物ボックス：2x2 トグルパズル ---
+        // 位置は [0]=左上, [1]=右上, [2]=左下, [3]=右下
+        let _otoshiState = [false, false, false, false];
+
+        function showOtoshimonoBoxPuzzle() {
+            if (gameState.main.flags.unlockOtoshimonoBox) {
+                updateMessage('もう、そこは開いている。');
+                return;
+            }
+
+            _otoshiState = [false, false, false, false];
+
+            const sqStyle = `
+    width: 88px; height: 88px;
+    border:2px solid #d4af37; border-radius:14px;
+    background: rgba(255,255,255,0.95);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 42px; font-weight: 900;
+    color:#1a0f08;
+    box-shadow:0 2px 10px rgba(0,0,0,0.25);
+    transition: transform .06s, filter .1s;
+  `;
+
+            const okStyle = `
+    background:#fff; color:#1a0f08;
+    border:2px solid #d4af37; border-radius:10px;
+    padding:14px 24px; font-weight:800;
+    min-width:180px; cursor:pointer; margin-top:12px;
+  `;
+
+            const content = `
+    <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; justify-items:center; align-items:center; margin:12px 0 6px;">
+        <button id="otoshiSq0" style="${sqStyle}"></button>
+        <button id="otoshiSq1" style="${sqStyle}"></button>
+        <button id="otoshiSq2" style="${sqStyle}"></button>
+        <button id="otoshiSq3" style="${sqStyle}"></button>
+      </div>
+      <div style="text-align:center;">
+        <button id="otoshiOk" style="${okStyle}">OK</button>
+      </div>
+    </div>
+  `;
+
+            showModal('落とし物ボックス', content, [{ text: '閉じる', action: 'close' }]);
+
+            const refresh = () => {
+                for (let i = 0; i < 4; i++) {
+                    const b = document.getElementById(`otoshiSq${i}`);
+                    if (!b) continue;
+                    b.textContent = _otoshiState[i] ? '?' : '';
+                }
+            };
+
+            setTimeout(() => {
+                const sq = [0, 1, 2, 3].map(i => document.getElementById(`otoshiSq${i}`));
+                const ok = document.getElementById('otoshiOk');
+
+                const toggle = (i) => {
+                    _otoshiState[i] = !_otoshiState[i];
+                    if (typeof playSE === 'function') playSE('se-click');
+                    const el = sq[i];
+                    if (el) {
+                        el.style.transform = 'scale(0.97)';
+                        setTimeout(() => { el.style.transform = ''; }, 80);
+                    }
+                    refresh();
+                };
+
+                sq.forEach((el, i) => el?.addEventListener('click', () => toggle(i)));
+                refresh();
+
+                ok?.addEventListener('click', () => {
+                    const isOk = (_otoshiState[1] === true) && (_otoshiState[3] === true) && (_otoshiState[2] === true) && (_otoshiState[0] === false);
+                    if (isOk) {
+                        gameState.main.flags.unlockOtoshimonoBox = true;
+                        if (typeof playSE === 'function') playSE('se-clear');
+                        closeModal();
+
+                        updateMessage('落とし物ボックスが開いた。');
+
+                    } else {
+                        if (typeof playSE === 'function') playSE('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                    }
+                });
+            }, 0);
+        }
+
+
+
+
+
+
+        // --- キャビネット右：4色ボタンパズル ---
+        const _cabinetRightColors = [
+            { name: 'white', css: '#ffffff' },
+            { name: 'gray', css: '#bdbdbd' },
+            { name: 'red', css: '#e53935' },
+            { name: 'blue', css: '#1e88e5' },
+            { name: 'yellow', css: '#fdd835' },
+            { name: 'green', css: '#43a047' },
+            { name: 'orange', css: '#fb8c00' },
+            { name: 'pink', css: '#ec407a' },
+        ];
+        const _cabinetRightAnswer = ['blue', 'gray', 'pink', 'red'];
+        let _cabinetRightIdx = [0, 0, 0, 0];
+
+        function showCabinetRightPuzzle() {
+            if (gameState.main.flags.unlockCabinetRight) {
+                updateMessage('キャビネット右はもう開いている。');
+                return;
+            }
+
+            _cabinetRightIdx = [0, 0, 0, 0];
+
+            const squareStyle = `
+    width:64px;
+    height:64px;
+    border:2px solid #d4af37;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow:0 2px 10px rgba(0,0,0,0.25);
+    transition: transform .06s, filter .1s;
+  `;
+            const okStyle = `
+    background:#fff;
+    color:#1a0f08;
+    border:2px solid #d4af37;
+    border-radius:10px;
+    padding:14px 24px;
+    font-weight:800;
+    min-width:180px;
+    cursor:pointer;
+  `;
+
+            const content = `
+    <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+      <div style="display:flex; gap:12px; justify-content:center; align-items:center; margin-bottom:14px;">
+        <button id="cabRightSq1" style="${squareStyle}"></button>
+        <button id="cabRightSq2" style="${squareStyle}"></button>
+        <button id="cabRightSq3" style="${squareStyle}"></button>
+        <button id="cabRightSq4" style="${squareStyle}"></button>
+      </div>
+      <div style="text-align:center;">
+        <button id="cabRightOk" style="${okStyle}">OK</button>
+      </div>
+    </div>
+  `;
+
+            showModal('キャビネット右のロック', content, [{ text: '閉じる', action: 'close' }]);
+
+            setTimeout(() => {
+                const btns = [
+                    document.getElementById('cabRightSq1'),
+                    document.getElementById('cabRightSq2'),
+                    document.getElementById('cabRightSq3'),
+                    document.getElementById('cabRightSq4'),
+                ];
+                const ok = document.getElementById('cabRightOk');
+
+                const render = () => {
+                    btns.forEach((b, i) => {
+                        if (!b) return;
+                        const c = _cabinetRightColors[_cabinetRightIdx[i]];
+                        b.style.background = c.css;
+                        // 白は境界が見えにくいので内側ラインを足す
+                        b.style.outline = (c.name === 'white') ? '2px solid rgba(0,0,0,0.15)' : 'none';
+                    });
+                };
+
+                const next = (i) => {
+                    _cabinetRightIdx[i] = (_cabinetRightIdx[i] + 1) % _cabinetRightColors.length;
+                    if (typeof playSE === 'function') playSE('se-click');
+                    render();
+                };
+
+                btns.forEach((b, i) => b?.addEventListener('click', () => next(i)));
+
+                ok?.addEventListener('click', () => {
+                    const cur = _cabinetRightIdx.map(i => _cabinetRightColors[i].name);
+                    const isOk = cur.every((v, i) => v === _cabinetRightAnswer[i]);
+
+                    if (isOk) {
+                        gameState.main.flags.unlockCabinetRight = true;
+                        if (typeof playSE === 'function') playSE('se-clear');
+                        closeModal();
+                        updateMessage('キャビネット右のロックを解除した。');
+                        markProgress('27_cabinetright_unlock');
+                        renderCanvasRoom();
+                    } else {
+                        if (typeof playSE === 'function') playSE('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake(document.getElementById('modalContent'), 120, 'fx-shake');
+                    }
+                });
+
+                render();
+            }, 0);
+        }
+
+        // --- キャビネット左：テキスト入力パズル（5292） ---
+        function showCabinetLeftPuzzle() {
+            if (gameState.main.flags.unlockCabinetLeft) {
+                updateMessage('キャビネット左はもう開いている。');
+                return;
+            }
+
+            const inputStyle = `
+        width:220px;
+        padding:12px 10px;
+        border:2px solid #d4af37;
+        background: rgba(244, 241, 232, 0.95);
+        color:#1a0f08;
+        border-radius:10px;
+        text-align:center;
+        font-size:18px;
+        font-weight:800;
+        letter-spacing:0.12em;
+        outline:none;
+    `;
+
+            const okStyle = `
+        background:#fff;
+        color:#1a0f08;
+        border:2px solid #d4af37;
+        border-radius:10px;
+        padding:14px 24px;
+        font-weight:800;
+        min-width:180px;
+        cursor:pointer;
+        margin-top:10px;
+    `;
+
+            const content = `
+        <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+            <div style="font-weight:900; margin-bottom:10px;">暗証番号</div>
+            <input id="cabLeftInput" type="text" inputmode="numeric" autocomplete="one-time-code"
+                   style="${inputStyle}" placeholder="____" maxlength="8" />
+            <div style="text-align:center;">
+                <button id="cabLeftOk" style="${okStyle}">OK</button>
+            </div>
+        </div>
+    `;
+
+            showModal('キャビネット左のロック', content, [{ text: '閉じる', action: 'close' }]);
+
+            setTimeout(() => {
+                const el = document.getElementById('cabLeftInput');
+                const ok = document.getElementById('cabLeftOk');
+
+                const tryUnlock = () => {
+                    const v = (el?.value ?? '').trim();
+                    if (v === '5292') {
+                        gameState.main.flags.unlockCabinetLeft = true;
+                        if (typeof playSE === 'function') playSE('se-clear');
+                        closeModal();
+                        updateMessage('キャビネット左のロックを解除した。');
+                        markProgress?.('27_cabinetleft_unlock');
+                        renderCanvasRoom();
+                    } else {
+                        if (typeof playSE === 'function') playSE('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                        if (el) { el.value = ''; el.focus(); }
+                    }
+                };
+
+                ok?.addEventListener('click', tryUnlock);
+                el?.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        tryUnlock();
+                    }
+                });
+
+                el?.focus();
+            }, 0);
+        }
+
+
+        // --- テーブル端末：3つの記号ボタンパズル ---
+        const _cTabletSymbols = ['♪', '●', '■', '×', '~', '★'];
+        const _cTabletAnswer = ['■', '●', '★'];
+        let _cTabletIdx = [0, 0, 0];
+
+        function showTabletPuzzle() {
+            if (gameState.main.flags.unlockTablet) {
+                updateMessage('端末はもう解除されている。');
+                return;
+            }
+
+            _cTabletIdx = [0, 0, 0];
+
+            const squareStyle = `
+    width:72px;
+    height:72px;
+    border:2px solid #d4af37;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow:0 2px 10px rgba(0,0,0,0.25);
+    transition: transform .06s, filter .1s;
+    background: rgba(255,255,255,0.92);
+    color:#1a0f08;
+    font-size:34px;
+    font-weight:900;
+    line-height:72px;
+    text-align:center;
+    padding: 0px 0px;
+  `;
+
+            const okStyle = `
+    background:#fff;
+    color:#1a0f08;
+    border:2px solid #d4af37;
+    border-radius:10px;
+    padding:14px 24px;
+    font-weight:800;
+    min-width:180px;
+    cursor:pointer;
+  `;
+
+            const content = `
+    <div style="background:#6a3f22; border:2px solid #d4af37; border-radius:12px; padding:18px 16px;">
+      <div style="display:flex; gap:12px; justify-content:center; align-items:center; margin-bottom:14px;">
+        <button id="cTabSq1" style="${squareStyle}"></button>
+        <button id="cTabSq2" style="${squareStyle}"></button>
+        <button id="cTabSq3" style="${squareStyle}"></button>
+      </div>
+      <div style="text-align:center;">
+        <button id="cTabOk" style="${okStyle}">OK</button>
+      </div>
+    </div>
+  `;
+
+            showModal('端末のロック', content, [{ text: '閉じる', action: 'close' }]);
+
+            setTimeout(() => {
+                const btns = [
+                    document.getElementById('cTabSq1'),
+                    document.getElementById('cTabSq2'),
+                    document.getElementById('cTabSq3'),
+                ];
+                const ok = document.getElementById('cTabOk');
+
+                const render = () => {
+                    btns.forEach((b, i) => {
+                        if (!b) return;
+                        b.textContent = _cTabletSymbols[_cTabletIdx[i]];
+                    });
+                };
+
+                const next = (i) => {
+                    _cTabletIdx[i] = (_cTabletIdx[i] + 1) % _cTabletSymbols.length;
+                    if (typeof playSE === 'function') playSE('se-click');
+                    render();
+                };
+
+                btns[0]?.addEventListener('click', () => next(0));
+                btns[1]?.addEventListener('click', () => next(1));
+                btns[2]?.addEventListener('click', () => next(2));
+
+                ok?.addEventListener('click', () => {
+                    const cur = [
+                        _cTabletSymbols[_cTabletIdx[0]],
+                        _cTabletSymbols[_cTabletIdx[1]],
+                        _cTabletSymbols[_cTabletIdx[2]],
+                    ];
+                    const isOk = cur.every((v, i) => v === _cTabletAnswer[i]);
+
+                    if (isOk) {
+                        gameState.main.flags.unlockTablet = true;
+                        if (typeof playSE === 'function') playSE('se-clear');
+                        closeModal();
+                        updateMessage('端末のロックを解除した。');
+                        renderCanvasRoom();
+                        markProgress?.('unlock_tablet_27');
+                    } else {
+                        if (typeof playSE === 'function') playSE('se-error');
+                        updateMessage('ちがうようだ。');
+                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
+                    }
+                });
+
+                render();
+            }, 0);
+        }
+
+
+        function handleDoor() {
+            // エンディング遷移共通ハンドラ
+            const trueEndFlg = gameState.main.flags.ghostToHeaven && gameState.main.flags.unlockCoordinate
+            const goEnding = () => {
+
+                if (trueEndFlg) {
+                    gameState.endings.true = true;
+                    travelWithStepsTrueEnd();
+                } else if (gameState.main.flags.safeBroken) {
+                    travelWithSteps('end');
+                } else if (gameState.main.flags.unlockSafe && hasItem('bar')) {
+                    travelWithSteps('endWorse', '#fff');
+                    setTimeout(() => {
+                        playSE('se-police');
+                    }, 600);
+                } else if (gameState.main.flags.unlockSafe && !hasItem('bar')) {
+                    travelWithSteps('endGood', '#fff');
+                }
+            };
+
+            goEnding();
+        }
+
+        function showObj(flagKey, title, imgSrc, msg, altImgSrc) {
+            const f = gameState.main.flags;
+            if (flagKey) f[flagKey] = true;
+
+            const imgId = 'objImg_' + Date.now(); // 1モーダル1IDで衝突回避
+            let isAlt = false;
+
+            const content =
+                `<img id="${imgId}" src="${imgSrc}"
+          style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`;
+
+            const buttons = [];
+
+            // altImgSrc があるときだけ「言語切替」ボタンを出す
+            if (altImgSrc) {
+                buttons.push({
+                    text: '🌐 En',
+                    action: () => {
+                        const el = document.getElementById(imgId);
+                        if (!el) return;
+                        isAlt = !isAlt;
+                        el.src = isAlt ? altImgSrc : imgSrc;
+                        updateMessage(isAlt ? '英語版を表示中' : msg);
+                    }
+                });
+            }
+
+            buttons.push({ text: '閉じる', action: 'close' });
+
+            showModal(title, content, buttons);
+            updateMessage(msg);
+        }
+
+        // アイテム管理
+        function addItem(itemId) {
+            playSE('se-item');
+            if (gameState.inventory.length < 7) {
+                gameState.inventory.push(itemId);
+                updateInventoryDisplay();
+            } else {
+                updateMessage('アイテム欄がいっぱいだ。どこかで減らしてこよう');
+            }
+        }
+
+        function removeItem(itemId) {
+            const index = gameState.inventory.indexOf(itemId);
+            if (index !== -1) {
+                gameState.inventory.splice(index, 1);
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateInventoryDisplay();
+            }
+        }
+
+        function hasItem(itemId) {
+            return gameState.inventory.includes(itemId);
+        }
+
+        function useItem(slotIndex) {
+            const clickedItem = gameState.inventory[slotIndex];
+            if (!clickedItem) return;
+
+            // -------------------------
+            // 1) 「使用対象を選んでください」中なら、クリックされたアイテムを対象として判定
+            //    ・別アイテムクリックでフラグ解除（成功/失敗どっちでも）
+            //    ・失敗時は無音（メッセージも出さない）
+            // -------------------------
+            if (gameState.usingItem) {
+                // 同じスロットを押したらキャンセル（メッセージは出しても出さなくてもOK）
+                if (gameState.usingItem.slotIndex === slotIndex) {
+                    clearUsingItem(true);
+                    return;
+                }
+
+                const success = tryPutSaltOnYakisoba(clickedItem);
+
+                // 成功でも失敗でも解除（仕様どおり）
+                clearUsingItem(true);
+
+                if (success) {
+                    updateMessage('焼きそばに塩を振った。');
+                    gameState.main.flags.useSaltToYakisoba = true;
+                    updateInventoryDisplay();
+                }
+                return;
+            }
+
+            // -------------------------
+            // 2) 塩をクリックしたら「使用対象選択モード」へ
+            // -------------------------
+            if (clickedItem === 'salt') {
+                gameState.usingItem = { itemId: clickedItem, slotIndex };
+                gameState.selectedItem = clickedItem;
+                gameState.selectedItemSlot = slotIndex;
+                updateMessage('使用対象を選んでください');
+                updateInventoryDisplay();
+                return;
+            }
+
+            // -------------------------
+            // 3) それ以外は今まで通りの挙動（既存ロジック）
+            // -------------------------
+
+            // ★すでに選択中のスロットを再クリック → 解除
+            if (gameState.selectedItemSlot === slotIndex) {
+                gameState.selectedItem = null;
+                gameState.selectedItemSlot = null;
+                updateMessage('アイテム選択を解除しました。');
+                updateInventoryDisplay();
+                return;
+            }
+
+            // ★通常の選択
+            gameState.selectedItem = clickedItem;
+            gameState.selectedItemSlot = slotIndex;
+            updateMessage('アイテムを選択した。');
+            updateInventoryDisplay();
+        }
+
+
+
+        function clearUsingItem(silent = true) {
+            gameState.usingItem = null;
+            gameState.selectedItem = null;
+            gameState.selectedItemSlot = null;
+            updateInventoryDisplay();
+            // silent=true ならメッセージ更新もしない（失敗時は無音）
+            if (!silent) updateMessage('アイテム選択を解除しました。');
+        }
+
+        function tryPutSaltOnYakisoba(targetItemId) {
+            if (targetItemId != 'yakisoba') {
+                return false;
+            }
+            gameState.main.flags.saltToYakisobaCnt++;
+            showModal(
+                '焼きそばに塩を振った',
+                `<img src="${IMAGES.modals.yakisobaSalt}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                [
+                    {
+                        text: '閉じる',
+                        action: () => {
+                            closeModal();
+
+                        }
+                    }
+                ]
+            );
+            return true;
+        }
+
+
+        function getItemName(itemId) {
+            const names = {
+                coin: 'クマコイン',
+                bear: 'クマ妖精',
+                ticketIju: '移住チケット',
+                ticketYakisoba: '焼きそばチケット',
+                operaGlasses: 'オペラグラス',
+                cardkey: 'カードキー',
+                elevatorCard: 'エレベーターカード',
+                baken: '馬券',
+                yakisoba: '焼きそば',
+                key: '鍵',
+                water: '水',
+                tea: 'お茶の葉',
+                part: '何かの部品',
+                board: '銘板',
+                salt: '塩'
+
+
+            };
+            return names[itemId] || itemId;
+        }
+
+
+        function renderNavigation() {
+            const navDiv = document.querySelector('.navigation');
+            navDiv.innerHTML = '';
+
+            const isMobile = window.matchMedia('(max-width: 600px)').matches;
+
+            if (isMobile) {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.textContent = 'ナビ';
+                btn.onclick = () => openNavModal();
+                navDiv.appendChild(btn);
+                return;
+            }
+
+            // PCは従来通り（ルームボタン並べる）
+            gameState.openRooms.forEach(roomId => {
+                const b = document.createElement('button');
+                b.className = 'nav-btn';
+                b.textContent = rooms[roomId].name;
+                b.onclick = () => changeRoom(roomId);
+                navDiv.appendChild(b);
+            });
+        }
+
+        function openNavModal() {
+            const cur = gameState.currentRoom;
+            const listHtml = `
+    <div style="display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto;">
+      ${gameState.openRooms.map(roomId => {
+                const isHere = roomId === cur;
+                return `
+          <button class="nav-btn" style="width:100%; opacity:${isHere ? 0.5 : 1};"
+            ${isHere ? 'disabled' : ''}
+            onclick="(function(){ closeModal(); changeRoom('${roomId}'); })()">
+            ${rooms[roomId].name}${isHere ? '（ここ）' : ''}
+          </button>
+        `;
+            }).join('')}
+    </div>
+  `;
+            showModal('移動先', listHtml, [{ text: '閉じる', action: 'close' }]);
+        }
+
+        function addNaviItem(room) {
+            if (!gameState.openRooms.includes(room)) {
+                gameState.openRooms.push(room);
+                return true;
+            }
+            return false;
+        }
+
+        // インベントリ表示更新
+        function updateInventoryDisplay() {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach((slot, index) => {
+                slot.innerHTML = '';
+                if (gameState.inventory[index]) {
+                    const img = document.createElement('img');
+                    img.src = IMAGES.items[gameState.inventory[index]];
+                    img.onerror = function () {
+                        // 画像が読み込めない場合はプレースホルダーを表示
+                        this.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder';
+                        placeholder.textContent = getItemName(gameState.inventory[index]);
+                        placeholder.style.width = '60px';
+                        placeholder.style.height = '60px';
+                        slot.appendChild(placeholder);
+                    };
+                    slot.appendChild(img);
+                    const magBtn = document.createElement('div');
+                    magBtn.className = 'magnifier-btn';
+                    magBtn.title = '拡大表示';
+                    magBtn.innerHTML = '<img src="images/magnifier.png" alt="拡大">';
+                    magBtn.onclick = (e) => {
+                        e.stopPropagation();
+
+                        const itemId = gameState.inventory[index];
+
+
+                        // デフォの中身
+                        let content = `<img src="${img.src}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
+                        let buttons = [{ text: '閉じる', action: 'close' }];
+
+
+                        if (itemId === 'baken') {
+                            buttons = [
+                                {
+                                    text: '裏を見る',
+                                    action: () => {
+                                        const stamped = gameState.main.flags.bakenStamped;
+                                        const after = stamped ? IMAGES.items.bakenUraStamped : IMAGES.items.bakenUra;
+                                        const msg = stamped ? 'もう交換済だ' : '焼きそばが無料でもらえるようだ';
+
+                                        window._nextModal = {
+                                            title: '馬券を裏返した',
+                                            content: `
+                                                <div class="modal-anim fast">
+                                                <img src="${IMAGES.items.baken}">
+                                                <img src="${after}">
+                                                </div>
+                                                                                `,
+                                            buttons: [
+                                                { text: '閉じる', action: 'close' }
+                                            ],
+                                        };
+                                        closeModal();
+                                        updateMessage(msg);
+                                        gameState.main.flags.checkBaken = true;
+
+                                    }
+                                },
+                                { text: '閉じる', action: 'close' }
+                            ];
+                        }
+
+
+                        showModal(
+                            getItemName(itemId),
+                            content,
+                            buttons
+                        );
+                    };
+                    slot.appendChild(magBtn);
+                }
+                // ★選択中ならselectedクラス追加
+                if (gameState.selectedItemSlot === index) {
+                    slot.classList.add('selected');
+                } else {
+                    slot.classList.remove('selected');
+                }
+            });
+        }
+
+
+        // メッセージ更新
+        function updateMessage(message) {
+            //document.getElementById('messageArea').innerHTML = message;
+            document.getElementById('msgText').textContent = message;
+        }
+
+        function updateMessageHTML(html) {
+            const el = document.getElementById('msgText');
+            el.innerHTML = html;
+            el.querySelectorAll('a').forEach(a => {
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.style.color = '#d4af37';
+                a.style.textDecoration = 'underline';
+            });
+        }
+
+        // モーダル表示
+        function showModal(title, content, buttons, onSequenceSuccess, options) {
+            options = options || {};
+            let modalHtml = `<h3>${title}</h3><div>${content}</div>`;
+            if (buttons && buttons.length > 0) {
+                const columnStyle = options.columnButtons
+                    ? 'display:flex; flex-direction:column; gap:12px; align-items:stretch;'
+                    : 'text-align:center; display:flex; gap:10px; justify-content:center;';
+
+                modalHtml += `<div id="modalButtons" style="${columnStyle}"></div>`;
+                modalHtml += `<div id="modalClose" style="margin-top:25px;text-align:center;"></div>`;
+            }
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modal').style.display = 'flex';
+
+            if (!buttons || buttons.length === 0) return;
+
+            let pressed = [];
+            let heartCnt = 0;
+            let checkCnt = 0;
+            let houseCnt = 0;
+
+            // 画像/通常ボタンとcloseボタンで分ける
+            const modalButtons = document.getElementById('modalButtons');
+            const modalClose = document.getElementById('modalClose');
+
+            buttons.forEach((button, idx) => {
+                // 閉じるボタンは下へ
+                if (button.action === 'close') {
+                    const btn = document.createElement('button');
+                    btn.textContent = button.text || '閉じる';
+                    btn.className = 'modal-close-btn';
+                    btn.onclick = function () {
+                        closeModal();
+                        if (typeof onSequenceSuccess === "function") {
+                            onSequenceSuccess();
+                        }
+                    };
+                    modalClose.appendChild(btn);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.style.margin = "0 10px 10px 0";
+                    if (button.img) {
+                        btn.innerHTML = `<img src="${button.img}" alt="${button.text || ''}" style="width:80px;height:80px;vertical-align:middle;">`;
+                    } else {
+                        btn.textContent = button.text;
+                        btn.className = 'text-btn';
+                    }
+                    btn.onclick = function () {
+                        if (button.action === 'restart') {
+                            restartGame();
+                        } else if (typeof button.action === "function") {
+                            button.action();
+                        } else if (typeof button.action === 'string') {
+                            closeModal();
+                            handleAreaClick(button.action);
+                        }
+                    };
+                    modalButtons.appendChild(btn);
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            // 次のモーダルが登録されていれば表示
+            if (window._nextModal) {
+                // 登録内容は {title, content, buttons, after} オブジェクト
+                let modal = window._nextModal;
+                window._nextModal = null; // クリア
+
+                if (typeof modal === 'function') {
+                    try { modal(); } catch (e) { }
+                    window.dispatchEvent(new Event('modal:closed'));
+                    return;
+                }
+
+                if (modal.before) modal.before();
+                showModal(modal.title, modal.content, modal.buttons);
+                if (modal.after) modal.after();
+            }
+            window.dispatchEvent(new Event('modal:closed'));
+        }
+
+        // ゲームリスタート
+        function restartGame() {
+            gameState = getDefaultGameState();
+            closeModal();
+            initGame();
+            updateInventoryDisplay();
+        }
+
+        let isBGMPlaying = false;
+        let isBGMInitialized = false; // 初回クリック判定用
+
+        // 初回クリック時にだけBGMを再生
+        function initBGMOnce() {
+            if (!isBGMInitialized) {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.3;
+                bgm.play();
+                isBGMPlaying = true;
+                isBGMInitialized = true;
+                document.getElementById('bgm-toggle').textContent = "🔊 BGM";
+            }
+        }
+        window.addEventListener('click', initBGMOnce, { once: true });
+
+        function toggleBGM() {
+            const bgm = document.getElementById('bgm');
+            const btn = document.getElementById('bgm-toggle');
+            if (!isBGMPlaying) {
+                bgm.play();
+                isBGMPlaying = true;
+                btn.textContent = "🔊 BGM";
+            } else {
+                bgm.pause();
+                isBGMPlaying = false;
+                btn.textContent = "🔇 BGM";
+            }
+        }
+
+        function changeBGM(newSrc) {
+            const bgm = document.getElementById('bgm');
+            // ファイル名のみで比較
+            const current = bgm.src.split('/').pop();
+            const next = newSrc.split('/').pop();
+            if (current === next) return; // すでにそのBGMなら何もしない
+
+            const isPlaying = isBGMPlaying;
+            bgm.pause();
+            bgm.src = newSrc;
+            bgm.load();
+            if (isPlaying) {
+                bgm.play();
+            }
+        }
+
+        function pauseBGM() {
+            const bgm = document.getElementById('bgm');
+            bgm.src = "";
+            bgm.pause();
+        }
+
+        function playSE(id) {
+            const se = document.getElementById(id);
+            se.currentTime = 0;
+            se.play();
+        }
+        function stopSE(id) {
+            const se = document.getElementById(id);
+            se.pause();
+        }
+
+        // どこかで最初に一度だけ呼ぶ
+        let loadedImages = {};
+        function preloadImages() {
+            // 部屋画像
+            Object.values(IMAGES.rooms).forEach(val => {
+                if (Array.isArray(val)) {
+                    val.forEach(src => {
+                        if (!loadedImages[src]) {
+                            const img = new Image();
+                            img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                            img.src = src;
+                            loadedImages[src] = img;
+
+
+
+                        }
+                    });
+                } else if (typeof val === "string") {
+                    if (!loadedImages[val]) {
+                        const img = new Image();
+                        img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                        img.src = val;
+                        loadedImages[val] = img;
+                    }
+                }
+            });
+            // アイテム画像
+            Object.values(IMAGES.items).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+            // モーダル画像
+            Object.values(IMAGES.modals).forEach(src => {
+                if (!loadedImages[src]) {
+                    const img = new Image();
+                    img.onload = () => { try { renderCanvasRoom(); } catch (e) { } };
+                    img.src = src;
+                    loadedImages[src] = img;
+                }
+            });
+        }
+
+        // save&load
+        function saveGameToSlot(slotIndex) {
+            const toSave = { ...gameState, __version: SAVE_VERSION };
+
+            const payload = {
+                data: toSave,
+                savedAt: Date.now()
+            };
+
+            localStorage.setItem(SAVE_KEYS[slotIndex], JSON.stringify(payload));
+            updateMessage(`セーブ${slotIndex + 1}に保存しました！`);
+        }
+
+        function loadGameFromSlot(slotIndex) {
+            const raw = localStorage.getItem(SAVE_KEYS[slotIndex]);
+            if (!raw) {
+                updateMessage(`セーブ${slotIndex + 1}のデータがありません`);
+                return;
+            }
+
+            let saved;
+            try {
+                const parsed = JSON.parse(raw);
+                // 新形式：{ data: {...}, savedAt: ... }
+                if (parsed && parsed.data) {
+                    saved = parsed.data;
+                } else {
+                    // 旧形式：そのまま gameState が入っている
+                    saved = parsed;
+                }
+            } catch (e) {
+                console.error(e);
+                updateMessage('セーブデータの読み込みに失敗しました');
+                return;
+            }
+
+            const def = getDefaultGameState();
+            const merged = deepMerge(def, saved);
+
+            if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
+            if (!merged.currentRoom || !rooms[merged.currentRoom]) merged.currentRoom = def.currentRoom;
+
+            gameState = merged;
+
+            changeRoom(gameState.currentRoom);
+            updateInventoryDisplay?.();
+            renderNavigation?.();
+            updateMessage(`セーブ${slotIndex + 1}をロードしました！`);
+        }
+
+        function getSaveSlotLabel(slotIndex) {
+            const raw = localStorage.getItem(SAVE_KEYS[slotIndex]);
+            if (!raw) {
+                return `セーブ${slotIndex + 1}（空）`;
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                const savedAt = parsed.savedAt;
+                if (!savedAt) {
+                    return `セーブ${slotIndex + 1}（日時不明）`;
+                }
+                const d = new Date(savedAt);
+                const jp = d.toLocaleString('ja-JP');
+                return `セーブ${slotIndex + 1}（${jp}）`;
+            } catch {
+                return `セーブ${slotIndex + 1}（読み込みエラー）`;
+            }
+        }
+
+        function openLoadMenu() {
+            const buttons = [
+                {
+                    text: getSaveSlotLabel(0),
+                    action: () => {
+                        loadGameFromSlot(0);
+                        closeModal();
+                    }
+                },
+                {
+                    text: getSaveSlotLabel(1),
+                    action: () => {
+                        loadGameFromSlot(1);
+                        closeModal();
+                    }
+                },
+                { text: 'やめる', action: 'close' }
+            ];
+
+            showModal('ロードするデータを選んでください', '', buttons, null, { columnButtons: true });
+        }
+
+        function saveGame() {
+            const buttons = [
+                {
+                    text: getSaveSlotLabel(0) + ' に上書き保存',
+                    action: () => {
+                        saveGameToSlot(0);
+                        closeModal();
+                    }
+                },
+                {
+                    text: getSaveSlotLabel(1) + ' に上書き保存',
+                    action: () => {
+                        saveGameToSlot(1);
+                        closeModal();
+                    }
+                },
+                { text: 'やめる', action: 'close' }
+            ];
+
+            showModal('セーブ先を選んでください', '', buttons, null, { columnButtons: true });
+        }
+
+        function loadGame() {
+            openLoadMenu();
+        }
+
+        function deepMerge(target, source) {
+            if (source === undefined || source === null) return target;
+            if (Array.isArray(source)) return source.slice();
+            if (typeof source === 'object') {
+                const out = (target && typeof target === 'object') ? { ...target } : {};
+                for (const k of Object.keys(source)) {
+                    out[k] = deepMerge(target ? target[k] : undefined, source[k]);
+                }
+                return out;
+            }
+            return source;
+        }
+
+        function showToast(text, ms = 2600) {
+            const el = document.getElementById('toast');
+            if (!el) return;
+            el.textContent = text;
+            el.style.opacity = '1';
+            el.style.transform = 'translateX(-50%) translateY(0)';
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(-50%) translateY(-8px)';
+            }, ms);
+        }
+
+
+        window.addEventListener('resize', () => renderNavigation());
+
+        window.addEventListener('keydown', e => {
+            if (e.key === 'F2') {
+                DEV_MODE = !DEV_MODE;
+                renderCanvasRoom();
+            }
+        });
+
+        // ゲーム開始
+        preloadImages();
+        initGame();
+    </script>
+    <div id="toast"
+        style="position:fixed;left:50%;top:14px;transform:translateX(-50%);
+padding:10px 14px;border-radius:8px;background:#1f6feb;color:#fff;font-weight:700;
+box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s; z-index:9999;">
+    </div>
+
+</body>
+
+</html>
