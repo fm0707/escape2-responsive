@@ -1385,7 +1385,7 @@
                 book6: ['images/28/book_6.png'],
                 boxInner: ['images/28/box_inner.png', 'images/28/box_inner2.png'],
 
-                end: ['images/28/end.png'],
+                end: ['images/28/end.png', 'images/28/end2.png'],
                 // endWorse: ['images/28/end_worse.jpeg'],
                 trueEnd: ['images/28/true_end.png'],
                 trueEnd2: ['images/28/true_end2.png'],
@@ -2822,7 +2822,17 @@
                         }),
                         description: '子カニ',
                         zIndex: 5,
-                        usable: () => true,
+                        usable: () => gameState.end.flags.backgroundState==0,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 58.5, y: 52.2, width: 33.3, height: 6.0,
+                        onClick: clickWrap(function () {
+                            updateMessage('子カニたちが家路を急いでいる');
+                        }),
+                        description: '子カニ',
+                        zIndex: 5,
+                        usable: () => gameState.end.flags.backgroundState==1,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
