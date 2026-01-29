@@ -1382,11 +1382,12 @@
                 book4: ['images/28/book_4.png'],
                 book5: ['images/28/book_5.png'],
                 book6: ['images/28/book_6.png'],
-                boxInner: ['images/28/box_inner.png'],
+                boxInner: ['images/28/box_inner.png', 'images/28/box_inner2.png'],
 
                 end: ['images/28/end.png'],
                 // endWorse: ['images/28/end_worse.jpeg'],
                 trueEnd: ['images/28/true_end.png'],
+                trueEnd2: ['images/28/true_end2.png'],
 
             },
             items: {
@@ -1416,6 +1417,7 @@
                 kaniDead: 'images/28/kani_dead.png',
                 onigiri: 'images/28/onigiri.png',
                 onigiriBack: 'images/28/onigiri_back.png',
+                yakiOnigiri: 'images/28/yaki_onigiri.png',
                 board: 'images/28/board.png',
                 seed: 'images/28/seed.png',
                 water: 'images/28/water.png',
@@ -1470,6 +1472,10 @@
                 fertilizerToPlantar7b: 'images/28/modal_fertilizer_7b.png',
                 keyHasami: 'images/28/modal_key_hasami.png',
                 kaniKey: 'images/28/modal_kani_key.png',
+                grilOnigiri1: 'images/28/modal_gril_onigiri_1.png',
+                grilOnigiri2: 'images/28/modal_gril_onigiri_2.png',
+                bearAppear: 'images/28/modal_bear_appear.png',
+                bearLeave: 'images/28/modal_bear_leave.png',
 
 
 
@@ -1522,6 +1528,7 @@
                         readBook6: false, unlockPowerOffPuzzle: false,
                         appearOrangeFruit: false,
                         kaniCutString: false,
+                        cookedOnigiri: false,
 
                         bearAppear: false,
 
@@ -2605,7 +2612,7 @@
                 description: '',
                 clickableAreas: [
                     {
-                        x: 56.3, y: 28.2, width: 28.7, height: 24.2,
+                        x: 66.8, y: 58.8, width: 24.0, height: 23.8,
                         onClick: clickWrap(function () {
                             acquireItemOnce('foundDriver', 'driver', 'ドライバーを見つけた', IMAGES.items.driver, 'ドライバーを手に入れた');
                         }),
@@ -2613,6 +2620,82 @@
                         zIndex: 5,
                         usable: () => !gameState.main.flags.foundDriver,
                         item: { img: 'driver', visible: () => !gameState.main.flags.foundDriver }
+                    },
+                    {
+                        x: 14.1, y: 25.0, width: 28.9, height: 30.3,
+                        onClick: clickWrap(function () {
+                            const f = gameState.main.flags;
+
+                            // もう焼いてたら軽く流す
+                            if (f.cookedOnigiri) {
+                                updateMessage('焼きおにぎりの香りがする。');
+                                return;
+                            }
+
+                            // 電源OFFなら焼けない
+                            if (!f.powerOn) {
+                                updateMessage('電源が入っていない。');
+                                return;
+                            }
+
+                            // 電源ONかつ、おにぎりを使ってるなら焼く
+                            if (gameState.selectedItem === 'onigiri') {
+                                playSE('se-gril');
+
+                                // 2枚アニメ
+                                const frames = [
+                                    IMAGES.modals.grilOnigiri1,
+                                    IMAGES.modals.grilOnigiri2,
+                                ];
+                                const animHtml = `
+        <div class="modal-anim frames" style="height: min(400px, 80vw);">
+          ${frames.map(src => `<img src="${src}" alt="">`).join('')}
+        </div>
+      `;
+
+                                showModal(
+                                    'おにぎりを置いた',
+                                    animHtml,
+                                    [{ text: '閉じる', action: 'close' }]
+                                );
+
+                                // 変換：onigiri → yakiOnigiri
+                                removeItem('onigiri');
+                                // addItem('yakiOnigiri');
+                                updateInventoryDisplay?.();
+
+                                f.cookedOnigiri = true;
+                                updateMessage('おにぎりを焼いた。');
+                                return;
+                            }
+
+                            // それ以外は触れない
+                            updateMessage('熱くて触ることができない');
+
+                        }),
+                        description: '電熱版',
+                        zIndex: 1,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 21.8, y: 31.3, width: 15.4, height: 16.0,
+                        onClick: clickWrap(function () {
+                            if (gameState.main.flags.powerOn) {
+                                updateMessage('熱くて触ることができない');
+                            } else {
+                                acquireItemOnce('gotYakionigiri', 'yakiOnigiri', '焼きおにぎりを手に入れた', IMAGES.items.yakiOnigiri, '焼きおにぎりを手に入れた');
+
+                                // ★ 直後にクマ妖精イベント
+                                setTimeout(() => {
+                                    showBearFairyEvent();
+                                }, 200);
+                            }
+                        }),
+                        description: '焼きおにぎり',
+                        zIndex: 5,
+                        usable: () => gameState.main.flags.cookedOnigiri && !gameState.main.flags.gotYakionigiri,
+                        item: { img: 'yakiOnigiri', visible: () => gameState.main.flags.cookedOnigiri && !gameState.main.flags.gotYakionigiri }
                     },
 
                     {
@@ -2686,6 +2769,63 @@
                         onClick: clickWrap(function () {
                             updateMessage('カニを因果から救いました。おめでとうございます！');
                             showEndingReport('trueEnd');
+                        }),
+                        description: 'トゥルーエンド',
+                        usable: () => true,
+                    },
+
+                ]
+            },
+            trueEnd2: {
+                name: 'トゥルーエンド2',
+                description: 'カニを因果から救い、ひもじいクマにご飯をあげました。',
+                clickableAreas: [
+                    {
+                        x: 1.4, y: 22.8, width: 59.2, height: 41.0,
+                        onClick: clickWrap(function () {
+                            updateMessage('カニファミリーがピクニックしている');
+                        }),
+                        description: 'カニファミリー',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 61.5, y: 13.2, width: 38.5, height: 32.4,
+                        onClick: clickWrap(function () {
+                            updateMessage('クマ妖精はなぜかピクニックに参加している');
+                        }),
+                        description: 'クマ妖精',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 50.5, y: 68.6, width: 28.8, height: 15.6,
+                        onClick: clickWrap(function () {
+                            updateMessage('焼きおにぎりだ');
+                        }),
+                        description: '焼きおにぎり',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 23.2, y: 64.4, width: 23.5, height: 11.0,
+                        onClick: clickWrap(function () {
+                            updateMessage('食べやすいようカットされた柿だ');
+                        }),
+                        description: 'カットされた柿',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+
+                    {
+                        x: 0, y: 0, width: 100, height: 100,
+                        onClick: clickWrap(function () {
+                            updateMessage('カニを因果から救いました。おめでとうございます！');
+                            showEndingReport('trueEnd2');
                         }),
                         description: 'トゥルーエンド',
                         usable: () => true,
@@ -2911,7 +3051,7 @@
             }
 
             // BGM切替はそのまま
-            if (roomId === "trueEnd") {
+            if (roomId === "trueEnd" || roomId === "trueEnd2") {
                 changeBGM("sounds/28/jinja_ichou_namiki.mp3");
 
             } else if (roomId === "end") {
@@ -2937,7 +3077,7 @@
             renderNavigation();
         }
 
-        const END_IDS = new Set(['end', 'trueEnd']);
+        const END_IDS = new Set(['end', 'trueEnd', 'trueEnd2']);
 
         // ===== changeRoom フック：=====
         const _changeRoom_custom = changeRoom;
@@ -3195,6 +3335,12 @@
         function getRoomBackgroundImage(roomId, gameState) {
             let imgList = IMAGES.rooms[roomId]; // ★ const → let
 
+            if (roomId === 'boxInner') {
+                return gameState.main.flags.powerOn
+                    ? IMAGES.rooms.boxInner[0]
+                    : IMAGES.rooms.boxInner[1];
+            }
+
             // ★ book1〜3みたいに {jp:[], en:[]} 形式なら言語で選ぶ
             if (imgList && !Array.isArray(imgList) && (imgList.jp || imgList.en)) {
                 imgList = imgList[uiLang] || imgList.jp || imgList.en;
@@ -3361,6 +3507,11 @@
                     label: "TRUE END",
                     desc: "カニの団欒"
                 },
+                trueEnd2: {
+                    title: "🦀 TRUE END2",
+                    label: "TRUE END2",
+                    desc: "カニクマハピネス"
+                },
                 end: {
                     title: "🌇 NORMAL END ",
                     label: "NORMAL END ",
@@ -3378,6 +3529,9 @@
             switch (endingId) {
                 case "trueEnd":
                     secretText = "🦀 カニの平和を守りました";
+                    break;
+                case "trueEnd2":
+                    secretText = "🦀🐻 カニの平和を守り、クマの空腹を満たしました";
                     break;
                 case "end":
                     secretText = `😢 犠牲がありました`;
@@ -4119,6 +4273,44 @@
             );
         }
 
+        function showBearFairyEvent() {
+            showModal(
+                'どこからともなくクマ妖精があらわれた。「良い匂い…」',
+                `<img src="${IMAGES.modals.bearAppear}" style="width:100%;max-width:360px;">`,
+                [
+                    {
+                        text: '焼きおにぎりをあげる',
+                        action: () => {
+                            // 焼きおにぎり消費
+                            removeItem('yakiOnigiri');
+                            updateInventoryDisplay?.();
+
+                            gameState.main.flags.bearAppear = true;
+                            playSE('se-bear-eat');
+
+                            closeModal();
+
+                            // 退場モーダル
+                            setTimeout(() => {
+                                showModal(
+                                    'クマ妖精は嬉しそうに去って行った',
+                                    `<img src="${IMAGES.modals.bearLeave}" style="width:100%;max-width:360px;">`,
+                                    [
+                                        {
+                                            text: '閉じる',
+                                            action: 'close'
+                                        }
+                                    ]
+                                );
+                                playSE('se-bear-flying');
+                            }, 200);
+                        }
+                    }
+                ]
+            );
+        }
+
+
 
 
 
@@ -4128,8 +4320,14 @@
             const goEnding = () => {
 
                 if (trueEndFlg) {
+
                     gameState.endings.true = true;
-                    travelWithStepsTrueEnd();
+                    if (gameState.main.flags.bearAppear) {
+                        travelWithSteps('trueEnd2');
+                    } else {
+                        travelWithStepsTrueEnd();
+                    }
+
                 } else {
                     travelWithSteps('end');
                 }
