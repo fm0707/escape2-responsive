@@ -3643,7 +3643,7 @@
                     secretText = "🦀🐻 カニの平和を守り、クマの空腹を満たしました";
                     break;
                 case "end":
-                    secretText = `😢 犠牲がありました`;
+                    secretText = gameState.main.flags.kaniHealing? "🏥 カニもいつか回復するでしょう":"😢 犠牲がありました";
                     break;
 
                 default:
@@ -4414,6 +4414,7 @@
                                     [{ text: '閉じる', action: 'close' }]
                                 );
                                 playSE('se-bear-flying');
+                                updateMessage('クマ妖精は去って行った。');
                             }, 200);
                         }
                     }
