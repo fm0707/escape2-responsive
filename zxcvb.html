@@ -2063,7 +2063,7 @@
                                 `<img src="${IMAGES.modals.bearHeal}" style="width:100%;max-width:360px;">`,
                                 [{ text: 'つづける', action: 'close' }]
                             );
-                            playSE('se-angel'); // 好みで（なければ消してOK）
+                            playSE('se-angel'); 
 
                             // 次モーダル予約
                             window._nextModal = () => {
@@ -2083,6 +2083,7 @@
                                     }]
                                 );
                                 playSE('se-bear-flying');
+                                updateMessage('クマ妖精は去って行った。');
                             };
                         }),
                         description: 'クマ妖精後ろ向き',
@@ -2213,6 +2214,10 @@
                             if (gameState.selectedItem == 'key') {
                                 if (gameState.main.flags.kaniHealing && hasItem('kaniHasami')) {
                                     updateMessage('カニ君のはさみは返しておこう');
+                                    return;
+                                }
+                                if (gameState.main.flags.bearStandsby && !gameState.main.flags.bearGone) {
+                                    updateMessage('クマ妖精に話してみよう');
                                     return;
                                 }
                                 removeItem('key');
@@ -2947,13 +2952,9 @@
 
             main: {
                 bear: [
-                    'ありがとう',
-                    'ハムにされるところだったよ',
+                   
                 ],
-                elevator: [
-                    'エレベーターは別の階に居るようだ',
-                    '…ドアの隙間から、ヒンヤリした冷気を感じる',
-                ],
+                
             },
         };
 
