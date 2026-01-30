@@ -1327,16 +1327,11 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             const modal = document.querySelector(".modal-overlay");
-            const openBtn = document.querySelector("#open-casefile");
+            
             const closeBtn = document.querySelector(".close-btn");
 
             // 初期状態で非表示
             modal.style.display = "none";
-
-            // 開く
-            openBtn?.addEventListener("click", () => {
-                modal.style.display = "flex";
-            });
 
             // 閉じる
             closeBtn?.addEventListener("click", () => {
