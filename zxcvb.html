@@ -1433,6 +1433,7 @@
                 kakiBlue: 'images/28/kaki_blue.png',
                 bearBack: 'images/28/bear_back.png',
                 aura: 'images/28/aura.png',
+                bearSleep: 'images/28/bear_sleep.png',
 
 
 
@@ -2719,6 +2720,11 @@
                         onClick: clickWrap(function () {
                             const f = gameState.main.flags;
 
+                            if (f.powerOn && gameState.selectedItem == 'kaniHasami') {
+                                updateMessage('そんなことはしてはいけません');
+                                return;
+                            }
+
                             // もう焼いてたら軽く流す
                             if (f.cookedOnigiri) {
                                 updateMessage('焼きおにぎりの香りがただよっている。');
@@ -2847,6 +2853,16 @@
                         zIndex: 5,
                         usable: () => gameState.end.flags.backgroundState == 0,
                         item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 89.8, y: 65.0, width: 8.8, height: 7.8,
+                        onClick: clickWrap(function () {
+                            updateMessage('クマ妖精が寝ている');
+                        }),
+                        description: '寝るクマ',
+                        zIndex: 5,
+                        usable: () => gameState.end.flags.backgroundState == 0 && (gameState.main.flags.bearAppear && !gameState.main.flags.kaniHealing),
+                        item: { img: 'bearSleep', visible: () => gameState.end.flags.backgroundState == 0 && (gameState.main.flags.bearAppear && !gameState.main.flags.kaniHealing) }
                     },
                     {
                         x: 58.5, y: 52.2, width: 33.3, height: 6.0,
@@ -3642,7 +3658,7 @@
                 end: {
                     title: "🌇 NORMAL END ",
                     label: "NORMAL END ",
-                    desc: "保育室から脱出できました！"
+                    desc: "忘れられた保育室から脱出できました！"
                 },
 
 
@@ -3753,70 +3769,7 @@
             updateMessage(messages[idx]);
         }
 
-        // =========================
-        // 怨念に塩をまく共通処理
-        // =========================
-        function dispelOnnen(letter) {
-            const goneKey = 'goneOnnen' + letter;
-            const dispelKey = 'dispelOnnen' + letter;
-
-            if (gameState.main.flags[goneKey]) {
-                updateMessage('もう、そこにはいない。');
-                return;
-            }
-
-            // 一度でも塩を使ったフラグ
-            gameState.main.flags.useSalt = true;
-            // 各怨念ごとの塩フラグ（塩跡の表示用）
-            gameState.main.flags[dispelKey] = true;
-
-            // 現在の部屋の中から対象の怨念エリアを探す
-            const room = rooms[gameState.currentRoom];
-            const areas = room?.clickableAreas || [];
-            const target = areas.find(a =>
-                a?.description === ('怨念' + letter) ||
-                (a?.item && (a.item.img === ('onnen' + letter)))
-            );
-
-            if (!target) {
-                // 万一見つからなければ、即消滅だけでも成立させる
-                gameState.main.flags[goneKey] = true;
-                renderCanvasRoom();
-                return;
-            }
-
-            // 連打防止：フェード中は触れない
-            const originalUsable = target.usable;
-            target.usable = () => false;
-
-            // フェードアウト（canvas上で透明度を落とす）
-            const duration = 650; // ms
-            const start = performance.now();
-            target.alpha = 1;
-
-            if (typeof playSE === 'function') playSE('se-aaa');
-            updateMessage(`怨念${letter}に塩をまいた。`);
-
-            const step = (now) => {
-                const t = Math.min(1, (now - start) / duration);
-                target.alpha = 1 - t;
-                renderCanvasRoom();
-
-                if (t >= 1) {
-                    // 完了：怨念を消滅扱いにして、alphaを掃除
-                    gameState.main.flags[goneKey] = true;
-                    delete target.alpha;
-                    target.usable = originalUsable;
-                    renderCanvasRoom();
-                    return;
-                }
-                requestAnimationFrame(step);
-            };
-            requestAnimationFrame(step);
-
-        }
-
-
+        
         // ▼ 手帳モーダル 操作用
 
         function openNotebook() {
@@ -4324,9 +4277,9 @@
             };
 
             // ボタンイベント（modalContentを上書きしない）
-            document.getElementById('powBtn0').onclick = () => { counts[0]++; playSE('se-click'); update(); };
-            document.getElementById('powBtn1').onclick = () => { counts[1]++; playSE('se-click'); update(); };
-            document.getElementById('powBtn2').onclick = () => { counts[2]++; playSE('se-click'); update(); };
+            document.getElementById('powBtn0').onclick = () => { counts[0]++; if (counts[0] > 9) counts[0] = 0; playSE('se-click'); update(); };
+            document.getElementById('powBtn1').onclick = () => { counts[1]++; if (counts[1] > 9) counts[1] = 0; playSE('se-click'); update(); };
+            document.getElementById('powBtn2').onclick = () => { counts[2]++; if (counts[2] > 9) counts[2] = 0; playSE('se-click'); update(); };
 
             document.getElementById('powOffOk').onclick = () => {
                 const correct = counts[0] === 1 && counts[1] === 3 && counts[2] === 2;
@@ -4425,23 +4378,20 @@
                             }
 
                             // ★通常ルート：退場（今まで通り）
-                            setTimeout(() => {
-                                showModal(
-                                    'クマ妖精は嬉しそうに去って行った',
-                                    `<img src="${IMAGES.modals.bearLeave}" style="width:100%;max-width:360px;">`,
-                                    [{ text: '閉じる', action: 'close' }]
-                                );
-                                playSE('se-bear-flying');
-                                updateMessage('クマ妖精は去って行った。');
-                            }, 200);
+                            // setTimeout(() => {
+                            showModal(
+                                '「わーい」<br>クマ妖精は嬉しそうに去って行った',
+                                `<img src="${IMAGES.modals.bearLeave}" style="width:100%;max-width:360px;">`,
+                                [{ text: '閉じる', action: 'close' }]
+                            );
+                            playSE('se-bear-flying');
+                            updateMessage('クマ妖精は去って行った。');
+                            // }, 200);
                         }
                     }
                 ]
             );
         }
-
-
-
 
         function handleDoor() {
             // エンディング遷移共通ハンドラ
