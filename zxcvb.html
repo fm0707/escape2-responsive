@@ -241,8 +241,15 @@
             padding: 30px;
             border-radius: 10px;
             border: 3px solid #d4af37;
-            max-width: calc(100vw - 60px);
+          /*  max-width: calc(100vw - 60px); */
             text-align: center;
+            max-width: min(96vw, 640px);
+            max-height: calc(100vh - 64px);
+            /* 画面に収める */
+            overflow: auto;
+            /* はみ出したらスクロール */
+            padding: 20px;
+            /* ちょい圧縮 */
         }
 
         .modal button {
@@ -797,15 +804,7 @@
             }
         }
 
-        .modal-content {
-            max-width: min(96vw, 640px);
-            max-height: calc(100vh - 64px);
-            /* 画面に収める */
-            overflow: auto;
-            /* はみ出したらスクロール */
-            padding: 20px;
-            /* ちょい圧縮 */
-        }
+        
 
         /* モーダルの画像ボタンは固定80px→可変に */
         #modalButtons button img {
