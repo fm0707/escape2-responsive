@@ -4271,7 +4271,7 @@
                 document.getElementById('powCnt2').textContent = String(counts[2]);
                 document.getElementById('powReset').onclick = () => {
                     counts = [0, 0, 0];
-                    playSE('se-change'); // se-click でもOK
+                    playSE('se-click'); 
                     update();
                 };
             };
