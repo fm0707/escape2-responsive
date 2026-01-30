@@ -2063,7 +2063,7 @@
                                 `<img src="${IMAGES.modals.bearHeal}" style="width:100%;max-width:360px;">`,
                                 [{ text: 'つづける', action: 'close' }]
                             );
-                            playSE('se-angel'); 
+                            playSE('se-angel');
 
                             // 次モーダル予約
                             window._nextModal = () => {
@@ -2577,15 +2577,33 @@
                                     }
                                 };
 
+                                // 落下SEタイマー（スキップ対策）
+                                let fallingTimer = null;
+
+                                // ★ モーダル表示
                                 showModal(
                                     '肥料をあげた',
                                     animHtml,
-                                    [{ text: 'スキップ', action: 'close' }]
+                                    [{
+                                        text: 'スキップ',
+                                        action: () => {
+                                            // スキップしたら落下音タイマーを殺す
+                                            if (fallingTimer) {
+                                                clearTimeout(fallingTimer);
+                                                fallingTimer = null;
+                                            }
+                                            closeModal();
+                                        }
+                                    }]
                                 );
 
                                 // 電源ONのときだけ「落下SE」を鳴らす（OFFルートは落下しない）
                                 if (isPowerOn) {
-                                    setTimeout(() => { playSE('se-falling'); }, 6000);
+                                    fallingTimer = setTimeout(() => {
+                                        // 念のため：モーダルが開いてる時だけ鳴らす（自動close後の誤爆も防ぐ）
+                                        const m = document.getElementById('modal');
+                                        if (m && m.style.display === 'flex') playSE('se-falling');
+                                    }, 6000);
                                 }
 
                                 // 自動で閉じて次へ（開いてる時だけ）
@@ -2827,7 +2845,7 @@
                         }),
                         description: '子カニ',
                         zIndex: 5,
-                        usable: () => gameState.end.flags.backgroundState==0,
+                        usable: () => gameState.end.flags.backgroundState == 0,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
@@ -2837,7 +2855,7 @@
                         }),
                         description: '子カニ',
                         zIndex: 5,
-                        usable: () => gameState.end.flags.backgroundState==1,
+                        usable: () => gameState.end.flags.backgroundState == 1,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
@@ -2952,9 +2970,9 @@
 
             main: {
                 bear: [
-                   
+
                 ],
-                
+
             },
         };
 
@@ -3643,7 +3661,7 @@
                     secretText = "🦀🐻 カニの平和を守り、クマの空腹を満たしました";
                     break;
                 case "end":
-                    secretText = gameState.main.flags.kaniHealing? "🏥 カニもいつか回復するでしょう":"😢 犠牲がありました";
+                    secretText = gameState.main.flags.kaniHealing ? "🏥 カニもいつか回復するでしょう" : "😢 犠牲がありました";
                     break;
 
                 default:
