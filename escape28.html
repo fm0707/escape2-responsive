@@ -3952,7 +3952,7 @@
                         closeModal();
                         updateMessage('カチッ…右のウォールシェルフのロックが外れた。');
                         renderCanvasRoom?.();
-                        // markProgress?.('unlock_wallcab_right_28');
+                        markProgress?.('unlock_wallcab_right_28');
                     } else {
                         playSE?.('se-error');
                         if (hint) hint.textContent = 'ちがうようだ。';
@@ -4060,6 +4060,7 @@
                         playSE?.('se-clear');
                         closeModal();
                         updateMessage('カチッ…左のウォールシェルフのロックが外れた。');
+                        markProgress('28_left_wall_unlock');
                         renderCanvasRoom?.();
                     } else {
                         playSE?.('se-error');
@@ -4136,6 +4137,7 @@
                         playSE?.('se-power');
                         closeModal();
                         updateMessage('カチッ…電源が入った。');
+                        markProgress('28_power_on');
                         renderCanvasRoom?.();
                     } else {
                         playSE?.('se-error');
@@ -4193,6 +4195,7 @@
                         playSE?.('se-open');
                         closeModal();
                         updateMessage('木箱が開いた。');
+                        markProgress('28_box_unlock');
                         renderCanvasRoom?.();
                     } else {
                         playSE?.('se-error');
