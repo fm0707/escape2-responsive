@@ -2599,7 +2599,17 @@
                         }),
                         description: '泣いているクマ妖精',
                         zIndex: 5,
-                        usable: () => true,
+                        usable: () => gameState.endWorse.flags.backgroundState == 0,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 54.1, y: 54.2, width: 34.4, height: 36.1,
+                        onClick: clickWrap(function () {
+                            updateMessage('クマ妖精は嬉しそうだ。');
+                        }),
+                        description: '花火を持つクマ妖精',
+                        zIndex: 5,
+                        usable: () => gameState.endWorse.flags.backgroundState == 1,
                         item: { img: 'IMAGE_KEY', visible: () => true }
                     },
                     {
