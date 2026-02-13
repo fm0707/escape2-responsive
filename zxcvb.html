@@ -1630,13 +1630,13 @@
                     {
                         x: 78.0, y: 65.6, width: 19.7, height: 15.1,
                         onClick: clickWrap(function () {
-                            if (gameState.selectedItem == 'hammer'&& !gameState.main.flags.openNabe) {
+                            if (gameState.selectedItem == 'hammer' && !gameState.main.flags.openNabe) {
                                 showObj('useHammerToNabe', 'ハンマーで鍋をたたいた', IMAGES.modals.nabeHammer, '鍋は少しへこんでしまった');
                                 playSE('se-sword');
                                 renderCanvasRoom();
                                 return;
                             }
-                            if (gameState.selectedItem == 'luckyHammer'&& !gameState.main.flags.openNabe) {
+                            if (gameState.selectedItem == 'luckyHammer' && !gameState.main.flags.openNabe) {
                                 updateMessage('何も起こらなかった。');
                                 playSE('se-sword');
                                 renderCanvasRoom();
@@ -1750,7 +1750,7 @@
                                     showObj(null, 'オープナーで蓋を開けた', IMAGES.modals.openBottle, 'オープナーで蓋を開けた');
                                     renderCanvasRoom();
                                 } else {
-                                    updateMessage('蓋が固くて開かない。');
+                                    updateMessage('青い素材が入っているが、蓋が固くて開かない。');
                                 }
                                 return;
                             }
@@ -1772,6 +1772,16 @@
 
                         }),
                         description: '青い素材の瓶',
+                        zIndex: 5,
+                        usable: () => true,
+                        item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 69.7, y: 5.6, width: 21.7, height: 8.8,
+                        onClick: clickWrap(function () {
+                            updateMessage('素材の瓶が並んでいる');
+                        }),
+                        description: '右上瓶',
                         zIndex: 5,
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
@@ -1801,11 +1811,11 @@
                         item: { img: 'windowAfter', visible: () => gameState.main.flags.removeWindowFrame }
                     },
                     {
-                        x: 1.1, y: 62.1, width: 10.5, height: 18.5,
+                        x: 1.5, y: 71.4, width: 13.1, height: 9.4,
                         onClick: clickWrap(function () {
-
+                            updateMessage('食べかけのおにぎりだ。具は鮭のようだ');
                         }),
-                        description: 'ポット',
+                        description: '食べかけのおにぎり',
                         zIndex: 5,
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
