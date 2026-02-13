@@ -1499,6 +1499,7 @@
                 driverBottom: 'images/29/modal_driver_bottom.png',
                 hammerSide: 'images/29/modal_hammer_side.png',
                 onigiriHammer: 'images/29/modal_onigiri_hammer.png',
+                bearHappy: 'images/29/bear_happy.jpeg',
 
 
 
@@ -2666,7 +2667,7 @@
                     {
                         x: 74.6, y: 60.8, width: 24.8, height: 22.1,
                         onClick: clickWrap(function () {
-                            updateMessage('クマ妖精がおにぎりを食べている。');
+                            showObj(null, 'えへへ', IMAGES.modals.bearHappy, 'クマ妖精がおにぎりを食べている。');
                         }),
                         description: 'クマおにぎり',
                         zIndex: 5,
