@@ -5090,7 +5090,7 @@
             // 仕様：最初から 8 行を固定表示。未発見は全部「？？？」で薄く表示。
             const TOTAL_RECIPES = 8;
             const list = (ALCHEMY_RECIPES || []);
-            const rows = Array.from({ length: TOTAL_RECIPES }, (_, i) => {
+            const rows = Array.from({ length: ALCHEMY_RECIPES.length }, (_, i) => {
                 const r = list[i]; // 未定義ならプレースホルダ扱い
                 const unlocked = !!(r && recipeCodexIsUnlocked(r));
 
