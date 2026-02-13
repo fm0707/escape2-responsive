@@ -1431,6 +1431,7 @@
                 drawerMiddleInner: ['images/29/drawer_inner.png'],
                 drawerBottomInner: ['images/29/drawer_inner.png'],
                 nabeInner: ['images/29/nabe_inner.png'],
+                boxInner: ['images/29/box_inner.png'],
 
                 end: ['images/29/end.png'],
                 endWorse: ['images/29/end_worse.png', 'images/29/end_worse2.png'],
@@ -1490,6 +1491,7 @@
                 bearHope: 'images/29/bear_hope.png',
                 bearOnigiri: 'images/29/bear_onigiri.png',
                 book: 'images/29/book.png',
+                lock: 'images/29/lock.png',
 
 
 
@@ -2094,18 +2096,29 @@
                                 updateMessage('鍵を開けた');
                                 playSE('se-gacha');
                                 gameState.main.flags.unlockBox = true;
+                                renderCanvasRoom();
                                 return;
                             }
                             if (gameState.main.flags.unlockBox) {
-                                acquireItemOnce('foundGemGreen', 'gemGreen', '緑色の宝石を見つけた', IMAGES.items.gemGreen, '緑色の宝石を手に入れた');
+                                changeRoom('boxInner');
                                 return;
                             }
                             updateMessage('箱には鍵がかかっている');
                         }),
                         description: 'タンス上の箱',
-                        zIndex: 5,
+                        zIndex: 1,
                         usable: () => true,
                         item: { img: 'IMAGE_KEY', visible: () => true }
+                    },
+                    {
+                        x: 18.3, y: 60.4, width: 3.0, height: 2.8,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '箱のロック',
+                        zIndex: 5,
+                        usable: () => false,
+                        item: { img: 'lock', visible: () => !gameState.main.flags.unlockBox }
                     },
                     {
                         x: 90, y: 90, width: 10, height: 10,
@@ -2410,6 +2423,32 @@
                             changeRoom('mainDoor');
                         }, { allowAtNight: true }),
                         description: 'ドア面引き出し内部戻る',
+                        zIndex: 5,
+                        item: { img: 'back', visible: () => true }
+                    },
+
+                ]
+            },
+            boxInner: {
+                name: '箱内部',
+                description: '',
+                clickableAreas: [
+                    {
+                        x: 57.2, y: 33.5, width: 18.4, height: 16.8,
+                        onClick: clickWrap(function () {
+                            acquireItemOnce('foundGemGreen', 'gemGreen', '緑色の宝石を見つけた', IMAGES.items.gemGreen, '緑色の宝石を手に入れた');
+                        }),
+                        description: '緑の宝石',
+                        zIndex: 5,
+                        usable: () => !gameState.main.flags.foundGemGreen,
+                        item: { img: 'gemGreen', visible: () => !gameState.main.flags.foundGemGreen }
+                    },
+                    {
+                        x: 90, y: 90, width: 10, height: 10,
+                        onClick: clickWrap(function () {
+                            changeRoom('mainDoor');
+                        }, { allowAtNight: true }),
+                        description: '箱内部戻る',
                         zIndex: 5,
                         item: { img: 'back', visible: () => true }
                     },
@@ -3668,12 +3707,6 @@
         function getRoomBackgroundImage(roomId, gameState) {
             let imgList = IMAGES.rooms[roomId]; // ★ const → let
 
-            if (roomId === 'boxInner') {
-                return gameState.main.flags.powerOn
-                    ? IMAGES.rooms.boxInner[0]
-                    : IMAGES.rooms.boxInner[1];
-            }
-
             // ★ book1〜3みたいに {jp:[], en:[]} 形式なら言語で選ぶ
             if (imgList && !Array.isArray(imgList) && (imgList.jp || imgList.en)) {
                 imgList = imgList[uiLang] || imgList.jp || imgList.en;
@@ -3861,11 +3894,9 @@
             let secretText = "";
             switch (endingId) {
                 case "trueEnd":
-                    secretText = "🦀 カニの平和を守りました";
+                    secretText = "🍙 おにぎりデザイン";
                     break;
-                case "trueEnd2":
-                    secretText = "🦀🐻 カニの平和を守り、クマの空腹を満たしました";
-                    break;
+
                 case "end":
                     secretText = "❤ ハートの花火が上がりました";
                     break;
@@ -3909,7 +3940,7 @@
         // クリアログ生成（既存のがあればそのまま流用でOK）
         function copyClearLog(label, timeStr) {
             const text =
-                `『保育室からの脱出』${label} クリア\n` +
+                `『工房からの脱出』${label} クリア\n` +
                 `プレイ時間：${timeStr}\n` +
                 `ヒント利用：${ANA.hintCount || 0}回\n` +
                 `#脱出ゲーム #保育室からの脱出`;
@@ -4069,228 +4100,7 @@
             }
         });
 
-        function showWallCabRightPuzzle() {
-            const f = gameState.main.flags;
 
-            // もう解いてたら、普通にメッセージだけでもOK
-            if (f.unlockWallCabRight) {
-                updateMessage('右のウォールシェルフは、もうアンロックされている。');
-                return;
-            }
-
-            const ROT = ['A', 'E', 'H', 'I', 'N', 'S', 'T', 'U'];
-
-            const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:12px;">
-      <div id="wallCabRightPickers" style="display:flex; gap:12px; justify-content:center; align-items:center;">
-        <button class="nav-btn" id="wallCabRightSq0"
-          style="width:72px; height:72px; padding:0; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; border-radius:10px;background-color:#fff;">
-          A
-        </button>
-        <button class="nav-btn" id="wallCabRightSq1"
-          style="width:72px; height:72px; padding:0; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; border-radius:10px;background-color:#fff;">
-          A
-        </button>
-        <button class="nav-btn" id="wallCabRightSq2"
-          style="width:72px; height:72px; padding:0; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; border-radius:10px;background-color:#fff;">
-          A
-        </button>
-      </div>
-
-      <div>
-        <button id="wallCabRightOk" class="ok-btn" style="">OK</button>
-      </div>
-
-      <div id="wallCabRightHint" style="margin-top:2px; font-size:0.95em; min-height:1.2em;"></div>
-    </div>
-  `;
-
-            showModal('ウォールシェルフ右のロック', content, [{ text: '閉じる', action: 'close' }]);
-
-            // showModalがDOMを書き換えた後にフック
-            setTimeout(() => {
-                const sq = [
-                    document.getElementById('wallCabRightSq0'),
-                    document.getElementById('wallCabRightSq1'),
-                    document.getElementById('wallCabRightSq2'),
-                ];
-                const okBtn = document.getElementById('wallCabRightOk');
-                const hint = document.getElementById('wallCabRightHint');
-
-                if (!sq[0] || !sq[1] || !sq[2] || !okBtn) return;
-
-                // 現在位置（Aからスタート）
-                const idx = [0, 0, 0];
-
-                const paint = (i) => {
-                    sq[i].textContent = ROT[idx[i]];
-                };
-
-                const rotate = (i) => {
-                    idx[i] = (idx[i] + 1) % ROT.length;
-                    paint(i);
-                    try { playSE?.('se-gacha'); } catch (e) { }
-                };
-
-                // 初期描画
-                paint(0); paint(1); paint(2);
-
-                sq.forEach((btn, i) => {
-                    btn.addEventListener('click', () => rotate(i));
-                });
-
-                const judge = () => {
-                    const word = ROT[idx[0]] + ROT[idx[1]] + ROT[idx[2]];
-                    const isOk = (word === 'USE');
-
-                    if (isOk) {
-                        f.unlockWallCabRight = true;
-                        playSE?.('se-clear');
-                        closeModal();
-                        updateMessage('カチッ…右のウォールシェルフのロックが外れた。');
-                        renderCanvasRoom?.();
-                        markProgress?.('unlock_wallcab_right_28');
-                    } else {
-                        playSE?.('se-error');
-                        if (hint) hint.textContent = 'ちがうようだ。';
-                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
-                    }
-                };
-
-                okBtn.addEventListener('click', judge);
-
-                // キーボード操作（Enter=OK, 1/2/3=回す）
-                const onKey = (e) => {
-                    if (e.key === 'Enter') judge();
-                    if (e.key === '1') rotate(0);
-                    if (e.key === '2') rotate(1);
-                    if (e.key === '3') rotate(2);
-                };
-                document.addEventListener('keydown', onKey);
-
-                // 閉じたらイベントを掃除（closeModalをフック）
-                const _origCloseModal = window.closeModal;
-                if (typeof _origCloseModal === 'function') {
-                    window.closeModal = function () {
-                        try { document.removeEventListener('keydown', onKey); } catch (e) { }
-                        window.closeModal = _origCloseModal;
-                        return _origCloseModal.apply(this, arguments);
-                    }
-                }
-
-                sq[0].focus();
-            }, 0);
-        }
-
-        function showWallCabLeftPuzzle() {
-            const f = gameState.main.flags;
-
-            // もう解いてたら、メッセージだけでもOK
-            if (f.unlockWallCabLeft) {
-                updateMessage('左のウォールシェルフは、もうアンロックされている。');
-                return;
-            }
-
-            // 正解：下 → 右 → 下 → 左 → 上
-            const ANSWER = ['D', 'R', 'D', 'L', 'U'];
-            let input = [];
-
-            const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:12px;">
-      <div id="wallCabLeftPad"
-           style="display:grid; grid-template-columns:72px 72px 72px; grid-template-rows:72px 72px 72px; gap:10px; place-items:center;">
-        <div></div>
-        <button class="nav-btn" id="wallCabLeftU"
-          style="width:72px; height:72px; padding:0; font-size:28px; font-weight:900; border-radius:10px;background-color:#fff;">↑</button>
-        <div></div>
-
-        <button class="nav-btn" id="wallCabLeftL"
-          style="width:72px; height:72px; padding:0; font-size:28px; font-weight:900; border-radius:10px;background-color:#fff;">←</button>
-        <div style="width:72px; height:72px; display:flex; align-items:center; justify-content:center; opacity:.65;">
-          <span style="font-size:14px;">PAD</span>
-        </div>
-        <button class="nav-btn" id="wallCabLeftR"
-          style="width:72px; height:72px; padding:0; font-size:28px; font-weight:900; border-radius:10px;background-color:#fff;">→</button>
-
-        <div></div>
-        <button class="nav-btn" id="wallCabLeftD"
-          style="width:72px; height:72px; padding:0; font-size:28px; font-weight:900; border-radius:10px;background-color:#fff;">↓</button>
-        <div></div>
-      </div>
-
-      <div>
-        <button id="wallCabLeftOk" class="" style="margin-top:8px;font-size:1.4rem;background-color:#1d9fff;color:#fff;">OK</button>
-      </div>
-
-      <div id="wallCabLeftHint" style="margin-top:2px; font-size:0.95em; min-height:1.2em;"></div>
-    </div>
-  `;
-
-            showModal('ウォールシェルフ左のロック', content, [{ text: '閉じる', action: 'close' }]);
-
-            setTimeout(() => {
-                const btnU = document.getElementById('wallCabLeftU');
-                const btnD = document.getElementById('wallCabLeftD');
-                const btnL = document.getElementById('wallCabLeftL');
-                const btnR = document.getElementById('wallCabLeftR');
-                const okBtn = document.getElementById('wallCabLeftOk');
-                const hint = document.getElementById('wallCabLeftHint');
-                if (!btnU || !btnD || !btnL || !btnR || !okBtn) return;
-
-                const push = (d) => {
-                    input.push(d);
-                    // 長くなりすぎたら末尾5つだけ保持（事故防止）
-                    if (input.length > ANSWER.length) input = input.slice(-ANSWER.length);
-                    try { playSE?.('se-gacha'); } catch (e) { }
-                    if (hint) hint.textContent = `入力：${input.map(x => ({ U: '↑', D: '↓', L: '←', R: '→' }[x])).join(' ')}`;
-                };
-
-                btnU.addEventListener('click', () => push('U'));
-                btnD.addEventListener('click', () => push('D'));
-                btnL.addEventListener('click', () => push('L'));
-                btnR.addEventListener('click', () => push('R'));
-
-                const judge = () => {
-                    const ok = (input.length === ANSWER.length && input.every((v, i) => v === ANSWER[i]) && gameState.main.flags.powerOn);
-                    if (ok) {
-                        f.unlockWallCabLeft = true;
-                        playSE?.('se-clear');
-                        closeModal();
-                        updateMessage('カチッ…左のウォールシェルフのロックが外れた。');
-                        markProgress('28_left_wall_unlock');
-                        renderCanvasRoom?.();
-                    } else {
-                        playSE?.('se-error');
-                        if (hint) hint.textContent = 'ちがうようだ。';
-                        screenShake?.(document.getElementById('modalContent'), 120, 'fx-shake');
-                    }
-                };
-
-                okBtn.addEventListener('click', judge);
-
-                // キーボードでも操作できると地味に便利（矢印キー/Enter）
-                const onKey = (e) => {
-                    if (e.key === 'Enter') judge();
-                    if (e.key === 'ArrowUp') push('U');
-                    if (e.key === 'ArrowDown') push('D');
-                    if (e.key === 'ArrowLeft') push('L');
-                    if (e.key === 'ArrowRight') push('R');
-                };
-                document.addEventListener('keydown', onKey);
-
-                // closeModalフックで掃除（右パズルと同じ作法）:contentReference[oaicite:2]{index=2}
-                const _origCloseModal = window.closeModal;
-                if (typeof _origCloseModal === 'function') {
-                    window.closeModal = function () {
-                        try { document.removeEventListener('keydown', onKey); } catch (e) { }
-                        window.closeModal = _origCloseModal;
-                        return _origCloseModal.apply(this, arguments);
-                    }
-                }
-
-                btnD.focus(); // 初期フォーカスは「下」にしておく（なんとなく）
-            }, 0);
-        }
 
         function showDrawerMainPuzzle() {
             const f = gameState.main.flags || (gameState.main.flags = {});
@@ -4969,69 +4779,6 @@
             if (btnK) btnK.onclick = () => rotateCW('k');
         }
 
-        function showBearFairyEvent() {
-            showModal(
-                'どこからともなくクマ妖精があらわれた。<br>「良い匂い…」',
-                `<img src="${IMAGES.modals.bearAppear}" style="width:100%;max-width:360px;">`,
-                [
-                    {
-                        text: '焼きおにぎりをあげる',
-                        action: () => {
-                            // 焼きおにぎり消費
-                            removeItem('yakiOnigiri');
-                            updateInventoryDisplay?.();
-
-                            gameState.main.flags.bearAppear = true;
-                            closeModal();
-
-                            // ★分岐：カニ君が死亡している場合は退場しない
-                            if (gameState.main.flags.kaniDead) {
-                                // 先に「食べる」モーダル
-                                showModal(
-                                    'クマ妖精は焼きおにぎりを食べている',
-                                    `<img src="${IMAGES.modals.bearEat}" style="width:100%;max-width:360px;">`,
-                                    [{ text: 'つづける', action: 'close' }]
-                                );
-                                playSE('se-bear-eat');
-
-                                // 次モーダル：気づく（美味しい…ん？）
-                                window._nextModal = () => {
-                                    showModal(
-                                        '美味しい…ん？',
-                                        `<img src="${IMAGES.modals.bearNotice}" style="width:100%;max-width:360px;">`,
-                                        [
-                                            {
-                                                text: '閉じる',
-                                                action: () => {
-                                                    // ★待機状態へ
-                                                    gameState.main.flags.bearStandsby = true;
-                                                    renderCanvasRoom();
-                                                    closeModal();
-                                                }
-                                            }
-                                        ]
-                                    );
-                                };
-                                updateMessage('クマ妖精が現れた。');
-
-                                return;
-                            }
-
-                            // ★通常ルート：退場（今まで通り）
-                            // setTimeout(() => {
-                            showModal(
-                                '「わーい」<br>クマ妖精は嬉しそうに去って行った',
-                                `<img src="${IMAGES.modals.bearLeave}" style="width:100%;max-width:360px;">`,
-                                [{ text: '閉じる', action: 'close' }]
-                            );
-                            playSE('se-bear-flying');
-                            updateMessage('クマ妖精は去って行った。');
-                            // }, 200);
-                        }
-                    }
-                ]
-            );
-        }
 
         function handleDoor() {
             // エンディング遷移共通ハンドラ
@@ -5057,7 +4804,11 @@
 
         function showObj(flagKey, title, imgSrc, msg, altImgSrc, msgEn) {
             const f = gameState.main.flags;
+            const wasFlagOn = flagKey ? !!f[flagKey] : false;
             if (flagKey) f[flagKey] = true;
+            if (flagKey === 'unlockMachine' && !wasFlagOn) {
+                showToast('錬成マシンの使い方を思い出した');
+            }
 
             const imgId = 'objImg_' + Date.now();
 
