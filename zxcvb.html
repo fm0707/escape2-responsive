@@ -1823,7 +1823,28 @@
                                 return;
                             }
                             if (gameState.main.flags.removeWindowFrame) {
+                                if (hasItem('redSphere') || hasItem('onigiriSphere')) {
+                                    showModal(
+                                        '注文の品は作成できています。窓から出ますか？',
+                                        '',
+                                        [
+                                            {
+                                                text: 'はい',
+                                                action: () => {
+                                                    closeModal();
+                                                    travelWithSteps('endWorse');
+                                                }
+                                            },
+                                            {
+                                                text: 'いいえ',
+                                                action: 'close'
+                                            }
+                                        ]
+                                    );
+                                    return;
+                                }
                                 travelWithSteps('endWorse');
+                                return;
                             }
                             updateMessage('外が見える');
                         }),
@@ -2635,6 +2656,7 @@
                                 updateMessage('クマ妖精にラッキーハンマーを使った。');
                                 return;
                             }
+                            updateMessage('クマ妖精が悲しそうにしている。');
                         }),
                         description: '泣いているクマ妖精',
                         zIndex: 5,
