@@ -1492,6 +1492,8 @@
                 bearOnigiri: 'images/29/bear_onigiri.png',
                 book: 'images/29/book.png',
                 lock: 'images/29/lock.png',
+                triSquare: 'images/29/tri_square.png',
+                lineOnigiri: 'images/29/line_onigiri.png',
 
 
 
@@ -2463,6 +2465,16 @@
                         zIndex: 5,
                         usable: () => !gameState.main.flags.foundGemGreen,
                         item: { img: 'gemGreen', visible: () => !gameState.main.flags.foundGemGreen }
+                    },
+                    {
+                        x: 18.8, y: 52.8, width: 24.1, height: 21.2,
+                        onClick: clickWrap(function () {
+
+                        }),
+                        description: '模様',
+                        zIndex: 5,
+                        usable: () => false,
+                        item: { img: 'triSquare', visible: () => true }
                     },
                     {
                         x: 90, y: 90, width: 10, height: 10,
@@ -3489,20 +3501,12 @@
                 if (f.setKeyRevealed) {
                     const cx = canvas.width * 0.5;
                     const cy = canvas.height * 0.72;
-                    ctx.save();
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.lineWidth = 4;
-                    ctx.strokeStyle = 'rgba(0,0,0,0.75)';
-                    ctx.fillStyle = '#fff4c4';
-                    const fontSize = Math.max(16, Math.min(28, Math.floor(canvas.height * 0.045)));
-                    ctx.font = `bold ${fontSize}px Arial`;
-                    ctx.strokeText('↑↓↓←↓', cx, cy);
-                    ctx.fillText('↑↓↓←↓', cx, cy);
-                    // ctx.font = `bold ${Math.max(12, Math.floor(fontSize * 0.7))}px Arial`;
-                    // ctx.strokeText('The secret spell is ume', cx, cy + fontSize * 0.9);
-                    // ctx.fillText('The secret spell is ume', cx, cy + fontSize * 0.9);
-                    ctx.restore();
+                    const lineImg = loadedImages[IMAGES.items.lineOnigiri];
+                    if (lineImg && lineImg.complete) {
+                        const targetW = Math.max(360, Math.min(canvas.width * 0.78, 780));
+                        const targetH = targetW * (lineImg.naturalHeight / lineImg.naturalWidth);
+                        ctx.drawImage(lineImg, cx - targetW / 2, cy - targetH / 2, targetW, targetH);
+                    }
                 }
             }
 
