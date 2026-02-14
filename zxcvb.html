@@ -2467,16 +2467,16 @@
                         usable: () => !gameState.main.flags.foundGemGreen,
                         item: { img: 'gemGreen', visible: () => !gameState.main.flags.foundGemGreen }
                     },
-                    {
-                        x: 18.8, y: 52.8, width: 24.1, height: 21.2,
-                        onClick: clickWrap(function () {
+                    // {
+                    //     x: 18.8, y: 52.8, width: 24.1, height: 21.2,
+                    //     onClick: clickWrap(function () {
 
-                        }),
-                        description: '模様',
-                        zIndex: 5,
-                        usable: () => false,
-                        item: { img: 'triSquare', visible: () => true }
-                    },
+                    //     }),
+                    //     description: '模様',
+                    //     zIndex: 5,
+                    //     usable: () => false,
+                    //     item: { img: 'triSquare', visible: () => true }
+                    // },
                     {
                         x: 90, y: 90, width: 10, height: 10,
                         onClick: clickWrap(function () {
@@ -4264,7 +4264,7 @@
         <button class="nav-btn" id="drawerTopSq0"
           style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#fff; color:#111;">0</button>
         <button class="nav-btn" id="drawerTopSq1"
-          style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#fff; color:#111;">0</button>
+          style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#e8e8e8; color:#999; cursor:not-allowed;">0</button>
         <button class="nav-btn" id="drawerTopSq2"
           style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#fff; color:#111;">0</button>
         <button class="nav-btn" id="drawerTopSq3"
@@ -4306,7 +4306,10 @@
                 paint(0); paint(1); paint(2); paint(3);
 
                 sq.forEach((btn, i) => {
-                    btn.addEventListener('click', () => cycle(i));
+                    // 左から2番目（i=1）はクリック不可
+                    if (i !== 1) {
+                        btn.addEventListener('click', () => cycle(i));
+                    }
                 });
 
                 const judge = () => {
@@ -4331,7 +4334,7 @@
                 const onKey = (e) => {
                     if (e.key === 'Enter') judge();
                     if (e.key === '1') cycle(0);
-                    if (e.key === '2') cycle(1);
+                    if (e.key === '2') return;  // 左から2番目はキーボードでも無効
                     if (e.key === '3') cycle(2);
                     if (e.key === '4') cycle(3);
                 };
@@ -4363,7 +4366,6 @@
 
             const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:12px;">
-        <img src="${IMAGES.modals.tri}" style="width:100%;max-width:360px;">
       <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
         <button class="nav-btn" id="drawerMidSq0"
           style="width:72px; height:72px; padding:0; display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:900; border-radius:10px; background:#fff; color:#111;">0</button>
