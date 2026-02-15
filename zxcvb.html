@@ -1859,6 +1859,10 @@
                     {
                         x: 1.5, y: 71.4, width: 13.1, height: 9.4,
                         onClick: clickWrap(function () {
+                            if (gameState.selectedItem=='hammer') {
+                                updateMessage('おにぎりを軽く叩いてみたが、特に変化はなかった');
+                                return;
+                            }
                             updateMessage('食べかけのおにぎりだ。具は鮭のようだ');
                         }),
                         description: '食べかけのおにぎり',
