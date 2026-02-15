@@ -2493,7 +2493,11 @@
                 function () {
                   if (gameState.main.flags.unlockDrawerTop) return;
                   const rot = ensureLetterRot();
+                  const f = gameState.main.flags || (gameState.main.flags = {});
+                  if (!f.letterRotCount) f.letterRotCount = {};
                   rot.l = ((rot.l || 0) + 90) % 360;
+                  f.letterRotCount.l = (f.letterRotCount.l || 0) + 1;
+                  if (f.letterRotCount.l > 3) f.letterRotCount.l = 0;
                   playSE("se-click");
                   renderCanvasRoom();
                 },
@@ -2516,7 +2520,11 @@
                 function () {
                   if (gameState.main.flags.unlockDrawerTop) return;
                   const rot = ensureLetterRot();
+                  const f = gameState.main.flags || (gameState.main.flags = {});
+                  if (!f.letterRotCount) f.letterRotCount = {};
                   rot.c = ((rot.c || 0) + 90) % 360;
+                  f.letterRotCount.c = (f.letterRotCount.c || 0) + 1;
+                  if (f.letterRotCount.c > 3) f.letterRotCount.c = 0;
                   playSE("se-click");
                   renderCanvasRoom();
                 },
@@ -2539,7 +2547,11 @@
                 function () {
                   if (gameState.main.flags.unlockDrawerTop) return;
                   const rot = ensureLetterRot();
+                  const f = gameState.main.flags || (gameState.main.flags = {});
+                  if (!f.letterRotCount) f.letterRotCount = {};
                   rot.k = ((rot.k || 0) + 90) % 360;
+                  f.letterRotCount.k = (f.letterRotCount.k || 0) + 1;
+                  if (f.letterRotCount.k > 3) f.letterRotCount.k = 0;
                   playSE("se-click");
                   renderCanvasRoom();
                 },
@@ -4030,6 +4042,31 @@
             ctx.restore();
           }
 
+          // 回転ボタン下に回転回数の●を表示
+          if (!f.letterRotCount) f.letterRotCount = { l: 0, o: 0, c: 0, k: 0 };
+          const buttons = [
+            { key: "l", x: 12 },
+            { key: "c", x: 52 },
+            { key: "k", x: 72 },
+          ];
+          buttons.forEach((btn) => {
+            const dotCount = f.letterRotCount[btn.key] || 0;
+            const dotCx = canvas.width * ((btn.x + 8) / 100);
+            const dotCy = canvas.height * (52 / 100); // ボタン下(y=43の下)
+            const dotRadius = Math.max(3, Math.min(5, canvas.width * 0.01));
+            const dotSpacing = dotRadius * 4;
+            
+            ctx.save();
+            ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+            for (let i = 0; i < dotCount; i++) {
+              const offsetX = (i - (dotCount - 1) / 2) * dotSpacing;
+              ctx.beginPath();
+              ctx.arc(dotCx + offsetX, dotCy, dotRadius, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          });
+
           if (f.setKeyRevealed) {
             const cx = canvas.width * 0.5;
             const cy = canvas.height * 0.72;
@@ -5319,13 +5356,20 @@
         const f = gameState.main.flags || (gameState.main.flags = {});
         if (f.unlockDrawerTop) {
           f.letterRot = { l: 0, o: 0, c: 0, k: 0 };
+          f.letterRotCount = { l: 0, o: 0, c: 0, k: 0 };
           f.letterRotSolved = true;
           return f.letterRot;
         }
         if (reset || !f.letterRot) {
           f.letterRot = { l: 270, o: 0, c: 90, k: 180 };
+          f.letterRotCount = { l: 0, o: 0, c: 0, k: 0 }; // 初期角度をゼロとして扱う
           f.letterRotSolved = false;
           return f.letterRot;
+        }
+
+        // 初期化時にカウントが無ければ作成
+        if (!f.letterRotCount) {
+          f.letterRotCount = { l: 0, o: 0, c: 0, k: 0 };
         }
 
         const rot = f.letterRot;
