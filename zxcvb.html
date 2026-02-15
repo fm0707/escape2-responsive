@@ -1571,6 +1571,7 @@
           bottleBlue: "images/29/modal_bottle_blue.png",
           driverToWindow: "images/29/modal_driver_to_window.png",
           setKey: "images/29/modal_set_key.png",
+          flyer: "images/29/modal_flyer.png",
           recipeBack: "images/29/modal_recipe_back.png",
           driverBottom: "images/29/modal_driver_bottom.png",
           hammerSide: "images/29/modal_hammer_side.png",
@@ -1993,9 +1994,7 @@
                   return;
                 }
                 if (gameState.selectedItem == "luckyHammer") {
-                  updateMessage(
-                    "おにぎりをラッキーハンマーで叩いた",
-                  );
+                  updateMessage("おにぎりをラッキーハンマーで叩いた");
                   gameState.main.flags.useLuckHammerToTabekake = true;
                   renderCanvasRoom();
                   return;
@@ -2265,6 +2264,19 @@
               zIndex: 5,
               usable: () => true,
               item: { img: "IMAGE_KEY", visible: () => true },
+            },
+            {
+              x: 79.2,
+              y: 60.4,
+              width: 14.5,
+              height: 7.1,
+              onClick: clickWrap(function () {
+                showObj(null, "", IMAGES.modals.flyer, "チラシのようだ");
+              }),
+              description: "チラシ",
+              zIndex: 5,
+              usable: () => true,
+              item: { img: "", visible: () => true },
             },
             {
               x: 8.0,
@@ -4055,7 +4067,7 @@
             const dotCy = canvas.height * (52 / 100); // ボタン下(y=43の下)
             const dotRadius = Math.max(3, Math.min(5, canvas.width * 0.01));
             const dotSpacing = dotRadius * 4;
-            
+
             ctx.save();
             ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
             for (let i = 0; i < dotCount; i++) {
@@ -4961,7 +4973,7 @@
           const onKey = (e) => {
             if (e.key === "Enter") judge();
             if (e.key === "1") cycle(0);
-            if (e.key === "2") return;  // 左から2番目はキーボードでも無効
+            if (e.key === "2") return; // 左から2番目はキーボードでも無効
             if (e.key === "3") cycle(2);
             if (e.key === "4") cycle(3);
           };
@@ -5049,7 +5061,7 @@
           });
 
           const judge = () => {
-            const ok = num[0] === 6 && num[1] === 3 && num[2] === 9;
+            const ok = num[0] === 0 && num[1] === 9 && num[2] === 7;
             if (ok) {
               f.unlockDrawerMiddle = true;
               playSE?.("se-clear");
