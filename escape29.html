@@ -5097,6 +5097,7 @@
               closeModal();
               updateMessage("カチッ…引き出し下段のロックが外れた。");
               renderCanvasRoom?.();
+              markProgress?.("unlock_drawer_bottom");
             } else {
               playSE?.("se-error");
               if (hint) hint.textContent = "違うようだ。";
