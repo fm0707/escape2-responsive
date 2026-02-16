@@ -2120,7 +2120,7 @@
               onClick: clickWrap(function () {
                 showObj(
                   null,
-                  "祭りは今日だ。何とか仕上げないと…",
+                  "祭りは今日だ。何とか仕上げないと。",
                   IMAGES.modals.order,
                   "注文書が貼られている",
                   IMAGES.modals.orderEn,
@@ -3028,7 +3028,7 @@
           ],
         },
         book1: {
-          name: "絵本1ページ目",
+          name: "本1ページ目",
           description: "",
           clickableAreas: [
             {
@@ -3081,7 +3081,7 @@
           ],
         },
         book2: {
-          name: "絵本2ページ目",
+          name: "本2ページ目",
           description: "",
           clickableAreas: [
             {
@@ -4167,8 +4167,6 @@
       function drawRoomItems(ctx, canvas, roomId) {
         const room = rooms[roomId];
         const fx = gameState.fx || {};
-        const km = fx.kaniMove;
-        const isKaniMoving = !!(km && km.active && km.roomId === roomId);
 
         // 通常のアイテム（演出中のカニだけスキップ）
         room.clickableAreas.forEach((area) => {
@@ -4223,62 +4221,7 @@
             }
           }
         });
-
-        // ===== カニ移動演出（canvas上で実際に動かす） =====
-        if (isKaniMoving) {
-          const now =
-            typeof performance !== "undefined" ? performance.now() : Date.now();
-          const p = Math.max(0, Math.min(1, (now - km.start) / km.duration));
-          const e = easeOutCubic(p);
-
-          const x = km.from.x + (km.to.x - km.from.x) * e;
-          const y = km.from.y + (km.to.y - km.from.y) * e;
-          const w = km.from.w + (km.to.w - km.from.w) * e;
-          const h = km.from.h + (km.to.h - km.from.h) * e;
-
-          // const img = loadedImages[IMAGES.items['kani']];
-          const spriteKey = km.spriteKey || "kani";
-          const img = loadedImages[IMAGES.items[spriteKey]];
-          if (img && img.complete && img.naturalWidth > 0) {
-            ctx.save();
-
-            const phase = gameState.main?.flags?.timePhase ?? 0;
-            const isNight = phase === 2;
-            if (isNight) {
-              ctx.filter = "saturate(0.4) brightness(0.8)";
-            } else {
-              ctx.filter = "none";
-            }
-
-            ctx.drawImage(img, x, y, w, h);
-            ctx.restore();
-          }
-
-          if (p < 1) {
-            // 次フレーム
-            requestAnimationFrame(() => {
-              try {
-                renderCanvasRoom();
-              } catch (e) {}
-            });
-          } else if (!km.done) {
-            km.done = true;
-            const cb = km.onDone;
-
-            // 演出終了：ロック解除＆後処理
-            fx.kaniMove = null;
-            fx.lockInput = false;
-
-            if (typeof cb === "function") {
-              try {
-                cb();
-              } catch (e) {}
-            }
-            try {
-              renderCanvasRoom();
-            } catch (e) {}
-          }
-        }
+        
       }
 
       // ===== 演出ユーティリティ =====
@@ -4300,45 +4243,6 @@
         };
       }
 
-      function startKaniMoveAnimation(opts = {}) {
-        const canvas = document.getElementById("gameCanvas");
-        if (!canvas) return;
-
-        const roomId = opts.roomId || gameState.currentRoom;
-        const from = getAreaRectPx(
-          roomId,
-          opts.fromDesc || "カニ初期位置",
-          canvas,
-        );
-        const to = getAreaRectPx(roomId, opts.toDesc || "カニ移動後", canvas);
-        if (!from || !to) return;
-
-        gameState.fx = gameState.fx || {};
-        if (gameState.fx.kaniMove && gameState.fx.kaniMove.active) return;
-
-        gameState.fx.lockInput = true;
-        gameState.fx.kaniMove = {
-          active: true,
-          roomId,
-          from,
-          to,
-          start:
-            typeof performance !== "undefined" ? performance.now() : Date.now(),
-          duration: opts.duration ?? 650,
-          done: false,
-          onDone: opts.onDone || null,
-          spriteKey: opts.spriteKey || "kani", // ★追加
-          startSE: "startSE" in opts ? opts.startSE : "se-kani", // ★追加（null可）
-        };
-
-        requestAnimationFrame(() => {
-          try {
-            renderCanvasRoom();
-            const se = gameState.fx?.kaniMove?.startSE;
-            if (se) playSE(se);
-          } catch (e) {}
-        });
-      }
 
       function getRoomBackgroundImage(roomId, gameState) {
         let imgList = IMAGES.rooms[roomId]; // ★ const → let
@@ -5236,71 +5140,6 @@
         }, 0);
       }
 
-      function showPowerPuzzle() {
-        const f = gameState.main.flags;
-
-        if (f.powerOn) {
-          updateMessage("電源はすでに入っている。");
-          return;
-        }
-
-        const content = `
-      <div style="margin-top:10px;">
-        <input id="powerInput" class="puzzle-input" type="text"
-               placeholder="ひらがな / English" autocomplete="off" />
-        <div>
-          <button id="powerOk" class="nav-btn" style="margin-top:8px;font-size:1.4rem;background-color:#1d9fff;color:#fff;">OK</button>
-        </div>
-        <div id="powerHint" style="margin-top:10px; font-size:0.95em; min-height:1.2em;"></div>
-      </div>
-    `;
-
-        showModal("電源のロック", content, [
-          { text: "閉じる", action: "close" },
-        ]);
-
-        setTimeout(() => {
-          const input = document.getElementById("powerInput");
-          const okBtn = document.getElementById("powerOk");
-          const hint = document.getElementById("powerHint");
-          if (!input || !okBtn) return;
-
-          const normalize = (s) =>
-            (s ?? "").toString().trim().normalize("NFKC");
-
-          const judge = () => {
-            const vRaw = normalize(input.value);
-            const vLower = vRaw.toLowerCase();
-
-            const isOk = vRaw === "さぎし" || vLower === "lie";
-
-            if (isOk) {
-              f.powerOn = true;
-
-              playSE?.("se-power");
-              closeModal();
-              updateMessage("カチッ…電源が入った。");
-              markProgress("28_power_on");
-              renderCanvasRoom?.();
-            } else {
-              playSE?.("se-error");
-              if (hint) hint.textContent = "ちがうようだ。";
-              screenShake?.(
-                document.getElementById("modalContent"),
-                120,
-                "fx-shake",
-              );
-            }
-          };
-
-          okBtn.addEventListener("click", judge);
-          input.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") judge();
-          });
-
-          input.focus();
-        }, 0);
-      }
 
       // 工具（ドライバー/ハンマー/キャップオープナー）は「どれか1つだけ所持」仕様
       function getCurrentToolId() {
