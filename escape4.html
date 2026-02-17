@@ -416,12 +416,12 @@
         // ゲーム設定 - 画像パスをここで管理
         let IMAGES = {
             rooms: {
-                office: 'images/4/office.jpg',        
-                end: 'images/4/end.jpg',    
+                office: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/office.jpg',        
+                end: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/end.jpg',    
             },
             items: {
-                key: 'images/4/key.jpg',
-                honey: 'images/4/honey.jpg'   
+                key: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/key.jpg',
+                honey: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/honey.jpg'   
             }
         };
 
@@ -631,7 +631,7 @@
                     if (gameState.flags.unlockPc) {
                         showModal(
                         '村田でログインしている',
-                        '<img src="images/4/pc.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/pc.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     } else {
@@ -646,7 +646,7 @@
                         updateMessage('癒される植物だ');
                         showModal(
                             '癒される植物だ',
-                            '<img src="images/4/green.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/green.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                     } else {
@@ -665,7 +665,7 @@
                     updateMessage('社内のお知らせだ');
                     showModal(
                         '社員のみなさんへ',
-                        '<img src="images/4/paper1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/paper1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     break;  
@@ -673,7 +673,7 @@
                     updateMessage('社内のお知らせだ');
                     showModal(
                         '何の当番だろう？',
-                        '<img src="images/4/paper2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/paper2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     break;  
@@ -681,7 +681,7 @@
                     updateMessage('社内のお知らせだ');
                     showModal(
                         '社員のみなさんへ',
-                        '<img src="images/4/paper3.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/paper3.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     break;  
@@ -689,7 +689,7 @@
                     updateMessage('社内のお知らせだ');
                     showModal(
                         '社員のみなさんへ',
-                        '<img src="images/4/paper4.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/paper4.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     break;  
@@ -697,7 +697,7 @@
                     updateMessage('社内のお知らせだ');
                     showModal(
                         '社員のみなさんへ',
-                        '<img src="images/4/paper5.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/paper5.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     break;  
@@ -705,7 +705,7 @@
                     updateMessage('社内のお知らせだ');
                     showModal(
                         '社員のみなさんへ',
-                        '<img src="images/4/paper6.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/paper6.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );  
                     break;  
@@ -715,14 +715,14 @@
                         playSE('se-box');
                         showModal(
                             '鍵が開いた！',
-                            '<img src="images/4/open.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/open.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                         playSE('se-clear');
                         window._nextModal = {
                             before: function() { playSE('se-clear'); },
                             title: 'あなたは外へ足を踏み出した',
-                            content: '<img src="images/4/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            content: '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             buttons: [{text: '閉じる', action: 'close'}],
                             after: function() { changeRoom('end'); }
                         };     
@@ -738,7 +738,7 @@
                     if (gameState.flags.foundMemo) {
                         showModal(
                             'クマ妖精のメモだ',
-                            '<img src="images/4/memo.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/memo.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                     } else {
@@ -761,7 +761,7 @@
                             updateMessage('ハチミツが落ちていた');
                             showModal(
                                 'ハチミツが落ちていた',
-                                '<img src="images/4/honey.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                                '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/honey.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                                 [{text: '閉じる', action: 'close'}]
                             );  
                         } else {
@@ -820,7 +820,7 @@ Meaning: Completely lost in the fog / Having no clue.</p>
                 playSE('se-subclear');
                 showModal(
                     'ログイン成功！',
-                    '<img src="images/4/pc_login.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/pc_login.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
 
@@ -856,7 +856,7 @@ Meaning: Completely lost in the fog / Having no clue.</p>
                 playSE('se-box');
                 showModal(
                     '鍵を手に入れた！',
-                    '<img src="images/4/key.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/key.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 addItem('key');
@@ -869,21 +869,21 @@ Meaning: Completely lost in the fog / Having no clue.</p>
                 playSE('se-fanta');
                 showModal(
                     'バッドエンド',
-                    '<img src="images/4/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
                     '<br>あなたはクマの妖精シティに転移してしまった。もう帰ることはできない。',
                     [{text: '最初から', action: 'restart'}]
                 );          
 
             } else if (input === '879' || input=== '８７９') {
                 gameState.flags.foundBear = true;
-                IMAGES.rooms.office = 'images/4/office2.jpg';
+                IMAGES.rooms.office = 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/office2.jpg';
                 updateMessage("不思議な生き物が現れた。");
                 changeRoomImage('office');
                 generateClickableAreas('office');
                 playSE('se-fanta');
                 showModal(
                     'なんだろう？',
-                    '<img src="images/4/ex.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/ex.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
 
@@ -1027,7 +1027,7 @@ Meaning: Completely lost in the fog / Having no clue.</p>
             closeModal();
             initGame();
             updateInventoryDisplay();
-            IMAGES.rooms.office = 'images/4/office.jpg';
+            IMAGES.rooms.office = 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/office.jpg';
             changeRoom('office');
         }
 
@@ -1122,9 +1122,9 @@ Meaning: Completely lost in the fog / Having no clue.</p>
                 gameState = JSON.parse(saved);
                 // ここでIMAGES.rooms.officeを書き換える！
                 if (gameState.flags.foundBear) {
-                    IMAGES.rooms.office = 'images/4/office2.jpg';
+                    IMAGES.rooms.office = 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/office2.jpg';
                 } else {
-                    IMAGES.rooms.office = 'images/4/office.jpg';
+                    IMAGES.rooms.office = 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/4/office.jpg';
                 }
                 // UIや画面をstateに合わせて復元する
                 changeRoom(gameState.currentRoom);

@@ -496,26 +496,26 @@
         // ゲーム設定 - 画像パスをここで管理
         let IMAGES = {
             rooms: {
-                room: 'images/3/room.jpg',        
-                road: 'images/3/road.jpg',       
-                park: 'images/3/park.jpg',      
-                supermarket: 'images/3/supermarket.jpg',
-                tvEnd: 'images/3/tvEnd.jpg',
-                roomEnd: 'images/3/roomEnd.jpg',
-                roadEnd: 'images/3/roadEnd.jpg',
-                superEnd: 'images/3/superEnd.jpg',
-                parkEnd: 'images/3/parkEnd.jpg',
-                bokeEnd: 'images/3/bokeEnd.jpg',
-                normalEnd: 'images/3/normalEnd.jpg',
-                normal2End: 'images/3/normalEnd2.jpg',
-                muneEnd: 'images/3/muneEnd.jpg'     
+                room: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/room.jpg',        
+                road: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/road.jpg',       
+                park: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/park.jpg',      
+                supermarket: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/supermarket.jpg',
+                tvEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/tvEnd.jpg',
+                roomEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/roomEnd.jpg',
+                roadEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/roadEnd.jpg',
+                superEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/superEnd.jpg',
+                parkEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/parkEnd.jpg',
+                bokeEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/bokeEnd.jpg',
+                normalEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/normalEnd.jpg',
+                normal2End: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/normalEnd2.jpg',
+                muneEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/muneEnd.jpg'     
             },
             items: {
-                tamago: 'images/3/tamago.jpg',
-                muneniku: 'images/3/muneniku.jpg',
-                shiokoji: 'images/3/shiokoji.jpg',
-                tanpopo: 'images/3/tanpopoItem.jpg',
-                book: 'images/3/book.jpg',
+                tamago: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/tamago.jpg',
+                muneniku: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/muneniku.jpg',
+                shiokoji: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/shiokoji.jpg',
+                tanpopo: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/tanpopoItem.jpg',
+                book: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/book.jpg',
 
             }
         };
@@ -1204,7 +1204,7 @@
                     if (gameState.flags.tanpopoAction == "pick") {
                         showModal(
                             'そういえば昔も、山でタンポポを見つけて…',
-                            '<img src="images/3/pic_tozan.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/pic_tozan.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                         gameState.flags.positiveCount++;
@@ -1229,7 +1229,7 @@
                     } else {
                         showModal(
                             'なんだ…このメモ？俺が書いたのか？',
-                            '<img src="images/3/memo.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/memo.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                         gameState.canGoOutside = true;
@@ -1260,7 +1260,7 @@
                         // バッドエンド演出
                         showModal(
                             'バッドエンド',
-                            '<img src="images/3/fushinEnd.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/fushinEnd.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
                             '<br>「ほら、これ食べな」<br><b>子供「なに？このおじさん！こわいよー」</b><br><span style="color:#f00;">【バッドエンド】</span><br>クマ妖精「…次は自分で食べようね」',
                             [{text: '最初から', action: 'restart'}]
                         );
@@ -1287,7 +1287,7 @@
                             updateMessage('もう買い物は済んだ');
                         } else {
                             updateMessage('卵を買って代金を支払った');
-                            IMAGES.rooms.road = 'images/3/road2.jpg';
+                            IMAGES.rooms.road = 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/road2.jpg';
                             addItem('tamago');
                         }         
                     } else {
@@ -1295,7 +1295,7 @@
                             updateMessage('もう買い物は済んだ');
                         } else {
                             updateMessage('卵とむね肉と塩こうじを買って代金を支払った');
-                            IMAGES.rooms.road = 'images/3/road2.jpg';
+                            IMAGES.rooms.road = 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/road2.jpg';
                             addItem('tamago');
                             addItem('muneniku');
                             addItem('shiokoji');
@@ -1321,7 +1321,7 @@
                     if (gameState.positiveCount>1 && !gameState.flags.gotMuneRecipe) {
                         showModal(
                             '暇そうな男性と目があうと、話しかけられた。<br>…偶然目が合っただけなのに、いつの間にかむね肉談義に花が咲いた。<br>“塩麹につけてみるといいですよ”――ちょっとした発見だった。',
-                            '<img src="images/3/mushokuman1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/mushokuman1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                         gameState.flags.gotMuneRecipe = true;
@@ -1329,7 +1329,7 @@
                         window._nextModal = {
                             before: function() { playSE('se-inspiration'); },
                             title: 'なんだか今日はもう少し動けそうな気がする…<br>（行動回数が増えた！）',
-                            content: '<img src="images/3/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            content: '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             buttons: [{text: '閉じる', action: 'close'}],
                             after: null 
                         };
@@ -1419,7 +1419,7 @@
                 playSE('se-subclear');
                 showModal(
                     '外へ出られるようになった。少し気力がわいた。<br>（行動回数アップ！）',
-                    '<img src="images/3/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 unlockRoom('road');
@@ -1441,7 +1441,7 @@
         function showTanpopoChoice() {
             showModal(
                 '道端に小さなタンポポが咲いている。どうする？',
-                '<img src="images/3/tanpopo.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
+                '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/tanpopo.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
                 [
                     { text: '摘んで持ち帰る', action: 'pickTanpopo' },
                     { text: 'そのまま眺める', action: 'watchTanpopo' },
@@ -1474,7 +1474,7 @@
                 showModal(
                     '女性たちが孫の絵をキーホルダーにするのが楽しいと話している。',
                     '一人、キーホルダーを無くしてしまった人がいるようだ',
-                    // '<img src="images/tanpopo.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
+                    // '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/tanpopo.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
                     [
                         { text: '落とし物掲示板のことを伝える', action: 'tellKeyholder' },
                         { text: '通り過ぎる', action: 'ignoreKeyholder' }
@@ -1503,7 +1503,7 @@
             if (!gameState.flags.playShogi) {
                 showModal(
                     '男性に将棋を一緒にしないかと誘われた',
-                     '<img src="images/3/shogiman.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
+                     '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/shogiman.jpg" style="width:220px;display:block;margin:0 auto 18px;">',
                     [
                         { text: 'ありがたくご一緒する', action: 'playShogi' },
                         { text: '忙しいので…', action: 'rejectShogi' }
@@ -1979,7 +1979,7 @@
                 const lastThree = gameState.puzzleSequence.slice(-3);
                 if (JSON.stringify(lastThree) === JSON.stringify(correct)) {
                     gameState.flags.memoAppeared = true;
-                    IMAGES.rooms.room = 'images/3/room2.jpg';
+                    IMAGES.rooms.room = 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/3/room2.jpg';
                     // メモが現れた演出
                     updateMessage("畳の上に一枚のメモが置かれているのに気づいた。");
                     changeRoomImage('room');

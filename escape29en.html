@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="保育室を舞台にした無料ゲーム。スマホ＆PC対応。"
+      content="A free escape game. Compatible with smartphones & PCs."
     />
     <link rel="icon" href="favicon.ico" />
-    <title>工房からの脱出</title>
+    <title>Escape from the Workshop</title>
     <style>
       body {
         margin: 0;
@@ -375,7 +375,7 @@
         cursor: not-allowed;
       }
 
-      /* 閉じるボタン */
+      /* Closeボタン */
       #modalClose .modal-close-btn {
         display: inline-block;
         min-width: 160px;
@@ -1218,7 +1218,7 @@
 
           <!-- NOTESタブ：後から増えるメモ用 -->
           <div class="notebook-tab-content" id="notebook-tab-notes">
-            <p class="notebook-cap">空白のページ。</p>
+            <p class="notebook-cap">A blank page.</p>
             <div id="notebook-notes-body">
               <!-- 後半のイベントで追記していく想定 -->
             </div>
@@ -1310,7 +1310,7 @@
         当サイトの音源は<a href="https://otologic.jp/" target="blank"
           >OtoLogic</a
         >,<a href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a
-        >の素材を使用しています 作者:<a href="index.html">スラセブン</a>
+        >のMaterialsを使用しています 作者:<a href="index.html">スラセブン</a>
       </div>
     </div>
 
@@ -1446,12 +1446,12 @@
         // 初期状態で非表示
         modal.style.display = "none";
 
-        // 閉じる
+        // Close
         closeBtn?.addEventListener("click", () => {
           modal.style.display = "none";
         });
 
-        // オーバーレイクリックでも閉じる
+        // オーバーレイクリックでもClose
         modal.addEventListener("click", (e) => {
           if (e.target === modal) modal.style.display = "none";
         });
@@ -1719,7 +1719,7 @@
                 ) {
                   showObj(
                     "useHammerToNabe",
-                    "ハンマーで鍋をたたいた",
+                    "Hammerで鍋をたたいた",
                     IMAGES.modals.nabeHammer,
                     "鍋は少しへこんでしまった",
                   );
@@ -1742,7 +1742,7 @@
                 ) {
                   showObj(
                     null,
-                    "ドライバーで蓋をこじあけた",
+                    "Driverで蓋をこじあけた",
                     IMAGES.modals.nabeDriver,
                     "鍋の蓋が開いた",
                   );
@@ -1757,7 +1757,7 @@
                 ) {
                   showObj(
                     null,
-                    "ミラクルドライバーで蓋をこじあけた",
+                    "ミラクルDriverで蓋をこじあけた",
                     IMAGES.modals.nabeDriver,
                     "鍋の蓋が開いた",
                   );
@@ -1835,19 +1835,19 @@
               onClick: clickWrap(function () {
                 // すでに持ってたら何もしない（メッセージだけ）
                 if (hasItem("gemRed")) {
-                  updateMessage("赤い宝石はもう持っている。");
+                  updateMessage("Red Gemはもう持っている。");
                   return;
                 }
 
                 showModal(
-                  "赤い宝石がある",
+                  "Red Gemがある",
                   `<img src="${IMAGES.modals.bottleRed}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                  [{ text: "閉じる", action: "close" }],
+                  [{ text: "Close", action: "close" }],
                 );
                 addItem("gemRed");
-                updateMessage("赤い宝石を手に入れた");
+                updateMessage("Red Gemを手に入れた");
               }),
-              description: "赤い素材の瓶",
+              description: "赤いMaterialsの瓶",
               zIndex: 5,
               usable: () => true,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -1860,7 +1860,7 @@
               onClick: clickWrap(function () {
                 updateMessage("空の瓶だ");
               }),
-              description: "カラの素材の瓶",
+              description: "カラのMaterialsの瓶",
               zIndex: 5,
               usable: () => true,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -1887,7 +1887,7 @@
                     renderCanvasRoom();
                   } else {
                     updateMessage(
-                      "青い素材が入っているが、蓋が固くて開かない。",
+                      "青いMaterialsが入っているが、蓋が固くて開かない。",
                     );
                   }
                   return;
@@ -1895,19 +1895,19 @@
 
                 // アンロック後：未所持のときだけ入手
                 if (hasItem("gemBlue")) {
-                  updateMessage("青い宝石はもう持っている。");
+                  updateMessage("Blue Gemはもう持っている。");
                   return;
                 }
 
                 showModal(
-                  "青い宝石がある",
+                  "Blue Gemがある",
                   `<img src="${IMAGES.modals.bottleBlue}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                  [{ text: "閉じる", action: "close" }],
+                  [{ text: "Close", action: "close" }],
                 );
                 addItem("gemBlue");
-                updateMessage("青い宝石を手に入れた");
+                updateMessage("Blue Gemを手に入れた");
               }),
-              description: "青い素材の瓶",
+              description: "青いMaterialsの瓶",
               zIndex: 5,
               usable: () => true,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -1918,7 +1918,7 @@
               width: 21.7,
               height: 8.8,
               onClick: clickWrap(function () {
-                showObj(null, "", IMAGES.modals.bin, "素材の瓶が並んでいる");
+                showObj(null, "", IMAGES.modals.bin, "Materialsの瓶が並んでいる");
               }),
               description: "右上瓶",
               zIndex: 5,
@@ -1989,19 +1989,19 @@
               onClick: clickWrap(function () {
                 if (gameState.selectedItem == "hammer") {
                   updateMessage(
-                    "おにぎりを軽く叩いてみたが、特に変化はなかった",
+                    "Onigiriを軽く叩いてみたが、特に変化はなかった",
                   );
                   return;
                 }
                 if (gameState.selectedItem == "luckyHammer") {
-                  updateMessage("おにぎりをラッキーハンマーで叩いた");
+                  updateMessage("OnigiriをラッキーHammerで叩いた");
                   gameState.main.flags.useLuckHammerToTabekake = true;
                   renderCanvasRoom();
                   return;
                 }
-                updateMessage("食べかけのおにぎりだ。具は鮭のようだ");
+                updateMessage("食べかけのOnigiriだ。具は鮭のようだ");
               }),
-              description: "食べかけのおにぎり",
+              description: "食べかけのOnigiri",
               zIndex: 5,
               usable: () => !gameState.main.flags.useLuckHammerToTabekake,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -2012,9 +2012,9 @@
               width: 15.5,
               height: 13.1,
               onClick: clickWrap(function () {
-                updateMessage("出来立てのおにぎりだ。ホカホカしている");
+                updateMessage("出来立てのOnigiriだ。ホカホカしている");
               }),
-              description: "ぴかぴかおにぎり",
+              description: "ぴかぴかOnigiri",
               zIndex: 5,
               usable: () => gameState.main.flags.useLuckHammerToTabekake,
               item: {
@@ -2141,11 +2141,11 @@
                   null,
                   "",
                   IMAGES.modals.posterSozai,
-                  "素材が記されている",
+                  "Materialsが記されている",
                   IMAGES.modals.posterSozaiEn,
                 );
               }),
-              description: "ドア上素材表",
+              description: "ドア上Materials表",
               zIndex: 5,
               usable: () => true,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -2189,7 +2189,7 @@
               onClick: clickWrap(function () {
                 showObj(null, "", IMAGES.modals.spellTable, "謎の表だ");
               }),
-              description: "呪文表",
+              description: "Spell表",
               zIndex: 5,
               usable: () => hasItem("hammer") || hasItem("luckyHammer"),
               item: { img: "spellTable", visible: () => true },
@@ -2211,7 +2211,7 @@
               width: 11.0,
               height: 11.4,
               onClick: clickWrap(function () {}, { allowAtNight: true }),
-              description: "ドライバー",
+              description: "Driver",
               zIndex: 5,
               usable: () => false,
               item: {
@@ -2233,7 +2233,7 @@
               width: 7.8,
               height: 15.3,
               onClick: clickWrap(function () {}, { allowAtNight: true }),
-              description: "ハンマー",
+              description: "Hammer",
               zIndex: 5,
               usable: () => false,
               item: {
@@ -2352,7 +2352,7 @@
               height: 5.4,
               onClick: clickWrap(function () {
                 if (gameState.selectedItem == "key") {
-                  updateMessage("鍵を開けた");
+                  updateMessage("Keyを開けた");
                   playSE("se-gacha");
                   gameState.main.flags.unlockBox = true;
                   renderCanvasRoom();
@@ -2362,7 +2362,7 @@
                   changeRoom("boxInner");
                   return;
                 }
-                updateMessage("箱には鍵がかかっている");
+                updateMessage("箱にはKeyがかかっている");
               }),
               description: "タンス上の箱",
               zIndex: 1,
@@ -2460,11 +2460,11 @@
                   removeItem("key");
                   f.setKey = true;
                   showModal(
-                    "鍵を嵌め込んだ",
+                    "Keyを嵌め込んだ",
                     `<img src="${IMAGES.modals.setKey}" style="width:360px;max-width:100%;display:block;margin:0 auto 16px;">`,
                     [
                       {
-                        text: "閉じる",
+                        text: "Close",
                         action: () => {
                           closeModal();
                           f.stringBoardFlashUntil = Date.now() + 450;
@@ -2604,12 +2604,12 @@
                 acquireItemOnce(
                   "foundCore",
                   "core",
-                  "発光コアがある",
+                  "発光Coreがある",
                   IMAGES.items.core,
-                  "発光コアを手に入れた。どうやら、この工房に残っている発光コアはこれだけのようだ…",
+                  "発光Coreを手に入れた。どうやら、この工房に残っている発光Coreはこれだけのようだ…",
                 );
               }),
-              description: "発光コア",
+              description: "発光Core",
               zIndex: 5,
               usable: () => !gameState.main.flags.foundCore,
               item: {
@@ -2710,12 +2710,12 @@
                 acquireItemOnce(
                   "foundKey",
                   "key",
-                  "鍵をみつけた",
+                  "Keyをみつけた",
                   IMAGES.items.key,
-                  "鍵を手に入れた",
+                  "Keyを手に入れた",
                 );
               }),
-              description: "鍵",
+              description: "Key",
               zIndex: 5,
               usable: () => !gameState.main.flags.foundKey,
               item: {
@@ -2877,7 +2877,7 @@
                   "緑色の宝石を手に入れた",
                 );
               }),
-              description: "緑の宝石",
+              description: "Green Gem",
               zIndex: 5,
               usable: () => !gameState.main.flags.foundGemGreen,
               item: {
@@ -2924,7 +2924,7 @@
               onClick: clickWrap(function () {
                 alchemyHandleSlotClick(1);
               }),
-              description: "素材1スロット",
+              description: "Materials1スロット",
               zIndex: 5,
               usable: () => true,
               item: {
@@ -2940,7 +2940,7 @@
               onClick: clickWrap(function () {
                 alchemyHandleSlotClick(2);
               }),
-              description: "素材2スロット",
+              description: "Materials2スロット",
               zIndex: 5,
               usable: () => true,
               item: {
@@ -2962,7 +2962,7 @@
                   renderCanvasRoom?.();
                   playSE("se-cyber");
                   showModal("QRコードを読み取った", "", [
-                    { text: "閉じる", action: "close" },
+                    { text: "Close", action: "close" },
                   ]);
                   return;
                 }
@@ -2981,7 +2981,7 @@
               onClick: clickWrap(function () {
                 openAlchemySpellInputModal();
               }),
-              description: "呪文入力パネル",
+              description: "Spell入力パネル",
               zIndex: 1,
               usable: () => true,
             },
@@ -2993,7 +2993,7 @@
               onClick: clickWrap(function () {
                 openAlchemySpellInputModal();
               }),
-              description: "呪文表示欄",
+              description: "Spell表示欄",
               zIndex: 5,
               usable: () => false,
             },
@@ -3149,12 +3149,12 @@
                     gameState.endWorse.flags || (gameState.endWorse.flags = {});
                   ef.backgroundState++;
                   renderCanvasRoom();
-                  updateMessage("クマ妖精にラッキーハンマーを使った。");
+                  updateMessage("Bear FairyにラッキーHammerを使った。");
                   return;
                 }
-                updateMessage("クマ妖精が悲しそうにしている。");
+                updateMessage("Bear Fairyが悲しそうにしている。");
               }),
-              description: "泣いているクマ妖精",
+              description: "泣いているBear Fairy",
               zIndex: 5,
               usable: () => gameState.endWorse.flags.backgroundState == 0,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -3165,9 +3165,9 @@
               width: 34.4,
               height: 36.1,
               onClick: clickWrap(function () {
-                updateMessage("クマ妖精は嬉しそうだ。");
+                updateMessage("Bear Fairyは嬉しそうだ。");
               }),
-              description: "花火を持つクマ妖精",
+              description: "花火を持つBear Fairy",
               zIndex: 5,
               usable: () => gameState.endWorse.flags.backgroundState == 1,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -3185,7 +3185,7 @@
           ],
         },
         end: {
-          name: "ノーマルエンド",
+          name: "Normal Ending",
           description:
             "依頼品をきちんと作成して脱出できました。おめでとうございます！",
           clickableAreas: [
@@ -3208,9 +3208,9 @@
               width: 14.8,
               height: 15.0,
               onClick: clickWrap(function () {
-                updateMessage("クマ妖精だ");
+                updateMessage("Bear Fairyだ");
               }),
-              description: "クマ妖精",
+              description: "Bear Fairy",
               zIndex: 5,
               usable: () => true,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -3223,13 +3223,13 @@
               onClick: clickWrap(function () {
                 showEndingReport("end");
               }),
-              description: "ノーマルエンド",
+              description: "Normal Ending",
             },
           ],
         },
 
         trueEnd: {
-          name: "トゥルーエンド",
+          name: "True Ending",
           description:
             "ミラクル花火を打ち上げることができました。おめでとうございます！",
           clickableAreas: [
@@ -3242,33 +3242,33 @@
                 const f = gameState.main.flags || (gameState.main.flags = {});
                 if (gameState.selectedItem === "luckyHammer") {
                   if (hasItem("onigiri") || f.giveOnigiri) {
-                    updateMessage("もうおにぎりはある。");
+                    updateMessage("もうOnigiriはある。");
                     return;
                   }
                   showModal(
-                    "ラッキーハンマーを使った",
+                    "ラッキーHammerを使った",
                     `<img src="${IMAGES.modals.onigiriHammer}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
                     [
                       {
                         text: "つづける",
                         action: () => {
                           window._nextModal = {
-                            title: "おにぎりが落ちてきた",
+                            title: "Onigiriが落ちてきた",
                             content: `<img src="${IMAGES.items.onigiri}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                            buttons: [{ text: "閉じる", action: "close" }],
+                            buttons: [{ text: "Close", action: "close" }],
                           };
                           addItem("onigiri");
                           closeModal();
-                          updateMessage("おにぎりを手に入れた。");
+                          updateMessage("Onigiriを手に入れた。");
                         },
                       },
                     ],
                   );
                   return;
                 }
-                updateMessage("おにぎり花火だ。");
+                updateMessage("Onigiri花火だ。");
               }),
-              description: "おにぎり花火",
+              description: "Onigiri花火",
               zIndex: 5,
               usable: () => true,
               item: { img: "IMAGE_KEY", visible: () => true },
@@ -3284,10 +3284,10 @@
                   removeItem("onigiri");
                   f.giveOnigiri = true;
                   renderCanvasRoom();
-                  updateMessage("クマ妖精におにぎりを渡した。");
+                  updateMessage("Bear FairyにOnigiriを渡した。");
                   return;
                 }
-                updateMessage("クマ妖精がおにぎりを欲しそうに見ている。");
+                updateMessage("Bear FairyがOnigiriを欲しそうに見ている。");
               }),
               description: "クマ希望",
               zIndex: 5,
@@ -3307,10 +3307,10 @@
                   null,
                   "えへへ",
                   IMAGES.modals.bearHappy,
-                  "クマ妖精がおにぎりを食べている。",
+                  "Bear FairyがOnigiriを食べている。",
                 );
               }),
-              description: "クマおにぎり",
+              description: "クマOnigiri",
               zIndex: 5,
               usable: () => gameState.main.flags.giveOnigiri,
               item: {
@@ -3330,7 +3330,7 @@
                 );
                 showEndingReport("trueEnd");
               }),
-              description: "トゥルーエンド",
+              description: "True Ending",
               usable: () => true,
             },
           ],
@@ -3375,7 +3375,7 @@
             }
 
             setTimeout(() => {
-              // 演出後に綺麗に消す
+              // 演出後に綺麗にClear
               if (overlay) {
                 // overlay.style.background = '';
                 overlay.style.opacity = 0;
@@ -3422,7 +3422,7 @@
             }
 
             setTimeout(() => {
-              // 演出後に綺麗に消す
+              // 演出後に綺麗にClear
               if (overlay) {
                 overlay.classList.remove("warp-active");
                 overlay.style.opacity = 0;
@@ -3535,7 +3535,7 @@
 
       function changeRoom(roomId) {
         const prevRoom = gameState.currentRoom;
-        // alchemyRoom から出るときは、スロットに置いた素材をインベントリへ戻す
+        // alchemyRoom から出るときは、スロットに置いたMaterialsをインベントリへ戻す
         if (prevRoom === "alchemyRoom" && roomId !== "alchemyRoom") {
           try {
             alchemyReturnItemsToInventory();
@@ -3706,14 +3706,14 @@
         // 何も選択していない → スロットから回収
         if (!selected) {
           if (!f[key]) {
-            updateMessage("（素材を選んでからここに置ける）");
+            updateMessage("（Select a material before placing it here.）");
             return;
           }
           addItem(f[key]);
           f[key] = null;
           renderCanvasRoom();
           updateInventoryDisplay();
-          updateMessage("素材をインベントリに戻した。");
+          updateMessage("Material returned to inventory.");
           return;
         }
 
@@ -3729,7 +3729,7 @@
 
         renderCanvasRoom();
         updateInventoryDisplay();
-        updateMessage("素材をセットした。");
+        updateMessage("Material set.");
       }
 
       function openAlchemySpellInputModal() {
@@ -3738,15 +3738,15 @@
 
         const content = `
         <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:8px;">
-            <div style="font-size:0.95em;opacity:0.9;">呪文を入力してね（大文字・小文字は気にしない）</div>
+            <div style="font-size:0.95em;opacity:0.9;">Enter the spell (case-insensitive)</div>
             <input id="alchemySpellInput" class="puzzle-input" type="text" maxlength="32" value="${(f.spellText || "").replace(/"/g, "&quot;")}" />
             <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
                 <button id="alchemySpellOk" class="ok-btn">OK</button>
-                <button id="alchemySpellClear" class="nav-btn" style="background:#666;color:#fff;">消す</button>
+                <button id="alchemySpellClear" class="nav-btn" style="background:#666;color:#fff;">Clear</button>
             </div>
         </div>
     `;
-        showModal("呪文入力", content, [{ text: "閉じる", action: "close" }]);
+        showModal("Spell入力", content, [{ text: "Close", action: "close" }]);
 
         setTimeout(() => {
           const inp = document.getElementById("alchemySpellInput");
@@ -3760,7 +3760,7 @@
             const t = String(inp.value ?? "").trim();
             f.spellText = t;
             renderCanvasRoom();
-            updateMessage(t ? `呪文をセットした：${t}` : "呪文を消した。");
+            updateMessage(t ? `Spellをセットした：${t}` : "Spellを消した。");
             closeModal();
           };
 
@@ -3797,12 +3797,12 @@
         if (f.isSynthesizing) return;
 
         if (!f.slot1 || !f.slot2) {
-          updateMessage("素材が2つ必要。");
+          updateMessage("Two materials are required.");
           screenFlash("red", 160);
           return;
         }
         if (!String(f.spellText || "").trim()) {
-          updateMessage("呪文が入力されていない。");
+          updateMessage("No spell has been entered.");
           screenFlash("red", 160);
           return;
         }
@@ -3817,13 +3817,13 @@
         // 錬成中モーダル（2枚交互アニメ）
         const content = `
         <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:6px;">
-            <div style="font-size:1.1em;font-weight:bold;">錬成中…</div>
+            <div style="font-size:1.1em;font-weight:bold;">Synthesizing...</div>
             <div style="width:360px;height:360px;display:flex;align-items:center;justify-content:center;">
                 <img id="alchemyAnimImg"
                      src="${animImgs[0] || IMAGES.items.core || ""}"
                      style="width:300px;height:300px;image-rendering:pixelated;" />
             </div>
-            <div style="font-size:0.95em;opacity:0.85;">（ゴゴゴ…）</div>
+            <div style="font-size:0.95em;opacity:0.85;">(Rumbling...)</div>
         </div>
     `;
         showModal("錬成", content, []); // ボタン無し
@@ -3836,22 +3836,22 @@
           const recipe = alchemyFindRecipe();
 
           if (!recipe) {
-            // 失敗：煙＋何も起きない。素材は戻す。
+            // 失敗：煙＋何も起きない。Materialsは戻す。
             screenFlash("red", 220);
             try {
               playSE?.("se-boko");
             } catch (e) {}
             showModal(
-              "……",
+              "...",
               `
                 <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:6px;">
                     <div style="font-size:64px;line-height:1;">💨</div>
-                    <div style="font-size:1.05em;">何も起きなかった</div>
+                    <div style="font-size:1.05em;">Nothing happened.</div>
                 </div>
             `,
-              [{ text: "閉じる", action: "close" }],
+              [{ text: "Close", action: "close" }],
             );
-            updateMessage("何も起きなかった");
+            updateMessage("Nothing happened.");
 
             alchemyReturnItemsToInventory();
             f.isSynthesizing = false;
@@ -3874,7 +3874,7 @@
 
           if (resultId === "gemViolet" && hasItem("gemViolet")) {
             showModal("すでに所持している組み合わせだ", "", [
-              { text: "閉じる", action: "close" },
+              { text: "Close", action: "close" },
             ]);
             alchemyReturnItemsToInventory();
             f.isSynthesizing = false;
@@ -3901,7 +3901,7 @@
           if (resultId) addItem(resultId);
           updateInventoryDisplay();
           if (resultId === "redSphere") {
-            showToast("注文の品ができた。外に出られそうだ");
+            showToast("The order is ready. I might be able to get out.");
           }
 
           const itemHtml = img
@@ -3909,16 +3909,16 @@
             : `<div style="font-size:1.1em;font-weight:bold;">${resultId}</div>`;
 
           showModal(
-            "成功！",
+            "Success!",
             `
             <div id="alchemySuccessBox" style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:6px;">
                 ${getItemName(itemHtml)}
-                <div style="font-size:1.05em;">完成した！</div>
+                <div style="font-size:1.05em;">Complete!</div>
             </div>
         `,
-            [{ text: "閉じる", action: "close" }],
+            [{ text: "Close", action: "close" }],
           );
-          updateMessage("完成した！");
+          updateMessage("Complete!");
 
           setTimeout(() => {
             const box = document.getElementById("alchemySuccessBox");
@@ -3991,12 +3991,12 @@
         // アイテム描画（未取得のみ）
         drawRoomItems(ctx, canvas, roomId);
 
-        // alchemyRoom: 呪文表示欄にテキストを描画
+        // alchemyRoom: Spell表示欄にテキストを描画
         if (roomId === "alchemyRoom") {
           const f = ensureAlchemyState();
           const spell = String(f.spellText || "").trim();
           if (spell) {
-            // 呪文表示欄のクリックエリア（x:77.6,y:61.9,w:17.9,h:5.6）に合わせて描く（% → px）
+            // Spell表示欄のクリックエリア（x:77.6,y:61.9,w:17.9,h:5.6）に合わせて描く（% → px）
             const px = canvas.width * (77.6 / 100);
             const py = canvas.height * (61.9 / 100);
             const w = canvas.width * (17.9 / 100);
@@ -4025,7 +4025,7 @@
           }
         }
 
-        // stringBoard: 鍵セット後の演出＆メッセージ表示
+        // stringBoard: Keyセット後の演出＆メッセージ表示
         if (roomId === "stringBoard") {
           const f = gameState.main.flags || (gameState.main.flags = {});
           const until = f.stringBoardFlashUntil || 0;
@@ -4335,9 +4335,9 @@
         const f = gameState.main.flags;
         if (f[flagKey]) {
           if (itemId == "glass") {
-            updateMessage("グラスが沢山ある");
+            updateMessage("There are many glasses.");
           } else {
-            updateMessage("もう何もない");
+            updateMessage("There's nothing else here.");
           }
 
           return;
@@ -4349,7 +4349,7 @@
         showModal(
           title,
           `<img src="${imgSrc}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-          [{ text: "閉じる", action: "close" }],
+          [{ text: "Close", action: "close" }],
         );
         updateMessage(msg);
       }
@@ -4357,7 +4357,7 @@
       function clickWrap(fn, { allowAtNight = false } = {}) {
         return function (...args) {
           if (gameState.main.flags.isNight && !allowAtNight) {
-            updateMessage("暗くてよく見えない");
+            updateMessage("It's too dark to see clearly.");
             return;
           }
           fn.apply(this, args);
@@ -4411,17 +4411,17 @@
           trueEnd: {
             title: "🍙 TRUE END",
             label: "TRUE END",
-            desc: "個性的な花火",
+            desc: "Unique fireworks",
           },
           endWorse: {
             title: "🏃‍♀️‍➡️ END",
             label: "END",
-            desc: "暗い森の中へ",
+            desc: "Into the dark forest",
           },
           end: {
             title: "🎆 NORMAL END ",
             label: "NORMAL END ",
-            desc: "無事依頼をこなして脱出できました！",
+            desc: "You completed the quest and escaped safely!",
           },
         };
 
@@ -4431,7 +4431,7 @@
         let secretText = "";
         switch (endingId) {
           case "trueEnd":
-            secretText = "🍙 おにぎりデザイン";
+            secretText = "🍙 Onigiriデザイン";
             break;
 
           case "end":
@@ -4452,21 +4452,21 @@
         <div style="max-width:520px; text-align:center;">
             <h2 style="margin-top:0;">${info.title}</h2>
             <p style="margin:6px 0 12px 0; font-weight:bold;">${info.desc}</p>
-            <p style="margin:4px 0;">プレイ時間：<b>${timeStr}</b></p>
-            <p style="margin:4px 0;">ヒント利用：<b>${ANA.hintCount || 0} 回</b></p>
+            <p style="margin:4px 0;">Play time: <b>${timeStr}</b></p>
+            <p style="margin:4px 0;">Hints used: <b>${ANA.hintCount || 0} 回</b></p>
             ${secretText ? `<p style="margin:12px 0; font-size:.9em; opacity:.85;">${secretText}</p>` : ""}
             
             
         </div>
     `;
 
-        showModal("エンディング", html, [
+        showModal("Ending", html, [
           {
-            text: "評価はこちら",
+            text: "Rate here",
             action: () => openFeedbackForm(endingId),
           },
           {
-            text: "閉じる",
+            text: "Close",
             action: () => {
               closeModal();
             },
@@ -4477,17 +4477,17 @@
       // クリアログ生成（既存のがあればそのまま流用でOK）
       function copyClearLog(label, timeStr) {
         const text =
-          `『工房からの脱出』${label} クリア\n` +
-          `プレイ時間：${timeStr}\n` +
-          `ヒント利用：${ANA.hintCount || 0}回\n` +
+          `『Escape from the Workshop』${label} クリア\n` +
+          `Play time: ${timeStr}\n` +
+          `Hints used: ${ANA.hintCount || 0}回\n` +
           `#脱出ゲーム #保育室からの脱出`;
         navigator.clipboard
           .writeText(text)
           .then(() => {
-            alert("クリアログをコピーしました！");
+            alert("Clear log copied!");
           })
           .catch(() => {
-            alert("コピーに失敗しました…");
+            alert("Copy failed...");
           });
       }
 
@@ -4498,8 +4498,8 @@
 
         const endingLabel =
           {
-            trueEnd: "トゥルーエンド",
-            end: "ノーマルエンド",
+            trueEnd: "True Ending",
+            end: "Normal Ending",
             endWorse: "エンド",
           }[endingId] || "エンド";
 
@@ -4596,8 +4596,8 @@
         if (cap) {
           cap.textContent =
             tasks.length > 0
-              ? "進捗メモが書き足されている。"
-              : "空白のページ。";
+              ? "Progress notes are written."
+              : "A blank page.";
         }
 
         const wrap = document.createElement("div");
@@ -4605,7 +4605,7 @@
         wrap.className = "notebook-note";
 
         if (tasks.length === 0) {
-          wrap.innerHTML = `<p style="margin:0;">まだタスクはない。</p>`;
+          wrap.innerHTML = `<p style="margin:0;">No tasks yet.</p>`;
           notesBody.prepend(wrap);
           return;
         }
@@ -4648,7 +4648,7 @@
         const f = gameState.main.flags || (gameState.main.flags = {});
 
         if (f.unlockDrawerMain) {
-          updateMessage("引き出しは、もうアンロックされている。");
+          updateMessage("The drawer is already unlocked.");
           return;
         }
 
@@ -4681,8 +4681,8 @@
     </div>
   `;
 
-        showModal("引き出しのロック", content, [
-          { text: "閉じる", action: "close" },
+        showModal("Lock", content, [
+          { text: "Close", action: "close" },
         ]);
 
         setTimeout(() => {
@@ -4737,12 +4737,12 @@
               f.unlockDrawerMain = true;
               playSE?.("se-clear");
               closeModal();
-              updateMessage("カチッ…引き出しのロックが外れた。");
+              updateMessage("カチッ…Lockが外れた。");
               renderCanvasRoom?.();
               markProgress?.("unlock_drawer_main");
             } else {
               playSE?.("se-error");
-              if (hint) hint.textContent = "ちがうようだ。";
+              if (hint) hint.textContent = "That's not right.";
               screenShake?.(
                 document.getElementById("modalContent"),
                 120,
@@ -4783,7 +4783,7 @@
         const f = gameState.main.flags || (gameState.main.flags = {});
 
         if (f.unlockDrawerTop) {
-          updateMessage("引き出しは、もうアンロックされている。");
+          updateMessage("The drawer is already unlocked.");
           return;
         }
 
@@ -4808,8 +4808,8 @@
     </div>
   `;
 
-        showModal("引き出しのロック", content, [
-          { text: "閉じる", action: "close" },
+        showModal("Lock", content, [
+          { text: "Close", action: "close" },
         ]);
 
         setTimeout(() => {
@@ -4857,12 +4857,12 @@
               f.unlockDrawerTop = true;
               playSE?.("se-clear");
               closeModal();
-              updateMessage("カチッ…引き出しのロックが外れた。");
+              updateMessage("カチッ…Lockが外れた。");
               renderCanvasRoom?.();
               markProgress?.("unlock_drawer_top");
             } else {
               playSE?.("se-error");
-              if (hint) hint.textContent = "ちがうみたいだ。";
+              if (hint) hint.textContent = "That doesn't seem right.";
               screenShake?.(
                 document.getElementById("modalContent"),
                 120,
@@ -4904,7 +4904,7 @@
         const f = gameState.main.flags || (gameState.main.flags = {});
 
         if (f.unlockDrawerMiddle) {
-          updateMessage("引き出しは、もうアンロックされている。");
+          updateMessage("The drawer is already unlocked.");
           return;
         }
 
@@ -4927,8 +4927,8 @@
     </div>
   `;
 
-        showModal("引き出しのロック", content, [
-          { text: "閉じる", action: "close" },
+        showModal("Lock", content, [
+          { text: "Close", action: "close" },
         ]);
 
         setTimeout(() => {
@@ -4970,12 +4970,12 @@
               f.unlockDrawerMiddle = true;
               playSE?.("se-clear");
               closeModal();
-              updateMessage("カチッ…引き出しのロックが外れた。");
+              updateMessage("カチッ…Lockが外れた。");
               renderCanvasRoom?.();
               markProgress?.("unlock_drawer_middle");
             } else {
               playSE?.("se-error");
-              if (hint) hint.textContent = "ちがうようだ。";
+              if (hint) hint.textContent = "That's not right.";
               screenShake?.(
                 document.getElementById("modalContent"),
                 120,
@@ -5016,7 +5016,7 @@
         const f = gameState.main.flags || (gameState.main.flags = {});
 
         if (f.unlockDrawerBottom) {
-          updateMessage("引き出し下段は、もうアンロックされている。");
+          updateMessage("The bottom drawer is already unlocked.");
           return;
         }
 
@@ -5034,7 +5034,7 @@
         <div></div>
       </div>
 
-      <div id="drawerBottomSeq" style="font-size:1.05em;min-height:1.4em;">入力: </div>
+      <div id="drawerBottomSeq" style="font-size:1.05em;min-height:1.4em;">Input: </div>
       <div style="display:flex;gap:10px;">
         <button id="drawerBottomOk" class="ok-btn">OK</button>
         <button id="drawerBottomClear" class="nav-btn">クリア</button>
@@ -5043,8 +5043,8 @@
     </div>
   `;
 
-        showModal("引き出し下段ロック", content, [
-          { text: "閉じる", action: "close" },
+        showModal("Bottom Drawer Lock", content, [
+          { text: "Close", action: "close" },
         ]);
 
         setTimeout(() => {
@@ -5071,7 +5071,7 @@
           const input = [];
 
           const repaint = () => {
-            seqEl.textContent = `入力: ${input.join("")}`;
+            seqEl.textContent = `Input: ${input.join("")}`;
           };
 
           const pushDir = (dir) => {
@@ -5095,12 +5095,12 @@
               f.unlockDrawerBottom = true;
               playSE?.("se-clear");
               closeModal();
-              updateMessage("カチッ…引き出し下段のロックが外れた。");
+              updateMessage("Click... The bottom drawer is unlocked.");
               renderCanvasRoom?.();
               markProgress?.("unlock_drawer_bottom");
             } else {
               playSE?.("se-error");
-              if (hint) hint.textContent = "違うようだ。";
+              if (hint) hint.textContent = "That doesn't appear to be correct.";
               screenShake?.(
                 document.getElementById("modalContent"),
                 120,
@@ -5142,7 +5142,7 @@
       }
 
 
-      // 工具（ドライバー/ハンマー/キャップオープナー）は「どれか1つだけ所持」仕様
+      // 工具（Driver/Hammer/Cap Opener）は「どれか1つだけ所持」仕様
       function getCurrentToolId() {
         if (hasItem("miracleDriver")) return "miracleDriver";
         if (hasItem("luckyHammer")) return "luckyHammer";
@@ -5172,14 +5172,14 @@
 
         closeModal();
         renderCanvasRoom();
-        updateMessage(`${getItemName(nextToolId)}を持った。`);
+        updateMessage(`${getItemName(nextToolId)} is now in hand.`);
       }
 
       function showToolShelfModal() {
         const cur = getCurrentToolId();
         const title = cur
-          ? `現在は${getItemName(cur)}を持っている。使いたいものを選んで下さい`
-          : "使いたい工具を選んでください";
+          ? `Currently holding ${getItemName(cur)}. Select the one you want to use.`
+          : "Select the tool you want to use.";
 
         const hasMiracle =
           !!gameState.main?.flags?.hasMiracleDriver || hasItem("miracleDriver");
@@ -5198,11 +5198,11 @@
             action: () => swapTool(t),
           }));
 
-        buttons.push({ text: "閉じる", action: "close" });
+        buttons.push({ text: "Close", action: "close" });
 
         showModal(
           title,
-          `<div style="margin-top:8px; font-size:0.95em; opacity:0.9;">（クリックで持ち替え）</div>`,
+          `<div style="margin-top:8px; font-size:0.95em; opacity:0.9;">(Click to swap)</div>`,
           buttons,
         );
       }
@@ -5305,7 +5305,7 @@
         </style>
     `;
 
-        showModal("🔒", content, [{ text: "閉じる", action: "close" }]);
+        showModal("🔒", content, [{ text: "Close", action: "close" }]);
 
         const update = () => {
           ["l", "o", "c", "k"].forEach((k) => {
@@ -5330,10 +5330,10 @@
       }
 
       function handleDoor() {
-        // エンディング遷移共通ハンドラ
+        // Ending遷移共通ハンドラ
         const trueEndFlg = gameState.flags.trueEndUnlocked;
         const goEnding = () => {
-          // エンディング遷移時に依頼品を消費
+          // Ending遷移時に依頼品を消費
           removeItem("redSphere");
           removeItem("onigiriSphere");
 
@@ -5353,7 +5353,7 @@
         const wasFlagOn = flagKey ? !!f[flagKey] : false;
         if (flagKey) f[flagKey] = true;
         if (flagKey === "unlockMachine" && !wasFlagOn) {
-          showToast("錬成マシンの使い方を思い出した");
+          showToast("I remembered how to use the synthesis machine.");
         }
 
         const imgId = "objImg_" + Date.now();
@@ -5386,7 +5386,7 @@
           });
         }
 
-        buttons.push({ text: "閉じる", action: "close" });
+        buttons.push({ text: "Close", action: "close" });
 
         showModal(title, content, buttons);
         updateMessage(isEn ? msgEn || msg : msg);
@@ -5407,7 +5407,7 @@
       // レシピ図鑑（コレクション）システム
       // =========================
 
-      // レシピ解放のキーは「完成品 + 素材2つ(並び替え) + 呪文(正規化)」
+      // レシピ解放のキーは「Result + Materials2つ(並び替え) + Spell(正規化)」
       function ensureRecipeCodex() {
         if (!gameState.recipeCodex) gameState.recipeCodex = { discovered: {} };
         if (!gameState.recipeCodex.discovered)
@@ -5495,20 +5495,20 @@
 
         const content = `
         <div style="opacity:.92;margin:6px 0 10px 0;font-size:.95em;">
-            今までに成功したレシピ
+            Recipes you have successfully created
         </div>
 
         <table class="evidence">
             <thead>
                 <tr>
                     <th style="width:56px;">No.</th>
-                    <th>完成品</th>
-                    <th>素材</th>
-                    <th>呪文</th>
+                    <th>Result</th>
+                    <th>Materials</th>
+                    <th>Spell</th>
                 </tr>
             </thead>
             <tbody>
-                ${rows || '<tr><td colspan="4" style="text-align:center;opacity:.8;">（レシピがまだ無い…錬成しよう）</td></tr>'}
+                ${rows || '<tr><td colspan="4" style="text-align:center;opacity:.8;">(No recipes yet... Try synthesizing!)</td></tr>'}
             </tbody>
         </table>
 
@@ -5549,9 +5549,9 @@
 
         // casefile 風の見た目をそのまま使う
         showModal(
-          "📖 レシピ図鑑",
+          "📖 Recipe Codex",
           content,
-          [{ text: "閉じる", action: "close" }],
+          [{ text: "Close", action: "close" }],
           null,
           { columnButtons: false },
         );
@@ -5584,7 +5584,7 @@
           gameState.inventory.push(itemId);
           updateInventoryDisplay();
         } else {
-          updateMessage("アイテム欄がいっぱいだ。どこかで減らしてこよう");
+          updateMessage("Your item slots are full. Drop something somewhere.");
         }
       }
 
@@ -5607,7 +5607,7 @@
         if (!clickedItem) return;
 
         // -------------------------
-        // 1) 「使用対象を選んでください」中なら、クリックされたアイテムを対象として判定
+        // 1) 「Select a target.」中なら、クリックされたアイテムを対象として判定
         //    ・別アイテムクリックでフラグ解除（成功/失敗どっちでも）
         //    ・失敗時は無音（メッセージも出さない）
         // -------------------------
@@ -5624,7 +5624,7 @@
           clearUsingItem(true);
 
           if (success) {
-            updateMessage("焼きそばに塩を振った。");
+            updateMessage("YakisobaにSaltを振った。");
             gameState.main.flags.useSaltToYakisoba = true;
             updateInventoryDisplay();
           }
@@ -5632,13 +5632,13 @@
         }
 
         // -------------------------
-        // 2) 塩をクリックしたら「使用対象選択モード」へ
+        // 2) Saltをクリックしたら「使用対象選択モード」へ
         // -------------------------
         if (clickedItem === "salt") {
           gameState.usingItem = { itemId: clickedItem, slotIndex };
           gameState.selectedItem = clickedItem;
           gameState.selectedItemSlot = slotIndex;
-          updateMessage("使用対象を選んでください");
+          updateMessage("Select a target.");
           updateInventoryDisplay();
           return;
         }
@@ -5659,7 +5659,7 @@
             (a === "recipe2" && b === "recipe1");
           if (isRecipePair) {
             clearUsingItem(true);
-            showModal("レシピの切れ端を組み合わせますか？", "", [
+            showModal("Recipe Fragmentを組み合わせますか？", "", [
               {
                 text: "はい",
                 action: () => {
@@ -5679,7 +5679,7 @@
         if (gameState.selectedItemSlot === slotIndex) {
           gameState.selectedItem = null;
           gameState.selectedItemSlot = null;
-          updateMessage("アイテム選択を解除しました。");
+          updateMessage("Item selection deselected.");
           updateInventoryDisplay();
           return;
         }
@@ -5687,7 +5687,7 @@
         // ★通常の選択
         gameState.selectedItem = clickedItem;
         gameState.selectedItemSlot = slotIndex;
-        updateMessage("アイテムを選択した。");
+        updateMessage("Item selected.");
         updateInventoryDisplay();
       }
 
@@ -5697,7 +5697,7 @@
         gameState.selectedItemSlot = null;
         updateInventoryDisplay();
         // silent=true ならメッセージ更新もしない（失敗時は無音）
-        if (!silent) updateMessage("アイテム選択を解除しました。");
+        if (!silent) updateMessage("Item selection deselected.");
       }
 
       function tryPutSaltOnYakisoba(targetItemId) {
@@ -5706,11 +5706,11 @@
         }
         gameState.main.flags.saltToYakisobaCnt++;
         showModal(
-          "焼きそばに塩を振った",
+          "YakisobaにSaltを振った",
           `<img src="${IMAGES.modals.yakisobaSalt}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
           [
             {
-              text: "閉じる",
+              text: "Close",
               action: () => {
                 closeModal();
               },
@@ -5722,26 +5722,26 @@
 
       function getItemName(itemId) {
         const names = {
-          coin: "クマコイン",
-          bear: "クマ妖精",
-          driver: "ドライバー",
-          miracleDriver: "ミラクルドライバー",
-          hammer: "ハンマー",
-          luckyHammer: "ラッキーハンマー",
-          opener: "キャップオープナー",
-          key: "鍵",
-          core: "コア",
-          gemBlue: "青い宝石",
-          gemRed: "赤い宝石",
-          gemGreen: "緑の宝石",
-          gemViolet: "紫の宝石",
-          gemOnigiri: "究極の宝石",
-          onigiri: "おにぎり",
-          recipe1: "レシピの切れ端",
-          recipe2: "紙の切れ端",
-          recipeFixed: "復元したレシピ",
-          redSphere: "赤色発光玉",
-          onigiriSphere: "ミラクル発光玉",
+          coin: "Bear Coin",
+          bear: "Bear Fairy",
+          driver: "Driver",
+          miracleDriver: "ミラクルDriver",
+          hammer: "Hammer",
+          luckyHammer: "ラッキーHammer",
+          opener: "Cap Opener",
+          key: "Key",
+          core: "Core",
+          gemBlue: "Blue Gem",
+          gemRed: "Red Gem",
+          gemGreen: "Green Gem",
+          gemViolet: "Purple Gem",
+          gemOnigiri: "Ultimate Gem",
+          onigiri: "Onigiri",
+          recipe1: "Recipe Fragment",
+          recipe2: "Paper Fragment",
+          recipeFixed: "Restored Recipe",
+          redSphere: "Red Shining Orb",
+          onigiriSphere: "Miracle Shining Orb",
         };
         return names[itemId] || itemId;
       }
@@ -5755,7 +5755,7 @@
         if (isMobile) {
           const btn = document.createElement("button");
           btn.className = "nav-btn";
-          btn.textContent = "ナビ";
+          btn.textContent = "Navigation";
           btn.onclick = () => openNavModal();
           navDiv.appendChild(btn);
           return;
@@ -5782,14 +5782,14 @@
           <button class="nav-btn" style="width:100%; opacity:${isHere ? 0.5 : 1};"
             ${isHere ? "disabled" : ""}
             onclick="(function(){ closeModal(); changeRoom('${roomId}'); })()">
-            ${rooms[roomId].name}${isHere ? "（ここ）" : ""}
+            ${rooms[roomId].name}${isHere ? "(Here)" : ""}
           </button>
         `;
         })
         .join("")}
     </div>
   `;
-        showModal("移動先", listHtml, [{ text: "閉じる", action: "close" }]);
+        showModal("Go to", listHtml, [{ text: "Close", action: "close" }]);
       }
 
       function addNaviItem(room) {
@@ -5821,8 +5821,8 @@
             slot.appendChild(img);
             const magBtn = document.createElement("div");
             magBtn.className = "magnifier-btn";
-            magBtn.title = "拡大表示";
-            magBtn.innerHTML = '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/magnifier.png" alt="拡大">';
+            magBtn.title = "Magnify表示";
+            magBtn.innerHTML = '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/magnifier.png" alt="Magnify">';
             magBtn.onclick = (e) => {
               e.stopPropagation();
 
@@ -5830,40 +5830,40 @@
 
               // デフォの中身
               let content = `<img src="${img.src}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
-              let buttons = [{ text: "閉じる", action: "close" }];
+              let buttons = [{ text: "Close", action: "close" }];
 
               if (itemId === "recipeFixed") {
                 buttons = [
                   {
-                    text: "裏を見る",
+                    text: "Check the back",
                     action: () => {
                       window._nextModal = {
                         title: "レシピを裏返した",
                         content: `<img src="${IMAGES.modals.recipeBack}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
-                        buttons: [{ text: "閉じる", action: "close" }],
+                        buttons: [{ text: "Close", action: "close" }],
                       };
                       closeModal();
                       updateMessage("レシピを裏返した");
                     },
                   },
-                  { text: "閉じる", action: "close" },
+                  { text: "Close", action: "close" },
                 ];
               }
               if (itemId === "driver") {
                 buttons = [
                   {
-                    text: "調べる",
+                    text: "Examine",
                     action: () => {
                       window._nextModal = {
                         title: "持ち手をよく見た",
                         content: `<img src="${IMAGES.modals.driverBottom}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
-                        buttons: [{ text: "閉じる", action: "close" }],
+                        buttons: [{ text: "Close", action: "close" }],
                       };
                       closeModal();
-                      updateMessage("ドライバーの持ち手をよく見た");
+                      updateMessage("Driverの持ち手をよく見た");
                     },
                   },
-                  { text: "閉じる", action: "close" },
+                  { text: "Close", action: "close" },
                 ];
               }
               if (
@@ -5872,18 +5872,18 @@
               ) {
                 buttons = [
                   {
-                    text: "調べる",
+                    text: "Examine",
                     action: () => {
                       window._nextModal = {
                         title: "側面をよく見た",
                         content: `<img src="${IMAGES.modals.hammerSide}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
-                        buttons: [{ text: "閉じる", action: "close" }],
+                        buttons: [{ text: "Close", action: "close" }],
                       };
                       closeModal();
-                      updateMessage("ハンマーの側面をよく見た");
+                      updateMessage("Hammerの側面をよく見た");
                     },
                   },
-                  { text: "閉じる", action: "close" },
+                  { text: "Close", action: "close" },
                 ];
               }
 
@@ -5950,10 +5950,10 @@
         const modalClose = document.getElementById("modalClose");
 
         buttons.forEach((button, idx) => {
-          // 閉じるボタンは下へ
+          // Closeボタンは下へ
           if (button.action === "close") {
             const btn = document.createElement("button");
-            btn.textContent = button.text || "閉じる";
+            btn.textContent = button.text || "Close";
             btn.className = "modal-close-btn";
             btn.onclick = function () {
               closeModal();
@@ -6202,7 +6202,7 @@
           }
         } catch (e) {
           console.error(e);
-          updateMessage("セーブデータの読み込みに失敗しました");
+          updateMessage("Failed to load save data.");
           return;
         }
 
@@ -6257,10 +6257,10 @@
               closeModal();
             },
           },
-          { text: "やめる", action: "close" },
+          { text: "Cancel", action: "close" },
         ];
 
-        showModal("ロードするデータを選んでください", "", buttons, null, {
+        showModal("Select a save to load.", "", buttons, null, {
           columnButtons: true,
         });
       }
@@ -6268,23 +6268,23 @@
       function saveGame() {
         const buttons = [
           {
-            text: getSaveSlotLabel(0) + " に上書き保存",
+            text: getSaveSlotLabel(0) + " (Overwrite)",
             action: () => {
               saveGameToSlot(0);
               closeModal();
             },
           },
           {
-            text: getSaveSlotLabel(1) + " に上書き保存",
+            text: getSaveSlotLabel(1) + " (Overwrite)",
             action: () => {
               saveGameToSlot(1);
               closeModal();
             },
           },
-          { text: "やめる", action: "close" },
+          { text: "Cancel", action: "close" },
         ];
 
-        showModal("セーブ先を選んでください", "", buttons, null, {
+        showModal("Select a save slot.", "", buttons, null, {
           columnButtons: true,
         });
       }

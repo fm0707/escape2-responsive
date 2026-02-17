@@ -415,22 +415,22 @@
         // ゲーム設定 - 画像パスをここで管理
         let IMAGES = {
             rooms: {
-                genkan: 'images/genkan.jpg',        
-                corridor: 'images/corridor.jpg',       
-                dining: 'images/dining.jpg',      
-                living: 'images/living.jpg',
-                end: 'images/end.jpg',
-                dreamEnd: 'images/dreamEnd.jpg',
-                trueEnd: 'images/trueEnd.jpg',
-                extraEnd: 'images/extraEnd.jpg'     
+                genkan: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/genkan.jpg',        
+                corridor: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/corridor.jpg',       
+                dining: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/dining.jpg',      
+                living: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/living.jpg',
+                end: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/end.jpg',
+                dreamEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/dreamEnd.jpg',
+                trueEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/trueEnd.jpg',
+                extraEnd: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/extraEnd.jpg'     
             },
             items: {
-                drawerKey: 'images/drawerKey.jpg',
-                coin: 'images/coin.jpg',
-                pin: 'images/pin.jpg',
-                oil: 'images/oil.jpg',
-                jam: 'images/jam.jpg',
-                picture: 'images/picture.jpg',
+                drawerKey: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/drawerKey.jpg',
+                coin: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/coin.jpg',
+                pin: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/pin.jpg',
+                oil: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/oil.jpg',
+                jam: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/jam.jpg',
+                picture: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/picture.jpg',
             }
         };
 
@@ -970,7 +970,7 @@
                         updateMessage('古びたピンブローチだ');
                         showModal(
                             '家具の下に何か落ちている…<br>小さなピンブローチだ',
-                            '<img src="images/pin.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/pin.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                         addItem('pin'); 
@@ -1011,7 +1011,7 @@
                 case 'examine_living_books2':
                     showModal(
                         'メモが挟まっている。',
-                        '<img src="images/living_memo1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/living_memo1.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
                     break;   
@@ -1035,7 +1035,7 @@
                         playSE('se-skeleton');
                         showModal(
                             '「なんと、私に下さるのですか？ありがとうございます」',
-                            '<img src="images/skeleton-favor.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/skeleton-favor.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                         removeItem('pin');
@@ -1085,7 +1085,7 @@
                         updateMessage('コインをみつけた');
                         showModal(
                             '古びたコインを見つけた。<br>何かに使えそうだ',
-                            '<img src="images/coin.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/coin.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                         addItem('coin');
@@ -1095,7 +1095,7 @@
                         updateMessage('写真を手に入れた');
                         showModal(
                             '引き出しの奥に古びた写真がある。<br>裏に「イングリッドの誕生日、<br>ご馳走がたくさん残ってしまったわね」と書いてある',
-                            '<img src="images/picture.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/picture.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                         addItem('picture');
@@ -1113,7 +1113,7 @@
                         updateMessage('ふかふかとした椅子だ');  
                         showModal(
                             '座ってみるとお尻に固いものが当たる…<br>張り地の破れ目から指を入れると何かがある。<br>小さな鍵を手に入れた。',
-                            '<img src="images/drawerKey.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/drawerKey.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                         addItem('drawerKey');
@@ -1145,7 +1145,7 @@
                         updateMessage('テーブルの下にジャムの瓶が落ちていた。未開封だ。果実の香りがほのかにする。使い道は…パン以外にも？');    
                         showModal(
                             'ジャムの瓶（中身入り）を手に入れた。',
-                            '<img src="images/jam.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/jam.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                         addItem('jam');
@@ -1160,7 +1160,7 @@
                         updateMessage('ポットの中身はなにかのオイルのようだ。なんだか骨にツヤが出そうなオイルだ');   
                         showModal(
                             'ポットの中には油のような液体が入っている<br>まるでプレイヤーのために用意されたようなグラスを見つけ、オイルを入れた',
-                            '<img src="images/oil.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/oil.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );   
                         addItem('oil');
@@ -1175,7 +1175,7 @@
                         // バッドエンド演出
                         showModal(
                             'バッドエンド',
-                            '<img src="images/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">' +
                             '<br>あなたはクマの妖精のお皿を割ってしまった…<br><b>大事なものだったようだ。</b><br>あなたは怒った骸骨により小部屋に監禁された。<span style="color:#f00;">【バッドエンド】</span><br><span style="font-weight:bold;color:#5ef4dc;">も</span>ういやだ',
                             [{text: '最初から', action: 'restart'}]
                         );
@@ -1192,7 +1192,7 @@
                     updateMessage('お皿の下にメモがある');
                     showModal(
                             'お皿の下にメモがある',
-                            '<img src="images/living_memo2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/living_memo2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                     break; 
@@ -1202,7 +1202,7 @@
                         playSE('se-subclear');
                         showModal(
                             'オイルでかんぬきが動くようになった！',
-                            '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                         removeItem('oil');
@@ -1215,7 +1215,7 @@
                         playSE('se-subclear');
                         showModal(
                             'ジャムを塗ってみると、かんぬきが動くようになった！',
-                            '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                         removeItem('jam');
@@ -1296,7 +1296,7 @@
                 playSE('se-subclear');
                 showModal(
                     '次の部屋へのドアが開いた！',
-                    '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 unlockRoom('corridor');
@@ -1334,7 +1334,7 @@
                 playSE('se-subclear');
                 showModal(
                     '次の部屋へのドアが開いた！',
-                    '<img src="images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/sub_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 unlockRoom('dining');
@@ -1375,14 +1375,14 @@
                     playSE('se-box');
                     showModal(
                         '箱が開いた！',
-                        '<img src="images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
                     playSE('se-clear');
                     window._nextModal = {
                         before: function() { playSE('se-clear'); },
                         title: '……ああ、思い出しました。私の名はマーティン。<br>あなたのおかげで、私もやっと心残りから解放されます。<br>さあ、ともに夢の世界へ…',
-                        content: '<img src="images/dream_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        content: '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/dream_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         buttons: [{text: '閉じる', action: 'close'}],
                         after: function() { changeRoom('dreamEnd'); }
                     };
@@ -1391,14 +1391,14 @@
                     playSE('se-box');
                     showModal(
                         '箱が開いた！',
-                        '<img src="images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
                     playSE('se-clear');
                     window._nextModal = {
                         before: function() { playSE('se-clear'); },
                         title: '……ああ、思い出しました。私の名はマーティン。<br>この屋敷に“夢（DREAM）”を託してくださって、<br>心より感謝申し上げます',
-                        content: '<img src="images/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        content: '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         buttons: [{text: '閉じる', action: 'close'}],
                         after: function() { changeRoom('end'); }
                     };
@@ -1409,7 +1409,7 @@
                 playSE('se-box');
                 showModal(
                         '箱が開いた！',
-                        '<img src="images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/openBox.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
                 playSE('se-clear');
@@ -1417,7 +1417,7 @@
                 window._nextModal = {
                     before: function() { playSE('se-clear'); },
                     title: '……ああ、すべて思い出しました。私の名はマーティン。<br>この屋敷に残された夢をすべて見つけてくださって<br>家族一同心より感謝申し上げます',
-                    content: '<img src="images/true_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    content: '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/true_clear.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     buttons: [{text: '閉じる', action: 'close'}],
                     after: function() { changeRoom('trueEnd'); }
                 };
@@ -1452,7 +1452,7 @@
                 playSE('se-clear');
                 showModal(
                     'お見事！',
-                    '<img src="images/extra_end.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/extra_end.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 renderNavigation();

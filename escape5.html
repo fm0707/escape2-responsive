@@ -347,7 +347,7 @@
             width: 180px; height: 180px;
             pointer-events: none;
             z-index: 30;
-            background: url('images/5/kira.png') center/contain no-repeat;
+            background: url('https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/kira.png') center/contain no-repeat;
             opacity: 0;
             animation: sparkle-pop 0.9s ease-out;
         }
@@ -432,39 +432,39 @@
         let IMAGES = {
             rooms: {
                 entrance: [
-                    'images/5/entrance.png',          // backgroundState = 0
-                    'images/5/entrance2.png',         // backgroundState = 1
-                    'images/5/entrance3.png',         // backgroundState = 2
-                    'images/5/entrance4.png',         // backgroundState = 3
-                    'images/5/entrance5.png',         // backgroundState = 4
-                    'images/5/entrance6.png',         // backgroundState = 5
-                    'images/5/entrance7.png',         // backgroundState = 6
-                    'images/5/entrance8.png',         // backgroundState = 7
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance.png',          // backgroundState = 0
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance2.png',         // backgroundState = 1
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance3.png',         // backgroundState = 2
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance4.png',         // backgroundState = 3
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance5.png',         // backgroundState = 4
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance6.png',         // backgroundState = 5
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance7.png',         // backgroundState = 6
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/entrance8.png',         // backgroundState = 7
                 ],
                 dining: [
-                    'images/5/dining.png',             // backgroundState = 0
-                    'images/5/dining2.png',            // backgroundState = 1
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/dining.png',             // backgroundState = 0
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/dining2.png',            // backgroundState = 1
                 ],
                 kitchen: [
-                    'images/5/kitchen.jpg',           // backgroundState = 0
-                    'images/5/kitchen2.png',          // backgroundState = 1
-                    'images/5/kitchen3.png',          // backgroundState = 2
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/kitchen.jpg',           // backgroundState = 0
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/kitchen2.png',          // backgroundState = 1
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/kitchen3.png',          // backgroundState = 2
                 ],
                 restroom: [
-                    'images/5/restroom.png',           // backgroundState = 0
-                    'images/5/restroom2.png',          // backgroundState = 1
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/restroom.png',           // backgroundState = 0
+                    'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/restroom2.png',          // backgroundState = 1
                 ],
                 
-                end: ['images/5/end.jpg'],
-                bearEnd: ['images/5/bearEnd.jpg'],
+                end: ['https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/end.jpg'],
+                bearEnd: ['https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/bearEnd.jpg'],
             },
             items: {
-                wine: 'images/5/wine.png',
-                wine2: 'images/5/wine2.png',
-                bluebear: 'images/5/bluebear.png',
-                raspberry: 'images/5/raspberry.png',
-                takeout: 'images/5/takeout.jpg',
-                takeout2: 'images/5/takeout2.jpg',
+                wine: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/wine.png',
+                wine2: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/wine2.png',
+                bluebear: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/bluebear.png',
+                raspberry: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/raspberry.png',
+                takeout: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/takeout.jpg',
+                takeout2: 'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/takeout2.jpg',
             }
         };
 
@@ -828,19 +828,19 @@
                     if (gameState.entrance.flags.backgroundState==4 || gameState.entrance.flags.backgroundState==6) {
                         showModal(
                             '初代オーナーの肖像画のようだ。さっきまでと印象が変わった？',
-                            '<img src="images/5/picture2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/picture2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                     } else if (gameState.entrance.flags.backgroundState==5 || gameState.entrance.flags.backgroundState==7) {
                         showModal(
                             '初代オーナーの肖像画のようだ。さっきまでと印象が変わった？',
-                            '<img src="images/5/picture3.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/picture3.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                     } else {
                         showModal(
                             '初代オーナーの肖像画のようだ。',
-                            '<img src="images/5/picture.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/picture.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );
                     } 
@@ -848,7 +848,7 @@
                 case 'examine_dining_pic_detail':
                     showModal(
                         '説明書きだ。',
-                        '<img src="images/5/pic_detail.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                        '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/pic_detail.png" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
                     break;   
@@ -860,7 +860,7 @@
                         updateMessage('ワインをみつけた');
                         showModal(
                             'ワインを見つけた。',
-                            '<img src="images/5/wine.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/wine.png" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                         addItem('wine');
@@ -869,7 +869,7 @@
                 case 'examine_dining_newspaper':
                     showModal(
                         '古い新聞記事だ。この店は五輪選手に人気だったらしい<br>名物料理の部分は読めない',
-                         '<img src="images/5/newspaper.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                         '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/newspaper.png" style="width:300px;display:block;margin:0 auto 20px;">',
                         [{text: '閉じる', action: 'close'}]
                     );
                     break; 
@@ -889,7 +889,7 @@
                             updateMessage('ピ…ピ。エナジー充填レベル3。これを差し上げます');
                             showModal(
                                 'ロボットからラズベリーをもらった。',
-                                '<img src="images/5/raspberry.png" style="width:300px;display:block;margin:0 auto 20px;">',
+                                '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/raspberry.png" style="width:300px;display:block;margin:0 auto 20px;">',
                                 [{text: '閉じる', action: 'close'}]
                             );  
                             addItem('raspberry');
@@ -908,7 +908,7 @@
                     updateMessage('紙切れが挟まっている');    
                         showModal(
                             '紙切れが挟まっている',
-                            '<img src="images/5/olympic.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/olympic.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'close'}]
                         );  
                     break; 
@@ -918,7 +918,7 @@
                         playSE('se-ban');   
                         showModal(
                             '【バッドエンド】<br>あなたは酔っ払ったクマの妖精にクマビームを打たれて死んでしまった',
-                            '<img src="images/5/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                            '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/badend.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                             [{text: '閉じる', action: 'restart'}]
                         );  
 
@@ -997,7 +997,7 @@
                 playSE('se-register');
                 showModal(
                     '『ご利用ありがとうございます』<br>テイクアウト弁当を手に入れた',
-                    '<img src="images/5/takeout.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/takeout.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 gameState.entrance.flags.entrancePuzzleSolved = true;
@@ -1011,7 +1011,7 @@
                 playSE('se-register');
                 showModal(
                     '『ご利用ありがとうございます』<br>テイクアウトBOXを手に入れた',
-                    '<img src="images/5/takeout2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/takeout2.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 gameState.entrance.flags.entrancePuzzleSolved = true;
@@ -1048,7 +1048,7 @@
                 playSE('se-subclear');
                 showModal(
                     'ピ…！そうです。エナジー充填…',
-                    '<img src="images/5/roboenergy.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/roboenergy.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 gameState.restroom.flags.backgroundState = 1;
@@ -1088,7 +1088,7 @@
                 playSE('se-subclear');
                 showModal(
                     'ピピピ…！そうです。エナジー充填…',
-                    '<img src="images/5/roboenergy.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
+                    '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/roboenergy.jpg" style="width:300px;display:block;margin:0 auto 20px;">',
                     [{text: '閉じる', action: 'close'}]
                 );
                 gameState.kitchen.flags.backgroundState = 2;
@@ -1335,18 +1335,18 @@
             });
             // モーダル画像 ← 追加
             [
-                'images/5/picture2.jpg',
-                'images/5/picture3.jpg',
-                'images/5/pic_detail.png',
-                'images/5/wine.png',
-                'images/5/newspaper.png',
-                'images/5/olympic.jpg',
-                'images/5/badend.jpg',
-                'images/5/bearEnd.jpg',
-                'images/5/end.jpg',
-                'images/5/takeout.jpg',
-                'images/5/takeout2.jpg',
-                'images/5/roboenergy.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/picture2.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/picture3.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/pic_detail.png',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/wine.png',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/newspaper.png',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/olympic.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/badend.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/bearEnd.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/end.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/takeout.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/takeout2.jpg',
+                'https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/5/roboenergy.jpg',
                 // ...必要なだけ追加
             ].forEach(src => {
                 const img = new Image(); img.src = src;
