@@ -426,6 +426,8 @@
         };
 
         // ゲーム状態
+        const SAVE_KEY = 'escapeGameState4';
+
         let gameState = {
             inventory: [],
             
@@ -1108,7 +1110,7 @@ Meaning: Completely lost in the fog / Having no clue.</p>
         }
 
         function saveGame() {
-            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
             const oldMsg = document.getElementById('messageArea').innerHTML;
             updateMessage('セーブしました！');
             setTimeout(() => {
@@ -1117,7 +1119,7 @@ Meaning: Completely lost in the fog / Having no clue.</p>
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('escapeGameState');
+            const saved = localStorage.getItem(SAVE_KEY) || localStorage.getItem('escapeGameState');
             if (saved) {
                 gameState = JSON.parse(saved);
                 // ここでIMAGES.rooms.officeを書き換える！

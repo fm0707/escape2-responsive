@@ -591,6 +591,8 @@
         };
 
         // ゲーム状態
+        const SAVE_KEY = 'escapeGameState7';
+
         let gameState = {
             currentRoom: 'yatai',
             openRooms:  ['entrance', 'yatai', 'seat', 'jinja'], 
@@ -2379,7 +2381,7 @@
         }
 
         function saveGame() {
-            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
             const oldMsg = document.getElementById('msgText').textContent;
             updateMessage('セーブしました！');
             setTimeout(() => {
@@ -2388,7 +2390,7 @@
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('escapeGameState');
+            const saved = localStorage.getItem(SAVE_KEY) || localStorage.getItem('escapeGameState');
             if (saved) {
                 gameState = JSON.parse(saved);
                 // UIや画面をstateに合わせて復元する

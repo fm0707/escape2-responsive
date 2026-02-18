@@ -681,6 +681,8 @@
         const defaltActions = 7;
 
         // ゲーム状態
+        const SAVE_KEY = 'escapeGameState3';
+
         let gameState = {
             currentRoom: 'room',
             openRooms: ['room'], 
@@ -2103,7 +2105,7 @@
 
 
         function saveGame() {
-            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
             const oldMsg = document.getElementById('messageText').innerHTML;
             updateMessage('セーブしました！');
             setTimeout(() => {
@@ -2116,7 +2118,7 @@
             isActionLocked = false;
             isEndingShowing = false;
             isAdvancingDay = false;
-            const saved = localStorage.getItem('escapeGameState');
+            const saved = localStorage.getItem(SAVE_KEY) || localStorage.getItem('escapeGameState');
             if (saved) {
                 gameState = JSON.parse(saved);
                 // UIや画面をstateに合わせて復元する

@@ -435,6 +435,8 @@
         };
 
         // ゲーム状態
+        const SAVE_KEY = 'escapeGameState2';
+
         let gameState = {
             currentRoom: 'genkan',
             openRooms: ['genkan'], 
@@ -1725,7 +1727,7 @@
         }
 
         function saveGame() {
-            localStorage.setItem('escapeGameState', JSON.stringify(gameState));
+            localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
             const oldMsg = document.getElementById('messageArea').innerHTML;
             updateMessage('セーブしました！');
             setTimeout(() => {
@@ -1734,7 +1736,7 @@
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('escapeGameState');
+            const saved = localStorage.getItem(SAVE_KEY) || localStorage.getItem('escapeGameState');
             if (saved) {
                 gameState = JSON.parse(saved);
                 // UIや画面をstateに合わせて復元する
