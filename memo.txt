@@ -19,3 +19,84 @@ PCを操作して象マシンを起動する
 再び象マシンを通って体を小さくし、気球に乗り込む
 上空シーンへ
 天界に到着。神様の審判を受ける。燃やしたのが枯れ葉ならトゥルーエンド。神の力で元の大きさに戻してもらい、地上に戻れる。燃やしたのがぬいぐるみなら、クマ妖精を一体犠牲にした代わりにクマ妖精にされてしまう（ノーマルエンド3）
+
+カニ初期位置にitem:seedを使ったときのイベント強化したい。
+カニ初期位置に表示しているitem:kaniをcanvas上でカニ移動後の座標まで動かす演出を入れたい。
+
+電源をクリックしたときのモーダルパズルを表示したい。
+テキスト入力欄とOKボタン。入力はひらがなまたは英字。（海外対応のため）
+正解は「さぎし」または「lie」とする。正解かつOKボタン押下でアンロック。gameSate.main.flags.powerOn=trueとする
+
+showWallCabRightPuzzleを変更したい。
+テキスト入力欄は削除して、3つの横並びの正方形を配置。
+各正方形をクリックすると[A, E, H, I, N, S, T, U]がローテーション表示される。
+左からUSEになった状態でOKボタンを押すとアンロック。
+
+ウォールシェルフ左をクリックしたときのモーダルパズルを表示したい。
+上下左右に4つのボタンを配置。その下にOKボタンを配置。
+下右下左上の順で押してOKボタンを押すとアンロック。
+gameState.main.flags.unlockWallCabLeft=trueとする。
+
+木箱のふたをクリックしたときのモーダルパズルを表示したい。
+テキスト入力欄とOKボタン。入力は英字。unsafe OR UNSAFEと入力した状態でOKボタンを押すとアンロック。
+gameState.main.flags.unlockBox=trueとする。
+
+/* アニメモーダル用 */
+        .modal-anim {
+            position: relative;
+            width: min(400px, 80vw);
+            margin: 0 auto 16px;
+        }
+
+        .modal-anim img {
+            display: block;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        /* 1枚目はだんだん消える */
+        .modal-anim img:nth-child(1) {
+            position: absolute;
+            inset: 0;
+            opacity: 1;
+            animation: blockmanHatFadeOut 2.8s ease forwards 0.1s;
+        }
+
+        /* 2枚目は後からふわっと出てくる */
+        .modal-anim img:nth-child(2) {
+            opacity: 0;
+            animation: blockmanHatFadeIn 3.0s ease forwards 0.4s;
+        }
+
+room:ivyでプランターの土部分にitem:waterを使った場合のイベントを作りたい。
+モーダルでアニメ、IMAGES.modals.water,IMAGES.modals.water2を表示、さらにgameState.ivy.backgroundState++として背景を徐々に切り替えたい（苗が生えてきたように見せたい）
+
+examine_main_door_handleクリック時に、room:doorInputに移動したい。
+doorInputで4つの四角をクリックすると値がローテーションするようにしたい。
+右上と右下は数字がローテーション、左上と左下はアルファベットがローテーション。
+右上から時計回りに、E,8,Y,3となったら正解となり、gameState.main.flags.doorPuzzleSolved=trueとする
+
+開始時は村マップ。ねこやま村長の家のみ入室できる。
+ねこやま村長はPCのログインパスワードが分からず困っている。宴会で使うカニを注文しなければならない。メモと、村長の家の「孫が描いた絵」からPCパスワードを導く。
+PCにログインすると、村のカエル田さんからHELPメールが来ている。
+カエル田さんの家に行くと、宴会で歌う歌の歌詞が行方不明で困っている。村長の家にもどり、壁に貼ってある過去の宴会写真から歌詞を導く。
+ラビ坂さん（ウサギ）の家へ。宴会で使う野菜の保管箱が空かなくて困っている。村の図書館が借りた本と、村長の家にある本をヒントに開錠コードを導く。
+ワン川（犬）さんの家へ。宴会で飲む飲料の宅配業者への道順指示に悩んでいる。村長の家の壁に貼ってある迷路から道順を取得。教えて解決。
+今回の主役。ウマ森（馬）の家へ。主役なのにたてがみをとかすブラシが無く悩んでいる。村長の家の小箱を、各家のヒントから開錠し、ブラシゲット。
+→村の広場で宴会のエンディングへ
+
+room:windowの箱閉じるをクリック時にモーダルパズルを表示したい。
+入力欄とOKボタンがあり、入力欄にfocusを入力してOKボタンを押すとアンロック。
+gameState.main.flags.unlockBox=trueとする。アンロック後の箱開いているをクリックすると、item:glassFrameを入手できる。
+
+gameState.main.flags.ghostFaver==3のときにカプセル君をクリックすると成仏イベントを発生させたい。
+ビデオはIMAGES.modals.capsuleHeaven, gameState.window.flags.backgroundStateを4にする。
+
+room:windowの入力パネルをクリックしたときのモーダルパズルを表示したい。
+モーダル上部に地図画像IMAGES.modals.map、その下に入力欄
+
+gameState.main.flags.readBook6=trueのとき電源をクリックした場合、モーダルパズル（電源オフのための解除コード入力）を表示したい。
+モーダルにはオレンジ色の柿っぽい色の丸いボタンが3つ横並び。下部にOKボタン。
+左のボタンを1回、真ん中のボタンを3回、右のボタンを2回クリックしてOKを押すと電源オフ。gameState.main.flags.powerOn=falseとする。
+
+https://docs.google.com/forms/d/e/1FAIpQLSf90YrfP0p_DFlDx9zw-ragK5CfgNcXLZNJmePKbdwLbT_s6w/viewform?usp=pp_url&entry.666725843=%E3%83%8E%E3%83%BC%E3%83%9E%E3%83%AB%E3%82%A8%E3%83%B3%E3%83%89?
