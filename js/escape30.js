@@ -99,7 +99,7 @@ let IMAGES = {
     //   en: [I30("book_2en.png")],
     // },
 
-    end: [I30("end.webp")],
+    end: [I30("end.webp"), I30("end2.webp")],
     trueEnd: [I30("true_end.webp")],
   },
   items: {
@@ -3827,14 +3827,13 @@ function handleDoor() {
   // エンディング遷移共通ハンドラ
   const trueEndFlg = gameState.flags.trueEndUnlocked;
   const goEnding = () => {
-    // エンディング遷移時に依頼品を消費
-    removeItem("redSphere");
-    removeItem("onigiriSphere");
+
 
     if (trueEndFlg) {
       gameState.endings.true = true;
       travelWithStepsTrueEnd();
     } else {
+      if (hasItem("seal")) gameState.end.flags.backgroundState++;
       travelWithSteps("end");
     }
   };
