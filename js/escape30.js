@@ -2985,7 +2985,7 @@ function showTicketMachinePuzzle() {
     </div>
   `;
 
-  showModal("チケットマシン", content, [{ text: "閉じる", action: "close" }]);
+  showModal("4桁コードを入力", content, [{ text: "閉じる", action: "close" }]);
 
   setTimeout(() => {
     const seqEl = document.getElementById("ticketMachineSeq");
