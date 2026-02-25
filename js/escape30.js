@@ -100,7 +100,7 @@ let IMAGES = {
     // },
 
     end: [I30("end.webp"), I30("end2.webp")],
-    trueEnd: [I30("true_end.webp")],
+    trueEnd: [I30("true_end.webp"), I30("true_end2.webp")],
   },
   items: {
     coin: ICM("bear_coin.png"),
@@ -1801,7 +1801,7 @@ function travelWithSteps(destRoom = "end", color = "#000") {
 function travelWithStepsTrueEnd() {
   const overlay = document.getElementById("roomEffectOverlay");
   let destRoom = "trueEnd";
-  if (gameState.main.flags.watchOutside) {
+  if (hasItem("sheetComplete3")) {
     gameState.trueEnd.flags.backgroundState++;
   }
 
