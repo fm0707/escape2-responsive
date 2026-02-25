@@ -811,7 +811,7 @@ let rooms = {
         }),
         description: "藤棚右の蝶",
         zIndex: 5,
-        usable: () => true,
+        usable: () => hasItem("sheetComplete3"),
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
