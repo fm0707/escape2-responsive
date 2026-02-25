@@ -1,0 +1,8 @@
+{
+  "htmlWhitespaceSensitivity": "ignore",
+  "printWidth": 300,
+  "semi": true,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "endOfLine": "auto"
+}
