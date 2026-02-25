@@ -2678,9 +2678,10 @@ function copyClearLog(label, timeStr) {
     });
 }
 
+
 // アンケート
 function openFeedbackForm(endingId) {
-  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLScXMaEIknd9ABM5oVrduJMLbszvVdTCc87aHQD8sZl07zmScg/viewform";
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLScLIWlfSFcEgbwuHAhjmfwiXrSVoU7IdQp0lxnYs-Gbb8JDgQ/viewform";
 
   const endingLabel =
     {
