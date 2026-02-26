@@ -179,6 +179,7 @@ let IMAGES = {
     soulGive: I30("modal_soul_give.webp"),
     lockerTop: I30("modal_locker_top.webp"),
     bearShocked: I30("modal_bear_shocked.webp"),
+    sheetZoom: I30("modal_sheet_zoom.webp"),
 
     // bearHappy: I30("modal_bear_happy.jpeg"),
   },
@@ -343,6 +344,7 @@ function applySheetStamp(stampKey) {
     if (currentSheetNo >= 2) {
       f.unlockFujiTunnelBearGuide = true;
     }
+    showToast("絵柄が完成した！");
     removeItem("sheet");
     addItem(currentSheetNo >= 2 ? "sheetComplete3extra" : "sheetComplete3");
     resetActiveSheetProgress(f);
@@ -3966,6 +3968,23 @@ function updateInventoryDisplay() {
                 .join("")}
             </div>
           `;
+        }
+
+        if (itemId === "sheetComplete3") {
+          buttons = [
+            {
+              text: "よく見る",
+              action: () => {
+                window._nextModal = {
+                  title: getItemName(itemId),
+                  content: `<img src="${IMAGES.modals.sheetZoom}" style="max-width:380px;max-height:80vh;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
+                  buttons: [{ text: "閉じる", action: "close" }],
+                };
+                closeModal();
+              },
+            },
+            { text: "閉じる", action: "close" },
+          ];
         }
 
         if (itemId === "walletFull") {
