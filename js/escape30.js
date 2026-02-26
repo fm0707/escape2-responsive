@@ -1741,7 +1741,7 @@ let rooms = {
         }),
         description: "おまんじゅう",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.trueEnd.flags.backgroundState == 0,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -1750,11 +1750,50 @@ let rooms = {
         width: 38.7,
         height: 34.8,
         onClick: clickWrap(function () {
-          updateMessage("嬉しそうだ。帰らなくていいのかな？");
+          updateMessage("クマガイドはお饅頭を食べている。嬉しそうだ。");
         }),
         description: "クマガイド",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.trueEnd.flags.backgroundState == 0,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 23.6,
+        y: 11.1,
+        width: 31.4,
+        height: 32.8,
+        onClick: clickWrap(function () {
+          updateMessage("嬉しそうだ。帰らなくていいのかな？");
+        }),
+        description: "クマガイド窓",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 69.1,
+        y: 79.9,
+        width: 14.8,
+        height: 11.8,
+        onClick: clickWrap(function () {
+          updateMessage("現実だったのかな…");
+        }),
+        description: "シール",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 40.2,
+        y: 50.4,
+        width: 29.7,
+        height: 28.4,
+        onClick: clickWrap(function () {
+          updateMessage("ヒンヤリしていて美味しい");
+        }),
+        description: "食べかけのお饅頭",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 1,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
