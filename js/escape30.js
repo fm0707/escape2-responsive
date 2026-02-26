@@ -152,8 +152,10 @@ let IMAGES = {
     fujiFlower: I30("modal_fuji_flower.webp"),
     walletOpen: I30("modal_wallet_open.webp"),
     posterRobo: I30("modal_poster_robo.webp"),
+    posterRoboEn: I30("modal_poster_robo_en.webp"),
     posterStamp: I30("modal_poster_stamp.webp"),
     posterFuji: I30("modal_poster_fuji.webp"),
+    posterFujiEn: I30("modal_poster_fuji_en.webp"),
     roboTicketRequire: I30("modal_robo_ticket_require.webp"),
     roboTicketComfirm: I30("modal_robo_ticket_comfirm.webp"),
     roboComfirmPond: I30("modal_robo_confirm_pond.webp"),
@@ -652,7 +654,7 @@ let rooms = {
         width: 13.7,
         height: 13.5,
         onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.posterRobo, "管理ロボのポスターだ");
+          showObj(null, "", IMAGES.modals.posterRobo, "管理ロボのポスターだ", IMAGES.modals.posterRoboEn);
         }),
         description: "管理ポスター",
         zIndex: 5,
@@ -678,7 +680,7 @@ let rooms = {
         width: 11.7,
         height: 10.9,
         onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.posterFuji, "藤棚のポスターだ");
+          showObj(null, "", IMAGES.modals.posterFuji, "藤棚のポスターだ", IMAGES.modals.posterFujiEn);
         }),
         description: "富士のポスター",
         zIndex: 5,
@@ -1076,6 +1078,10 @@ let rooms = {
           }
           if (gameState.selectedItem == "annualPassUnknown") {
             updateMessage("ご主人…");
+            return;
+          }
+          if (gameState.selectedItem == "hisyaku") {
+            updateMessage("叩かないでください");
             return;
           }
           if (f.clearFishing) {
@@ -1614,6 +1620,15 @@ let rooms = {
             playSE("se-fofofo");
             return;
           }
+          if (gameState.selectedItem == "seal") {
+            updateMessage("「働き者じゃ」");
+            playSE("se-fofofo");
+            return;
+          }
+          if (gameState.selectedItem == "hisyaku") {
+            updateMessage("叩いたりしたら、どうなるか分からない。やめておこう");
+            return;
+          }
           if (f.winterSoulGiftDone) {
             updateMessage("人魂は静かに漂っている");
             return;
@@ -1669,6 +1684,10 @@ let rooms = {
         height: 20.7,
         onClick: clickWrap(function () {
           const f = gameState.main.flags || (gameState.main.flags = {});
+          if (gameState.selectedItem == "hisyaku") {
+            updateMessage("ここまで連れてきてくれたガイドさんだ。やめておこう");
+            return;
+          }
           if (!f.winterSoulGiftDone) {
             updateMessage("クマガイドがこちらを見ている");
             return;
@@ -1805,7 +1824,7 @@ function travelWithSteps(destRoom = "end", color = "#000") {
 function travelWithStepsTrueEnd() {
   const overlay = document.getElementById("roomEffectOverlay");
   let destRoom = "trueEnd";
-  if (hasItem("sheetComplete3")) {
+  if (hasItem("seal")) {
     gameState.trueEnd.flags.backgroundState++;
   }
 
@@ -3828,6 +3847,7 @@ function getItemName(itemId) {
     hisyaku: "柄杓",
     stampBodyGreen: "緑のスタンプ本体",
     annualPassUnknown: "誰かの年間パスポート",
+    manju: "四季のお饅頭",
   };
   return names[itemId] || itemId;
 }
