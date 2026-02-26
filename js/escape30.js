@@ -1098,6 +1098,7 @@ let rooms = {
             window.addEventListener("modal:closed", () => fadeOutPondRobo(), { once: true });
             return;
           }
+          playSE("se-glich");
           showObj(null, "池に異物検知。除去が必要です", IMAGES.modals.roboUpset, "池に異物が沈んでいるようだ");
         }),
         description: "ロボ",
@@ -1320,7 +1321,7 @@ let rooms = {
             return;
           }
           playDeskPondDrawerOpenFx("引き出し上段", () => {
-            acquireItemOnce("foundStampBodyGreen", "stampBodyGreen", "スタンプの部品がある", IMAGES.items.stampBodyGreen, "緑のスタンプ部品を手に入れた");
+            acquireItemOnce("foundStampBodyGreen", "stampBodyGreen", "スタンプの本体がある", IMAGES.items.stampBodyGreen, "緑のスタンプ本体を手に入れた");
           });
         }),
         description: "引き出し上段",
@@ -1407,6 +1408,7 @@ let rooms = {
           if (gameState.selectedItem == "tsuboWater") {
             removeItem("tsuboWater");
             addItem("tsuboFixed");
+            playMomijiLeafEffect();
             showModal("水でインクを湿らせた", "<div>スタンプが使えるようになった</div>", [{ text: "閉じる", action: "close" }]);
             gameState.main.flags.stampMomijiUsable = true;
             return;
@@ -4276,6 +4278,74 @@ function updateMessageHTML(html) {
     a.style.color = "#d4af37";
     a.style.textDecoration = "underline";
   });
+}
+
+function playMomijiLeafEffect() {
+  if (typeof document === "undefined" || !document.body) return;
+
+  if (!document.getElementById("momijiFxStyle")) {
+    const style = document.createElement("style");
+    style.id = "momijiFxStyle";
+    style.textContent = `
+      .momiji-fx-layer{
+        position:fixed;
+        inset:0;
+        pointer-events:none;
+        overflow:hidden;
+        z-index:10010;
+      }
+      .momiji-fx-leaf{
+        position:absolute;
+        top:-12vh;
+        left:0;
+        font-size:clamp(18px, 3vw, 34px);
+        line-height:1;
+        opacity:0;
+        filter:drop-shadow(0 2px 2px rgba(50,20,0,0.18));
+        animation-name:momiji-fall, momiji-sway, momiji-spin, momiji-fade;
+        animation-timing-function:linear, ease-in-out, ease-in-out, linear;
+        animation-fill-mode:forwards, both, both, forwards;
+      }
+      @keyframes momiji-fall { from { transform: translateY(-8vh); } to { transform: translateY(118vh); } }
+      @keyframes momiji-sway { 0% { margin-left:-10px; } 50% { margin-left:12px; } 100% { margin-left:-8px; } }
+      @keyframes momiji-spin { 0% { rotate:0deg; } 50% { rotate:140deg; } 100% { rotate:320deg; } }
+      @keyframes momiji-fade { 0% { opacity:0; } 8% { opacity:.95; } 90% { opacity:.9; } 100% { opacity:0; } }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const layer = document.createElement("div");
+  layer.className = "momiji-fx-layer";
+  document.body.appendChild(layer);
+
+  const reduceMotion = !!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  const count = reduceMotion ? 8 : 20;
+  let cleanupMs = 0;
+  const symbols = ["&#x1F341;", "&#x1F342;"];
+
+  for (let i = 0; i < count; i++) {
+    const leaf = document.createElement("span");
+    leaf.className = "momiji-fx-leaf";
+    leaf.innerHTML = symbols[Math.random() < 0.8 ? 0 : 1];
+
+    const left = Math.random() * 100;
+    const delay = Math.random() * (reduceMotion ? 0.3 : 0.8);
+    const fallDur = (reduceMotion ? 0.9 : 1.4) + Math.random() * (reduceMotion ? 0.5 : 1.0);
+    const swayDur = 0.8 + Math.random() * 0.9;
+    const spinDur = 0.9 + Math.random() * 1.1;
+    leaf.style.left = `${left}vw`;
+    leaf.style.fontSize = `${16 + Math.random() * 24}px`;
+    leaf.style.animationDuration = `${fallDur}s, ${swayDur}s, ${spinDur}s, ${fallDur}s`;
+    leaf.style.animationDelay = `${delay}s, ${delay}s, ${delay}s, ${delay}s`;
+    leaf.style.color = ["#d8471d", "#b62f18", "#e08d1f", "#c96a17"][Math.floor(Math.random() * 4)];
+    cleanupMs = Math.max(cleanupMs, Math.ceil((delay + fallDur) * 1000) + 120);
+
+    layer.appendChild(leaf);
+  }
+
+  setTimeout(() => {
+    layer.remove();
+  }, cleanupMs || 2400);
 }
 
 // モーダル表示
