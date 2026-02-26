@@ -2825,127 +2825,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-function showDrawerMainPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-
-  if (f.unlockDrawerMain) {
-    updateMessage("引き出しは、もうアンロックされている。");
-    return;
-  }
-
-  const COLORS = [
-    { name: "black", bg: "#111", fg: "#fff" },
-    { name: "red", bg: "#ff3b30", fg: "#fff" },
-    { name: "yellow", bg: "#ffcc00", fg: "#111" },
-    { name: "green", bg: "#34c759", fg: "#111" },
-    { name: "pink", bg: "#ffa9de", fg: "#fff" },
-    { name: "blue", bg: "#007aff", fg: "#fff" },
-  ];
-
-  // 3つの白い正方形（中の記号は黒）からスタート
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:12px;">
-      <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
-        <button class="nav-btn" id="drawerMainSq0"
-          style="width:72px; height:72px; padding:0; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; border-radius:10px; background:#fff; color:#111;">♥</button>
-        <button class="nav-btn" id="drawerMainSq1"
-          style="width:72px; height:72px; padding:0; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; border-radius:10px; background:#fff; color:#111;">▼</button>
-        <button class="nav-btn" id="drawerMainSq2"
-          style="width:72px; height:72px; padding:0; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; border-radius:10px; background:#fff; color:#111;">■</button>
-      </div>
-
-      <div>
-        <button id="drawerMainOk" class="ok-btn" style="">OK</button>
-      </div>
-
-      <div id="drawerMainHint" style="margin-top:2px; font-size:0.95em; min-height:1.2em;"></div>
-    </div>
-  `;
-
-  showModal("引き出しのロック", content, [{ text: "閉じる", action: "close" }]);
-
-  setTimeout(() => {
-    const sq = [document.getElementById("drawerMainSq0"), document.getElementById("drawerMainSq1"), document.getElementById("drawerMainSq2")];
-    const okBtn = document.getElementById("drawerMainOk");
-    const hint = document.getElementById("drawerMainHint");
-    if (!sq[0] || !sq[1] || !sq[2] || !okBtn) return;
-
-    // -1 = 白（未選択）
-    const idx = [-1, -1, -1];
-
-    const paint = (i) => {
-      if (idx[i] < 0) {
-        sq[i].style.backgroundColor = "#fff";
-        sq[i].style.color = "#111";
-        return;
-      }
-      const c = COLORS[idx[i]];
-      sq[i].style.backgroundColor = c.bg;
-      sq[i].style.color = c.fg;
-    };
-
-    const cycle = (i) => {
-      if (idx[i] < 0) idx[i] = 0;
-      else idx[i] = (idx[i] + 1) % COLORS.length;
-      paint(i);
-      try {
-        playSE?.("se-gacha");
-      } catch (e) {}
-    };
-
-    // 初期描画（白）
-    paint(0);
-    paint(1);
-    paint(2);
-
-    sq.forEach((btn, i) => {
-      btn.addEventListener("click", () => cycle(i));
-    });
-
-    const isColor = (i, name) => idx[i] >= 0 && COLORS[idx[i]].name === name;
-
-    const judge = () => {
-      const ok = isColor(0, "red") && isColor(1, "green") && isColor(2, "blue");
-      if (ok) {
-        f.unlockDrawerMain = true;
-        playSE?.("se-clear");
-        closeModal();
-        updateMessage("カチッ…引き出しのロックが外れた。");
-        renderCanvasRoom?.();
-        markProgress?.("unlock_drawer_main");
-      } else {
-        playSE?.("se-error");
-        if (hint) hint.textContent = "ちがうようだ。";
-        screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-      }
-    };
-
-    okBtn.addEventListener("click", judge);
-
-    // キーボード：Enter=OK, 1/2/3=色を進める
-    const onKey = (e) => {
-      if (e.key === "Enter") judge();
-      if (e.key === "1") cycle(0);
-      if (e.key === "2") cycle(1);
-      if (e.key === "3") cycle(2);
-    };
-    document.addEventListener("keydown", onKey);
-
-    // closeModalフックで掃除
-    const _origCloseModal = window.closeModal;
-    if (typeof _origCloseModal === "function") {
-      window.closeModal = function () {
-        try {
-          document.removeEventListener("keydown", onKey);
-        } catch (e) {}
-        window.closeModal = _origCloseModal;
-        return _origCloseModal.apply(this, arguments);
-      };
-    }
-
-    sq[0].focus();
-  }, 0);
-}
 
 function showTicketMachinePuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
@@ -3038,6 +2917,7 @@ function showTicketMachinePuzzle() {
       } catch (e) {}
       closeModal();
       renderCanvasRoom?.();
+      markProgress?.("unlock_ticket_machine");
       updateMessage("チケットが出てきた");
     };
 
@@ -3070,116 +2950,9 @@ function showTicketMachinePuzzle() {
   }, 0);
 }
 
-// mainDoor：引き出し上段（数字ロック 4桁）
-function showDrawerTopPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
 
-  if (f.unlockDrawerTop) {
-    updateMessage("引き出しは、もうアンロックされている。");
-    return;
-  }
 
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:12px;">
-      <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-        <button class="nav-btn" id="drawerTopSq0"
-          style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#fff; color:#111;">0</button>
-        <button class="nav-btn" id="drawerTopSq1"
-          style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#e8e8e8; color:#999; cursor:not-allowed;">0</button>
-        <button class="nav-btn" id="drawerTopSq2"
-          style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#fff; color:#111;">0</button>
-        <button class="nav-btn" id="drawerTopSq3"
-          style="width:64px; height:64px; padding:0; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; border-radius:10px; background:#fff; color:#111;">0</button>
-      </div>
-
-      <div>
-        <button id="drawerTopOk" class="ok-btn">OK</button>
-      </div>
-
-      <div id="drawerTopHint" style="margin-top:2px; font-size:0.95em; min-height:1.2em;"></div>
-    </div>
-  `;
-
-  showModal("引き出しのロック", content, [{ text: "閉じる", action: "close" }]);
-
-  setTimeout(() => {
-    const sq = [document.getElementById("drawerTopSq0"), document.getElementById("drawerTopSq1"), document.getElementById("drawerTopSq2"), document.getElementById("drawerTopSq3")];
-    const okBtn = document.getElementById("drawerTopOk");
-    const hint = document.getElementById("drawerTopHint");
-    if (!sq[0] || !sq[1] || !sq[2] || !sq[3] || !okBtn) return;
-
-    // 初期はすべて0
-    const num = [0, 0, 0, 0];
-
-    const paint = (i) => {
-      sq[i].textContent = String(num[i]);
-    };
-
-    const cycle = (i) => {
-      num[i] = (num[i] + 1) % 10;
-      paint(i);
-      try {
-        playSE?.("se-gacha");
-      } catch (e) {}
-    };
-
-    paint(0);
-    paint(1);
-    paint(2);
-    paint(3);
-
-    sq.forEach((btn, i) => {
-      // 左から2番目（i=1）はクリック不可
-      if (i !== 1) {
-        btn.addEventListener("click", () => cycle(i));
-      }
-    });
-
-    const judge = () => {
-      const ok = num[0] === 1 && num[1] === 0 && num[2] === 3 && num[3] === 2;
-      if (ok) {
-        f.unlockDrawerTop = true;
-        playSE?.("se-clear");
-        closeModal();
-        updateMessage("カチッ…引き出しのロックが外れた。");
-        renderCanvasRoom?.();
-        markProgress?.("unlock_drawer_top");
-      } else {
-        playSE?.("se-error");
-        if (hint) hint.textContent = "ちがうみたいだ。";
-        screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-      }
-    };
-
-    okBtn.addEventListener("click", judge);
-
-    // Enter=OK, 1/2/3/4=対応枠を進める
-    const onKey = (e) => {
-      if (e.key === "Enter") judge();
-      if (e.key === "1") cycle(0);
-      if (e.key === "2") return; // 左から2番目はキーボードでも無効
-      if (e.key === "3") cycle(2);
-      if (e.key === "4") cycle(3);
-    };
-    document.addEventListener("keydown", onKey);
-
-    // closeModalフックで解除
-    const _origCloseModal = window.closeModal;
-    if (typeof _origCloseModal === "function") {
-      window.closeModal = function () {
-        try {
-          document.removeEventListener("keydown", onKey);
-        } catch (e) {}
-        window.closeModal = _origCloseModal;
-        return _origCloseModal.apply(this, arguments);
-      };
-    }
-
-    sq[0].focus();
-  }, 0);
-}
-
-// mainDoor：引き出し中段（数字ロック 3桁）
+// 引き出し中段（数字ロック 3桁）
 function showDrawerMiddlePuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
 
@@ -3309,6 +3082,7 @@ function showDeskPondTopPuzzle() {
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
+        markProgress?.("unlock_drawer_top");
         updateMessage("カチッ…引き出し上段のロックが外れた。");
         return;
       }
@@ -3393,7 +3167,8 @@ function showMomijiLockerTopPuzzle() {
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
-        updateMessage("カチッ…ロッカー上段のロックが外れた。");
+        markProgress?.("unlock_locker_top");
+        updateMessage("ロッカー上段のロックが外れた。");
         return;
       }
       playSE?.("se-error");
@@ -3474,7 +3249,8 @@ function showMomijiLockerBottomPuzzle() {
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
-        updateMessage("カチッ…ロッカー下段のロックが外れた。");
+        markProgress?.("unlock_locker_bottom");
+        updateMessage("ロッカー下段のロックが外れた。");
         return;
       }
       playSE?.("se-error");
@@ -3792,7 +3568,7 @@ function showGateLockPuzzle() {
         f.unlockGate = true;
         playSE?.("se-clear");
         closeModal();
-        updateMessage("カチッ…門のロックが外れた。");
+        updateMessage("門のロックが外れた。");
         renderCanvasRoom?.();
         markProgress?.("unlock_gate");
         return;
@@ -3848,8 +3624,8 @@ function showObj(flagKey, title, imgSrc, msg, altImgSrc, msgEn) {
   const f = gameState.main.flags;
   const wasFlagOn = flagKey ? !!f[flagKey] : false;
   if (flagKey) f[flagKey] = true;
-  if (flagKey === "unlockMachine" && !wasFlagOn) {
-    showToast("錬成マシンの使い方を思い出した");
+  if (flagKey && !wasFlagOn) {
+    markProgress?.(`important_flag_${flagKey}`, { flagKey });
   }
 
   const imgId = "objImg_" + Date.now();
