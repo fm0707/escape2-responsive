@@ -2655,7 +2655,7 @@ function showEndingReport(endingId = "end") {
       action: "restart",
     },
     {
-      text: "評価はこちら",
+      text: "プレイ後アンケート",
       action: () => openFeedbackForm(endingId),
     },
     {
@@ -3809,6 +3809,7 @@ function getItemName(itemId) {
   const names = {
     coin: "クマコイン",
     bear: "クマ妖精",
+    yen200: "200円",
     ticket: "入場券",
     souvenirVoucher: "お土産引換券",
     seal: "シール",
