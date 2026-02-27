@@ -159,6 +159,9 @@ let IMAGES = {
     roboTicketRequire: I30("modal_robo_ticket_require.webp"),
     roboTicketComfirm: I30("modal_robo_ticket_comfirm.webp"),
     roboComfirmPond: I30("modal_robo_confirm_pond.webp"),
+    roboComfirmWallet: I30("modal_robo_confirm_wallet.webp"),
+    roboConfirmWallet: I30("modal_robo_confirm_wallet.webp"),
+    roboGiveYen: I30("modal_robo_give_yen.webp"),
     stampPut: I30("modal_stamp_put.webp"),
     stampPut2: I30("modal_stamp_put2.webp"),
     pondNum: I30("modal_pond_num.webp"),
@@ -746,6 +749,25 @@ let rooms = {
         height: 12.1,
         onClick: clickWrap(function () {
           const f = gameState.main.flags;
+          if (gameState.selectedItem === "walletFull") {
+            showModal(
+              "管理ロボ",
+              `
+                <div style="text-align:center;">
+                  <div class="modal-anim">
+                    <img src="${IMAGES.modals.roboConfirmWallet}">
+                    <img src="${IMAGES.modals.roboGiveYen}">
+                  </div>
+                  <p style="margin:12px 0 0;">落とし物ですか。ありがとうございます。これは謝礼です。</p>
+                </div>
+              `,
+              [{ text: "閉じる", action: "close" }],
+            );
+            removeItem("walletFull");
+            addItem("yen200");
+            updateMessage("200円を手に入れた");
+            return;
+          }
           if (gameState.selectedItem === "ticket") {
             if (f.fujiTunnelRoboChecked || f.fujiTunnelRoboMoved) {
               updateMessage("管理ロボは別の場所へ移動したようだ");
@@ -4056,59 +4078,6 @@ function updateInventoryDisplay() {
             },
             { text: "閉じる", action: "close" },
           ];
-        }
-
-        if (itemId === "walletFull") {
-          showModal(getItemName(itemId), content, [
-            {
-              text: "調べる",
-              action: () => {
-                const walletAnimId = `walletInspectAnimImg-${index}-${Date.now()}`;
-                const walletAnimImgs = [IMAGES.items.walletFull, IMAGES.modals.walletOpen].filter(Boolean);
-                // const walletContent = walletAnimImgs.length > 0 ? `<img id="${walletAnimId}" src="${walletAnimImgs[0]}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">` : content;
-
-                const walletContent = `
-                                                <div class="modal-anim fast">
-                                                <img src="${walletAnimImgs[0]}">
-                                                <img src="${walletAnimImgs[1]}">
-                                                </div>
-                                                                                `;
-                window._nextModal = {
-                  title: getItemName(itemId),
-                  content: walletContent,
-                  buttons: [{ text: "閉じる", action: "close" }],
-                  after: () => {
-                    if (gameState.inventory[index] === "walletFull") {
-                      gameState.inventory[index] = "walletOpen";
-                      addItem("yen200");
-                      updateInventoryDisplay();
-                      updateMessage("財布の中に200円が入っていた");
-                    }
-
-                    if (walletAnimImgs.length < 2) return;
-                    setTimeout(() => {
-                      let count = 0;
-                      let imgIdx = 0;
-                      const timer = setInterval(() => {
-                        const liveImgEl = document.getElementById(walletAnimId);
-                        if (!liveImgEl) {
-                          clearInterval(timer);
-                          return;
-                        }
-                        imgIdx = 1 - imgIdx;
-                        liveImgEl.src = walletAnimImgs[imgIdx];
-                        count++;
-                        if (count >= 8) clearInterval(timer);
-                      }, 120);
-                    }, 0);
-                  },
-                };
-                closeModal();
-              },
-            },
-            { text: "閉じる", action: "close" },
-          ]);
-          return;
         }
 
         showModal(getItemName(itemId), content, buttons);
