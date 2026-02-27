@@ -1581,10 +1581,10 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 15.2,
-        y: 71.0,
-        width: 13.9,
-        height: 10.2,
+        x: 69.3,
+        y: 80.7,
+        width: 6.3,
+        height: 9.0,
         onClick: clickWrap(function () {
           updateMessage("この庭園を完成させた人物は、たびたびこの庭園を訪れて、四季折々の植物を楽しんでいたと伝えられています。");
         }),
