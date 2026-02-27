@@ -999,7 +999,7 @@ let rooms = {
             return;
           }
 
-          showModal("確認", "順番を間違えた台紙を捨てますか？", [
+          showModal("確認", "未完成の台紙を捨てますか？", [
             {
               text: "はい",
               action: () => {
