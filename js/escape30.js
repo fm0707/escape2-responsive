@@ -3881,7 +3881,7 @@ function getItemName(itemId) {
     tsubo: "壺",
     tsuboFixed: "修理した壺",
     tsuboWater: "水が入った壺",
-    tape: "ガムテープ",
+    tape: "耐水和紙テープ",
     key: "鍵",
     hisyaku: "柄杓",
     stampBodyGreen: "緑のスタンプ本体",
