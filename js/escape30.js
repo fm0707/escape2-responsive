@@ -335,20 +335,13 @@ function applySheetStamp(stampKey) {
 
   if (stampCount >= 3) {
     f.sheetStampCompleted = true;
-    if (currentSheetNo >= 2 && f.sheetOrderWrong) {
-      f.sheetStampCompleted = false;
-      return { ok: true, completed: false, wrongOrder: true };
-    }
-    if (currentSheetNo >= 2 && !f.confirmPapiyon) {
-      f.sheetStampCompleted = false;
-      return { ok: true, completed: false, wrongOrder: false };
-    }
-    if (currentSheetNo >= 2) {
+    const shouldCreateExtra = currentSheetNo >= 2 && !!f.confirmPapiyon && !f.sheetOrderWrong;
+    if (shouldCreateExtra) {
       f.unlockFujiTunnelBearGuide = true;
     }
     showToast("絵柄が完成した！");
     removeItem("sheet");
-    addItem(currentSheetNo >= 2 ? "sheetComplete3extra" : "sheetComplete3");
+    addItem(shouldCreateExtra ? "sheetComplete3extra" : "sheetComplete3");
     resetActiveSheetProgress(f);
     return { ok: true, completed: true, wrongOrder: false };
   }
