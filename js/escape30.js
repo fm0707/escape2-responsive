@@ -182,6 +182,7 @@ let IMAGES = {
     lockerTop: I30("modal_locker_top.webp"),
     bearShocked: I30("modal_bear_shocked.webp"),
     sheetZoom: I30("modal_sheet_zoom.webp"),
+    roboTicket: I30("modal_robo_ticket.webp"),
 
     // bearHappy: I30("modal_bear_happy.jpeg"),
   },
@@ -627,12 +628,16 @@ let rooms = {
             removeItem("souvenirVoucher");
             f.gotSouvenirSeal = true;
             addItem("seal");
-            showModal("お土産ですね。こちらをどうぞ", `<img src="${IMAGES.items.seal}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
+            showModal("ふむ。お土産と引き換えですね。<br>こちらをどうぞ", `<img src="${IMAGES.modals.roboTicket}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
             updateMessage("シールを手に入れた");
             return;
           }
           if (gameState.selectedItem == "annualPassUnknown") {
             updateMessage("ご主人…");
+            return;
+          }
+          if (gameState.selectedItem == "seal") {
+            updateMessage("当園の魅力を伝えるオリジナルシールです");
             return;
           }
           updateMessage("お得な年間パスポートはいかがですか？");
