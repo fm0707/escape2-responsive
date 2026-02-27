@@ -423,19 +423,7 @@ let rooms = {
         usable: () => false,
         item: { img: () => (gameState.main.flags.unlockGate ? "greenBack" : "redBack"), visible: () => true },
       },
-      {
-        x: 15.2,
-        y: 71.0,
-        width: 13.9,
-        height: 10.2,
-        onClick: clickWrap(function () {
-          updateMessage("この庭園を完成させた人物は、たびたびこの庭園を訪れて、四季折々の植物を楽しんでいたと伝えられています。");
-        }),
-        description: "立札",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
+
       {
         x: 90,
         y: 90,
@@ -1595,6 +1583,19 @@ let rooms = {
           updateMessage("見事な紅葉だ。");
         }),
         description: "紅葉",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 15.2,
+        y: 71.0,
+        width: 13.9,
+        height: 10.2,
+        onClick: clickWrap(function () {
+          updateMessage("この庭園を完成させた人物は、たびたびこの庭園を訪れて、四季折々の植物を楽しんでいたと伝えられています。");
+        }),
+        description: "貼り紙",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
