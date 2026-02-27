@@ -1586,7 +1586,7 @@ let rooms = {
         width: 6.3,
         height: 9.0,
         onClick: clickWrap(function () {
-          updateMessage("この庭園を完成させた人物は、たびたびこの庭園を訪れて、四季折々の植物を楽しんでいたと伝えられています。");
+          updateMessage("「この庭園を完成させた人物は、たびたびこの庭園を訪れて、四季折々の植物を楽しんでいたと伝えられています。」と書いてある");
         }),
         description: "貼り紙",
         zIndex: 5,
