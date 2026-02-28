@@ -182,7 +182,7 @@ let IMAGES = {
     papiyon: I30("modal_papiyon.webp"),
     bearGuide: I30("modal_bear_guide.webp"),
     soulGive: I30("modal_soul_give.webp"),
-    lockerTop: I30("modal_locker_top.webp"),
+    lockerTop: I30("modal_locker_top2.webp"),
     bearShocked: I30("modal_bear_shocked.webp"),
     sheetZoom: I30("modal_sheet_zoom.webp"),
     roboTicket: I30("modal_robo_ticket.webp"),
