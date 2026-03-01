@@ -3982,9 +3982,18 @@ function addNaviItem(room) {
 // インベントリ表示更新
 function updateInventoryDisplay() {
   const slots = document.querySelectorAll(".inventory-slot");
+  const isMobile = window.matchMedia("(max-width: 600px)").matches;
+  const mobileFilledSlotMinSize = "56px";
   slots.forEach((slot, index) => {
     slot.innerHTML = "";
     if (gameState.inventory[index]) {
+      if (isMobile) {
+        slot.style.minWidth = mobileFilledSlotMinSize;
+        slot.style.minHeight = mobileFilledSlotMinSize;
+      } else {
+        slot.style.minWidth = "";
+        slot.style.minHeight = "";
+      }
       const invItemId = gameState.inventory[index];
       const img = document.createElement("img");
       img.src = IMAGES.items[invItemId];
@@ -4083,6 +4092,9 @@ function updateInventoryDisplay() {
         showModal(getItemName(itemId), content, buttons);
       };
       slot.appendChild(magBtn);
+    } else {
+      slot.style.minWidth = "";
+      slot.style.minHeight = "";
     }
     // ★選択中ならselectedクラス追加
     if (gameState.selectedItemSlot === index) {
