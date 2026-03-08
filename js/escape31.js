@@ -132,6 +132,8 @@ let IMAGES = {
     stoneDriver: I31("modal_stone_driver.webp"),
     posterKinko: I31("modal_poster_kinko.webp"),
     posterHaisen: I31("modal_poster_haisen.webp"),
+    posterKinkoEn: I31("modal_poster_kinko_en.webp"),
+    posterHaisenEn: I31("modal_poster_haisen_en.webp"),
     memoTel: I31("modal_memo_tel.webp"),
     memoTelEn: I31("modal_memo_tel_en.webp"),
     posterTaxi: I31("modal_poster_taxi.webp"),
@@ -762,7 +764,7 @@ let rooms = {
         width: 10.2,
         height: 10.1,
         onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.posterHaisen, "お知らせが貼られている");
+          showObj(null, "", IMAGES.modals.posterHaisen, "お知らせが貼られている", IMAGES.modals.posterHaisenEn);
         }),
         description: "ポスター廃線",
         zIndex: 5,
@@ -775,7 +777,7 @@ let rooms = {
         width: 10.8,
         height: 11.1,
         onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.posterKinko, "お知らせが貼られている");
+          showObj(null, "", IMAGES.modals.posterKinko, "お知らせが貼られている", IMAGES.modals.posterKinkoEn);
         }),
         description: "ポスター金庫",
         zIndex: 5,
