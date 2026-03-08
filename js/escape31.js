@@ -2941,7 +2941,7 @@ function showDrawerLeftTopRhythmGame() {
     <div id="drawerLeftTopRhythmGame" style="margin-top:8px;">
       <div style="font-size:0.92em;line-height:1.6;margin-bottom:8px;text-align:left;">
         引っかかりをリズムで緩めてから、一気に引っ張る。<br>
-        リズム調整: 画面の <b>左 / 右</b> を交互にタップ。最初は左。<br>
+        リズム調整: 画面の <b>左 / 右</b> を交互にタップ。<br>
         引っ張り: <b>引っ張る</b> を連打
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;">
