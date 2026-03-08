@@ -1169,7 +1169,9 @@ let rooms = {
         y: 29.2,
         width: 38.4,
         height: 36.0,
-        onClick: clickWrap(function () {}),
+        onClick: clickWrap(function () {
+          updateMessage("古い帽子だ");
+        }),
         description: "帽子",
         zIndex: 5,
         usable: () => true,
