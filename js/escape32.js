@@ -627,7 +627,7 @@ let rooms = {
         width: 6.3,
         height: 4.5,
         onClick: clickWrap(function () {
-          updateMessage("「10月1日より、○○小学校、××小学校との統合に伴いみなさんは転校となります。私物は必ず持ち帰りましょう。」");
+          updateMessage("「10月1日より、○○小学校との統合に伴いみなさんは転校となります。私物は必ず持ち帰りましょう。」");
         }),
         description: "お知らせメモ",
         zIndex: 5,
@@ -832,7 +832,7 @@ let rooms = {
       },
       {
         x: 93.6,
-        y: 50.6,
+        y: 55.6,
         width: 6.4,
         height: 6.4,
         onClick: clickWrap(
