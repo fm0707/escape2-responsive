@@ -417,7 +417,7 @@ let rooms = {
             return;
           }
           if (!f.gyozaWet) {
-            updateMessage("餃子がまだ乾いている");
+            updateMessage("餃子が乾いているから焼けない");
             return;
           }
           if (!hasItem("oil") || !hasItem("dish")) {
@@ -631,6 +631,19 @@ let rooms = {
         }),
         description: "食器を洗う道具",
         zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 6.1,
+        y: 6.3,
+        width: 60.2,
+        height: 50.7,
+        onClick: clickWrap(function () {
+          updateMessage("窓は開かない。外の景色が見える");
+        }),
+        description: "窓",
+        zIndex: 2,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
