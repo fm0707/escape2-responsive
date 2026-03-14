@@ -711,7 +711,7 @@ let rooms = {
             updateMessage("カーテンが設置されている");
             return;
           }
-          updateMessage("フックがある。突っ張り棒などを通せそうだ");
+          updateMessage("フックがある。棒に通したカーテンなどを通せそうだ");
         }),
         description: "フック右",
         zIndex: 5,
@@ -4935,7 +4935,7 @@ function showLockerRightTopJournal() {
             <img src="${IMAGES.modals.flower}" style="width:100%; max-width:280px; display:block; margin:0 auto 18px; border-radius:10px; object-fit:contain;">
             <div style="display:flex; flex-direction:column; gap:12px; font-size:1rem; line-height:1.8; text-align:left;">
               <div>「9/19 もうすぐ新幹線が開通。そうしたらこの学校とはお別れなんだね」</div>
-              <div>「9/22 みんなで育てたお花、きれいに咲いたよ」</div>
+              <div>「9/22 みんなで育てたお花、きれいに咲いたよ。お花ごとに特徴があって面白いね」</div>
               <div>「9/23 新しい駅ができて、町のみんなの暮らしも変わっていくね。来月からは新しい学校へ通うことになります」</div>
               <div>「9/26 小川君の家の餃子、めちゃ美味しい。たれが絶品」</div>
             </div>
