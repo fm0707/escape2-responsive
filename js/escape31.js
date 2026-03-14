@@ -2534,6 +2534,11 @@ const PHONE_CALL_DATA = {
     message: "いたずら電話はやめよう",
     seId: "",
   },
+  7373: {
+    title: "発信結果",
+    message: "年配の男性の声「セブン亭です。ああ、ごめんなさいねぇ。<br>今は出前はやってないんですよ。歳なもんでねぇ…」",
+    seId: "se-call",
+  },
 };
 
 const PHONE_CALL_FALLBACK = {

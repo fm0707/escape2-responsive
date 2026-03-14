@@ -4326,7 +4326,7 @@ function showShelfLeftCabinetMiddlePuzzle() {
     </div>
   `;
 
-  showModal("キャビネットのロック", content, [{ text: "閉じる", action: "close" }]);
+  showModal("三段キャビネット中段のロック", content, [{ text: "閉じる", action: "close" }]);
 
   setTimeout(() => {
     const row = document.getElementById("shelfLeftCabinetMiddleDigits");
@@ -4341,19 +4341,27 @@ function showShelfLeftCabinetMiddlePuzzle() {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "nav-btn";
-      btn.style.width = "50px";
-      btn.style.height = "64px";
+      btn.style.width = "52px";
+      btn.style.height = "86px";
       btn.style.padding = "0";
       btn.style.display = "grid";
       btn.style.placeItems = "center";
-      btn.style.borderRadius = "8px";
+      btn.style.borderRadius = "52% 52% 60% 60% / 82% 82% 28% 28%";
       btn.style.border = "2px solid #9ec9dc";
-      btn.style.background = "linear-gradient(180deg, #effbff, #cfeef8)";
+      btn.style.background = "linear-gradient(180deg, #f4fdff 0%, #d8f3fb 45%, #bfe3f2 100%)";
+      // btn.style.transform = "rotate(45deg)";
+      btn.style.boxShadow = "inset 0 2px 0 rgba(255,255,255,0.55), 0 4px 10px rgba(40,90,120,0.18)";
+      btn.style.margin = "4px 2px 10px";
       btn.style.color = "#14465e";
       btn.style.fontSize = "28px";
       btn.style.fontWeight = "700";
       btn.style.fontFamily = "Georgia, serif";
       btn.setAttribute("aria-label", `数字 ${i + 1}`);
+      const label = document.createElement("span");
+      label.style.display = "block";
+      // label.style.transform = "rotate(-45deg)";
+      label.style.lineHeight = "1";
+      btn.appendChild(label);
       btn.addEventListener("click", () => {
         digits[i] = (digits[i] + 1) % 10;
         playSE?.("se-pi");
@@ -4365,7 +4373,8 @@ function showShelfLeftCabinetMiddlePuzzle() {
 
     function repaint() {
       cells.forEach((btn, i) => {
-        btn.textContent = String(digits[i]);
+        const label = btn.querySelector("span");
+        if (label) label.textContent = String(digits[i]);
       });
       hintEl.textContent = "";
     }
@@ -4420,7 +4429,7 @@ function showShelfLeftCabinetBottomPuzzle() {
     </div>
   `;
 
-  showModal("キャビネットのロック", content, [{ text: "閉じる", action: "close" }]);
+  showModal("三段キャビネット下段のロック", content, [{ text: "閉じる", action: "close" }]);
 
   setTimeout(() => {
     const hintEl = document.getElementById("shelfLeftCabinetBottomHint");
@@ -4690,7 +4699,7 @@ function showShelfLeftCabinetTopPuzzle() {
     </div>
   `;
 
-  showModal("キャビネットのロック", content, [{ text: "閉じる", action: "close" }]);
+  showModal("三段キャビネット上段のロック", content, [{ text: "閉じる", action: "close" }]);
 
   setTimeout(() => {
     const row = document.getElementById("shelfLeftCabinetTopRow");
@@ -4714,8 +4723,14 @@ function showShelfLeftCabinetTopPuzzle() {
       btn.style.background = color;
       btn.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.35)";
       btn.setAttribute("aria-label", `色 ${i + 1}`);
+      const valueEl = document.createElement("span");
+      valueEl.style.display = "block";
+      valueEl.style.fontSize = "22px";
+      valueEl.style.fontWeight = "700";
+      valueEl.style.lineHeight = "1";
+      btn.appendChild(valueEl);
       btn.addEventListener("click", () => {
-        counts[i] += 1;
+        counts[i] = (counts[i] + 1) % 10;
         playSE?.("se-pi");
         repaint();
       });
@@ -4725,10 +4740,9 @@ function showShelfLeftCabinetTopPuzzle() {
 
     function repaint() {
       cells.forEach((btn, i) => {
-        btn.textContent = String(counts[i]);
+        const valueEl = btn.querySelector("span");
+        if (valueEl) valueEl.textContent = String(counts[i]);
         btn.style.color = i === 1 ? "#f5f5f5" : "#222";
-        btn.style.fontSize = "22px";
-        btn.style.fontWeight = "700";
       });
       hintEl.textContent = "";
     }
@@ -4922,7 +4936,7 @@ function showLockerRightTopJournal() {
             <div style="display:flex; flex-direction:column; gap:12px; font-size:1rem; line-height:1.8; text-align:left;">
               <div>「9/19 もうすぐ新幹線が開通。そうしたらこの学校とはお別れなんだね」</div>
               <div>「9/22 みんなで育てたお花、きれいに咲いたよ」</div>
-              <div>「9/23 たまごっち、欲しいな」</div>
+              <div>「9/23 新しい駅ができて、町のみんなの暮らしも変わっていくね。来月からは新しい学校へ通うことになります」</div>
               <div>「9/26 小川君の家の餃子、めちゃ美味しい。たれが絶品」</div>
             </div>
           </div>
