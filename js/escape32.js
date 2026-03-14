@@ -3975,7 +3975,7 @@ function getGyozaResultItem(score, timeMin) {
     return { itemId: "gyozaPerfect", title: "すばらしい焼き上がりの餃子" };
   }
   if (score >= 5) {
-    return timeMin < 7 ? { itemId: "gyozaUndercooked", title: "やや生焼けの餃子" } : { itemId: "gyozaOvercooked", title: "やや焼き過ぎの餃子" };
+    return timeMin < 7 ? { itemId: "gyozaUndercooked", title: "焼き目が薄い餃子" } : { itemId: "gyozaOvercooked", title: "やや焼き過ぎの餃子" };
   }
   return timeMin < 7 ? { itemId: "gyozaRaw", title: "生焼けの餃子" } : { itemId: "gyozaBurnt", title: "焦げた餃子" };
 }
