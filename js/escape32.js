@@ -622,6 +622,19 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
+        x: 87.5,
+        y: 47.6,
+        width: 6.3,
+        height: 4.5,
+        onClick: clickWrap(function () {
+          updateMessage("「10月1日より、○○小学校、××小学校との統合に伴いみなさんは転校となります。私物は必ず持ち帰りましょう。」");
+        }),
+        description: "お知らせメモ",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
         x: 70.0,
         y: 58.1,
         width: 19.8,
