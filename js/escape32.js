@@ -3001,13 +3001,13 @@ function acquireShelfLeftCabinetTopItems() {
   addItem("timetable");
   renderCanvasRoom();
   showModal(
-    "時刻表がある",
+    "時間割がある",
     `<div style="display:flex; justify-content:center; align-items:flex-start;">
       <img src="${IMAGES.items.timetable}" style="width:180px;max-width:100%;display:block;">
     </div>`,
     [{ text: "閉じる", action: "close" }],
   );
-  updateMessage("時刻表を手に入れた");
+  updateMessage("時間割を手に入れた");
 }
 
 function acquireItemOnce(flagKey, itemId, title, imgSrc, msg) {
@@ -3999,7 +3999,7 @@ function triggerBearGyozaEnding() {
   }
 
   if (hasItem("sauce")) {
-    showModal("「良い匂い！ぴったりなたれもあるんだね！きっとおいしく食べられるよ！」", `<img src="${IMAGES.modals.bearSauce}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [
+    showModal("「良い匂い！ぴったりなたれもあるんだね！<br>きっとおいしく食べられるよ！」", `<img src="${IMAGES.modals.bearSauce}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [
       {
         text: "次へ",
         action: () => {
