@@ -669,7 +669,7 @@ let rooms = {
             updateMessage("カーテンが設置されている");
             return;
           }
-          updateMessage("フックがある。突っ張り棒などを通せそうだ");
+          updateMessage("フックがある。棒に通したカーテンなどを通せそうだ");
         }),
         description: "フック左",
         zIndex: 5,
@@ -4588,7 +4588,7 @@ function showLockerLeftBottomPuzzle() {
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
       <div style="width:100%; max-width:280px; display:flex; justify-content:center;">
-        <div style="background:#f3ecb2; color:#111; width:64px; height:44px; border-radius:8px; display:grid; place-items:center; font-size:28px; font-weight:900; box-shadow:inset 0 1px 0 rgba(255,255,255,0.55);">▼</div>
+        <div style="background:#f3ecb2; color:#111; width:64px; height:44px; border-radius:8px; display:grid; place-items:center; font-size:28px; font-weight:900; box-shadow:inset 0 1px 0 rgba(255,255,255,0.55);">↓</div>
       </div>
       <div id="lockerLeftBottomRow" style="display:flex; gap:10px; justify-content:center; align-items:center;"></div>
       <button id="lockerLeftBottomOk" class="ok-btn" type="button">OK</button>
@@ -4596,7 +4596,7 @@ function showLockerLeftBottomPuzzle() {
     </div>
   `;
 
-  showModal("ロッカーのロック", content, [{ text: "閉じる", action: "close" }]);
+  showModal("左下ロッカーのロック", content, [{ text: "閉じる", action: "close" }]);
 
   setTimeout(() => {
     const row = document.getElementById("lockerLeftBottomRow");
@@ -4756,7 +4756,7 @@ function showLockerRightTopPuzzle() {
     </div>
   `;
 
-  showModal("ロッカーのロック", content, [{ text: "閉じる", action: "close" }]);
+  showModal("右上ロッカーのロック", content, [{ text: "閉じる", action: "close" }]);
 
   setTimeout(() => {
     const row = document.getElementById("lockerRightTopRow");
