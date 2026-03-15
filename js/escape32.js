@@ -875,7 +875,7 @@ let rooms = {
             ]);
             return;
           }
-          updateMessage("「むにゃ…」クマ妖精は眠っている");
+          updateMessage(getSleepingBearHint());
         }),
         description: "寝ているクマ妖精",
         zIndex: 5,
@@ -1718,6 +1718,28 @@ const hintMessages = {
     bear: [],
   },
 };
+
+function getSleepingBearHint() {
+  const f = gameState.main?.flags || {};
+
+  if (!f.unlockShelfLeftCabinetMiddle) {
+    return "「お水が、ぽたぽた…むにゃ」";
+  }
+
+  if (!f.isCurtainClosed && !f.unlockWindowRightVabinet) {
+    return "「まどには…カーテン…むにゃ」";
+  }
+
+  if (!f.unlockWindowRightVabinet) {
+    return "「たまには本が読みたいな…むにゃ」";
+  }
+
+  if (f.foundMirror && !f.putMirror) {
+    return "「かがみは…どこかに」";
+  }
+
+  return "「むにゃ…」クマ妖精は眠っている";
+}
 
 // 足音で数歩→ワープ演出→目的の部屋へ
 function travelWithSteps(destRoom = "end", color = "#000") {
