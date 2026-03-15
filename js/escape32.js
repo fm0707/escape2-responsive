@@ -288,6 +288,7 @@ let rooms = {
               };
               showModal("ドアノブ", `<img src="${IMAGES.modals.nobMirror}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;"><div style="text-align:center;">手鏡を差し入れてみた</div>`, [{ text: "次へ", action: "close" }]);
               updateMessage("手鏡を差し入れてみた");
+              if (!f.checkGreenClock) f.checkGreenClock = true;
               return;
             }
             showObj(null, "", IMAGES.modals.nobHole, "穴から覗いてみた。暗くてよく見えない");
@@ -1736,6 +1737,10 @@ function getSleepingBearHint() {
 
   if (f.foundMirror && !f.putMirror) {
     return "「かがみは…どこかに」";
+  }
+
+  if (f.checkGreenClock && !f.unlockLockerCenterTop) {
+    return "「五色の時計が…むにゃ」";
   }
 
   return "「むにゃ…」クマ妖精は眠っている";
