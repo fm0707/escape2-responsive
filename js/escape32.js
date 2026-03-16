@@ -244,7 +244,7 @@ let gameState = getDefaultGameState();
 // 部屋データ
 let rooms = {
   mainBoard: {
-    name: "家庭科室の黒板側",
+    name: "家庭科室",
     description: "",
     clickableAreas: [
       {
@@ -511,7 +511,7 @@ let rooms = {
             return;
           }
           if (f.gyozaKawaWet) {
-            showObj(null, "", IMAGES.modals.gyozaKawa, "餃子の皮に水を吹きかけた");
+            showObj(null, "", IMAGES.modals.gyozaKawa, "餃子の皮はしっとりしている");
             return;
           }
           updateMessage("餃子の皮がある。乾燥しきっている");
@@ -894,6 +894,10 @@ let rooms = {
             playSE("se-pop");
             showModal("うっとり", `<img src="${IMAGES.modals.bearMirror}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
             updateMessage("クマ妖精はうっとりしている");
+            return;
+          }
+          if (gameState.selectedItem === "splayBottleWithWater") {
+            updateMessage("ボクは乾いてないよ");
             return;
           }
           triggerBearGyozaEnding();
