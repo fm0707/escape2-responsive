@@ -1736,11 +1736,11 @@ function getSleepingBearHint() {
   }
 
   if (f.foundMirror && !f.putMirror) {
-    return "「かがみは…どこかに」";
+    return "「鏡は…ピカッ」";
   }
 
   if (f.checkGreenClock && !f.unlockLockerCenterTop) {
-    return "「五色の時計が…むにゃ」";
+    return "「五色の時計が…授業が始まっちゃう…」";
   }
 
   return "「むにゃ…」クマ妖精は眠っている";
