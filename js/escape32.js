@@ -273,10 +273,10 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 74.0,
-        y: 51.5,
-        width: 3.7,
-        height: 4.1,
+        x: 73.1,
+        y: 49.9,
+        width: 6.5,
+        height: 6.6,
         onClick: clickWrap(function () {
           const f = gameState.main.flags || (gameState.main.flags = {});
           if (f.removedPrepDoorKnob) {
@@ -662,10 +662,10 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 1.4,
-        y: 3.4,
-        width: 2.7,
-        height: 3.3,
+        x: 0.8,
+        y: 2.4,
+        width: 4.8,
+        height: 6.0,
         onClick: clickWrap(function () {
           const f = gameState.main.flags || (gameState.main.flags = {});
           if (gameState.selectedItem === "curtainRod") {
@@ -691,10 +691,10 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 68.0,
-        y: 4.0,
-        width: 2.3,
-        height: 2.9,
+        x: 66.4,
+        y: 2.2,
+        width: 5.7,
+        height: 6.1,
         onClick: clickWrap(function () {
           const f = gameState.main.flags || (gameState.main.flags = {});
           if (gameState.selectedItem === "curtainRod") {
