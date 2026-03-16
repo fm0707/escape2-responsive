@@ -168,6 +168,7 @@ let IMAGES = {
     bearWater: I32("modal_bear_splay.webp"),
     bearSplay: I32("modal_bear_splay.webp"),
     bearWind: I32("modal_bear_wind.webp"),
+    bearMirror: I32("modal_bear_mirror.webp"),
   },
 };
 
@@ -889,6 +890,12 @@ let rooms = {
         width: 26.0,
         height: 26.9,
         onClick: clickWrap(function () {
+          if (gameState.selectedItem === "mirror") {
+            playSE("se-pop");
+            showModal("うっとり", `<img src="${IMAGES.modals.bearMirror}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
+            updateMessage("クマ妖精はうっとりしている");
+            return;
+          }
           triggerBearGyozaEnding();
         }),
         description: "立っているクマ",
