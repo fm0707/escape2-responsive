@@ -4909,13 +4909,13 @@ function showLockerCenterTopPuzzle() {
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
       <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
-        <div style="width:28px; height:28px; border-radius:4px; background:#2d7be8; border:1px solid rgba(0,0,0,0.18);"></div>
-        <div style="width:28px; height:28px; border-radius:4px; background:#f1cf38; border:1px solid rgba(0,0,0,0.18);"></div>
         <div style="width:28px; height:28px; border-radius:4px; background:#d74848; border:1px solid rgba(0,0,0,0.18);"></div>
         <div style="width:28px; height:28px; border-radius:4px; background:#f08a2b; border:1px solid rgba(0,0,0,0.18);"></div>
         <div style="width:28px; height:28px; border-radius:4px; background:#48a65a; border:1px solid rgba(0,0,0,0.18);"></div>
+        <div style="width:28px; height:28px; border-radius:4px; background:#f1cf38; border:1px solid rgba(0,0,0,0.18);"></div>
+        <div style="width:28px; height:28px; border-radius:4px; background:#2d7be8; border:1px solid rgba(0,0,0,0.18);"></div>
       </div>
-      <div style="font-size:0.92em; color:#555; text-align:center;">青、黄、赤、オレンジ、緑</div>
+      <div style="font-size:0.92em; color:#555; text-align:center;">赤、オレンジ、緑、黄色、青</div>
       <div style="font-size:0.98em; font-weight:700;">キーを1回入力</div>
       
       <input id="lockerCenterTopInput" class="puzzle-input" type="text" maxlength="1" placeholder="" style="width:180px; text-align:center; font-size:1.2em;">
