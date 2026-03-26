@@ -5026,6 +5026,7 @@ function showAdminRoomDrawerTopPuzzle() {
       const ok = target.every((size, idx) => current[idx] === size);
       if (ok) {
         f.unlockAdminRoomDrawerTop = true;
+        markProgress?.("unlock_admin_room_drawer_top");
         playSE?.("se-clear");
         window._nextModal = {
           title: "解除",
@@ -5144,6 +5145,7 @@ function showAdminRoomDrawerBottomPuzzle() {
       const ok = target.every((name, idx) => current[idx] === name);
       if (ok) {
         f.unlockAdminRoomDrawerBottom = true;
+        markProgress?.("unlock_admin_room_drawer_bottom");
         playSE?.("se-clear");
         window._nextModal = {
           title: "解除",
@@ -5240,6 +5242,7 @@ function showWorkRoomDrawerMiddlePuzzle() {
       const coffeeOk = !!gameState.main?.flags?.makeCoffee;
       if (ok && coffeeOk) {
         f.unlockWorkRoomDrawerMiddle = true;
+        markProgress?.("unlock_work_room_drawer_middle");
         playSE?.("se-clear");
         closeModal();
         updateMessage("引き出し中段のロックが外れた。");
@@ -5328,6 +5331,7 @@ function showLockerIPuzzle() {
       const logOk = !!gameState.main?.flags?.violationLogExtraRows;
       if (symbolsOk && logOk) {
         f.unlockLockerI = true;
+        markProgress?.("unlock_locker_i");
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
@@ -5417,6 +5421,7 @@ function showLockerAPuzzle() {
       const ok = target.every((v, i) => current[i] === v);
       if (ok) {
         f.unlockLockerA = true;
+        markProgress?.("unlock_locker_a");
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
@@ -5478,6 +5483,7 @@ function showLockerCPuzzle() {
     const submit = () => {
       if (`${state[0]}${state[1]}` === "27") {
         f.unlockLockerC = true;
+        markProgress?.("unlock_locker_c");
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
@@ -5560,6 +5566,7 @@ function showReceptionKeyboxPuzzle() {
     okBtn.addEventListener("click", () => {
       if (digits.join("") === "235") {
         f.unlockReceptionKeybox = true;
+        markProgress?.("unlock_reception_keybox");
         playSE?.("se-clear");
         window._nextModal = () => {
           acquireItemOnce("foundKeyAdmin", "keyAdmin", "鍵が入っていた", IMAGES.items.keyAdmin, "管理室の鍵を手に入れた");
@@ -5646,6 +5653,7 @@ function showLockerDPuzzle() {
       const ok = target.every((v, i) => current[i] === v);
       if (ok) {
         f.unlockLockerD = true;
+        markProgress?.("unlock_locker_d");
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
@@ -5829,6 +5837,7 @@ function showPcReceptionLoginPuzzle() {
       const value = (input.value || "").trim().toUpperCase();
       if (value === "R-040") {
         f.loginPc = true;
+        markProgress?.("login_reception_pc");
         playSE?.("se-clear");
         closeModal();
         renderCanvasRoom?.();
@@ -5881,6 +5890,7 @@ function showAdminPcLoginPuzzle() {
       const value = (input.value || "").trim().toLowerCase();
       if (value === "gate") {
         f.adminPcLoggedIn = true;
+        markProgress?.("login_admin_pc");
         playSE?.("se-clear");
         closeModal();
         showModal("管理PC", "管理PCにログインできた", [{ text: "閉じる", action: "close" }]);

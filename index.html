@@ -33,6 +33,32 @@
         margin: 0 auto 18px;
         padding: 0 12px;
       }
+      .top-links {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 12px 0 20px;
+      }
+      .top-link {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 2px 6px #b8941f33;
+      }
+      .top-link.contact {
+        background: #d4af37;
+        color: #1a0f08;
+      }
+      .top-link.x-link {
+        background: linear-gradient(135deg, #1d1d1d 0%, #3a3a3a 100%);
+        color: #fff;
+      }
+      .top-link.x-link:hover {
+        background: linear-gradient(135deg, #000 0%, #2a2a2a 100%);
+      }
       .section-title {
         display: flex;
         align-items: center;
@@ -238,8 +264,9 @@
 
     <h1>スラセブンの脱出ゲーム作品集</h1>
     <p class="sub">最新作は上／過去作は下にあります。</p>
-    <div style="text-align: center; margin: 12px 0 20px">
-      <a href="contact.html" style="background: #d4af37; color: #1a0f08; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 6px #b8941f33">お問い合わせ</a>
+    <div class="top-links">
+      <a href="contact.html" class="top-link contact">お問い合わせ</a>
+      <a href="https://x.com/sura_seven" class="top-link x-link" target="_blank" rel="noopener noreferrer">X @sura_seven</a>
     </div>
 
     <div class="section" id="new-section">
