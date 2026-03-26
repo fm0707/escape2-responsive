@@ -1180,7 +1180,7 @@ let rooms = {
               <div style="display:flex;justify-content:center;padding:4px 0;">
                 <div style="width:min(100%,380px);padding:22px 24px;border:1px solid rgba(138,108,72,0.42);border-radius:8px;background:linear-gradient(180deg,#f5eddc 0%,#eadabd 100%);box-shadow:0 8px 22px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.45);color:#3a2818;text-align:left;line-height:1.9;font-size:1rem;position:relative;">
                   <div style="position:absolute;inset:0;border-radius:8px;background:repeating-linear-gradient(180deg,rgba(120,90,60,0.05) 0,rgba(120,90,60,0.05) 1px,transparent 1px,transparent 30px);pointer-events:none;"></div>
-                  <div style="position:relative;">PCのログインパスは、先月最後の予約番号にすること</div>
+                  <div style="position:relative;">PCのログインパスは、先月最後の予約IDにすること</div>
                 </div>
               </div>
             `,
@@ -4944,95 +4944,7 @@ function showPlantBadEnd() {
   updateMessage("BAD END: 怒れる植物に襲われた");
 }
 
-function showShelfLeftCabinetMiddlePuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockShelfLeftCabinetMiddle) {
-    playShelfCabinetDoorOpenFx("棚左キャビネット中段");
-    return;
-  }
 
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div id="shelfLeftCabinetMiddleDigits" style="display:flex; gap:8px; justify-content:center; align-items:center;"></div>
-      <button id="shelfLeftCabinetMiddleOk" class="ok-btn" type="button">OK</button>
-      <div id="shelfLeftCabinetMiddleHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("三段キャビネット中段のロック", content, [{ text: "閉じる", action: "close" }]);
-
-  setTimeout(() => {
-    const row = document.getElementById("shelfLeftCabinetMiddleDigits");
-    const okBtn = document.getElementById("shelfLeftCabinetMiddleOk");
-    const hintEl = document.getElementById("shelfLeftCabinetMiddleHint");
-    if (!row || !okBtn || !hintEl) return;
-
-    const target = ["3", "4", "1"];
-    const digits = [0, 0, 0];
-
-    const cells = Array.from({ length: 3 }, (_, i) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "nav-btn";
-      btn.style.width = "52px";
-      btn.style.height = "86px";
-      btn.style.padding = "0";
-      btn.style.display = "grid";
-      btn.style.placeItems = "center";
-      btn.style.borderRadius = "52% 52% 60% 60% / 82% 82% 28% 28%";
-      btn.style.border = "2px solid #9ec9dc";
-      btn.style.background = "linear-gradient(180deg, #f4fdff 0%, #d8f3fb 45%, #bfe3f2 100%)";
-      // btn.style.transform = "rotate(45deg)";
-      btn.style.boxShadow = "inset 0 2px 0 rgba(255,255,255,0.55), 0 4px 10px rgba(40,90,120,0.18)";
-      btn.style.margin = "4px 2px 10px";
-      btn.style.color = "#14465e";
-      btn.style.fontSize = "28px";
-      btn.style.fontWeight = "700";
-      btn.style.fontFamily = "Georgia, serif";
-      btn.setAttribute("aria-label", `数字 ${i + 1}`);
-      const label = document.createElement("span");
-      label.style.display = "block";
-      // label.style.transform = "rotate(-45deg)";
-      label.style.lineHeight = "1";
-      btn.appendChild(label);
-      btn.addEventListener("click", () => {
-        digits[i] = (digits[i] + 1) % 10;
-        playSE?.("se-pi");
-        repaint();
-      });
-      row.appendChild(btn);
-      return btn;
-    });
-
-    function repaint() {
-      cells.forEach((btn, i) => {
-        const label = btn.querySelector("span");
-        if (label) label.textContent = String(digits[i]);
-      });
-      hintEl.textContent = "";
-    }
-
-    okBtn.addEventListener("click", () => {
-      const current = digits.map(String);
-      const ok = target.every((v, i) => current[i] === v);
-      if (ok) {
-        f.unlockShelfLeftCabinetMiddle = true;
-        playSE?.("se-clear");
-        closeModal();
-        markProgress?.("unlock_shelf_left_cabinet_middle");
-        updateMessage("棚左キャビネット中段のロックが外れた。");
-        // playShelfCabinetDoorOpenFx("棚左キャビネット中段");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
-}
 
 function showAdminRoomDrawerTopPuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
@@ -5250,99 +5162,6 @@ function showAdminRoomDrawerBottomPuzzle() {
           ],
         };
         closeModal();
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
-}
-
-function showShelfLeftCabinetBottomPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockShelfLeftCabinetBottom) {
-    playShelfCabinetDoorOpenFx("棚左キャビネット下段");
-    return;
-  }
-
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:grid; grid-template-columns:repeat(3, 60px); grid-template-rows:repeat(3, 60px); gap:8px; justify-content:center; align-items:center;">
-        <div></div>
-        <button id="shelfLeftCabinetBottomUp" class="nav-btn" type="button" style="width:60px; height:60px; padding:0; border-radius:8px; background:#ffffff; color:#1a1a1a; border:2px solid #d9d9d9; font-size:28px; font-weight:700;">N</button>
-        <div></div>
-        <button id="shelfLeftCabinetBottomLeft" class="nav-btn" type="button" style="width:60px; height:60px; padding:0; border-radius:8px; background:#ffffff; border:2px solid #d9d9d9;"></button>
-        <div></div>
-        <button id="shelfLeftCabinetBottomRight" class="nav-btn" type="button" style="width:60px; height:60px; padding:0; border-radius:8px; background:#ffffff; border:2px solid #d9d9d9;"></button>
-        <div></div>
-        <button id="shelfLeftCabinetBottomDown" class="nav-btn" type="button" style="width:60px; height:60px; padding:0; border-radius:8px; background:#ffffff; border:2px solid #d9d9d9;"></button>
-        <div></div>
-      </div>
-      <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-        <button id="shelfLeftCabinetBottomClear" class="nav-btn" type="button">クリア</button>
-        <button id="shelfLeftCabinetBottomOk" class="ok-btn" type="button">OK</button>
-      </div>
-      <div id="shelfLeftCabinetBottomHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("三段キャビネット下段のロック", content, [{ text: "閉じる", action: "close" }]);
-
-  setTimeout(() => {
-    const hintEl = document.getElementById("shelfLeftCabinetBottomHint");
-    const clearBtn = document.getElementById("shelfLeftCabinetBottomClear");
-    const okBtn = document.getElementById("shelfLeftCabinetBottomOk");
-    if (!hintEl || !clearBtn || !okBtn) return;
-
-    const order = [];
-    const target = ["left", "up", "right", "down"];
-    const buttons = {
-      left: document.getElementById("shelfLeftCabinetBottomLeft"),
-      up: document.getElementById("shelfLeftCabinetBottomUp"),
-      right: document.getElementById("shelfLeftCabinetBottomRight"),
-      down: document.getElementById("shelfLeftCabinetBottomDown"),
-    };
-
-    const repaint = () => {
-      Object.entries(buttons).forEach(([key, btn]) => {
-        if (!btn) return;
-        const pressed = order.includes(key);
-        btn.style.background = pressed ? "#d0d0d0" : "#ffffff";
-        btn.style.borderColor = pressed ? "#b7b7b7" : "#d9d9d9";
-        btn.disabled = pressed;
-      });
-      hintEl.textContent = "";
-    };
-
-    Object.entries(buttons).forEach(([key, btn]) => {
-      if (!btn) return;
-      btn.addEventListener("click", () => {
-        if (order.includes(key)) return;
-        order.push(key);
-        playSE?.("se-pi");
-        repaint();
-      });
-    });
-
-    clearBtn.addEventListener("click", () => {
-      order.length = 0;
-      playSE?.("se-click");
-      repaint();
-    });
-
-    okBtn.addEventListener("click", () => {
-      const ok = order.length === target.length && target.every((dir, idx) => order[idx] === dir);
-      if (ok) {
-        f.unlockShelfLeftCabinetBottom = true;
-        playSE?.("se-clear");
-        closeModal();
-        renderCanvasRoom?.();
-        markProgress?.("unlock_shelf_left_cabinet_bottom");
-        updateMessage("棚左キャビネット下段のロックが外れた。");
         return;
       }
 
