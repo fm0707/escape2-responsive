@@ -1523,10 +1523,10 @@ let rooms = {
         item: { img: "arrowRight", visible: () => true },
       },
       {
-        x: 90,
-        y: 0,
-        width: 10,
-        height: 10,
+        x: 56.2,
+        y: 35.3,
+        width: 8,
+        height: 8,
         onClick: clickWrap(function () {
           changeRoom("adminDoor");
         }),
@@ -2256,8 +2256,10 @@ function travelToEndWithFootsteps() {
 function travelWithStepsTrueEnd() {
   const overlay = document.getElementById("roomEffectOverlay");
   let destRoom = "trueEnd";
-  if (hasItem("elixir")) {
+  const hasElixir = hasItem("elixir");
+  if (hasElixir) {
     gameState.trueEnd.flags.backgroundState = 1;
+    removeItem("elixir");
   }
   const calledEggBento = !!gameState.main?.flags?.calledEggBento;
   if (calledEggBento) {
@@ -3103,15 +3105,21 @@ const ADMIN_PC_TRASH_FILES = [
 ];
 
 function showAdminPcTrashExplorer() {
+  const formatShortDate = (value) => {
+    const m = String(value || "").match(/^(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})$/);
+    if (!m) return value;
+    return `${Number(m[2])}/${Number(m[3])} ${m[4]}:${m[5]}`;
+  };
+
   const rows = ADMIN_PC_TRASH_FILES.map(
     (file) => `
-    <div style="display:grid;grid-template-columns:minmax(0,1.8fr) minmax(132px,1.1fr) minmax(132px,1fr);gap:12px;align-items:center;padding:6px 10px;border-bottom:1px solid #c7c7c7;background:#ffffff;font-size:0.92em;">
-      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+    <div style="display:grid;grid-template-columns:minmax(0,2.5fr) minmax(68px,0.9fr) minmax(76px,0.9fr);gap:8px;align-items:center;padding:6px 8px;border-bottom:1px solid #c7c7c7;background:#ffffff;font-size:0.9em;">
+      <div style="display:flex;align-items:flex-start;gap:8px;min-width:0;">
         <span aria-hidden="true" style="font-size:18px;line-height:1;">📄</span>
-        <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${file.fileName}</span>
+        <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:normal;word-break:break-word;line-height:1.25;">${file.fileName}</span>
       </div>
-      <div style="color:#222;white-space:nowrap;">${file.modifiedAt}</div>
-      <div style="color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${file.kind}</div>
+      <div style="color:#222;white-space:nowrap;font-size:0.84em;">${formatShortDate(file.modifiedAt)}</div>
+      <div style="color:#222;white-space:normal;overflow:hidden;text-overflow:ellipsis;font-size:0.84em;line-height:1.2;">${file.kind}</div>
     </div>
   `,
   ).join("");
@@ -3130,9 +3138,9 @@ function showAdminPcTrashExplorer() {
         <div style="border:1px solid #808080;box-shadow:inset 1px 1px 0 #ffffff,inset -1px -1px 0 #9a9a9a;background:#efefef;">
           <div style="padding:6px 8px;border-bottom:1px solid #b3b3b3;background:#ece9d8;font-size:0.9em;color:#333;">C:\\WINDOWS\\デスクトップ\\ゴミ箱</div>
           <div style="padding:6px 8px;border-bottom:1px solid #bcbcbc;background:#f4f4f4;font-size:0.88em;color:#333;">3 個のオブジェクト</div>
-          <div style="display:grid;grid-template-columns:minmax(0,1.8fr) minmax(132px,1.1fr) minmax(132px,1fr);gap:12px;padding:5px 10px;background:#dfe3ea;border-top:1px solid #ffffff;border-bottom:1px solid #8f8f8f;font-size:0.86em;font-weight:700;color:#222;">
+          <div style="display:grid;grid-template-columns:minmax(0,2.5fr) minmax(68px,0.9fr) minmax(76px,0.9fr);gap:8px;padding:5px 8px;background:#dfe3ea;border-top:1px solid #ffffff;border-bottom:1px solid #8f8f8f;font-size:0.82em;font-weight:700;color:#222;">
             <div>名前</div>
-            <div>更新日時</div>
+            <div>更新</div>
             <div>種類</div>
           </div>
           <div>${rows}</div>
