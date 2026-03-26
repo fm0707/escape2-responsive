@@ -81,17 +81,46 @@
       }
 
       .inventory {
-        /* flex: 1; */
         display: flex;
         justify-content: center;
         gap: 20px;
         align-items: center;
         padding: 0 12px;
-        /* width:100%; */
-        flex-wrap: wrap;
-        max-width: 520px;
+        flex-wrap: nowrap;
+        max-width: 720px;
         margin: 0 auto;
         margin-top: 6px;
+      }
+
+      .inventory-shell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+
+      .inventory-nav {
+        width: 44px;
+        height: 44px;
+        border: 2px solid #d4af37;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #4a2a18, #241208);
+        color: #f8e4a2;
+        font-size: 24px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+      }
+
+      .inventory-nav:disabled {
+        opacity: 0.35;
+        cursor: default;
       }
 
       .inventory-slot {
@@ -477,7 +506,6 @@
         justify-content: center;
         gap: 18px;
         margin: 18px 0 4px 0;
-        /* width: 40%; */
         align-self: flex-start;
       }
 
@@ -498,31 +526,81 @@
         }
 
         .inventory {
-          gap: 12px;
+          gap: 6px;
           align-items: center;
-          padding: 0 6px;
-          width: 100%;
-          max-width: 100%;
-          flex-wrap: nowrap;
-          overflow-x: auto;
-          justify-content: flex-start;
+          padding: 0;
+          width: auto;
+          max-width: none;
+          flex: 1 1 auto;
+          min-width: 0;
+          overflow: hidden;
+          justify-content: center;
         }
 
         .inventory-slot {
-          width: 14vw;
-          height: 14vw;
+          width: clamp(42px, 10.5vw, 52px);
+          height: clamp(42px, 10.5vw, 52px);
+          min-width: 0;
+          min-height: 0;
+        }
+
+        .inventory-slot img {
+          max-width: 72%;
+          max-height: 72%;
+        }
+
+        .inventory-shell {
+          gap: 6px;
+          padding: 0 4px;
+        }
+
+        .inventory-nav {
+          width: 38px;
+          height: 38px;
+          font-size: 20px;
+        }
+
+        .magnifier-btn {
+          right: 1px;
+          bottom: 1px;
+          width: 16px;
+          height: 16px;
+        }
+
+        .magnifier-btn img {
+          width: 11px;
+          height: 11px;
         }
       }
 
       @media (min-width: 601px) {
+        .ui-panel {
+          align-items: center;
+        }
+
+        .inventory-shell {
+          width: auto;
+          flex: 1 1 auto;
+          justify-content: flex-start;
+          gap: 6px;
+          padding: 0 0 0 4px;
+        }
+
         .inventory {
-          display: grid;
-          grid-template-columns: repeat(7, 80px);
-          grid-auto-rows: 80px;
+          display: flex;
           gap: 16px;
-          justify-content: center;
-          align-content: flex-start;
-          max-width: 800px;
+          justify-content: flex-start;
+          align-items: center;
+          max-width: 672px;
+          margin: 0;
+          padding: 0 6px;
+        }
+
+        .save-area {
+          margin: 0 0 0 10px;
+          align-self: center;
+          align-items: center;
+          flex: 0 0 auto;
         }
       }
 
@@ -1286,21 +1364,18 @@
           </div>
           <div class="navigation"></div>
         </div>
-        <div class="inventory" id="inventory">
-          <div class="inventory-slot" onclick="useItem(0)"></div>
-          <div class="inventory-slot" onclick="useItem(1)"></div>
-          <div class="inventory-slot" onclick="useItem(2)"></div>
-          <div class="inventory-slot" onclick="useItem(3)"></div>
-          <div class="inventory-slot" onclick="useItem(4)"></div>
-          <div class="inventory-slot" onclick="useItem(5)"></div>
-          <div class="inventory-slot" onclick="useItem(6)"></div>
-          <div class="inventory-slot" onclick="useItem(7)"></div>
-          <div class="inventory-slot" onclick="useItem(8)"></div>
-          <div class="inventory-slot" onclick="useItem(9)"></div>
-          <div class="inventory-slot" onclick="useItem(10)"></div>
-          <div class="inventory-slot" onclick="useItem(11)"></div>
-          <div class="inventory-slot" onclick="useItem(12)"></div>
-          <div class="inventory-slot" onclick="useItem(13)"></div>
+        <div class="inventory-shell">
+          <button id="inventoryPrev" class="inventory-nav" type="button" aria-label="前のインベントリ">◀</button>
+          <div class="inventory" id="inventory">
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+          </div>
+          <button id="inventoryNext" class="inventory-nav" type="button" aria-label="次のインベントリ">▶</button>
         </div>
         <button id="bgm-toggle" onclick="toggleBGM()" style="position: absolute; top: 20px; right: 20px; z-index: 1000">🔊 BGM</button>
         <div class="save-area">

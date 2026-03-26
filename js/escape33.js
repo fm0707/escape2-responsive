@@ -256,7 +256,9 @@ function getDefaultGameState() {
 
     flags: { trueEndUnlocked: false },
     selectedItem: null,
+    selectedItemSlot: null,
     usingItem: null,
+    inventoryPage: 0,
     endings: { true: false, normal2: false, normal: false },
   };
 }
@@ -6041,6 +6043,38 @@ function hasItem(itemId) {
   return gameState.inventory.includes(itemId);
 }
 
+function getInventoryPageSize() {
+  return window.matchMedia("(max-width: 600px)").matches ? 5 : 7;
+}
+
+function getInventoryPageCount() {
+  return Math.max(1, Math.ceil(gameState.inventory.length / getInventoryPageSize()));
+}
+
+function clampInventoryPage(page) {
+  return Math.min(Math.max(page, 0), getInventoryPageCount() - 1);
+}
+
+function ensureInventoryPageState() {
+  if (typeof gameState.inventoryPage !== "number" || Number.isNaN(gameState.inventoryPage)) {
+    gameState.inventoryPage = 0;
+  }
+  gameState.inventoryPage = clampInventoryPage(gameState.inventoryPage);
+}
+
+function setInventoryPage(page) {
+  ensureInventoryPageState();
+  const nextPage = clampInventoryPage(page);
+  if (gameState.inventoryPage === nextPage) return;
+  gameState.inventoryPage = nextPage;
+  updateInventoryDisplay();
+}
+
+function syncInventoryPageToSelection() {
+  if (typeof gameState.selectedItemSlot !== "number") return;
+  gameState.inventoryPage = clampInventoryPage(Math.floor(gameState.selectedItemSlot / getInventoryPageSize()));
+}
+
 function useItem(slotIndex) {
   const clickedItem = gameState.inventory[slotIndex];
   if (!clickedItem) return;
@@ -6201,11 +6235,22 @@ function addNaviItem(room) {
 
 // インベントリ表示更新
 function updateInventoryDisplay() {
+  ensureInventoryPageState();
+  syncInventoryPageToSelection();
   const slots = document.querySelectorAll(".inventory-slot");
+  const prevButton = document.getElementById("inventoryPrev");
+  const nextButton = document.getElementById("inventoryNext");
+  const pageSize = getInventoryPageSize();
+  const pageStart = gameState.inventoryPage * pageSize;
   const isMobile = window.matchMedia("(max-width: 600px)").matches;
-  const mobileFilledSlotMinSize = "56px";
-  slots.forEach((slot, index) => {
+  const mobileFilledSlotMinSize = "42px";
+  slots.forEach((slot, visibleIndex) => {
+    slot.style.display = visibleIndex < pageSize ? "flex" : "none";
+    if (visibleIndex >= pageSize) return;
+    const index = pageStart + visibleIndex;
     slot.innerHTML = "";
+    slot.onclick = () => useItem(index);
+    slot.dataset.slotIndex = String(index);
     if (gameState.inventory[index]) {
       if (isMobile) {
         slot.style.minWidth = mobileFilledSlotMinSize;
@@ -6365,13 +6410,21 @@ function updateInventoryDisplay() {
       slot.style.minWidth = "";
       slot.style.minHeight = "";
     }
-    // ★選択中ならselectedクラス追加
     if (gameState.selectedItemSlot === index) {
       slot.classList.add("selected");
     } else {
       slot.classList.remove("selected");
     }
   });
+
+  if (prevButton) {
+    prevButton.disabled = gameState.inventoryPage <= 0;
+    prevButton.onclick = () => setInventoryPage(gameState.inventoryPage - 1);
+  }
+  if (nextButton) {
+    nextButton.disabled = gameState.inventoryPage >= getInventoryPageCount() - 1;
+    nextButton.onclick = () => setInventoryPage(gameState.inventoryPage + 1);
+  }
 }
 
 // メッセージ更新
