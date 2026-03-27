@@ -185,6 +185,7 @@ IMAGES = {
     chair: I33("chair.webp"),
     phone: I33("phone.webp"),
     dish: I33("dish.webp"),
+    invoicePattern: I33("invoice_pattern.webp"),
   },
 };
 
@@ -3050,15 +3051,19 @@ const PRINTER_DOCUMENTS = [
         <div>宛名：鈴木様</div>
         <div>利用期間：2026年3月</div>
         <div style="height:4px;"></div>
-        <div>◇デスク利用料　¥12,000</div>
-        <div>◇環境維持費　¥2,000</div>
-        <div>◇見守りサービス料　¥2,000</div>
+        <div>デスク利用料　¥12,000</div>
+        <div>環境維持費　¥2,000</div>
+        <div>見守りサービス料　¥2,000</div>
         <div>違反料金（計）　¥21,000</div>
         <div>（内訳非公開）</div>
-        <div>◇システム利用料　¥1,200</div>
+        <div>システム利用料　¥1,200</div>
         <div>請求書発行手数料　¥300</div>
         <div style="height:4px;"></div>
         <div style="font-weight:700;">合計　¥38,500</div>
+        <div style="height:12px;"></div>
+        <div style="display:flex;justify-content:center;">
+          <img src="${IMAGES.modals.invoicePattern}" alt="" style="display:block;width:100%;max-width:320px;height:auto;object-fit:contain;opacity:0.88;">
+        </div>
       </div>
     `,
   },
