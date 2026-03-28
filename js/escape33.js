@@ -186,6 +186,8 @@ IMAGES = {
     phone: I33("phone.webp"),
     dish: I33("dish.webp"),
     invoicePattern: I33("invoice_pattern.webp"),
+    thankyou: I33("thankyou.webp"),
+    thankyou2: I33("thankyou2.webp"),
   },
 };
 
@@ -2136,7 +2138,7 @@ let rooms = {
         width: 14.8,
         height: 15.3,
         onClick: clickWrap(function () {
-          updateMessage("クマ妖精はドリンクを飲んでいる");
+          showObj(null, "", IMAGES.modals.thankyou, "プレイありがとうございます。");
         }),
         description: "飛ぶクマ妖精",
         zIndex: 5,
@@ -2166,7 +2168,7 @@ let rooms = {
         width: 21.1,
         height: 28.5,
         onClick: clickWrap(function () {
-          updateMessage("クマ妖精は満足そうだ");
+            showObj(null, "", IMAGES.modals.thankyou2, "プレイありがとうございます。");
         }),
         description: "クマ妖精",
         zIndex: 5,
