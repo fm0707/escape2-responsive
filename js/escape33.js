@@ -2139,6 +2139,7 @@ let rooms = {
         height: 15.3,
         onClick: clickWrap(function () {
           showObj(null, "", IMAGES.modals.thankyou, "プレイありがとうございます。");
+          playSE("se-piko");
         }),
         description: "飛ぶクマ妖精",
         zIndex: 5,
@@ -2169,6 +2170,7 @@ let rooms = {
         height: 28.5,
         onClick: clickWrap(function () {
             showObj(null, "", IMAGES.modals.thankyou2, "プレイありがとうございます。");
+            playSE("se-piko");
         }),
         description: "クマ妖精",
         zIndex: 5,
