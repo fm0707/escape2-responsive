@@ -2209,7 +2209,7 @@ let rooms = {
 
 const hintMessages = {
   main: {
-    bear: ["おはよう", "お仕事しに来たの？"],
+    bear: ["おはよう", "お仕事しに来たの？", "ここのオーナー、見た目は怖いよねー"],
   },
 };
 
@@ -4926,18 +4926,6 @@ function getHeldGyozaResult() {
   return patterns.find((entry) => hasItem(entry.itemId)) || null;
 }
 
-function showGyozaBadEnd() {
-  const content = `
-    <div style="text-align:center;">
-      <img src="${IMAGES.modals.badend}" alt="bad end" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">
-      <div>フライパンに餃子が焦げ付いた…</div>
-    </div>
-  `;
-  pauseBGM();
-  playSE("se-grill");
-  showModal("BAD END", content, [{ text: "最初から", action: "restart" }]);
-  updateMessage("フライパンに餃子が焦げ付いた…");
-}
 
 function showPlantBadEnd() {
   const content = `
@@ -4946,7 +4934,7 @@ function showPlantBadEnd() {
         <img src="${IMAGES.modals.plantBad1}" alt="plant bad 1">
         <img src="${IMAGES.modals.plantBad2}" alt="plant bad 2">
       </div>
-      <div>BAD END: 怒れる植物に襲われた</div>
+      <div>BAD END: 施設内の備品を故意に損壊しました。怒れる植物に襲われました。</div>
     </div>
   `;
   pauseBGM();
