@@ -188,6 +188,8 @@ IMAGES = {
     invoicePattern: I33("invoice_pattern.webp"),
     thankyou: I33("thankyou.webp"),
     thankyou2: I33("thankyou2.webp"),
+    bearScissors: I33("modal_bear_scissors.webp"),
+    bearScissorsEn: I33("modal_bear_scissors_en.webp"),
   },
 };
 
@@ -347,6 +349,12 @@ let rooms = {
           }
           if (gameState.selectedItem === "cupWithWater") {
             updateMessage("お水はいらないよ");
+            return;
+          }
+          if (gameState.selectedItem === "scissors" && hasItem("scissors") && f.cutString) {
+            removeItem("scissors");
+            playSE("se-kiran");
+            showObj(null, "", IMAGES.modals.bearScissors, "クマ妖精が硬化し、はさみは壊れてしまった", IMAGES.modals.bearScissorsEn, "The bear fairy has hardened. The scissors broke.");
             return;
           }
           if (gameState.selectedItem === "coin" && hasItem("coin")) {
