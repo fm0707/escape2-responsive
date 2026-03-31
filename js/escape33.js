@@ -223,6 +223,7 @@ function getDefaultGameState() {
     main: {
       flags: {
         cutString: false,
+        bearHardened: false,
         makeCoffee: false,
         coffeeRecipeStep: 0,
         isNight: false,
@@ -352,6 +353,7 @@ let rooms = {
             return;
           }
           if (gameState.selectedItem === "scissors" && hasItem("scissors") && f.cutString) {
+            f.bearHardened = true;
             removeItem("scissors");
             playSE("se-kiran");
             showObj(null, "", IMAGES.modals.bearScissors, "クマ妖精が硬化し、はさみは壊れてしまった", IMAGES.modals.bearScissorsEn, "The bear fairy has hardened. The scissors broke.");
@@ -374,6 +376,10 @@ let rooms = {
                 },
               },
             ]);
+            return;
+          }
+          if (f.bearHardened) {
+            talkToHintCharacter("main", "bear2");
             return;
           }
           talkToHintCharacter("main", "bear");
@@ -2218,6 +2224,7 @@ let rooms = {
 const hintMessages = {
   main: {
     bear: ["おはよう", "お仕事しに来たの？", "ここのオーナー、見た目は怖いよねー"],
+    bear2: ["新しい技を身に着けたんだ", "いつか役に立つと思ったの"],
   },
 };
 
