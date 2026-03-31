@@ -94,7 +94,7 @@ IMAGES = {
     entrance: [I33("entrance.webp")],
     pcAdmin: [I33("admin_pc_desktop.webp")],
     end: [I33("end.webp"), I33("end2.webp")],
-    trueEnd: [I33("true_end.webp"), I33("true_end2.webp")],
+    trueEnd: [I33("true_end.webp"), I33("true_end2.webp"), I33("true_end3.webp"), I33("true_end4.webp")],
   },
   items: {
     coin: ICM("bear_coin.png"),
@@ -135,6 +135,7 @@ IMAGES = {
     eraser: I33("eraser.webp"),
     tile: I33("tile.webp"),
     elixir: ICM("common/elixir_modern.webp"),
+    sausage: I33("sausage.webp"),
   },
   modals: {
     fileboxes: I33("modal_fileboxes.webp"),
@@ -1277,6 +1278,7 @@ let rooms = {
         width: 12.6,
         height: 18.3,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("A");
           if (gameState.main.flags.unlockLockerA) {
             openLockerA();
             return;
@@ -1294,6 +1296,7 @@ let rooms = {
         width: 12.4,
         height: 18.2,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("B");
           const f = gameState.main.flags || (gameState.main.flags = {});
           if (f.unlockLockerB) {
             openLockerB();
@@ -1321,6 +1324,7 @@ let rooms = {
         width: 12.5,
         height: 18.1,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("C");
           const f = gameState.main.flags || (gameState.main.flags = {});
           if (f.unlockLockerC) {
             openLockerC();
@@ -1339,6 +1343,7 @@ let rooms = {
         width: 12.4,
         height: 18.2,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("D");
           if (gameState.main.flags.unlockLockerD) {
             openLockerD();
             return;
@@ -1356,6 +1361,7 @@ let rooms = {
         width: 12.5,
         height: 18.3,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("I");
           if (gameState.main.flags.unlockLockerI) {
             openLockerI();
             return;
@@ -1373,6 +1379,7 @@ let rooms = {
         width: 12.4,
         height: 18.2,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("J");
           openEmptyLocker("J");
         }),
         description: "ロッカーJ",
@@ -1386,6 +1393,7 @@ let rooms = {
         width: 12.5,
         height: 18.2,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("K");
           openEmptyLocker("K");
         }),
         description: "ロッカーK",
@@ -1399,6 +1407,7 @@ let rooms = {
         width: 12.6,
         height: 18.1,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("L");
           openEmptyLocker("L");
         }),
         description: "ロッカーL",
@@ -1412,6 +1421,7 @@ let rooms = {
         width: 12.4,
         height: 17.9,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("Q");
           openEmptyLocker("Q");
         }),
         description: "ロッカーQ",
@@ -1425,6 +1435,7 @@ let rooms = {
         width: 12.2,
         height: 18.0,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("R");
           openEmptyLocker("R");
         }),
         description: "ロッカーR",
@@ -1438,6 +1449,7 @@ let rooms = {
         width: 12.3,
         height: 18.1,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("S");
           openEmptyLocker("S");
         }),
         description: "ロッカーS",
@@ -1451,6 +1463,7 @@ let rooms = {
         width: 12.5,
         height: 18.1,
         onClick: clickWrap(function () {
+          noteWarmLockerClick("T");
           openEmptyLocker("T");
         }),
         description: "ロッカーT",
@@ -2178,17 +2191,69 @@ let rooms = {
     description: "不思議なコワーキングスペースから脱出おめでとうございます！",
     clickableAreas: [
       {
+        x: 26.6,
+        y: 50.7,
+        width: 26.0,
+        height: 19.0,
+        onClick: clickWrap(function () {
+          if (gameState.selectedItem == "sausage") {
+            removeItem("sausage");
+            gameState.trueEnd.flags.backgroundState = 2;
+            renderCanvasRoom();
+            return;
+          }
+          updateMessage("野菜の箱だ");
+        }),
+        description: "野菜の箱",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 0,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 47.1,
+        y: 47.4,
+        width: 17.7,
+        height: 13.6,
+        onClick: clickWrap(function () {
+          if (gameState.selectedItem == "sausage") {
+            removeItem("sausage");
+            gameState.trueEnd.flags.backgroundState = 3;
+            renderCanvasRoom();
+            return;
+          }
+          updateMessage("野菜の箱だ");
+        }),
+        description: "野菜の箱ドリンク時",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
         x: 9.3,
         y: 49.3,
         width: 21.1,
         height: 28.5,
         onClick: clickWrap(function () {
-            showObj(null, "", IMAGES.modals.thankyou2, "プレイありがとうございます。");
-            playSE("se-piko");
+          showObj(null, "", IMAGES.modals.thankyou2, "プレイありがとうございます。");
+          playSE("se-piko");
         }),
         description: "クマ妖精",
         zIndex: 5,
         usable: () => gameState.trueEnd.flags.backgroundState == 1,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 22.3,
+        y: 20.0,
+        width: 16.7,
+        height: 18.9,
+        onClick: clickWrap(function () {
+          showObj(null, "", IMAGES.modals.thankyou2, "プレイありがとうございます。");
+          playSE("se-piko");
+        }),
+        description: "クマ妖精飛ぶ",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 3,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -2224,7 +2289,7 @@ let rooms = {
 const hintMessages = {
   main: {
     bear: ["おはよう", "お仕事しに来たの？", "ここのオーナー、見た目は怖いよねー"],
-    bear2: ["新しい技を身に着けたんだ", "いつか役に立つと思ったの"],
+    bear2: ["新しい技を身に付けたんだ", "いつか役に立つと思ったの"],
   },
 };
 
@@ -4227,14 +4292,14 @@ function getCurrentPlayDateTime() {
   const now = new Date();
   const hh = String(now.getHours()).padStart(2, "0");
   const mi = String(now.getMinutes()).padStart(2, "0");
-  return `2026/04/09 ${hh}:${mi}`;
+  return `2026/04/08 ${hh}:${mi}`;
 }
 
 function getViolationLogRows() {
   const baseRows = [
-    { no: "1023", datetime: "2026/04/08 14:32", content: "通話行為", fine: "5,000円" },
-    { no: "1024", datetime: "2026/04/08 15:05", content: "飲食行為", fine: "10,000円" },
-    { no: "1025", datetime: "2026/04/08 18:47", content: "長時間離席", fine: "3,000円" },
+    { no: "1023", datetime: "2026/04/07 14:32", content: "通話行為", fine: "5,000円" },
+    { no: "1024", datetime: "2026/04/07 15:05", content: "飲食行為", fine: "10,000円" },
+    { no: "1025", datetime: "2026/04/07 18:47", content: "長時間離席", fine: "3,000円" },
   ];
   const extraRows = Array.isArray(gameState.main?.flags?.violationLogExtraRows) ? gameState.main.flags.violationLogExtraRows : [];
   return baseRows.concat(extraRows);
@@ -5774,10 +5839,39 @@ function showLockerPlantSquare() {
   showObj(null, "", IMAGES.modals.plantSquare, "植物は生命力にあふれている");
 }
 
+function noteWarmLockerClick(letter) {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  const enabled = f.unlockLockerA && f.unlockLockerI && f.readWarmMail;
+  if (!enabled || f.foundSausage) {
+    f.warmLockerSequenceStep = 0;
+    return;
+  }
+
+  const sequence = ["K", "I", "R", "A"];
+  const expected = sequence[f.warmLockerSequenceStep] || sequence[0];
+
+  if (letter === expected) {
+    f.warmLockerSequenceStep += 1;
+    return;
+  }
+
+  f.warmLockerSequenceStep = letter === sequence[0] ? 1 : 0;
+}
+
+function shouldFindWarmLockerSausage() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  return !!(f.unlockLockerA && f.unlockLockerI && f.readWarmMail && !f.foundSausage && f.warmLockerSequenceStep === 4);
+}
+
 function openLockerA() {
   playLockerDoorOpenFx(
     "ロッカーA",
     () => {
+      if (shouldFindWarmLockerSausage()) {
+        gameState.main.flags.warmLockerSequenceStep = 0;
+        acquireItemOnce("foundSausage", "sausage", "ソーセージが入っていた", IMAGES.items.sausage, "ソーセージを手に入れた");
+        return;
+      }
       acquireItemOnce("foundPartRed", "partRed", "赤いパーツがある", IMAGES.items.partRed, "赤いパーツを手に入れた");
     },
     { roomId: "locker", hingeSide: "right" },
@@ -6187,6 +6281,7 @@ function getItemName(itemId) {
     partYellow: "黄色いパーツ",
     partGreen: "緑のパーツ",
     tile: "タイル",
+    sausage: "ソーセージ",
   };
   return names[itemId] || itemId;
 }
