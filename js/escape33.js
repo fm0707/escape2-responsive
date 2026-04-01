@@ -508,7 +508,7 @@ let rooms = {
             return;
           }
           if (gameState.main.flags.loginPc) {
-            acquireItemOnce("foundKeyB", "keyB", "鍵がある", IMAGES.modals.keyFound, "Bの鍵を手に入れた", () => {
+            acquireItemOnce("foundKeyB", "keyB", "よく見ると、鍵があった", IMAGES.modals.keyFound, "Bの鍵を手に入れた", () => {
               addViolationLogEntryOnce("keyBViolationLogged", {
                 no: "1026",
                 datetime: getCurrentPlayDateTime(),
@@ -2020,7 +2020,7 @@ let rooms = {
                 showPaperDocumentModal("スタッフ応募書類", {
                   heading: "OFFICE CRO-CO スタッフ応募シート",
                   sections: [
-                    { label: "氏名", value: "耳長 キラ" },
+                    { label: "氏名", value: "耳長 キラ(KIRA MIMINAGA)" },
                     { label: "年齢", value: "18歳" },
                     { label: "希望勤務日数", value: "週2～3日" },
                     { label: "希望時間帯", value: "平日 17:00～21:00 / 土日応相談" },
@@ -2323,6 +2323,7 @@ function travelToEndWithFootsteps() {
   const overlay = document.getElementById("roomEffectOverlay");
   if (hasItem("elixir")) {
     gameState.end.flags.backgroundState = Math.min(1, (gameState.end.flags.backgroundState || 0) + 1);
+    removeItem("elixir");
   }
 
   playSE?.("se-ashioto");
