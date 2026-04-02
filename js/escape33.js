@@ -6954,13 +6954,6 @@ function showToast(text, ms = 2600) {
 
 window.addEventListener("resize", () => renderNavigation());
 
-window.addEventListener("keydown", (e) => {
-  if (e.key === "F2") {
-    DEV_MODE = !DEV_MODE;
-    renderCanvasRoom();
-  }
-});
-
 // ゲーム開始
 preloadImages();
 initGame();
