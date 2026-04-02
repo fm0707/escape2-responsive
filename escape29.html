@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="保育室を舞台にした無料ゲーム。スマホ＆PC対応。"
-    />
+    <meta name="description" content="保育室を舞台にした無料ゲーム。スマホ＆PC対応。" />
     <link rel="icon" href="favicon.ico" />
     <title>工房からの脱出</title>
     <style>
@@ -1154,10 +1151,7 @@
     </style>
   </head>
   <!-- Google tag (gtag.js) -->
-  <script
-    async
-    src="https://www.googletagmanager.com/gtag/js?id=G-F2G9BX4FBF"
-  ></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G9BX4FBF"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() {
@@ -1185,22 +1179,14 @@
             <span class="notebook-logo">🏘️</span>
             手帳
           </div>
-          <button class="notebook-close-btn" onclick="closeNotebook()">
-            ✕
-          </button>
+          <button class="notebook-close-btn" onclick="closeNotebook()">✕</button>
         </div>
 
         <div class="notebook-tabs">
           <!-- <button class="notebook-tab active" data-tab="memo" onclick="switchNotebookTab('memo')">
                     MEMO
                 </button> -->
-          <button
-            class="notebook-tab"
-            data-tab="notes"
-            onclick="switchNotebookTab('notes')"
-          >
-            NOTES
-          </button>
+          <button class="notebook-tab" data-tab="notes" onclick="switchNotebookTab('notes')">NOTES</button>
         </div>
 
         <div class="notebook-body">
@@ -1211,9 +1197,7 @@
               <li></li>
               <li></li>
             </ul>
-            <p class="notebook-note">
-              書き込みは、急いで走り書きしたような乱れた字で並んでいる。
-            </p>
+            <p class="notebook-note">書き込みは、急いで走り書きしたような乱れた字で並んでいる。</p>
           </div>
 
           <!-- NOTESタブ：後から増えるメモ用 -->
@@ -1233,44 +1217,17 @@
       <div class="title-wrapper">
         <!-- <div class="title">保育室からの脱出</div> -->
         <div style="margin: 0 0; text-align: center">
-          <a
-            href="escape29_hint.html"
-            target="_blank"
-            style="
-              color: #d4af37;
-              font-weight: bold;
-              font-size: 1.1em;
-              text-decoration: underline;
-            "
-          >
-            🔍 ヒントを見る
-          </a>
+          <a href="escape29_hint.html" target="_blank" style="color: #d4af37; font-weight: bold; font-size: 1.1em; text-decoration: underline">🔍 ヒントを見る</a>
         </div>
       </div>
 
-      <canvas
-        id="gameCanvas"
-        width="640"
-        height="640"
-        style="width: 90vw; max-width: 640px"
-      ></canvas>
+      <canvas id="gameCanvas" width="640" height="640" style="width: 90vw; max-width: 640px"></canvas>
 
       <div class="ui-panel">
         <div class="info-panel">
           <div class="message-area" id="messageArea">
-            <span id="msgText"
-              >気が付くとあなたは忘れられた保育室に立っていました。</span
-            >
-            <div
-              id="statusIconArea"
-              style="
-                position: absolute;
-                bottom: 6px;
-                right: 12px;
-                display: flex;
-                gap: 8px;
-              "
-            ></div>
+            <span id="msgText">気が付くとあなたは忘れられた保育室に立っていました。</span>
+            <div id="statusIconArea" style="position: absolute; bottom: 6px; right: 12px; display: flex; gap: 8px"></div>
           </div>
           <div class="navigation"></div>
         </div>
@@ -1290,13 +1247,7 @@
           <div class="inventory-slot" onclick="useItem(12)"></div>
           <div class="inventory-slot" onclick="useItem(13)"></div>
         </div>
-        <button
-          id="bgm-toggle"
-          onclick="toggleBGM()"
-          style="position: absolute; top: 20px; right: 20px; z-index: 1000"
-        >
-          🔊 BGM
-        </button>
+        <button id="bgm-toggle" onclick="toggleBGM()" style="position: absolute; top: 20px; right: 20px; z-index: 1000">🔊 BGM</button>
         <div class="save-area">
           <button class="nav-btn" onclick="saveGame()">セーブ</button>
           <button class="nav-btn" onclick="loadGame()">ロード</button>
@@ -1307,10 +1258,12 @@
         </div>
       </div>
       <div class="notice">
-        当サイトの音源は<a href="https://otologic.jp/" target="blank"
-          >OtoLogic</a
-        >,<a href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a
-        >の素材を使用しています 作者:<a href="index.html">スラセブン</a>
+        当サイトの音源は
+        <a href="https://otologic.jp/" target="blank">OtoLogic</a>
+        ,
+        <a href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a>
+        の素材を使用しています 作者:
+        <a href="index.html">スラセブン</a>
       </div>
     </div>
 
@@ -1328,20 +1281,11 @@
     <audio id="se-clear" src="sounds/common/Cyber03-1.mp3"></audio>
     <audio id="se-change" src="sounds/common/Scene_Change01-1(Up).mp3"></audio>
     <audio id="se-open" src="sounds/common/Short_Accent09-1(Dry).mp3"></audio>
-    <audio
-      id="se-fanta"
-      src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"
-    ></audio>
+    <audio id="se-fanta" src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
     <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
-    <audio
-      id="se-scene-change"
-      src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"
-    ></audio>
+    <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
     <audio id="se-gril" src="sounds/common/gril.mp3"></audio>
-    <audio
-      id="se-gacha"
-      src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"
-    ></audio>
+    <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
 
     <audio id="se-gogogo" src="sounds/common/gogogo.mp3"></audio>
 
@@ -1351,10 +1295,7 @@
     <audio id="se-switch" src="sounds/common/switch.mp3"></audio>
     <audio id="se-glich" src="sounds/common/glich.mp3"></audio>
     <audio id="se-bear-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
-    <audio
-      id="se-bear-flying"
-      src="sounds/common/Motion-Blow_Away02-1(Long).mp3"
-    ></audio>
+    <audio id="se-bear-flying" src="sounds/common/Motion-Blow_Away02-1(Long).mp3"></audio>
     <audio id="se-mouse" src="sounds/common/PC-Mouse06-1.mp3"></audio>
 
     <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
@@ -1362,10 +1303,7 @@
     <audio id="se-ashioto" src="sounds/common/NES-RPG02-01(Enter).mp3"></audio>
     <audio id="se-hasami" src="sounds/common/hasami.mp3"></audio>
     <audio id="se-shutter" src="sounds/common/shutter.mp3"></audio>
-    <audio
-      id="se-falling"
-      src="sounds/common/Motion-Falling_Whistle04-2(Short).mp3"
-    ></audio>
+    <audio id="se-falling" src="sounds/common/Motion-Falling_Whistle04-2(Short).mp3"></audio>
 
     <audio id="se-song" src="sounds/24/song.wav"></audio>
     <audio id="se-song-forget" src="sounds/24/song_forget.wav"></audio>
@@ -1381,10 +1319,7 @@
     <audio id="se-kira" src="sounds/common/kira.mp3"></audio>
     <audio id="se-bar" src="sounds/common/bar.mp3"></audio>
     <audio id="se-sword" src="sounds/common/sword.mp3"></audio>
-    <audio
-      id="se-attack"
-      src="sounds/common/Motion-Fall01-2(Short).mp3"
-    ></audio>
+    <audio id="se-attack" src="sounds/common/Motion-Fall01-2(Short).mp3"></audio>
     <audio id="se-tea" src="sounds/common/tea.mp3"></audio>
     <audio id="se-pop" src="sounds/common/Onoma-Pop01-3(Dry).mp3"></audio>
     <audio id="se-power" src="sounds/common/powerup.mp3"></audio>
@@ -1419,8 +1354,7 @@
           return {
             elapsed_sec: Math.round((Date.now() - this.start) / 1000),
             hints: this.hintCount || 0,
-            save_version:
-              typeof SAVE_VERSION === "number" ? SAVE_VERSION : null,
+            save_version: typeof SAVE_VERSION === "number" ? SAVE_VERSION : null,
             room: (window.gameState && gameState.currentRoom) || null,
             sid: this.sid,
           };
@@ -1713,54 +1647,27 @@
               width: 19.7,
               height: 15.1,
               onClick: clickWrap(function () {
-                if (
-                  gameState.selectedItem == "hammer" &&
-                  !gameState.main.flags.openNabe
-                ) {
-                  showObj(
-                    "useHammerToNabe",
-                    "ハンマーで鍋をたたいた",
-                    IMAGES.modals.nabeHammer,
-                    "鍋は少しへこんでしまった",
-                  );
+                if (gameState.selectedItem == "hammer" && !gameState.main.flags.openNabe) {
+                  showObj("useHammerToNabe", "ハンマーで鍋をたたいた", IMAGES.modals.nabeHammer, "鍋は少しへこんでしまった");
                   playSE("se-sword");
                   renderCanvasRoom();
                   return;
                 }
-                if (
-                  gameState.selectedItem == "luckyHammer" &&
-                  !gameState.main.flags.openNabe
-                ) {
+                if (gameState.selectedItem == "luckyHammer" && !gameState.main.flags.openNabe) {
                   updateMessage("何も起こらなかった。");
                   playSE("se-sword");
                   renderCanvasRoom();
                   return;
                 }
-                if (
-                  gameState.selectedItem == "driver" &&
-                  !gameState.main.flags.openNabe
-                ) {
-                  showObj(
-                    null,
-                    "ドライバーで蓋をこじあけた",
-                    IMAGES.modals.nabeDriver,
-                    "鍋の蓋が開いた",
-                  );
+                if (gameState.selectedItem == "driver" && !gameState.main.flags.openNabe) {
+                  showObj(null, "ドライバーで蓋をこじあけた", IMAGES.modals.nabeDriver, "鍋の蓋が開いた");
                   playSE("se-can");
                   gameState.main.flags.openNabe = true;
                   renderCanvasRoom();
                   return;
                 }
-                if (
-                  gameState.selectedItem == "miracleDriver" &&
-                  !gameState.main.flags.openNabe
-                ) {
-                  showObj(
-                    null,
-                    "ミラクルドライバーで蓋をこじあけた",
-                    IMAGES.modals.nabeDriver,
-                    "鍋の蓋が開いた",
-                  );
+                if (gameState.selectedItem == "miracleDriver" && !gameState.main.flags.openNabe) {
+                  showObj(null, "ミラクルドライバーで蓋をこじあけた", IMAGES.modals.nabeDriver, "鍋の蓋が開いた");
                   playSE("se-can");
                   gameState.main.flags.openNabe = true;
                   renderCanvasRoom();
@@ -1770,9 +1677,7 @@
                   changeRoom("nabeInner");
                   return;
                 }
-                updateMessage(
-                  "フタがゆがんでいて、開かない。何か工具が必要そうだ",
-                );
+                updateMessage("フタがゆがんでいて、開かない。何か工具が必要そうだ");
               }),
               description: "おなべ",
               zIndex: 5,
@@ -1805,9 +1710,7 @@
               usable: () => false,
               item: {
                 img: "nabeDamage",
-                visible: () =>
-                  !gameState.main.flags.openNabe &&
-                  gameState.main.flags.useHammerToNabe,
+                visible: () => !gameState.main.flags.openNabe && gameState.main.flags.useHammerToNabe,
               },
             },
             {
@@ -1839,11 +1742,7 @@
                   return;
                 }
 
-                showModal(
-                  "赤い宝石がある",
-                  `<img src="${IMAGES.modals.bottleRed}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                  [{ text: "閉じる", action: "close" }],
-                );
+                showModal("赤い宝石がある", `<img src="${IMAGES.modals.bottleRed}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
                 addItem("gemRed");
                 updateMessage("赤い宝石を手に入れた");
               }),
@@ -1878,17 +1777,10 @@
                   if (gameState.selectedItem === "opener") {
                     f.unlockBlueBottle = true;
                     playSE("se-open"); // なければ 'se-click' でもOK
-                    showObj(
-                      null,
-                      "オープナーで蓋を開けた",
-                      IMAGES.modals.openBottle,
-                      "オープナーで蓋を開けた",
-                    );
+                    showObj(null, "オープナーで蓋を開けた", IMAGES.modals.openBottle, "オープナーで蓋を開けた");
                     renderCanvasRoom();
                   } else {
-                    updateMessage(
-                      "青い素材が入っているが、蓋が固くて開かない。",
-                    );
+                    updateMessage("青い素材が入っているが、蓋が固くて開かない。");
                   }
                   return;
                 }
@@ -1899,11 +1791,7 @@
                   return;
                 }
 
-                showModal(
-                  "青い宝石がある",
-                  `<img src="${IMAGES.modals.bottleBlue}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                  [{ text: "閉じる", action: "close" }],
-                );
+                showModal("青い宝石がある", `<img src="${IMAGES.modals.bottleBlue}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
                 addItem("gemBlue");
                 updateMessage("青い宝石を手に入れた");
               }),
@@ -1937,35 +1825,26 @@
                 }
                 if (gameState.selectedItem == "miracleDriver") {
                   playSE("se-drill");
-                  showObj(
-                    null,
-                    "窓枠のねじを外した",
-                    IMAGES.modals.driverToWindow,
-                    "ねじを外して窓枠を外した",
-                  );
+                  showObj(null, "窓枠のねじを外した", IMAGES.modals.driverToWindow, "ねじを外して窓枠を外した");
                   gameState.main.flags.removeWindowFrame = true;
                   renderCanvasRoom();
                   return;
                 }
                 if (gameState.main.flags.removeWindowFrame) {
                   if (hasItem("redSphere") || hasItem("onigiriSphere")) {
-                    showModal(
-                      "注文の品は作成できています。窓から出ますか？",
-                      "",
-                      [
-                        {
-                          text: "はい",
-                          action: () => {
-                            closeModal();
-                            travelWithSteps("endWorse");
-                          },
+                    showModal("注文の品は作成できています。窓から出ますか？", "", [
+                      {
+                        text: "はい",
+                        action: () => {
+                          closeModal();
+                          travelWithSteps("endWorse");
                         },
-                        {
-                          text: "いいえ",
-                          action: "close",
-                        },
-                      ],
-                    );
+                      },
+                      {
+                        text: "いいえ",
+                        action: "close",
+                      },
+                    ]);
                     return;
                   }
                   travelWithSteps("endWorse");
@@ -1988,9 +1867,7 @@
               height: 9.4,
               onClick: clickWrap(function () {
                 if (gameState.selectedItem == "hammer") {
-                  updateMessage(
-                    "おにぎりを軽く叩いてみたが、特に変化はなかった",
-                  );
+                  updateMessage("おにぎりを軽く叩いてみたが、特に変化はなかった");
                   return;
                 }
                 if (gameState.selectedItem == "luckyHammer") {
@@ -2118,13 +1995,7 @@
               width: 16.2,
               height: 19.6,
               onClick: clickWrap(function () {
-                showObj(
-                  null,
-                  "祭りは今日だ。何とか仕上げないと。",
-                  IMAGES.modals.order,
-                  "注文書が貼られている",
-                  IMAGES.modals.orderEn,
-                );
+                showObj(null, "祭りは今日だ。何とか仕上げないと。", IMAGES.modals.order, "注文書が貼られている", IMAGES.modals.orderEn);
               }),
               description: "注文書",
               zIndex: 5,
@@ -2137,13 +2008,7 @@
               width: 26.1,
               height: 12.9,
               onClick: clickWrap(function () {
-                showObj(
-                  null,
-                  "",
-                  IMAGES.modals.posterSozai,
-                  "素材が記されている",
-                  IMAGES.modals.posterSozaiEn,
-                );
+                showObj(null, "", IMAGES.modals.posterSozai, "素材が記されている", IMAGES.modals.posterSozaiEn);
               }),
               description: "ドア上素材表",
               zIndex: 5,
@@ -2162,8 +2027,7 @@
                       text: "はい",
                       action: () => {
                         closeModal();
-                        const f =
-                          gameState.main.flags || (gameState.main.flags = {});
+                        const f = gameState.main.flags || (gameState.main.flags = {});
                         f.playHanabiOnEnd = true;
                         handleDoor();
                       },
@@ -2172,9 +2036,7 @@
                   ]);
                   return;
                 }
-                updateMessage(
-                  "ここから出るならば注文された品を持って行かないと…",
-                );
+                updateMessage("ここから出るならば注文された品を持って行かないと…");
               }),
               description: "ドア",
               zIndex: 5,
@@ -2215,15 +2077,10 @@
               zIndex: 5,
               usable: () => false,
               item: {
-                img: () =>
-                  gameState.main?.flags?.hasMiracleDriver
-                    ? "miracleDriver"
-                    : "driver",
+                img: () => (gameState.main?.flags?.hasMiracleDriver ? "miracleDriver" : "driver"),
                 visible: () => {
                   const hasMiracle = !!gameState.main?.flags?.hasMiracleDriver;
-                  return hasMiracle
-                    ? !hasItem("miracleDriver")
-                    : !hasItem("driver");
+                  return hasMiracle ? !hasItem("miracleDriver") : !hasItem("driver");
                 },
               },
             },
@@ -2237,15 +2094,10 @@
               zIndex: 5,
               usable: () => false,
               item: {
-                img: () =>
-                  gameState.main?.flags?.hasLuckyHammer
-                    ? "luckyHammer"
-                    : "hammer",
+                img: () => (gameState.main?.flags?.hasLuckyHammer ? "luckyHammer" : "hammer"),
                 visible: () => {
                   const hasLucky = !!gameState.main?.flags?.hasLuckyHammer;
-                  return hasLucky
-                    ? !hasItem("luckyHammer")
-                    : !hasItem("hammer");
+                  return hasLucky ? !hasItem("luckyHammer") : !hasItem("hammer");
                 },
               },
             },
@@ -2444,12 +2296,7 @@
               zIndex: 5,
               usable: () => true,
               item: {
-                img: () =>
-                  gameState.main.flags.setKey
-                    ? "c3"
-                    : gameState.main.flags.unlockDrawerTop
-                      ? "c2"
-                      : "c",
+                img: () => (gameState.main.flags.setKey ? "c3" : gameState.main.flags.unlockDrawerTop ? "c2" : "c"),
                 visible: () => true,
                 rotateDeg: () => ensureLetterRot().c,
               },
@@ -2459,21 +2306,17 @@
                 if (gameState.selectedItem === "key") {
                   removeItem("key");
                   f.setKey = true;
-                  showModal(
-                    "鍵を嵌め込んだ",
-                    `<img src="${IMAGES.modals.setKey}" style="width:360px;max-width:100%;display:block;margin:0 auto 16px;">`,
-                    [
-                      {
-                        text: "閉じる",
-                        action: () => {
-                          closeModal();
-                          f.stringBoardFlashUntil = Date.now() + 450;
-                          f.setKeyRevealed = true;
-                          renderCanvasRoom();
-                        },
+                  showModal("鍵を嵌め込んだ", `<img src="${IMAGES.modals.setKey}" style="width:360px;max-width:100%;display:block;margin:0 auto 16px;">`, [
+                    {
+                      text: "閉じる",
+                      action: () => {
+                        closeModal();
+                        f.stringBoardFlashUntil = Date.now() + 450;
+                        f.setKeyRevealed = true;
+                        renderCanvasRoom();
                       },
-                    ],
-                  );
+                    },
+                  ]);
                 }
               }),
             },
@@ -2601,13 +2444,7 @@
               width: 17.1,
               height: 16.0,
               onClick: clickWrap(function () {
-                acquireItemOnce(
-                  "foundCore",
-                  "core",
-                  "発光コアがある",
-                  IMAGES.items.core,
-                  "発光コアを手に入れた。どうやら、この工房に残っている発光コアはこれだけのようだ…",
-                );
+                acquireItemOnce("foundCore", "core", "発光コアがある", IMAGES.items.core, "発光コアを手に入れた。どうやら、この工房に残っている発光コアはこれだけのようだ…");
               }),
               description: "発光コア",
               zIndex: 5,
@@ -2623,13 +2460,7 @@
               width: 15.8,
               height: 14.3,
               onClick: clickWrap(function () {
-                acquireItemOnce(
-                  "foundRecipe1",
-                  "recipe1",
-                  "何かのレシピだ",
-                  IMAGES.items.recipe1,
-                  "破れたレシピを手に入れた",
-                );
+                acquireItemOnce("foundRecipe1", "recipe1", "何かのレシピだ", IMAGES.items.recipe1, "破れたレシピを手に入れた");
               }),
               description: "レシピ",
               zIndex: 5,
@@ -2667,13 +2498,7 @@
               width: 21.2,
               height: 20.7,
               onClick: clickWrap(function () {
-                showObj(
-                  "unlockMachine",
-                  "",
-                  IMAGES.items.memo,
-                  "錬成メモだ",
-                  IMAGES.items.memoEn,
-                );
+                showObj("unlockMachine", "", IMAGES.items.memo, "錬成メモだ", IMAGES.items.memoEn);
               }),
               description: "錬成メモ",
               zIndex: 5,
@@ -2707,13 +2532,7 @@
               width: 23.5,
               height: 17.6,
               onClick: clickWrap(function () {
-                acquireItemOnce(
-                  "foundKey",
-                  "key",
-                  "鍵をみつけた",
-                  IMAGES.items.key,
-                  "鍵を手に入れた",
-                );
+                acquireItemOnce("foundKey", "key", "鍵をみつけた", IMAGES.items.key, "鍵を手に入れた");
               }),
               description: "鍵",
               zIndex: 5,
@@ -2729,13 +2548,7 @@
               width: 22.7,
               height: 20.9,
               onClick: clickWrap(function () {
-                showObj(
-                  null,
-                  "",
-                  IMAGES.items.memoAdvance,
-                  "メモがある",
-                  IMAGES.items.memoAdvanceEn,
-                );
+                showObj(null, "", IMAGES.items.memoAdvance, "メモがある", IMAGES.items.memoAdvanceEn);
               }),
               description: "追加メモ",
               zIndex: 5,
@@ -2770,13 +2583,7 @@
               width: 15.8,
               height: 14.3,
               onClick: clickWrap(function () {
-                acquireItemOnce(
-                  "foundRecipe2",
-                  "recipe2",
-                  "何かの紙切れだ",
-                  IMAGES.items.recipe2,
-                  "破れた紙片を手に入れた",
-                );
+                acquireItemOnce("foundRecipe2", "recipe2", "何かの紙切れだ", IMAGES.items.recipe2, "破れた紙片を手に入れた");
               }),
               description: "レシピ",
               zIndex: 5,
@@ -2814,27 +2621,23 @@
               width: 34.0,
               height: 31.7,
               onClick: clickWrap(function () {
-                showModal(
-                  '<div style="text-align:center;">本がある。読みますか？</div>',
-                  "",
-                  [
-                    {
-                      text: "はい",
-                      action: () => {
-                        changeRoom("book1");
-                        closeModal();
-                      },
+                showModal('<div style="text-align:center;">本がある。読みますか？</div>', "", [
+                  {
+                    text: "はい",
+                    action: () => {
+                      changeRoom("book1");
+                      closeModal();
                     },
-                    {
-                      text: "いいえ",
-                      action: () => {
-                        closeModal();
-                        updateMessage("");
-                        return false;
-                      },
+                  },
+                  {
+                    text: "いいえ",
+                    action: () => {
+                      closeModal();
+                      updateMessage("");
+                      return false;
                     },
-                  ],
-                );
+                  },
+                ]);
               }),
               description: "本",
               zIndex: 5,
@@ -2869,13 +2672,7 @@
               width: 18.4,
               height: 16.8,
               onClick: clickWrap(function () {
-                acquireItemOnce(
-                  "foundGemGreen",
-                  "gemGreen",
-                  "緑色の宝石を見つけた",
-                  IMAGES.items.gemGreen,
-                  "緑色の宝石を手に入れた",
-                );
+                acquireItemOnce("foundGemGreen", "gemGreen", "緑色の宝石を見つけた", IMAGES.items.gemGreen, "緑色の宝石を手に入れた");
               }),
               description: "緑の宝石",
               zIndex: 5,
@@ -2961,9 +2758,7 @@
                   if (inp) inp.value = "unit";
                   renderCanvasRoom?.();
                   playSE("se-cyber");
-                  showModal("QRコードを読み取った", "", [
-                    { text: "閉じる", action: "close" },
-                  ]);
+                  showModal("QRコードを読み取った", "", [{ text: "閉じる", action: "close" }]);
                   return;
                 }
                 updateMessage("何かを読み取れそうだ");
@@ -3145,8 +2940,7 @@
               height: 20.2,
               onClick: clickWrap(function () {
                 if (gameState.selectedItem === "luckyHammer") {
-                  const ef =
-                    gameState.endWorse.flags || (gameState.endWorse.flags = {});
+                  const ef = gameState.endWorse.flags || (gameState.endWorse.flags = {});
                   ef.backgroundState++;
                   renderCanvasRoom();
                   updateMessage("クマ妖精にラッキーハンマーを使った。");
@@ -3186,8 +2980,7 @@
         },
         end: {
           name: "ノーマルエンド",
-          description:
-            "依頼品をきちんと作成して脱出できました。おめでとうございます！",
+          description: "依頼品をきちんと作成して脱出できました。おめでとうございます！",
           clickableAreas: [
             {
               x: 31.1,
@@ -3230,8 +3023,7 @@
 
         trueEnd: {
           name: "トゥルーエンド",
-          description:
-            "ミラクル花火を打ち上げることができました。おめでとうございます！",
+          description: "ミラクル花火を打ち上げることができました。おめでとうございます！",
           clickableAreas: [
             {
               x: 35.2,
@@ -3245,25 +3037,21 @@
                     updateMessage("もうおにぎりはある。");
                     return;
                   }
-                  showModal(
-                    "ラッキーハンマーを使った",
-                    `<img src="${IMAGES.modals.onigiriHammer}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                    [
-                      {
-                        text: "つづける",
-                        action: () => {
-                          window._nextModal = {
-                            title: "おにぎりが落ちてきた",
-                            content: `<img src="${IMAGES.items.onigiri}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-                            buttons: [{ text: "閉じる", action: "close" }],
-                          };
-                          addItem("onigiri");
-                          closeModal();
-                          updateMessage("おにぎりを手に入れた。");
-                        },
+                  showModal("ラッキーハンマーを使った", `<img src="${IMAGES.modals.onigiriHammer}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [
+                    {
+                      text: "つづける",
+                      action: () => {
+                        window._nextModal = {
+                          title: "おにぎりが落ちてきた",
+                          content: `<img src="${IMAGES.items.onigiri}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
+                          buttons: [{ text: "閉じる", action: "close" }],
+                        };
+                        addItem("onigiri");
+                        closeModal();
+                        updateMessage("おにぎりを手に入れた。");
                       },
-                    ],
-                  );
+                    },
+                  ]);
                   return;
                 }
                 updateMessage("おにぎり花火だ。");
@@ -3303,12 +3091,7 @@
               width: 24.8,
               height: 22.1,
               onClick: clickWrap(function () {
-                showObj(
-                  null,
-                  "えへへ",
-                  IMAGES.modals.bearHappy,
-                  "クマ妖精がおにぎりを食べている。",
-                );
+                showObj(null, "えへへ", IMAGES.modals.bearHappy, "クマ妖精がおにぎりを食べている。");
               }),
               description: "クマおにぎり",
               zIndex: 5,
@@ -3325,9 +3108,7 @@
               width: 100,
               height: 100,
               onClick: clickWrap(function () {
-                updateMessage(
-                  "ミラクル花火を打ち上げることができました。おめでとうございます！",
-                );
+                updateMessage("ミラクル花火を打ち上げることができました。おめでとうございます！");
                 showEndingReport("trueEnd");
               }),
               description: "トゥルーエンド",
@@ -3458,17 +3239,10 @@
 
       function findHitArea(x, y, clickableAreas, canvas) {
         // zIndex降順で
-        const sorted = clickableAreas
-          .slice()
-          .sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+        const sorted = clickableAreas.slice().sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
         for (const area of sorted) {
           // 必要ならusable判定もここで
-          const usable =
-            area.usable === undefined
-              ? true
-              : typeof area.usable === "function"
-                ? area.usable()
-                : area.usable;
+          const usable = area.usable === undefined ? true : typeof area.usable === "function" ? area.usable() : area.usable;
 
           if (!usable) continue; // 使えないエリアは判定しない
           const ax = (area.x / 100) * canvas.width;
@@ -3547,10 +3321,7 @@
 
         // 背景＋アイテム＋クリックエリアをcanvasで全部再描画
         renderCanvasRoom();
-        const msg =
-          room.name && room.name.trim() !== ""
-            ? `${room.name}です。${room.description}`
-            : room.description;
+        const msg = room.name && room.name.trim() !== "" ? `${room.name}です。${room.description}` : room.description;
         if (roomId === "trueEnd") {
           updateMessageHTML(msg);
         } else {
@@ -3645,8 +3416,7 @@
 
       function ensureAlchemyState() {
         if (!gameState.alchemyRoom) gameState.alchemyRoom = { flags: {} };
-        const f =
-          gameState.alchemyRoom.flags || (gameState.alchemyRoom.flags = {});
+        const f = gameState.alchemyRoom.flags || (gameState.alchemyRoom.flags = {});
         if (!("slot1" in f)) f.slot1 = null;
         if (!("slot2" in f)) f.slot2 = null;
         if (!("spellText" in f)) f.spellText = "";
@@ -3810,9 +3580,7 @@
         f.isSynthesizing = true;
 
         // ★ ここ：錬成中アニメ用の2枚画像
-        const animImgs = [IMAGES.modals.rensei1, IMAGES.modals.rensei2].filter(
-          Boolean,
-        );
+        const animImgs = [IMAGES.modals.rensei1, IMAGES.modals.rensei2].filter(Boolean);
 
         // 錬成中モーダル（2枚交互アニメ）
         const content = `
@@ -3873,9 +3641,7 @@
           const img = IMAGES.items[resultId];
 
           if (resultId === "gemViolet" && hasItem("gemViolet")) {
-            showModal("すでに所持している組み合わせだ", "", [
-              { text: "閉じる", action: "close" },
-            ]);
+            showModal("すでに所持している組み合わせだ", "", [{ text: "閉じる", action: "close" }]);
             alchemyReturnItemsToInventory();
             f.isSynthesizing = false;
             return;
@@ -3904,9 +3670,7 @@
             showToast("注文の品ができた。外に出られそうだ");
           }
 
-          const itemHtml = img
-            ? `<img src="${img}" style="width:160px;height:160px;image-rendering:pixelated;"/>`
-            : `<div style="font-size:1.1em;font-weight:bold;">${resultId}</div>`;
+          const itemHtml = img ? `<img src="${img}" style="width:160px;height:160px;image-rendering:pixelated;"/>` : `<div style="font-size:1.1em;font-weight:bold;">${resultId}</div>`;
 
           showModal(
             "成功！",
@@ -3924,10 +3688,7 @@
             const box = document.getElementById("alchemySuccessBox");
             if (!box) return;
             document.documentElement.classList.add("fx-shake");
-            setTimeout(
-              () => document.documentElement.classList.remove("fx-shake"),
-              180,
-            );
+            setTimeout(() => document.documentElement.classList.remove("fx-shake"), 180);
           }, 0);
 
           f.isSynthesizing = false;
@@ -4015,10 +3776,7 @@
             ctx.fillStyle = "#fff";
             // 長すぎる場合は末尾を…
             const maxChars = 10;
-            const disp =
-              spell.length > maxChars
-                ? spell.slice(0, maxChars - 1) + "…"
-                : spell;
+            const disp = spell.length > maxChars ? spell.slice(0, maxChars - 1) + "…" : spell;
             ctx.strokeText(disp, cx, cy);
             ctx.fillText(disp, cx, cy);
             ctx.restore();
@@ -4085,15 +3843,8 @@
             const lineImg = loadedImages[IMAGES.items.lineOnigiri];
             if (lineImg && lineImg.complete) {
               const targetW = Math.max(360, Math.min(canvas.width * 0.78, 780));
-              const targetH =
-                targetW * (lineImg.naturalHeight / lineImg.naturalWidth);
-              ctx.drawImage(
-                lineImg,
-                cx - targetW / 2,
-                cy - targetH / 2,
-                targetW,
-                targetH,
-              );
+              const targetH = targetW * (lineImg.naturalHeight / lineImg.naturalWidth);
+              ctx.drawImage(lineImg, cx - targetW / 2, cy - targetH / 2, targetW, targetH);
             }
           }
         }
@@ -4103,18 +3854,10 @@
           // zIndex降順でソート
           const sortedAreas = room.clickableAreas
             .map((area, i) => ({ ...area, __idx: i }))
-            .filter((area) =>
-              area.usable === undefined
-                ? true
-                : typeof area.usable === "function"
-                  ? area.usable()
-                  : area.usable,
-            )
+            .filter((area) => (area.usable === undefined ? true : typeof area.usable === "function" ? area.usable() : area.usable))
             .sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
           // hoveredAreaIndexと一致するエリアをzIndex順で1つだけ枠描画
-          const hoverArea = sortedAreas.find(
-            (area) => area.__idx === hoveredAreaIndex,
-          );
+          const hoverArea = sortedAreas.find((area) => area.__idx === hoveredAreaIndex);
           if (hoverArea) {
             const ax = (hoverArea.x / 100) * canvas.width;
             const ay = (hoverArea.y / 100) * canvas.height;
@@ -4148,12 +3891,7 @@
             // description 表示
             if (a.description) {
               ctx.fillStyle = "rgba(0,0,0,0.7)";
-              ctx.fillRect(
-                px,
-                py - 18,
-                ctx.measureText(a.description).width + 8,
-                18,
-              );
+              ctx.fillRect(px, py - 18, ctx.measureText(a.description).width + 8, 18);
 
               ctx.fillStyle = "white";
               ctx.fillText(a.description, px + 4, py - 4);
@@ -4171,10 +3909,7 @@
         // 通常のアイテム（演出中のカニだけスキップ）
         room.clickableAreas.forEach((area) => {
           if (area.item && area.item.visible && area.item.visible()) {
-            const key =
-              typeof area.item.img === "function"
-                ? area.item.img()
-                : area.item.img;
+            const key = typeof area.item.img === "function" ? area.item.img() : area.item.img;
 
             const img = loadedImages[IMAGES.items[key]];
             if (img && img.complete && img.naturalWidth > 0) {
@@ -4197,12 +3932,7 @@
               }
 
               // ★ drawRoomItems 内：ctx.drawImage(img, px, py, w, h); を置き換え
-              const rotDeg =
-                area.item && typeof area.item.rotateDeg === "function"
-                  ? area.item.rotateDeg()
-                  : area.item
-                    ? area.item.rotateDeg
-                    : 0;
+              const rotDeg = area.item && typeof area.item.rotateDeg === "function" ? area.item.rotateDeg() : area.item ? area.item.rotateDeg : 0;
 
               if (rotDeg) {
                 const rad = (rotDeg * Math.PI) / 180;
@@ -4221,7 +3951,6 @@
             }
           }
         });
-        
       }
 
       // ===== 演出ユーティリティ =====
@@ -4231,9 +3960,7 @@
 
       function getAreaRectPx(roomId, areaDescription, canvas) {
         const room = rooms[roomId];
-        const area = room?.clickableAreas?.find(
-          (a) => a.description === areaDescription,
-        );
+        const area = room?.clickableAreas?.find((a) => a.description === areaDescription);
         if (!area) return null;
         return {
           x: (area.x / 100) * canvas.width,
@@ -4242,7 +3969,6 @@
           h: (area.height / 100) * canvas.height,
         };
       }
-
 
       function getRoomBackgroundImage(roomId, gameState) {
         let imgList = IMAGES.rooms[roomId]; // ★ const → let
@@ -4304,18 +4030,11 @@
         f.style.animation = `${key} ${durMs}ms ease`;
         // ページ全体を極小シェイク
         document.documentElement.classList.add("fx-shake");
-        setTimeout(
-          () => document.documentElement.classList.remove("fx-shake"),
-          120,
-        );
+        setTimeout(() => document.documentElement.classList.remove("fx-shake"), 120);
       }
 
       // 画面揺れ
-      function screenShake(
-        el = document.documentElement,
-        ms = 120,
-        cls = "fx-shake",
-      ) {
+      function screenShake(el = document.documentElement, ms = 120, cls = "fx-shake") {
         if (!el) return;
         // 連打でも必ず発火させる
         el.classList.remove(cls);
@@ -4346,11 +4065,7 @@
         addItem(itemId);
         renderCanvasRoom();
 
-        showModal(
-          title,
-          `<img src="${imgSrc}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-          [{ text: "閉じる", action: "close" }],
-        );
+        showModal(title, `<img src="${imgSrc}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
         updateMessage(msg);
       }
 
@@ -4399,9 +4114,7 @@
 
       // クリアレポート表示
       function showEndingReport(endingId = "end") {
-        const elapsedSec = Math.round(
-          (Date.now() - (ANA.start || Date.now())) / 1000,
-        );
+        const elapsedSec = Math.round((Date.now() - (ANA.start || Date.now())) / 1000);
         const m = Math.floor(elapsedSec / 60);
         const s = elapsedSec % 60;
         const timeStr = `${m}分${s.toString().padStart(2, "0")}秒`;
@@ -4480,11 +4193,7 @@
 
       // クリアログ生成（既存のがあればそのまま流用でOK）
       function copyClearLog(label, timeStr) {
-        const text =
-          `『工房からの脱出』${label} クリア\n` +
-          `プレイ時間：${timeStr}\n` +
-          `ヒント利用：${ANA.hintCount || 0}回\n` +
-          `#脱出ゲーム #保育室からの脱出`;
+        const text = `『工房からの脱出』${label} クリア\n` + `プレイ時間：${timeStr}\n` + `ヒント利用：${ANA.hintCount || 0}回\n` + `#脱出ゲーム #保育室からの脱出`;
         navigator.clipboard
           .writeText(text)
           .then(() => {
@@ -4497,8 +4206,7 @@
 
       // アンケート
       function openFeedbackForm(endingId) {
-        const FEEDBACK_URL =
-          "https://docs.google.com/forms/d/e/1FAIpQLScXMaEIknd9ABM5oVrduJMLbszvVdTCc87aHQD8sZl07zmScg/viewform";
+        const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLScXMaEIknd9ABM5oVrduJMLbszvVdTCc87aHQD8sZl07zmScg/viewform";
 
         const endingLabel =
           {
@@ -4579,10 +4287,7 @@
         const notesBody = document.getElementById("notebook-notes-body");
         if (!notesBody) return;
 
-        const flags =
-          gameState && gameState.main && gameState.main.flags
-            ? gameState.main.flags
-            : {};
+        const flags = gameState && gameState.main && gameState.main.flags ? gameState.main.flags : {};
 
         // 既存の「タスク枠」だけ差し替える（他の追記メモが将来増えても消さない）
         const old = document.getElementById("notebook-tasks");
@@ -4598,10 +4303,7 @@
         // キャプションも進捗用に寄せる（タスクなしなら元のニュアンスに戻す）
         const cap = document.querySelector("#notebook-tab-notes .notebook-cap");
         if (cap) {
-          cap.textContent =
-            tasks.length > 0
-              ? "進捗メモが書き足されている。"
-              : "空白のページ。";
+          cap.textContent = tasks.length > 0 ? "進捗メモが書き足されている。" : "空白のページ。";
         }
 
         const wrap = document.createElement("div");
@@ -4617,9 +4319,7 @@
         const rows = tasks
           .map((t) => {
             const mark = t.done ? "✅" : "⬜";
-            const style = t.done
-              ? "text-decoration:line-through;opacity:0.75;"
-              : "";
+            const style = t.done ? "text-decoration:line-through;opacity:0.75;" : "";
             return `
       <li style="display:flex;gap:8px;align-items:flex-start;">
         <span style="width:1.2em;display:inline-block;">${mark}</span>
@@ -4685,16 +4385,10 @@
     </div>
   `;
 
-        showModal("引き出しのロック", content, [
-          { text: "閉じる", action: "close" },
-        ]);
+        showModal("引き出しのロック", content, [{ text: "閉じる", action: "close" }]);
 
         setTimeout(() => {
-          const sq = [
-            document.getElementById("drawerMainSq0"),
-            document.getElementById("drawerMainSq1"),
-            document.getElementById("drawerMainSq2"),
-          ];
+          const sq = [document.getElementById("drawerMainSq0"), document.getElementById("drawerMainSq1"), document.getElementById("drawerMainSq2")];
           const okBtn = document.getElementById("drawerMainOk");
           const hint = document.getElementById("drawerMainHint");
           if (!sq[0] || !sq[1] || !sq[2] || !okBtn) return;
@@ -4731,12 +4425,10 @@
             btn.addEventListener("click", () => cycle(i));
           });
 
-          const isColor = (i, name) =>
-            idx[i] >= 0 && COLORS[idx[i]].name === name;
+          const isColor = (i, name) => idx[i] >= 0 && COLORS[idx[i]].name === name;
 
           const judge = () => {
-            const ok =
-              isColor(0, "red") && isColor(1, "green") && isColor(2, "blue");
+            const ok = isColor(0, "red") && isColor(1, "green") && isColor(2, "blue");
             if (ok) {
               f.unlockDrawerMain = true;
               playSE?.("se-clear");
@@ -4747,11 +4439,7 @@
             } else {
               playSE?.("se-error");
               if (hint) hint.textContent = "ちがうようだ。";
-              screenShake?.(
-                document.getElementById("modalContent"),
-                120,
-                "fx-shake",
-              );
+              screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
             }
           };
 
@@ -4812,17 +4500,10 @@
     </div>
   `;
 
-        showModal("引き出しのロック", content, [
-          { text: "閉じる", action: "close" },
-        ]);
+        showModal("引き出しのロック", content, [{ text: "閉じる", action: "close" }]);
 
         setTimeout(() => {
-          const sq = [
-            document.getElementById("drawerTopSq0"),
-            document.getElementById("drawerTopSq1"),
-            document.getElementById("drawerTopSq2"),
-            document.getElementById("drawerTopSq3"),
-          ];
+          const sq = [document.getElementById("drawerTopSq0"), document.getElementById("drawerTopSq1"), document.getElementById("drawerTopSq2"), document.getElementById("drawerTopSq3")];
           const okBtn = document.getElementById("drawerTopOk");
           const hint = document.getElementById("drawerTopHint");
           if (!sq[0] || !sq[1] || !sq[2] || !sq[3] || !okBtn) return;
@@ -4855,8 +4536,7 @@
           });
 
           const judge = () => {
-            const ok =
-              num[0] === 1 && num[1] === 0 && num[2] === 3 && num[3] === 2;
+            const ok = num[0] === 1 && num[1] === 0 && num[2] === 3 && num[3] === 2;
             if (ok) {
               f.unlockDrawerTop = true;
               playSE?.("se-clear");
@@ -4867,11 +4547,7 @@
             } else {
               playSE?.("se-error");
               if (hint) hint.textContent = "ちがうみたいだ。";
-              screenShake?.(
-                document.getElementById("modalContent"),
-                120,
-                "fx-shake",
-              );
+              screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
             }
           };
 
@@ -4931,16 +4607,10 @@
     </div>
   `;
 
-        showModal("引き出しのロック", content, [
-          { text: "閉じる", action: "close" },
-        ]);
+        showModal("引き出しのロック", content, [{ text: "閉じる", action: "close" }]);
 
         setTimeout(() => {
-          const sq = [
-            document.getElementById("drawerMidSq0"),
-            document.getElementById("drawerMidSq1"),
-            document.getElementById("drawerMidSq2"),
-          ];
+          const sq = [document.getElementById("drawerMidSq0"), document.getElementById("drawerMidSq1"), document.getElementById("drawerMidSq2")];
           const okBtn = document.getElementById("drawerMidOk");
           const hint = document.getElementById("drawerMidHint");
           if (!sq[0] || !sq[1] || !sq[2] || !okBtn) return;
@@ -4980,11 +4650,7 @@
             } else {
               playSE?.("se-error");
               if (hint) hint.textContent = "ちがうようだ。";
-              screenShake?.(
-                document.getElementById("modalContent"),
-                120,
-                "fx-shake",
-              );
+              screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
             }
           };
 
@@ -5047,9 +4713,7 @@
     </div>
   `;
 
-        showModal("引き出し下段ロック", content, [
-          { text: "閉じる", action: "close" },
-        ]);
+        showModal("引き出し下段ロック", content, [{ text: "閉じる", action: "close" }]);
 
         setTimeout(() => {
           const upBtn = document.getElementById("drawerBottomUp");
@@ -5060,16 +4724,7 @@
           const clearBtn = document.getElementById("drawerBottomClear");
           const seqEl = document.getElementById("drawerBottomSeq");
           const hint = document.getElementById("drawerBottomHint");
-          if (
-            !upBtn ||
-            !downBtn ||
-            !leftBtn ||
-            !rightBtn ||
-            !okBtn ||
-            !clearBtn ||
-            !seqEl
-          )
-            return;
+          if (!upBtn || !downBtn || !leftBtn || !rightBtn || !okBtn || !clearBtn || !seqEl) return;
 
           const ANSWER = ["↑", "↓", "↓", "←", "↓"];
           const input = [];
@@ -5092,9 +4747,7 @@
           };
 
           const judge = () => {
-            const ok =
-              input.length === ANSWER.length &&
-              ANSWER.every((v, i) => input[i] === v);
+            const ok = input.length === ANSWER.length && ANSWER.every((v, i) => input[i] === v);
             if (ok) {
               f.unlockDrawerBottom = true;
               playSE?.("se-clear");
@@ -5105,11 +4758,7 @@
             } else {
               playSE?.("se-error");
               if (hint) hint.textContent = "違うようだ。";
-              screenShake?.(
-                document.getElementById("modalContent"),
-                120,
-                "fx-shake",
-              );
+              screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
             }
           };
 
@@ -5145,7 +4794,6 @@
         }, 0);
       }
 
-
       // 工具（ドライバー/ハンマー/キャップオープナー）は「どれか1つだけ所持」仕様
       function getCurrentToolId() {
         if (hasItem("miracleDriver")) return "miracleDriver";
@@ -5155,11 +4803,9 @@
       }
 
       function swapTool(nextToolId) {
-        const hasMiracle =
-          !!gameState.main?.flags?.hasMiracleDriver || hasItem("miracleDriver");
+        const hasMiracle = !!gameState.main?.flags?.hasMiracleDriver || hasItem("miracleDriver");
         const primaryTool = hasMiracle ? "miracleDriver" : "driver";
-        const hasLuckyHammer =
-          !!gameState.main?.flags?.hasLuckyHammer || hasItem("luckyHammer");
+        const hasLuckyHammer = !!gameState.main?.flags?.hasLuckyHammer || hasItem("luckyHammer");
         const primaryHammer = hasLuckyHammer ? "luckyHammer" : "hammer";
         const tools = [primaryTool, primaryHammer, "opener"];
         const cur = getCurrentToolId();
@@ -5181,15 +4827,11 @@
 
       function showToolShelfModal() {
         const cur = getCurrentToolId();
-        const title = cur
-          ? `現在は${getItemName(cur)}を持っている。使いたいものを選んで下さい`
-          : "使いたい工具を選んでください";
+        const title = cur ? `現在は${getItemName(cur)}を持っている。使いたいものを選んで下さい` : "使いたい工具を選んでください";
 
-        const hasMiracle =
-          !!gameState.main?.flags?.hasMiracleDriver || hasItem("miracleDriver");
+        const hasMiracle = !!gameState.main?.flags?.hasMiracleDriver || hasItem("miracleDriver");
         const primaryTool = hasMiracle ? "miracleDriver" : "driver";
-        const hasLuckyHammer =
-          !!gameState.main?.flags?.hasLuckyHammer || hasItem("luckyHammer");
+        const hasLuckyHammer = !!gameState.main?.flags?.hasLuckyHammer || hasItem("luckyHammer");
         const primaryHammer = hasLuckyHammer ? "luckyHammer" : "hammer";
         const tools = [primaryTool, primaryHammer, "opener"];
 
@@ -5204,11 +4846,7 @@
 
         buttons.push({ text: "閉じる", action: "close" });
 
-        showModal(
-          title,
-          `<div style="margin-top:8px; font-size:0.95em; opacity:0.9;">（クリックで持ち替え）</div>`,
-          buttons,
-        );
+        showModal(title, `<div style="margin-top:8px; font-size:0.95em; opacity:0.9;">（クリックで持ち替え）</div>`, buttons);
       }
 
       function ensureLetterRot(reset = false) {
@@ -5399,12 +5037,7 @@
       function escapeHtml(str) {
         if (typeof str !== "string") return str;
 
-        return str
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
       }
 
       // =========================
@@ -5414,8 +5047,7 @@
       // レシピ解放のキーは「完成品 + 素材2つ(並び替え) + 呪文(正規化)」
       function ensureRecipeCodex() {
         if (!gameState.recipeCodex) gameState.recipeCodex = { discovered: {} };
-        if (!gameState.recipeCodex.discovered)
-          gameState.recipeCodex.discovered = {};
+        if (!gameState.recipeCodex.discovered) gameState.recipeCodex.discovered = {};
         return gameState.recipeCodex;
       }
 
@@ -5428,11 +5060,7 @@
       function recipeCodexUnlock(recipe) {
         if (!recipe) return false;
         const codex = ensureRecipeCodex();
-        const key = recipeCodexKey(
-          recipe.materials,
-          recipe.spell,
-          recipe.result,
-        );
+        const key = recipeCodexKey(recipe.materials, recipe.spell, recipe.result);
         if (codex.discovered[key]) return false;
 
         codex.discovered[key] = {
@@ -5445,11 +5073,7 @@
 
       function recipeCodexIsUnlocked(recipe) {
         const codex = ensureRecipeCodex();
-        const key = recipeCodexKey(
-          recipe.materials,
-          recipe.spell,
-          recipe.result,
-        );
+        const key = recipeCodexKey(recipe.materials, recipe.spell, recipe.result);
         return !!codex.discovered[key];
       }
 
@@ -5469,10 +5093,7 @@
           const unlocked = !!(r && recipeCodexIsUnlocked(r));
 
           const resultName = unlocked && r ? getItemName(r.result) : "？？？";
-          const resultImg =
-            unlocked && r && IMAGES.items && IMAGES.items[r.result]
-              ? IMAGES.items[r.result]
-              : "";
+          const resultImg = unlocked && r && IMAGES.items && IMAGES.items[r.result] ? IMAGES.items[r.result] : "";
           const resultCell = unlocked
             ? `<div style="display:flex;align-items:center;gap:8px;">
                ${resultImg ? `<img src="${resultImg}" style="width:40px;height:40px;image-rendering:pixelated;object-fit:contain;" />` : ""}
@@ -5480,10 +5101,7 @@
            </div>`
             : `<span>？？？</span>`;
 
-          const matNames =
-            unlocked && r
-              ? (r.materials || []).map((id) => getItemName(id)).join(" + ")
-              : "？？？";
+          const matNames = unlocked && r ? (r.materials || []).map((id) => getItemName(id)).join(" + ") : "？？？";
 
           const spell = unlocked && r ? r.spell || "" : "？？？";
 
@@ -5552,13 +5170,7 @@
     `;
 
         // casefile 風の見た目をそのまま使う
-        showModal(
-          "📖 レシピ図鑑",
-          content,
-          [{ text: "閉じる", action: "close" }],
-          null,
-          { columnButtons: false },
-        );
+        showModal("📖 レシピ図鑑", content, [{ text: "閉じる", action: "close" }], null, { columnButtons: false });
       }
 
       function renderStatusIcons() {
@@ -5652,15 +5264,10 @@
         // -------------------------
 
         // ★すでに選択中のスロットを再クリック → 解除
-        if (
-          gameState.selectedItem &&
-          gameState.selectedItemSlot !== slotIndex
-        ) {
+        if (gameState.selectedItem && gameState.selectedItemSlot !== slotIndex) {
           const a = gameState.selectedItem;
           const b = clickedItem;
-          const isRecipePair =
-            (a === "recipe1" && b === "recipe2") ||
-            (a === "recipe2" && b === "recipe1");
+          const isRecipePair = (a === "recipe1" && b === "recipe2") || (a === "recipe2" && b === "recipe1");
           if (isRecipePair) {
             clearUsingItem(true);
             showModal("レシピの切れ端を組み合わせますか？", "", [
@@ -5709,18 +5316,14 @@
           return false;
         }
         gameState.main.flags.saltToYakisobaCnt++;
-        showModal(
-          "焼きそばに塩を振った",
-          `<img src="${IMAGES.modals.yakisobaSalt}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
-          [
-            {
-              text: "閉じる",
-              action: () => {
-                closeModal();
-              },
+        showModal("焼きそばに塩を振った", `<img src="${IMAGES.modals.yakisobaSalt}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [
+          {
+            text: "閉じる",
+            action: () => {
+              closeModal();
             },
-          ],
-        );
+          },
+        ]);
         return true;
       }
 
@@ -5870,10 +5473,7 @@
                   { text: "閉じる", action: "close" },
                 ];
               }
-              if (
-                itemId === "hammer" &&
-                gameState.main?.flags?.useHammerToNabe
-              ) {
+              if (itemId === "hammer" && gameState.main?.flags?.useHammerToNabe) {
                 buttons = [
                   {
                     text: "調べる",
@@ -5932,9 +5532,7 @@
         options = options || {};
         let modalHtml = `<h3>${title}</h3><div>${content}</div>`;
         if (buttons && buttons.length > 0) {
-          const columnStyle = options.columnButtons
-            ? "display:flex; flex-direction:column; gap:12px; align-items:stretch;"
-            : "text-align:center; display:flex; gap:10px; justify-content:center;";
+          const columnStyle = options.columnButtons ? "display:flex; flex-direction:column; gap:12px; align-items:stretch;" : "text-align:center; display:flex; gap:10px; justify-content:center;";
 
           modalHtml += `<div id="modalButtons" style="${columnStyle}"></div>`;
           modalHtml += `<div id="modalClose" style="margin-top:25px;text-align:center;"></div>`;
@@ -6213,10 +5811,8 @@
         const def = getDefaultGameState();
         const merged = deepMerge(def, saved);
 
-        if (!Array.isArray(merged.openRooms))
-          merged.openRooms = def.openRooms.slice();
-        if (!merged.currentRoom || !rooms[merged.currentRoom])
-          merged.currentRoom = def.currentRoom;
+        if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
+        if (!merged.currentRoom || !rooms[merged.currentRoom]) merged.currentRoom = def.currentRoom;
 
         gameState = merged;
 
@@ -6324,12 +5920,12 @@
 
       window.addEventListener("resize", () => renderNavigation());
 
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "F2") {
-          DEV_MODE = !DEV_MODE;
-          renderCanvasRoom();
-        }
-      });
+      // window.addEventListener("keydown", (e) => {
+      //   if (e.key === "F2") {
+      //     DEV_MODE = !DEV_MODE;
+      //     renderCanvasRoom();
+      //   }
+      // });
 
       // ゲーム開始
       preloadImages();
