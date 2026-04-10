@@ -1637,7 +1637,7 @@ let rooms = {
             updateMessage("「オシャレなカギだね」");
             return;
           }
-          updateMessage("おめでとう");
+          updateMessage("「おめでとう」");
         }),
         description: "クマ妖精2",
         zIndex: 5,
