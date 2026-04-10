@@ -782,7 +782,7 @@ let rooms = {
         height: 18.1,
         onClick: clickWrap(function () {
           resetOnigiriCoinSequence();
-          updateMessage("");
+          updateMessage("ハンドメイドおにぎり、と書いてある");
         }),
         description: "看板上",
         zIndex: 5,
@@ -1275,7 +1275,9 @@ let rooms = {
         y: 48.8,
         width: 15.0,
         height: 10.6,
-        onClick: clickWrap(function () {}),
+        onClick: clickWrap(function () {
+          updateMessage("水道だ");
+        }),
         description: "流し",
         zIndex: 5,
         usable: () => true,
