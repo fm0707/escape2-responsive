@@ -163,6 +163,7 @@ IMAGES = {
     marker: I34("marker.webp"),
     bearCoin: I34("modal_bear_coin.webp"),
     bearOnigiri: I34("modal_bear_onigiri.webp"),
+    giraffeKeyholder: I34("modal_giraffe_keyholder.webp"),
   },
 };
 
@@ -1040,7 +1041,14 @@ let rooms = {
                       f.makeNewKeyholder = true;
                       playNewKeyholderGlowFx();
                       renderCanvasRoom?.();
-                      updateMessage("「できました。並べておきますね」");
+                      showModal(
+                        "「できました。並べておきますね」",
+                        `
+                            <img src="${IMAGES.modals.giraffeKeyholder}" alt="giraffe keyholder" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">
+                           
+                          `,
+                        [{ text: "閉じる", action: "close" }],
+                      );
                     };
                     closeModal();
                   },
