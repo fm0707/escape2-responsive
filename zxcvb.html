@@ -1,0 +1,1503 @@
+﻿<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="マーケットイベントからの脱出、スマホ＆PC対応。" />
+    <link rel="icon" href="favicon.ico" />
+    <title>マーケットイベントからの脱出</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #2c1810, #1a0f08);
+        color: #f4f1e8;
+        width: 100%;
+        overflow-x: hidden;
+        /* ←これ重要 */
+      }
+
+      .game-container {
+        width: 100%;
+        max-width: 1408px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+
+      #gameCanvas {
+        position: relative;
+      }
+
+      #endingShareArea {
+        position: absolute;
+        left: 50%;
+        bottom: 32px;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 18px;
+        box-shadow: 0 0 24px #fffc;
+        padding: 18px 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 99;
+        font-size: 1.2em;
+        gap: 10px;
+        border: 2px solid gold;
+      }
+
+      #endingShareArea button {
+        font-size: 1.1em;
+        padding: 10px 24px;
+        margin: 6px 0;
+        background: gold;
+        color: #333;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        box-shadow: 0 2px 8px #ffdc;
+        cursor: pointer;
+      }
+
+      .ui-panel {
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 1048px;
+        min-height: 120px;
+        background: #2c1810;
+        box-sizing: border-box;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .inventory {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        align-items: center;
+        padding: 0 12px;
+        flex-wrap: nowrap;
+        max-width: 720px;
+        margin: 0 auto;
+        margin-top: 6px;
+      }
+
+      .inventory-shell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+
+      .inventory-nav {
+        width: 44px;
+        height: 44px;
+        border: 2px solid #d4af37;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #4a2a18, #241208);
+        color: #f8e4a2;
+        font-size: 24px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+      }
+
+      .inventory-nav:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+
+      .inventory-slot {
+        width: 80px;
+        height: 80px;
+        max-width: 80px;
+        max-height: 80px;
+        border: 2px solid #d4af37;
+        background: rgba(212, 175, 55, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .inventory-slot:hover {
+        background: rgba(212, 175, 55, 0.2);
+        transform: scale(1.05);
+      }
+
+      .inventory-slot.selected {
+        border: 3px solid #9f2b02;
+        /* 金色・太め推奨 */
+        box-shadow: 0 0 12px #ff8c0099;
+        background: rgba(255, 215, 0, 0.15);
+      }
+
+      .inventory-slot img {
+        max-width: 60px;
+        max-height: 60px;
+        object-fit: contain;
+      }
+
+      .magnifier-btn {
+        position: absolute;
+        right: 4px;
+        bottom: 4px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid #d4af37;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px #0002;
+        cursor: pointer;
+        z-index: 10;
+        transition: box-shadow 0.15s;
+      }
+
+      .magnifier-btn:hover {
+        box-shadow: 0 0 10px #ffd70099;
+      }
+
+      .magnifier-btn img {
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+      }
+
+      .info-panel {
+        width: 100%;
+        padding: 2px;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+
+      .message-area {
+        background: rgba(0, 0, 0, 0.8);
+        padding: 5px;
+        border-radius: 5px;
+        margin-bottom: 2px;
+        height: 65px;
+        min-height: 40px;
+        border: 1px solid #d4af37;
+        position: relative;
+      }
+
+      #statusIconArea {
+        position: absolute;
+        bottom: 6px;
+        right: 12px;
+        display: flex;
+        gap: 8px;
+        z-index: 5;
+      }
+
+      .status-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+        border: 2px solid gold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px #0005;
+        font-size: 1.4em;
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .nav-btn {
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #d4af37, #b8941f);
+        border: none;
+        border-radius: 5px;
+        color: #1a0f08;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .nav-btn:hover {
+        background: linear-gradient(135deg, #b8941f, #d4af37);
+        transform: translateY(-2px);
+      }
+
+      .nav-btn:disabled {
+        background: #666;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #2c1810, #1a0f08);
+        padding: 30px;
+        border-radius: 10px;
+        border: 3px solid #d4af37;
+        /*  max-width: calc(100vw - 60px); */
+        text-align: center;
+        max-width: min(96vw, 640px);
+        max-height: calc(100vh - 64px);
+        /* 画面に収める */
+        overflow: auto;
+        /* はみ出したらスクロール */
+        padding: 20px;
+        /* ちょい圧縮 */
+      }
+
+      .modal button {
+        margin: 10px;
+        padding: 10px 20px;
+        background: #d4af37;
+        border: none;
+        border-radius: 5px;
+        color: #1a0f08;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      #modalButtons button {
+        border: none;
+        background: none;
+        padding: 0;
+        margin: 0 10px 10px 0;
+        cursor: pointer;
+        transition:
+          filter 0.1s,
+          box-shadow 0.1s,
+          transform 0.08s;
+        border-radius: 10px;
+      }
+
+      #modalButtons button img {
+        width: 80px;
+        height: 80px;
+        vertical-align: middle;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition:
+          filter 0.1s,
+          box-shadow 0.1s,
+          transform 0.08s;
+      }
+
+      #modalButtons button:hover img {
+        filter: brightness(1.08) drop-shadow(0 2px 6px #ffd70050);
+        box-shadow: 0 0 10px #ffd70080;
+        transform: scale(1.05);
+      }
+
+      #modalButtons button:active img,
+      #modalButtons button.pressed img {
+        filter: brightness(0.95) grayscale(20%);
+        box-shadow: 0 0 8px #3332;
+        transform: scale(0.97);
+      }
+
+      #modalButtons button:disabled img {
+        filter: grayscale(90%) opacity(0.5);
+        box-shadow: none;
+      }
+
+      /* テキスト型ボタンも画像ボタン風に */
+      #modalButtons button.text-btn {
+        min-width: 120px;
+        font-size: 1.15em;
+        background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+        color: #7b4a00;
+        font-weight: bold;
+        border: none;
+        border-radius: 12px;
+        padding: 15px 32px;
+        margin: 0 10px 10px 0;
+        box-shadow: 0 4px 14px #ffc90022;
+        cursor: pointer;
+        transition:
+          background 0.12s,
+          filter 0.1s,
+          box-shadow 0.1s,
+          transform 0.08s;
+        vertical-align: middle;
+        display: inline-block;
+      }
+
+      #modalButtons button.text-btn:hover {
+        background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+        filter: brightness(1.08);
+        box-shadow: 0 6px 20px #ffc90055;
+        transform: scale(1.05);
+      }
+
+      #modalButtons button.text-btn:active {
+        filter: brightness(0.96);
+        transform: scale(0.97);
+      }
+
+      #modalButtons button.text-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* 閉じるボタン */
+      #modalClose .modal-close-btn {
+        display: inline-block;
+        min-width: 160px;
+        font-size: 1.2em;
+        background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+        color: #7b4a00;
+        font-weight: bold;
+        border: none;
+        border-radius: 12px;
+        padding: 15px 32px;
+        box-shadow: 0 4px 14px #ffc90022;
+        margin-top: 10px;
+        cursor: pointer;
+        transition:
+          background 0.12s,
+          filter 0.1s,
+          box-shadow 0.1s;
+      }
+
+      #modalClose .modal-close-btn:hover {
+        background: linear-gradient(90deg, #ffea85 0%, #ffc371 100%);
+        filter: brightness(1.08);
+        box-shadow: 0 6px 20px #ffc90055;
+      }
+
+      .modal button.ok-btn {
+        margin-top: 8px;
+        font-size: 1.4rem;
+        background-color: #1d9fff;
+        color: #fff;
+      }
+
+      .modal button.ok-btn:hover {
+        background-color: #1789da;
+      }
+
+      .puzzle-input {
+        width: 200px;
+        padding: 10px;
+        margin: 10px;
+        border: 2px solid #d4af37;
+        background: rgba(244, 241, 232, 0.9);
+        color: #1a0f08;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 16px;
+      }
+
+      .title {
+        position: absolute;
+        top: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        padding: 2px 8px;
+        border: 2px solid #d4af37;
+        border-radius: 25px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 100;
+      }
+
+      .login-container {
+        background: #1e1e1e;
+        padding: 20px;
+        border-radius: 10px;
+        color: #fff;
+        width: 280px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      .login-title {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .login-form label {
+        font-size: 14px;
+        margin-top: 8px;
+        display: block;
+      }
+
+      .login-buttons {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .login-btn {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .cancel-btn {
+        background: #f44336;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      /* 画像プレースホルダー用のスタイル */
+      .image-placeholder {
+        background: linear-gradient(135deg, #444, #666);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ccc;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 5px;
+      }
+
+      .notice {
+        text-overflow: clip;
+      }
+
+      .save-area {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        margin: 18px 0 4px 0;
+        align-self: flex-start;
+      }
+
+      @media (max-width: 600px) {
+        #msgText {
+          font-size: 0.8rem;
+        }
+
+        .save-area {
+          width: 100%;
+          max-width: 100%;
+          margin-left: 0;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          margin-top: 8px;
+          gap: 16px;
+        }
+
+        .inventory {
+          gap: 6px;
+          align-items: center;
+          padding: 0;
+          width: auto;
+          max-width: none;
+          flex: 1 1 auto;
+          min-width: 0;
+          overflow: hidden;
+          justify-content: center;
+        }
+
+        .inventory-slot {
+          width: clamp(42px, 10.5vw, 52px);
+          height: clamp(42px, 10.5vw, 52px);
+          min-width: 0;
+          min-height: 0;
+        }
+
+        .inventory-slot img {
+          max-width: 72%;
+          max-height: 72%;
+        }
+
+        .inventory-shell {
+          gap: 6px;
+          padding: 0 4px;
+        }
+
+        .inventory-nav {
+          width: 38px;
+          height: 38px;
+          font-size: 20px;
+        }
+
+        .magnifier-btn {
+          right: 1px;
+          bottom: 1px;
+          width: 16px;
+          height: 16px;
+        }
+
+        .magnifier-btn img {
+          width: 11px;
+          height: 11px;
+        }
+      }
+
+      @media (min-width: 601px) {
+        .ui-panel {
+          align-items: center;
+        }
+
+        .inventory-shell {
+          width: auto;
+          flex: 1 1 auto;
+          justify-content: flex-start;
+          gap: 6px;
+          padding: 0 0 0 4px;
+        }
+
+        .inventory {
+          display: flex;
+          gap: 16px;
+          justify-content: flex-start;
+          align-items: center;
+          max-width: 672px;
+          margin: 0;
+          padding: 0 6px;
+        }
+
+        .save-area {
+          margin: 0 0 0 10px;
+          align-self: center;
+          align-items: center;
+          flex: 0 0 auto;
+        }
+      }
+
+      .save-area .nav-btn {
+        min-width: 80px;
+        padding: 10px 18px;
+        font-size: 15px;
+        background: linear-gradient(135deg, #d4af37 85%, #b8941f 100%);
+        border-radius: 8px;
+        border: none;
+        color: #1a0f08;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+        transition:
+          background 0.3s,
+          transform 0.2s;
+      }
+
+      .save-area .nav-btn:hover {
+        background: linear-gradient(135deg, #b8941f 70%, #d4af37 100%);
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 0 12px #d4af3740;
+      }
+
+      #roomEffectOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: white;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.6s;
+        z-index: 9999;
+      }
+
+      .title-wrapper {
+        display: flex;
+        width: 100%;
+      }
+
+      @keyframes warpFlash {
+        0% {
+          opacity: 0;
+        }
+
+        15% {
+          opacity: 0.95;
+        }
+
+        50% {
+          opacity: 0.4;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes chroma {
+        0% {
+          filter: none;
+        }
+
+        100% {
+          filter: contrast(1.2) saturate(1.2) hue-rotate(20deg);
+        }
+      }
+
+      .warp-active {
+        background: radial-gradient(circle at 50% 50%, #fff, #000 70%);
+        animation:
+          warpFlash 900ms ease-out both,
+          chroma 900ms ease-out both;
+      }
+
+      #hintModal {
+        color: #000;
+      }
+
+      @keyframes glowPulse {
+        0% {
+          opacity: 0;
+        }
+
+        20% {
+          opacity: 1;
+        }
+
+        60% {
+          opacity: 0.9;
+        }
+
+        100% {
+          opacity: 0;
+        }
+
+        /* 自動でフェードアウト */
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
+        }
+
+        50% {
+          box-shadow: 0 0 18px 6px rgba(255, 255, 255, 0.35);
+        }
+      }
+
+      /* 画面フラッシュ用の全画面レイヤ */
+      #fxFlash {
+        position: fixed;
+        inset: 0;
+        background: transparent;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 9999;
+      }
+
+      /* 白フラッシュ */
+      @keyframes flashWhite {
+        0% {
+          opacity: 0;
+          background: #fff;
+        }
+
+        12% {
+          opacity: 0.95;
+          background: #fff;
+        }
+
+        100% {
+          opacity: 0;
+          background: #fff;
+        }
+      }
+
+      /* 赤フラッシュ（ミス） */
+      @keyframes flashRed {
+        0% {
+          opacity: 0;
+          background: rgba(255, 0, 0, 0);
+        }
+
+        18% {
+          opacity: 0.85;
+          background: rgba(255, 0, 0, 0.85);
+        }
+
+        100% {
+          opacity: 0;
+          background: rgba(255, 0, 0, 0);
+        }
+      }
+
+      /* 黒フラッシュ（バッドエンド） */
+      @keyframes flashBlack {
+        0% {
+          opacity: 0;
+          background: #000;
+        }
+
+        22% {
+          opacity: 0.95;
+          background: #000;
+        }
+
+        100% {
+          opacity: 0;
+          background: #000;
+        }
+      }
+
+      /* ほんの少しカメラシェイク（好みで） */
+      @keyframes camShake {
+        0% {
+          transform: translate(0, 0);
+        }
+
+        25% {
+          transform: translate(1px, -1px);
+        }
+
+        50% {
+          transform: translate(-1px, 1px);
+        }
+
+        75% {
+          transform: translate(1px, 1px);
+        }
+
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+
+      .fx-shake {
+        animation: camShake 120ms ease;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+      .casefile-modal {
+        background-color: #f6f2e8;
+        color: #2c2c2c;
+        width: 80%;
+        max-width: 720px;
+        max-height: 85vh;
+        border: 2px solid #bba;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+        border-radius: 4px;
+      }
+
+      .casefile-scroll {
+        padding: 24px;
+        overflow-y: auto;
+        max-height: 80vh;
+        font-family: "Noto Serif JP", "Times New Roman", serif;
+        line-height: 1.6;
+      }
+
+      .casefile-modal h1,
+      .casefile-modal h2 {
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .casefile-modal h3 {
+        margin-top: 20px;
+        border-bottom: 1px solid #999;
+      }
+
+      .person {
+        margin: 12px 0;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.6);
+        border-left: 3px solid #b44;
+      }
+
+      .initial-f {
+        font-weight: 900;
+        color: #c9a43d;
+        /* gold */
+        font-size: 1.55em;
+        /* margin-left: 6px; */
+      }
+
+      .initial-l {
+        font-weight: 900;
+        color: #8c8fa1;
+        /* silver/steel */
+        font-size: 1.55em;
+        /* margin-left: 4px; */
+      }
+
+      .evidence {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9em;
+      }
+
+      .evidence th,
+      .evidence td {
+        border: 1px solid #bbb;
+        padding: 6px 8px;
+      }
+
+      /* 電話図鑑用の行ハイライト */
+      .evidence tr.phone-discovered td {
+        background: rgba(255, 248, 210, 0.9);
+        /* うすいクリーム色 */
+        font-weight: 600;
+      }
+
+      .evidence tr.phone-undiscovered td {
+        background: rgba(245, 245, 245, 0.7);
+        /* うすグレー */
+        color: #777;
+      }
+
+      blockquote {
+        font-style: italic;
+        color: #444;
+        border-left: 4px solid #888;
+        padding-left: 10px;
+        margin: 10px 0;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        font-size: 1.4rem;
+        background: none;
+        border: none;
+        color: #333;
+        cursor: pointer;
+      }
+
+      .group {
+        width: 90%;
+        justify-content: center;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      @keyframes breathe {
+        0% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(2px);
+        }
+
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* モーダルの画像ボタンは固定80px→可変に */
+      #modalButtons button img {
+        width: clamp(56px, 18vw, 96px);
+        height: clamp(56px, 18vw, 96px);
+      }
+
+      /* アニメモーダル用 */
+      .modal-anim {
+        position: relative;
+        width: min(400px, 80vw);
+        margin: 0 auto 16px;
+      }
+
+      .modal-anim img {
+        display: block;
+        width: 100%;
+        pointer-events: none;
+      }
+
+      /* 1枚目はだんだん消える */
+      .modal-anim img:nth-child(1) {
+        position: absolute;
+        inset: 0;
+        opacity: 1;
+        animation: blockmanHatFadeOut 2.8s ease forwards 0.1s;
+      }
+
+      /* 2枚目は後からふわっと出てくる */
+      .modal-anim img:nth-child(2) {
+        opacity: 0;
+        animation: blockmanHatFadeIn 3s ease forwards 0.4s;
+      }
+
+      /* 1枚あたり1秒表示の例 */
+      .modal-anim.frames img:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .modal-anim.frames img:nth-child(2) {
+        animation-delay: 1s;
+      }
+
+      .modal-anim.frames img:nth-child(3) {
+        animation-delay: 2s;
+      }
+
+      .modal-anim.frames img:nth-child(4) {
+        animation-delay: 3s;
+      }
+
+      .modal-anim.frames img:nth-child(5) {
+        animation-delay: 4s;
+      }
+
+      .modal-anim.frames img:nth-child(6) {
+        animation-delay: 5s;
+      }
+
+      .modal-anim.frames img:nth-child(7) {
+        animation-delay: 6s;
+      }
+
+      .modal-anim.frames img:nth-child(8) {
+        animation-delay: 7s;
+      }
+
+      .modal-anim.frames img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        opacity: 0;
+        pointer-events: none;
+        animation: animFrame 8s linear forwards;
+      }
+
+      .door-unlock-anim {
+        position: relative;
+        width: min(380px, 82vw);
+        height: clamp(96px, 26vw, 130px);
+        margin: 0 auto 16px;
+        overflow: hidden;
+      }
+
+      .door-unlock-lock {
+        position: absolute;
+        top: 50%;
+        right: 18%;
+        width: clamp(56px, 15vw, 78px);
+        height: clamp(56px, 15vw, 78px);
+        border: 4px solid #b8a37b;
+        border-radius: 14px;
+        transform: translateY(-50%);
+        background: linear-gradient(145deg, #3b3227, #1f1913);
+        box-shadow: inset 0 0 0 2px #6b5a3f;
+      }
+
+      .door-unlock-lock::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #0f0b08;
+        transform: translate(-50%, -50%);
+      }
+
+      .door-unlock-key {
+        position: absolute;
+        top: 50%;
+        left: 6%;
+        width: clamp(64px, 18vw, 92px);
+        transform: translateY(-50%) rotate(-12deg);
+        animation: keyApproach 1.2s ease-in-out forwards;
+        filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+      }
+
+      @keyframes keyApproach {
+        0% {
+          left: 6%;
+          transform: translateY(-50%) rotate(-12deg) scale(0.95);
+          opacity: 0.88;
+        }
+        70% {
+          left: 58%;
+          transform: translateY(-50%) rotate(-4deg) scale(1);
+          opacity: 1;
+        }
+        100% {
+          left: 62%;
+          transform: translateY(-50%) rotate(0deg) scale(0.98);
+          opacity: 1;
+        }
+      }
+
+      @keyframes animFrame {
+        0% {
+          opacity: 0;
+        }
+
+        10% {
+          opacity: 1;
+        }
+
+        90% {
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      /* 1枚目はだんだん消える */
+      .fast img:nth-child(1) {
+        animation: blockmanHatFadeOut 1.2s ease forwards 0.1s;
+      }
+
+      /* 2枚目は後からふわっと出てくる */
+      .fast img:nth-child(2) {
+        animation: blockmanHatFadeIn 1.4s ease forwards 0.4s;
+      }
+
+      @keyframes blockmanHatFadeOut {
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes blockmanHatFadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* ▼ クルー手帳モーダル用 */
+
+      .notebook-modal-content {
+        background: #f4f7fb;
+        color: #2c1810;
+        border: 3px solid #d4af37;
+        max-width: min(96vw, 640px);
+        max-height: calc(100vh - 64px);
+        overflow: auto;
+        padding: 18px 18px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+        position: relative;
+      }
+
+      .notebook-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .notebook-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+        letter-spacing: 0.08em;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .notebook-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid #c9a43d;
+        font-size: 1.1rem;
+        background: linear-gradient(135deg, #eaf3ff, #d6e4ff);
+      }
+
+      .notebook-close-btn {
+        border: none;
+        background: transparent;
+        font-size: 1.4rem;
+        cursor: pointer;
+        color: #555;
+      }
+
+      .notebook-close-btn:hover {
+        color: #000;
+      }
+
+      .notebook-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .notebook-tab {
+        flex: 1;
+        border: 1px solid #c9a43d;
+        background: #fdfaf0;
+        padding: 6px 4px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        border-radius: 999px;
+        color: #6b4b10;
+        font-weight: bold;
+      }
+
+      .notebook-tab.active {
+        background: linear-gradient(135deg, #ffe9a8, #ffd36b);
+        box-shadow: 0 0 6px rgba(217, 165, 33, 0.6);
+      }
+
+      .notebook-body {
+        background: #fffef8;
+        border-radius: 8px;
+        padding: 10px 12px 12px;
+        border: 1px solid #e0d6b5;
+      }
+
+      .notebook-tab-content {
+        display: none;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .notebook-tab-content.active {
+        display: block;
+      }
+
+      .notebook-cap {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+
+      .notebook-note {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: #6b6b6b;
+      }
+
+      .notebook-list {
+        margin: 0 0 4px 1.1em;
+        padding: 0;
+      }
+
+      .notebook-list li {
+        margin-bottom: 3px;
+      }
+
+      .notebook-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        text-align: left;
+      }
+
+      .notebook-table th,
+      .notebook-table td {
+        border: 1px solid #d5c9a5;
+        padding: 4px 6px;
+      }
+
+      .notebook-table th {
+        background: #faf1d7;
+      }
+
+      /* ▲ クルー手帳モーダル用 */
+      .distress-btn {
+        padding: 14px 28px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, #ff5555, #ff9900);
+        color: #fff;
+        box-shadow: 0 0 12px rgba(255, 64, 64, 0.7);
+      }
+
+      .distress-btn.distress-holding {
+        transform: translateY(1px) scale(0.98);
+        box-shadow: 0 0 18px rgba(255, 0, 0, 0.9);
+      }
+
+      .distress-hint {
+        margin-top: 6px;
+        font-size: 0.9em;
+        color: #b00;
+      }
+
+      .notebook-image {
+        max-width: 100%;
+        display: block;
+        margin: 8px auto;
+        border-radius: 4px;
+      }
+
+      .red {
+        color: red;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2G9BX4FBF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-F2G9BX4FBF");
+  </script>
+
+  <body>
+    <!-- ▼ モーダル全体 -->
+    <!-- ▼ モーダル全体 -->
+    <div class="modal-overlay" style="display: none">
+      <div class="casefile-modal">
+        <button class="close-btn">×</button>
+        <div class="casefile-scroll"></div>
+      </div>
+    </div>
+    <!-- ▼ 手帳モーダル -->
+    <div class="modal" id="notebookModal" style="display: none">
+      <div class="modal-content notebook-modal-content">
+        <div class="notebook-header">
+          <div class="notebook-title">
+            <span class="notebook-logo">🏘️</span>
+            手帳
+          </div>
+          <button class="notebook-close-btn" onclick="closeNotebook()">✕</button>
+        </div>
+
+        <div class="notebook-tabs">
+          <!-- <button class="notebook-tab active" data-tab="memo" onclick="switchNotebookTab('memo')">
+                    MEMO
+                </button> -->
+          <button class="notebook-tab" data-tab="notes" onclick="switchNotebookTab('notes')">NOTES</button>
+        </div>
+
+        <div class="notebook-body">
+          <!-- MEMOタブ -->
+          <div class="notebook-tab-content active" id="notebook-tab-memo">
+            <p class="notebook-cap">何故か持っていた手帳だ。</p>
+            <ul class="notebook-list">
+              <li></li>
+              <li></li>
+            </ul>
+            <p class="notebook-note">書き込みは、急いで走り書きしたような乱れた字で並んでいる。</p>
+          </div>
+
+          <!-- NOTESタブ：後から増えるメモ用 -->
+          <div class="notebook-tab-content" id="notebook-tab-notes">
+            <p class="notebook-cap">空白のページ。</p>
+            <div id="notebook-notes-body">
+              <!-- 後半のイベントで追記していく想定 -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ▲ 手帳モーダル -->
+
+    <div id="roomEffectOverlay"></div>
+    <div class="game-container">
+      <div class="title-wrapper">
+        <!-- <div class="title">保育室からの脱出</div> -->
+        <div style="margin: 0 0; text-align: center">
+          <a href="escape34_hint.html" target="_blank" style="color: #d4af37; font-weight: bold; font-size: 1.1em; text-decoration: underline">🔍 ヒントを見る</a>
+        </div>
+      </div>
+
+      <canvas id="gameCanvas" width="640" height="640" style="width: 90vw; max-width: 640px"></canvas>
+
+      <div class="ui-panel">
+        <div class="info-panel">
+          <div class="message-area" id="messageArea">
+            <span id="msgText">escape33 のベースページです。ここから内容を差し替えていきます。</span>
+            <div id="statusIconArea" style="position: absolute; bottom: 6px; right: 12px; display: flex; gap: 8px"></div>
+          </div>
+          <div class="navigation"></div>
+        </div>
+        <div class="inventory-shell">
+          <button id="inventoryPrev" class="inventory-nav" type="button" aria-label="前のインベントリ">◀</button>
+          <div class="inventory" id="inventory">
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+            <div class="inventory-slot"></div>
+          </div>
+          <button id="inventoryNext" class="inventory-nav" type="button" aria-label="次のインベントリ">▶</button>
+        </div>
+        <button id="bgm-toggle" onclick="toggleBGM()" style="position: absolute; top: 20px; right: 20px; z-index: 1000">🔊 BGM</button>
+        <div class="save-area">
+          <button class="nav-btn" onclick="saveGame()">セーブ</button>
+          <button class="nav-btn" onclick="loadGame()">ロード</button>
+          <!-- <button class="nav-btn" onclick="openNotebook()">
+                    <img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/28/notebook.png"
+                        style="width:40px;max-width:100%;display:block;margin:0 auto 0px;">
+                </button> -->
+        </div>
+      </div>
+      <div class="notice">
+        当サイトの音源は
+        <a href="https://otologic.jp/" target="blank">OtoLogic</a>
+        ,
+        <a href="https://dova-s.jp/" target="blank">DOVA-SYNDROME</a>
+        の素材を使用しています 作者:
+        <a href="index.html">スラセブン</a>
+      </div>
+    </div>
+
+    <!-- モーダルダイアログ -->
+    <div class="modal" id="modal">
+      <div class="modal-content" id="modalContent">
+        <!-- モーダルの内容は動的に生成 -->
+      </div>
+    </div>
+
+    <audio id="bgm" src="sounds/33/You_Behind_the_Veil.mp3" loop></audio>
+    <audio id="se-click" src="sounds/Short_Accent18-1(Dry).mp3"></audio>
+    <audio id="se-pi" src="sounds/Short_Accent04-1(Single).mp3"></audio>
+    <audio id="se-item" src="sounds/Inspiration02-1(High).mp3"></audio>
+    <audio id="se-error" src="sounds/Quiz-Buzzer05-1(Mid).mp3"></audio>
+    <audio id="se-clear" src="sounds/common/Cyber03-1.mp3"></audio>
+    <audio id="se-change" src="sounds/common/Scene_Change01-1(Up).mp3"></audio>
+    <audio id="se-open" src="sounds/common/Short_Accent09-1(Dry).mp3"></audio>
+    <audio id="se-fanta" src="sounds/common/Scene-Fantasize03-3(Fast-Short).mp3"></audio>
+    <audio id="se-coin" src="sounds/common/Onoma-Ding01-1(Dry).mp3"></audio>
+    <audio id="se-scene-change" src="sounds/common/Scene_Change08-1(Delay-Fast).mp3"></audio>
+    <audio id="se-gril" src="sounds/common/gril.mp3"></audio>
+    <audio id="se-gacha" src="sounds/common/Retro_Anime-Switch02-3(Low).mp3"></audio>
+    <audio id="se-piko" src="sounds/common/Anime_Motion19-1(Phrase).mp3"></audio>
+    <audio id="se-negative" src="sounds/common/Onoma-Negative06-1(Delay).mp3"></audio>
+    <audio id="se-hp-charge" src="sounds/common/hp_charge.mp3"></audio>
+    <audio id="se-door-ring" src="sounds/common/doorchime.mp3"></audio>
+    <audio id="se-kiran" src="sounds/common/kiran.mp3"></audio>
+    <audio id="se-wa" src="sounds/33/wa.wav"></audio>
+
+    <audio id="se-bukimi_piano" src="sounds/common/bukimi_piano.mp3"></audio>
+    <audio id="se-idea" src="sounds/common/Inspiration11-1(Low).mp3"></audio>
+    <audio id="se-grab" src="sounds/common/Motion-Grab07-1(Dry).mp3"></audio>
+    <audio id="se-switch" src="sounds/common/switch.mp3"></audio>
+    <audio id="se-kiroriro" src="sounds/common/kiroriro.mp3"></audio>
+    <audio id="se-bear-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
+    <audio id="se-bear-flying" src="sounds/common/Motion-Blow_Away02-1(Long).mp3"></audio>
+    <audio id="se-mouse" src="sounds/common/PC-Mouse06-1.mp3"></audio>
+
+    <audio id="se-angel" src="sounds/Angel01-1.mp3"></audio>
+    <audio id="se-up" src="sounds/common/Inspiration10-1(High).mp3"></audio>
+    <audio id="se-ashioto" src="sounds/common/NES-RPG02-01(Enter).mp3"></audio>
+    <audio id="se-basha" src="sounds/common/basha.mp3"></audio>
+    <audio id="se-shutter" src="sounds/common/shutter.mp3"></audio>
+    <audio id="se-falling" src="sounds/common/Motion-Falling_Whistle04-2(Short).mp3"></audio>
+
+    <audio id="se-maa" src="sounds/34/maa.wav"></audio>
+    <audio id="se-hi-robo" src="sounds/34/hi_robo.wav"></audio>
+    <audio id="se-uwaa" src="sounds/common/uwaa.wav"></audio>
+    <audio id="se-cyber" src="sounds/common/Cyber20-1.mp3"></audio>
+    <audio id="se-fanfale" src="sounds/common/fanfale.mp3"></audio>
+    <audio id="se-shutter-open" src="sounds/common/shutter_open.mp3"></audio>
+    <audio id="se-kankan" src="sounds/common/kankan.mp3"></audio>
+    <audio id="se-paper" src="sounds/common/Flyer02-3(Rustle).mp3"></audio>
+    <audio id="se-zukkoke" src="sounds/common/zukkoke.mp3"></audio>
+    <audio id="se-hanabi" src="sounds/common/hanabi.mp3"></audio>
+    <audio id="se-nami" src="sounds/common/nami.mp3"></audio>
+    <audio id="se-hikidashi" src="sounds/common/hikidashi.mp3"></audio>
+    <audio id="se-nabe" src="sounds/common/nabe.mp3"></audio>
+    <audio id="se-can" src="sounds/common/can.mp3"></audio>
+    <audio id="se-kira" src="sounds/common/kira.mp3"></audio>
+    <audio id="se-bar" src="sounds/common/bar.mp3"></audio>
+    <audio id="se-sword" src="sounds/common/sword.mp3"></audio>
+    <audio id="se-attack" src="sounds/common/Motion-Fall01-2(Short).mp3"></audio>
+    <audio id="se-tea" src="sounds/common/tea.mp3"></audio>
+    <audio id="se-pop" src="sounds/common/Onoma-Pop01-3(Dry).mp3"></audio>
+    <audio id="se-bear-cry" src="sounds/common/bear_cry.wav"></audio>
+    <audio id="se-hanko" src="sounds/common/hanko.mp3"></audio>
+    <audio id="se-fire" src="sounds/common/fire.mp3"></audio>
+    <audio id="se-block" src="sounds/common/Hit-Block01-1.mp3"></audio>
+    <audio id="se-punch" src="sounds/common/Hit-Punch01-1.mp3"></audio>
+    <audio id="se-bus" src="sounds/common/bus.mp3"></audio>
+    <audio id="se-door-close" src="sounds/common/door_close.mp3"></audio>
+    <audio id="se-fumikiri" src="sounds/common/fumikiri.mp3"></audio>
+    <audio id="se-curtain" src="sounds/common/Curtain01-2.mp3"></audio>
+    <audio id="se-jaguchi" src="sounds/common/jaguchi.mp3"></audio>
+    <audio id="se-kirifuki" src="sounds/common/kirifuki.mp3"></audio>
+    <audio id="se-grill" src="sounds/common/gril.mp3"></audio>
+    <audio id="se-dodon" src="sounds/common/dodon.mp3"></audio>
+    <audio id="se-door" src="sounds/common/door.mp3"></audio>
+    <audio id="se-eat" src="sounds/common/Motion-Eating02-1.mp3"></audio>
+    <audio id="se-zun" src="sounds/common/zun.mp3"></audio>
+
+    <script src="js/escape34.js"></script>
+    <div
+      id="toast"
+      style="
+        position: fixed;
+        left: 50%;
+        top: 14px;
+        transform: translateX(-50%);
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: #1f6feb;
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.25s,
+          transform 0.25s;
+        z-index: 9999;
+      "
+    ></div>
+  </body>
+</html>
