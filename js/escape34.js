@@ -1533,6 +1533,10 @@ let rooms = {
             updateMessage("まだ起動しないようだ");
             return;
           }
+          if (!f.unlockEventAreaBoxMiddle) {
+            updateMessage("まだ起動しないようだ");
+            return;
+          }
           if (f.unlockEventAreaBoxRight) {
             acquireItemOnce("foundKey", "key", "鍵が入っていた", IMAGES.items.key, "鍵を手に入れた");
             return;
@@ -3554,6 +3558,10 @@ function showEventAreaBoxMiddlePuzzle() {
 
 function showEventAreaBoxRightPuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.unlockEventAreaBoxMiddle) {
+    updateMessage("2の箱がアンロックするまで起動しないようだ");
+    return;
+  }
   if (f.unlockEventAreaBoxRight) {
     updateMessage("3の箱のロックは解除されている");
     return;
