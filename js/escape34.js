@@ -1615,7 +1615,7 @@ let rooms = {
         x: 7.4,
         y: 70.7,
         width: 20.6,
-        height: 23.7,
+        height: 24.7,
         onClick: clickWrap(function () {
           const f = gameState.main.flags || (gameState.main.flags = {});
           if (gameState.selectedItem === "coin") {
