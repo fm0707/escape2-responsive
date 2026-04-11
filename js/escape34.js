@@ -516,6 +516,19 @@ let rooms = {
         item: { img: "ticketPudding", visible: () => !gameState.main.flags.foundTicket },
       },
       {
+        x: 39.1,
+        y: 18.3,
+        width: 49.3,
+        height: 7.1,
+        onClick: clickWrap(function () {
+          updateMessage("ハッピーストーン、と書かれている。店名のようだ");
+        }),
+        description: "看板",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
         x: 52.9,
         y: 34.2,
         width: 19.3,
@@ -1068,7 +1081,7 @@ let rooms = {
             return;
           }
           if (f.makeNewKeyholder) {
-            updateMessage("なかなか素敵にできました。ありがとう");
+            updateMessage("「なかなか素敵にできました。ありがとう」");
             return;
           }
 
