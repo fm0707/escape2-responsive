@@ -731,11 +731,15 @@ let rooms = {
             return;
           }
           if (gameState.selectedItem === "puddingStrawberry") {
-            updateMessage("「おすすめのイチゴプリンです」");
+            updateMessage("「おすすめのイチゴプリンです。とっても美味しいですよ」");
             return;
           }
           if (gameState.selectedItem === "onigiri") {
             updateMessage("「栄養豊富そうなおにぎりですね」");
+            return;
+          }
+          if (f.foundPuddingStrawberry) {
+            updateMessage("「当店のSNSアカウントも、良かったらフォローしてください」");
             return;
           }
           updateMessage("「いらっしゃいませ」");
