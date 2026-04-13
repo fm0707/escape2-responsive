@@ -739,7 +739,7 @@ let rooms = {
             return;
           }
           if (f.foundPuddingStrawberry) {
-            updateMessage("「当店のSNSアカウントも、良かったらフォローしてください」");
+            updateMessage("「当店のSNSアカウントも、良かったらフォローしてください。受付タブレットから見られますよ」");
             return;
           }
           updateMessage("「いらっしゃいませ」");
@@ -1085,7 +1085,7 @@ let rooms = {
             return;
           }
           if (f.makeNewKeyholder) {
-            updateMessage("「なかなか素敵にできました。ありがとう」");
+            updateMessage("「なかなか素敵にできました。あとでSNSに投稿しようかな」");
             return;
           }
 
@@ -1944,7 +1944,7 @@ let rooms = {
 
 const hintMessages = {
   main: {
-    bear: ["ここは非常口だよ。ただでは通せないなあ"],
+    bear: ["「ここは非常口だよ。ただでは通せないなあ」"],
   },
 };
 
@@ -3757,9 +3757,9 @@ function showPuddingTabletPuzzle() {
     const repaint = () => {
       cells.forEach((btn, i) => {
         if (lit[i]) {
-          btn.style.background = "radial-gradient(circle at 50% 45%, #f9ffcf 0%, #f1ff94 32%, #d7ff52 62%, #a7d230 100%)";
-          btn.style.borderColor = "#ecff9d";
-          btn.style.boxShadow = "0 0 14px rgba(228,255,120,0.78), inset 0 0 10px rgba(255,255,255,0.55)";
+          btn.style.background = "radial-gradient(circle at 50% 45%, #fffef7 0%, #fff9db 35%, #fff2b8 68%, #f7e7a0 100%)";
+          btn.style.borderColor = "#fff3c8";
+          btn.style.boxShadow = "0 0 14px rgba(255, 243, 186, 0.82), inset 0 0 10px rgba(255,255,255,0.68)";
         } else {
           btn.style.background = "#8e8e8e";
           btn.style.borderColor = "#9b9b9b";
