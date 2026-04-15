@@ -1318,7 +1318,7 @@ let rooms = {
         }),
         description: "洗ったプリンの瓶",
         zIndex: 5,
-        usable: () => true,
+        usable: () => !!gameState.main.flags.washedPuddingJar,
         item: { img: "emptyJar", visible: () => !!gameState.main.flags.washedPuddingJar },
       },
       {
