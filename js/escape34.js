@@ -1314,7 +1314,10 @@ let rooms = {
         width: 4.4,
         height: 6.1,
         onClick: clickWrap(function () {
-          updateMessage("洗ったプリンの瓶が置いてある");
+          if (gameState.main.flags.washedPuddingJar) {
+            updateMessage("洗ったプリンの瓶が置いてある");
+          }
+          
         }),
         description: "洗ったプリンの瓶",
         zIndex: 5,
