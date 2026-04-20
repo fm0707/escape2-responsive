@@ -190,6 +190,10 @@ IMAGES = {
     badgeBack: I35("badge_back.webp"),
     bearLetter1: I35("modal_bear_letter_1.webp"),
     bearLetter2: I35("modal_bear_letter_2.webp"),
+    bearDance1: I35("modal_bear_dance_1.webp"),
+    bearDance2: I35("modal_bear_dance_2.webp"),
+    bearDance3: I35("modal_bear_dance_3.webp"),
+    bearDance4: I35("modal_bear_dance_4.webp"),
   },
 };
 
@@ -1657,9 +1661,9 @@ let rooms = {
         width: 35.0,
         height: 40.1,
         onClick: clickWrap(function () {
-          updateMessage("クマ妖精は、喜びの舞を踊っている");
+          showBearDanceSequence();
         }),
-        description: "クマ妖精",
+        description: "踊るクマ妖精",
         zIndex: 5,
         usable: () => gameState.trueEnd.flags.backgroundState == 1,
         item: { img: "IMAGE_KEY", visible: () => true },
@@ -1682,7 +1686,7 @@ let rooms = {
 
 const hintMessages = {
   main: {
-    bear: ["「なんて書いてあったかって？」", "えへへ", "ひみつだよ"],
+    bear: ["「なんて書いてあったかって？」", "「えへへ」", "「ひみつだよ」"],
   },
 };
 
@@ -1748,7 +1752,6 @@ function travelWithSteps(destRoom, { useWarp = false } = {}) {
 
       if (overlay) {
         overlay.classList.add("warp-active");
-        gameState.trueEnd.flags.backgroundState = hasItem("onigiri") ? 1 : 0;
         changeRoom(destRoom);
         overlay.style.background = "";
       }
@@ -2130,7 +2133,7 @@ function playBearLetterSequence() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   f.bearLetterEventDone = true;
   showModal(
-    "クマ妖精",
+    "クマ妖精に手紙を渡した",
     `
       <div style="text-align:center;">
         <div class="modal-anim">
@@ -2144,6 +2147,27 @@ function playBearLetterSequence() {
   );
   renderCanvasRoom?.();
   updateMessage("ボクに？ふむふむ…");
+}
+
+function showBearDanceSequence() {
+  playSE?.("se-bear-hun");
+  showModal(
+    "クマ妖精は喜びの舞を踊っている",
+    `
+      <div style="text-align:center;">
+        <div class="modal-anim frames" style="height:min(400px, 80vw);">
+          <img src="${IMAGES.modals.bearDance1}" alt="bear dance 1">
+          <img src="${IMAGES.modals.bearDance2}" alt="bear dance 2">
+          <img src="${IMAGES.modals.bearDance3}" alt="bear dance 3">
+          <img src="${IMAGES.modals.bearDance4}" alt="bear dance 4">
+          <img src="${IMAGES.modals.bearDance1}" alt="bear dance 5">
+        </div>
+        <div style="margin-top:12px;">ふん、ふん、ふーん♪</div>
+      </div>
+    `,
+    [{ text: "閉じる", action: "close" }],
+  );
+  updateMessage("クマ妖精は喜びの舞を踊っている");
 }
 
 function playSummonSuccessSequence() {
