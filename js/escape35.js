@@ -4127,6 +4127,11 @@ function showDeskHatchPuzzle() {
 
 function showBasementSafePuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.ghostBearEventDone) {
+    updateMessage("霊力でおおわれている。触ることができない");
+    return;
+  }
+
   if (f.unlockSafe) {
     updateMessage("金庫は開いている");
     return;
