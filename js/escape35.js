@@ -131,8 +131,12 @@ IMAGES = {
     string: I35("string.webp"),
     loupe: I35("loupe.webp"),
     bearFairy: I35("bear_fairy.webp"),
+    bearFairy2: I35("bear_fairy2.webp"),
     keyDoor: I35("key_door.webp"),
     ghost: I35("ghost.webp"),
+    badge: I35("badge.webp"),
+    safeOpen: I35("safe_open.webp"),
+    letter: I35("letter.webp"),
   },
   modals: {
     clock: I35("modal_clock.webp"),
@@ -183,6 +187,9 @@ IMAGES = {
     badend: I35("badend.webp"),
     badendHammer1: I35("badend_hammer_1.webp"),
     badendHammer2: I35("badend_hammer_2.webp"),
+    badgeBack: I35("badge_back.webp"),
+    bearLetter1: I35("modal_bear_letter_1.webp"),
+    bearLetter2: I35("modal_bear_letter_2.webp"),
   },
 };
 
@@ -1015,7 +1022,7 @@ let rooms = {
             return;
           }
           if (f.unlockDoor && hasItem("ghost")) {
-            showModal("ドア", "地縛霊の力により、ドアを押し開けることができない…", [{ text: "閉じる", action: "close" }]);
+            showModal("体が引き戻される…", "地縛霊の力により、ドアを押し開けることができない…", [{ text: "閉じる", action: "close" }]);
             return;
           }
           if (f.unlockDoor) {
@@ -1089,6 +1096,12 @@ let rooms = {
             showObj(null, "わあ、美しいね", IMAGES.modals.bearDriver, "クマ妖精はうっとりしている");
             return;
           }
+          if (gameState.selectedItem === "letter") {
+            removeItem("letter");
+            clearUsingItem(true);
+            playBearLetterSequence();
+            return;
+          }
           if (gameState.selectedItem === "ghost") {
             removeItem("ghost");
             clearUsingItem(true);
@@ -1096,6 +1109,10 @@ let rooms = {
             return;
           }
           const f = gameState.main.flags || (gameState.main.flags = {});
+          if (f.bearLetterEventDone) {
+            talkToHintCharacter("main", "bear");
+            return;
+          }
           if (f.foundKeyDoor) {
             updateMessage(f.ghostBearEventDone ? "「良かったね」" : "「えへへ、また呼んでね」");
             return;
@@ -1116,7 +1133,7 @@ let rooms = {
         description: "クマ妖精",
         zIndex: 6,
         usable: () => gameState.main.flags.summonSucceeded,
-        item: { img: "bearFairy", visible: () => gameState.main.flags.summonSucceeded },
+        item: { img: () => (gameState.main.flags.bearLetterEventDone ? "bearFairy2" : "bearFairy"), visible: () => gameState.main.flags.summonSucceeded },
       },
       {
         x: 42.3,
@@ -1148,6 +1165,19 @@ let rooms = {
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 42.2,
+        y: 85.4,
+        width: 3.8,
+        height: 3.9,
+        onClick: clickWrap(function () {
+          acquireItemOnce("foundBadge", "badge", "足元に何かある", IMAGES.items.badge, "バッジを手に入れた");
+        }),
+        description: "バッジ",
+        zIndex: 5,
+        usable: () => gameState.main.flags.ghostBearEventDone && !gameState.main.flags.foundBadge,
+        item: { img: "badge", visible: () => gameState.main.flags.ghostBearEventDone && !gameState.main.flags.foundBadge },
       },
       {
         x: 0,
@@ -1491,6 +1521,30 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
+        x: 53.1,
+        y: 53.3,
+        width: 20.9,
+        height: 25.1,
+        onClick: clickWrap(function () {
+          showBasementSafePuzzle();
+        }),
+        description: "金庫",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        onClick: clickWrap(function () {}),
+        description: "金庫開いた効果",
+        zIndex: 5,
+        usable: () => false,
+        item: { img: "safeOpen", visible: () => gameState.main.flags.unlockSafe },
+      },
+      {
         x: 53.5,
         y: 52.4,
         width: 27.7,
@@ -1529,7 +1583,7 @@ let rooms = {
           updateMessage("地縛霊は未練があるようだ");
         }),
         description: "地縛霊",
-        zIndex: 5,
+        zIndex: 6,
         usable: () => !gameState.main.flags.foundGhost,
         item: { img: "ghost", visible: () => !gameState.main.flags.foundGhost },
       },
@@ -1594,7 +1648,20 @@ let rooms = {
         }),
         description: "クマ妖精",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.trueEnd.flags.backgroundState == 0,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 54.9,
+        y: 37.4,
+        width: 35.0,
+        height: 40.1,
+        onClick: clickWrap(function () {
+          updateMessage("クマ妖精は、喜びの舞を踊っている");
+        }),
+        description: "クマ妖精",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 1,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -1615,7 +1682,7 @@ let rooms = {
 
 const hintMessages = {
   main: {
-    bear: ["「ここは非常口だよ。ただでは通せないなあ」"],
+    bear: ["「なんて書いてあったかって？」", "えへへ", "ひみつだよ"],
   },
 };
 
@@ -1972,7 +2039,7 @@ function handleSummonOfferingSlotClick(slotIndex) {
     return;
   }
 
-  if (gameState.inventory.length >= 14) {
+  if (gameState.inventory.length >= 20) {
     updateMessage("アイテム欄がいっぱいだ。どこかで減らしてこよう");
     return;
   }
@@ -2057,6 +2124,26 @@ function playGhostBearSequence() {
     [{ text: "閉じる", action: "close" }],
   );
   updateMessage("地縛霊は成仏した");
+}
+
+function playBearLetterSequence() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  f.bearLetterEventDone = true;
+  showModal(
+    "クマ妖精",
+    `
+      <div style="text-align:center;">
+        <div class="modal-anim">
+          <img src="${IMAGES.modals.bearLetter1}" alt="bear letter 1">
+          <img src="${IMAGES.modals.bearLetter2}" alt="bear letter 2">
+        </div>
+        <div style="margin-top:12px;">ボクに？ふむふむ…</div>
+      </div>
+    `,
+    [{ text: "閉じる", action: "close" }],
+  );
+  renderCanvasRoom?.();
+  updateMessage("ボクに？ふむふむ…");
 }
 
 function playSummonSuccessSequence() {
@@ -4014,6 +4101,58 @@ function showDeskHatchPuzzle() {
   }, 0);
 }
 
+function showBasementSafePuzzle() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.unlockSafe) {
+    updateMessage("金庫は開いている");
+    return;
+  }
+
+  const content = `
+    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <input id="basementSafeInput" class="puzzle-input" type="text" maxlength="16" placeholder="WORD" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:220px; text-align:center; font-size:1.15em; letter-spacing:0.04em;">
+      <button id="basementSafeOk" class="ok-btn" type="button">OK</button>
+      <div id="basementSafeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+    </div>
+  `;
+
+  showModal("金庫のロック", content, [{ text: "閉じる", action: "close" }]);
+
+  setTimeout(() => {
+    const input = document.getElementById("basementSafeInput");
+    const okBtn = document.getElementById("basementSafeOk");
+    const hintEl = document.getElementById("basementSafeHint");
+    if (!input || !okBtn || !hintEl) return;
+
+    const submit = () => {
+      const answer = String(input.value || "")
+        .trim()
+        .toLowerCase();
+      if (answer === "charm") {
+        f.unlockSafe = true;
+        playSE?.("se-clear");
+        window._nextModal = () => {
+          acquireItemOnce("foundLetter", "letter", "金庫が開いた", IMAGES.items.letter, "手紙を手に入れた");
+        };
+        closeModal();
+        return;
+      }
+
+      playSE?.("se-error");
+      hintEl.textContent = "違うようだ";
+      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
+    };
+
+    okBtn.addEventListener("click", submit);
+    input.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      submit();
+    });
+    input.focus();
+  }, 0);
+}
+
 function showSinkCabinetPuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (f.unlockSinkCabinet) {
@@ -4102,8 +4241,10 @@ function showSinkCabinetPuzzle() {
 function handleDoor() {
   // エンディング遷移共通ハンドラ
   const trueEndFlg = gameState.flags.trueEndUnlocked;
+  const mainFlags = gameState.main.flags || (gameState.main.flags = {});
   const goEnding = () => {
     if (trueEndFlg) {
+      gameState.trueEnd.flags.backgroundState = mainFlags.bearLetterEventDone ? 1 : 0;
       gameState.endings.true = true;
       travelWithSteps("trueEnd", { useWarp: true });
     } else {
@@ -4175,7 +4316,7 @@ function renderStatusIcons() {
 // アイテム管理
 function addItem(itemId) {
   playSE("se-item");
-  if (gameState.inventory.length < 14) {
+  if (gameState.inventory.length < 20) {
     gameState.inventory.push(itemId);
     updateInventoryDisplay();
   } else {
@@ -4366,6 +4507,8 @@ function getItemName(itemId) {
     loupe: "学者の虫眼鏡（不思議な力を感じる）",
     map: "古い地図",
     ghost: "地縛霊（ひんやりしている）",
+    badge: "バッジ",
+    letter: "手紙",
   };
   return names[itemId] || itemId;
 }
@@ -4439,6 +4582,40 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
           window._nextModal = {
             title: getItemName(itemId),
             content: "お日様のような温かい香りがする",
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
+          closeModal();
+        },
+      },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  if (itemId === "letter") {
+    buttons = [
+      {
+        text: "調べる",
+        action: () => {
+          window._nextModal = {
+            title: getItemName(itemId),
+            content: "宛名は『妖精様』と書かれている",
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
+          closeModal();
+        },
+      },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  if (itemId === "badge") {
+    buttons = [
+      {
+        text: "調べる",
+        action: () => {
+          window._nextModal = {
+            title: getItemName(itemId),
+            content: `<img src="${IMAGES.modals.badgeBack}" style="max-width:380px;max-height:80vh;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
             buttons: [{ text: "閉じる", action: "close" }],
           };
           closeModal();
