@@ -1118,7 +1118,7 @@ let rooms = {
             return;
           }
           if (f.foundKeyDoor) {
-            updateMessage(f.ghostBearEventDone ? "「良かったね」" : "「えへへ、また呼んでね」");
+            updateMessage(f.ghostBearEventDone ? "「良かったね」" : "「また呼んでね」");
             return;
           }
           showModal("久しぶりに正式に呼ばれたよ！えへへ。嬉しいな", `<img src="${IMAGES.modals.bearStands}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [
@@ -1537,6 +1537,7 @@ let rooms = {
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
+
       {
         x: 0,
         y: 0,
@@ -1547,6 +1548,19 @@ let rooms = {
         zIndex: 5,
         usable: () => false,
         item: { img: "safeOpen", visible: () => gameState.main.flags.unlockSafe },
+      },
+      {
+        x: 59.4,
+        y: 68.1,
+        width: 9.2,
+        height: 4.5,
+        onClick: clickWrap(function () {
+          acquireItemOnce("foundLetter", "letter", "手紙がある", IMAGES.items.letter, "手紙を手に入れた");
+        }),
+        description: "手紙",
+        zIndex: 6,
+        usable: () => gameState.main.flags.unlockSafe && !gameState.main.flags.foundLetter,
+        item: { img: "letter", visible: () => gameState.main.flags.unlockSafe && !gameState.main.flags.foundLetter },
       },
       {
         x: 53.5,
@@ -1686,7 +1700,7 @@ let rooms = {
 
 const hintMessages = {
   main: {
-    bear: ["「なんて書いてあったかって？」", "「えへへ」", "「ひみつだよ」"],
+    bear: ["「なんて書いてあったかって？」", "「ふっふっふ」", "「ひみつだよ」"],
   },
 };
 
@@ -4160,9 +4174,8 @@ function showBasementSafePuzzle() {
       if (answer === "charm") {
         f.unlockSafe = true;
         playSE?.("se-clear");
-        window._nextModal = () => {
-          acquireItemOnce("foundLetter", "letter", "金庫が開いた", IMAGES.items.letter, "手紙を手に入れた");
-        };
+        renderCanvasRoom?.();
+        updateMessage("金庫が開いた");
         closeModal();
         return;
       }
