@@ -194,6 +194,8 @@ IMAGES = {
     bearDance2: I35("modal_bear_dance_2.webp"),
     bearDance3: I35("modal_bear_dance_3.webp"),
     bearDance4: I35("modal_bear_dance_4.webp"),
+    bearLoupe: I35("modal_bear_loupe.webp"),
+    bearLoupe2: I35("modal_bear_loupe_2.webp"),
   },
 };
 
@@ -1098,6 +1100,14 @@ let rooms = {
         onClick: clickWrap(function () {
           if (gameState.selectedItem === "driver") {
             showObj(null, "わあ、美しいね", IMAGES.modals.bearDriver, "クマ妖精はうっとりしている");
+            return;
+          }
+          if (gameState.selectedItem === "loupe") {
+            if (gameState.main.flags.bearLetterEventDone) {
+              showObj(null, "♪", IMAGES.modals.bearLoupe2, "クマ妖精の嬉しそうな顔が拡大された");
+            } else {
+              showObj(null, "?", IMAGES.modals.bearLoupe, "クマ妖精は学者の虫眼鏡越しに見ても、変化が無かった");
+            }
             return;
           }
           if (gameState.selectedItem === "letter") {
@@ -4153,7 +4163,7 @@ function showBasementSafePuzzle() {
 
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <input id="basementSafeInput" class="puzzle-input" type="text" maxlength="16" placeholder="WORD" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:220px; text-align:center; font-size:1.15em; letter-spacing:0.04em;">
+      <input id="basementSafeInput" class="puzzle-input" type="text" maxlength="16" placeholder="失われし文字" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:220px; text-align:center; font-size:1.15em; letter-spacing:0.04em;">
       <button id="basementSafeOk" class="ok-btn" type="button">OK</button>
       <div id="basementSafeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
