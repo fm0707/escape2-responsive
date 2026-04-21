@@ -1141,7 +1141,6 @@ let rooms = {
                 closeModal();
               },
             },
-            { text: "閉じる", action: "close" },
           ]);
         }),
         description: "クマ妖精",
@@ -2051,6 +2050,10 @@ function handleSummonOfferingSlotClick(slotIndex) {
 
   if (gameState.selectedItem) {
     const placedItem = gameState.selectedItem;
+    if (placedItem === "ghost") {
+      updateMessage("それは供えられない");
+      return;
+    }
     if (currentItem && currentItem !== placedItem) {
       addItem(currentItem);
     }
