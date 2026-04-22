@@ -1399,7 +1399,7 @@ let rooms = {
         height: 6.4,
         onClick: clickWrap(
           function () {
-            changeRoom("picText");
+            changeRoom("textOtogi");
           },
           { allowAtNight: true },
         ),
