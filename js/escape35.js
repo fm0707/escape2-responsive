@@ -177,6 +177,7 @@ IMAGES = {
     summonAfter: I35("modal_summon_after.webp"),
     bearDriver: I35("modal_bear_driver.webp"),
     ghostThink: I35("modal_ghost_think.webp"),
+    ghostWater: I35("modal_ghost_water.webp"),
     ghostBear1: I35("modal_ghost_bear_1.webp"),
     ghostBear2: I35("modal_ghost_bear_2.webp"),
     ghostBear3: I35("modal_ghost_bear_3.webp"),
@@ -196,6 +197,7 @@ IMAGES = {
     bearDance4: I35("modal_bear_dance_4.webp"),
     bearLoupe: I35("modal_bear_loupe.webp"),
     bearLoupe2: I35("modal_bear_loupe_2.webp"),
+    ghostWater: I35("modal_ghost_water.webp"),
   },
 };
 
@@ -1495,7 +1497,7 @@ let rooms = {
         }),
         description: "召喚ボタン",
         zIndex: 5,
-        usable: () => !gameState.main.flags.summonSucceeded,
+        usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
 
@@ -2084,6 +2086,10 @@ function handleSummonButtonClick() {
   const offerings = getSummonOfferings();
   const correct = ["glassWater", "potpourriSun", "lightSaturn"];
   const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.summonSucceeded) {
+    updateMessage("もう召喚する必要は無いようだ");
+    return;
+  }
   const isCorrectOfferings = correct.every((itemId, idx) => offerings[idx] === itemId);
   const isCorrectDirection = f.summonDirection === "NW";
   const isCorrect = isCorrectOfferings && isCorrectDirection;
@@ -4513,6 +4519,14 @@ function useItem(slotIndex) {
       clearUsingItem(true);
       showModal("学者の虫眼鏡を使った。文字が浮かび上がっている", `<img src="${IMAGES.modals.hammerString}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
       updateMessage("学者の虫眼鏡を使った。文字が浮かび上がっている");
+      return;
+    }
+
+    const isGhostWaterPair = (a === "glassWater" && b === "ghost") || (a === "ghost" && b === "glassWater");
+    if (isGhostWaterPair) {
+      clearUsingItem(true);
+      showModal("地縛霊に水を勧めた", `<img src="${IMAGES.modals.ghostWater}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">ありがとう。お気持ちだけいただきます`, [{ text: "閉じる", action: "close" }]);
+      updateMessage("「ありがとう。お気持ちだけいただきます」");
       return;
     }
   }
