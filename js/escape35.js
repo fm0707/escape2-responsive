@@ -1125,6 +1125,20 @@ let rooms = {
             return;
           }
           const f = gameState.main.flags || (gameState.main.flags = {});
+          if (!f.foundKeyDoor) {
+            showModal("久しぶりに正式に呼ばれたよ！えへへ。嬉しいな", `<img src="${IMAGES.modals.bearStands}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [
+              {
+                text: "次へ",
+                action: () => {
+                  window._nextModal = () => {
+                    acquireItemOnce("foundKeyDoor", "keyDoor", "これ預かってきたよ", IMAGES.modals.bearKey, "ドアのカギを手に入れた");
+                  };
+                  closeModal();
+                },
+              },
+            ]);
+            return;
+          }
           if (f.bearLetterEventDone) {
             talkToHintCharacter("main", "bear");
             return;
@@ -1133,17 +1147,6 @@ let rooms = {
             updateMessage(f.ghostBearEventDone ? "「良かったね」" : "「また呼んでね」");
             return;
           }
-          showModal("久しぶりに正式に呼ばれたよ！えへへ。嬉しいな", `<img src="${IMAGES.modals.bearStands}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [
-            {
-              text: "次へ",
-              action: () => {
-                window._nextModal = () => {
-                  acquireItemOnce("foundKeyDoor", "keyDoor", "これ預かってきたよ", IMAGES.modals.bearKey, "ドアのカギを手に入れた");
-                };
-                closeModal();
-              },
-            },
-          ]);
         }),
         description: "クマ妖精",
         zIndex: 6,
