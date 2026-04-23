@@ -2213,6 +2213,7 @@ function playSummonSuccessSequence() {
   const f = gameState.main.flags || (gameState.main.flags = {});
 
   f.summonSucceeded = true;
+  markProgress?.("summon_succeeded");
   playSE("se-fanta");
 
   if (overlay) {
@@ -3743,6 +3744,7 @@ function showPuddingMannerBadEnd() {
     </div>
   `;
   pauseBGM();
+  markProgress?.("bad_end_pudding_manner");
   playSE("se-negative");
   showModal("【BAD END】ちがうものが、来た", content, [{ text: "最初から", action: "restart" }]);
   updateMessage("BAD END: ちがうものが、来た");
@@ -3759,6 +3761,7 @@ function showBottleHammerBadEnd() {
     </div>
   `;
   pauseBGM();
+  markProgress?.("bad_end_bottle_hammer");
   playSE("se-gashan");
   showModal("【BAD END】飛び散る水銀", content, [{ text: "最初から", action: "restart" }]);
   updateMessage("BAD END: ボトルが割れ、水銀が飛び散る…視界がぼやける…");
