@@ -438,6 +438,7 @@ let rooms = {
           }
           if (gameState.selectedItem === "key") {
             f.unlockDrawerLeftTop = true;
+            markProgress?.("unlock_drawer_left_top");
             clearUsingItem(true);
             playSE?.("se-gacha");
             showModal("引き出し左上", "引き出しの鍵を開けた", [{ text: "閉じる", action: "close" }]);
@@ -1023,6 +1024,7 @@ let rooms = {
           }
           if (gameState.selectedItem === "keyDoor") {
             f.unlockDoor = true;
+            markProgress?.("unlock_door");
             removeItem("keyDoor");
             clearUsingItem(true);
             playSE("se-gacha");
@@ -2840,6 +2842,7 @@ function openEntranceShutter() {
 
   removeItem("key");
   f.unlockEntranceShutter = true;
+  markProgress?.("unlock_entrance_shutter");
   fx.lockInput = true;
   fx.entranceShutterOpen = {
     roomId: "entrance",
@@ -3903,6 +3906,7 @@ function showDeskDrawerLeftBottomPuzzle() {
       const ok = target.every((moon, idx) => answer[idx] === moon);
       if (ok) {
         f.unlockDrawerLeftBottom = true;
+        markProgress?.("unlock_drawer_left_bottom");
         playSE?.("se-clear");
         closeModal();
         updateMessage("左下の引き出しのロックが外れた");
@@ -3988,6 +3992,7 @@ function showDeskDrawerRightBottomPuzzle() {
       const ok = target.every((bar, idx) => answer[idx] === bar);
       if (ok) {
         f.unlockDrawerRightBottom = true;
+        markProgress?.("unlock_drawer_right_bottom");
         playSE?.("se-clear");
         closeModal();
         updateMessage("右下の引き出しのロックが外れた");
@@ -4061,6 +4066,7 @@ function showDeskDrawerRightMiddlePuzzle() {
       const ok = pressed.length === target.length && target.every((dir, idx) => pressed[idx] === dir);
       if (ok) {
         f.unlockDrawerRightMiddle = true;
+        markProgress?.("unlock_drawer_right_middle");
         playSE?.("se-clear");
         closeModal();
         updateMessage("右中の引き出しのロックが外れた");
@@ -4089,8 +4095,8 @@ function showDeskHatchPuzzle() {
   const target = ["truth", "lies", "within"];
   const state = [0, 0, 0];
   const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div id="deskHatchGrid" style="display:flex; flex-direction:column; gap:12px; width:min(100%, 420px);"></div>
+    <div translate="no" class="notranslate" style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <div id="deskHatchGrid" translate="no" class="notranslate" style="display:flex; flex-direction:column; gap:12px; width:min(100%, 420px);"></div>
       <button id="deskHatchOk" class="ok-btn" type="button">OK</button>
       <div id="deskHatchHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
@@ -4121,6 +4127,8 @@ function showDeskHatchPuzzle() {
       btn.style.textAlign = "center";
       btn.style.textTransform = "lowercase";
       btn.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.7), 0 2px 8px rgba(0,0,0,0.08)";
+      btn.setAttribute("translate", "no");
+      btn.classList.add("notranslate");
       btn.setAttribute("aria-label", `${i + 1}段目`);
 
       btn.addEventListener("click", () => {
@@ -4195,6 +4203,7 @@ function showBasementSafePuzzle() {
         .toLowerCase();
       if (answer === "charm") {
         f.unlockSafe = true;
+        markProgress?.("unlock_safe");
         playSE?.("se-clear");
         renderCanvasRoom?.();
         updateMessage("金庫が開いた");
@@ -4287,6 +4296,7 @@ function showSinkCabinetPuzzle() {
       const ok = target.every((item, idx) => answer[idx] === item);
       if (ok) {
         f.unlockSinkCabinet = true;
+        markProgress?.("unlock_sink_cabinet");
         playSE?.("se-clear");
         closeModal();
         updateMessage("キャビネットのロックが外れた");
