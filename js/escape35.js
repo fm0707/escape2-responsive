@@ -92,7 +92,7 @@ IMAGES = {
     summonBoard: [I35("summon_board.webp")],
     basement: [I35("basement.webp")],
 
-    end: [I35("end.webp")],
+    end: [I35("end.webp"), I35("end2.webp")],
     trueEnd: [I35("true_end.webp"), I35("true_end2.webp")],
   },
   items: {

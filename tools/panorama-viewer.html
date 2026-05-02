@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全天球パノラマビューア</title>
+  <link rel="stylesheet" href="./panorama-viewer/panorama-viewer.css">
+</head>
+
+<body>
+  <main class="viewer-shell">
+    <div id="viewer" class="viewer" aria-label="全天球パノラマ表示エリア">
+      <div id="dropHint" class="drop-hint">
+        <strong>等矩形パノラマ画像を読み込む</strong>
+        <span>2:1画像をドラッグ＆ドロップ、または下のボタンから選択</span>
+      </div>
+    </div>
+
+    <section class="toolbar" aria-label="操作パネル">
+      <label class="file-button">
+        <input id="imageInput" type="file" accept="image/*">
+        画像を選択
+      </label>
+
+      <button id="resetButton" type="button">リセット</button>
+      <button id="shotButton" type="button" disabled>スクショ保存</button>
+
+      <label class="range-field">
+        <span>ズーム</span>
+        <input id="fovInput" type="range" min="35" max="95" value="70">
+      </label>
+
+      <label class="select-field">
+        <span>出力</span>
+        <select id="sizeSelect">
+          <option value="viewport">表示サイズ</option>
+          <option value="1920x1080">1920 x 1080</option>
+          <option value="1280x720">1280 x 720</option>
+          <option value="1080x1080">1080 x 1080</option>
+        </select>
+      </label>
+
+      <p id="status" class="status">画像未読み込み</p>
+    </section>
+  </main>
+
+  <script src="./panorama-viewer/panorama-viewer.js"></script>
+</body>
+
+</html>

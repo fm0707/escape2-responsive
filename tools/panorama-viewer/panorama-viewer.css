@@ -1,0 +1,171 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #101214;
+  color: #f6f2e8;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.viewer-shell {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  width: 100%;
+  height: 100%;
+}
+
+.viewer {
+  position: relative;
+  min-height: 0;
+  cursor: grab;
+  touch-action: none;
+  background: #15181b;
+}
+
+.viewer:active {
+  cursor: grabbing;
+}
+
+.viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.drop-hint {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  color: #f8f1e3;
+  background: #171a1d;
+  pointer-events: none;
+}
+
+.drop-hint.is-hidden {
+  display: none;
+}
+
+.drop-hint strong {
+  font-size: clamp(22px, 4vw, 40px);
+  font-weight: 700;
+}
+
+.drop-hint span {
+  color: #d6cebf;
+  font-size: 15px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: #202326;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.24);
+}
+
+.file-button,
+button,
+select {
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  background: #f2e7d0;
+  color: #1c1b18;
+}
+
+.file-button,
+button {
+  display: inline-grid;
+  place-items: center;
+  padding: 0 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.file-button input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.range-field,
+.select-field {
+  display: grid;
+  gap: 5px;
+  color: #d8d2c6;
+  font-size: 12px;
+}
+
+.range-field {
+  min-width: 160px;
+}
+
+.range-field input {
+  accent-color: #f2c166;
+}
+
+.select-field select {
+  min-width: 130px;
+  padding: 0 9px;
+}
+
+.status {
+  min-width: 0;
+  margin: 0 0 0 auto;
+  overflow: hidden;
+  color: #d8d2c6;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .toolbar {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .file-button,
+  button {
+    flex: 1 1 110px;
+  }
+
+  .range-field,
+  .select-field {
+    flex: 1 1 150px;
+  }
+
+  .status {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
