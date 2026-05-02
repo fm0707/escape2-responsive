@@ -4614,6 +4614,144 @@ function getItemName(itemId) {
   return names[itemId] || itemId;
 }
 
+function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
+  const itemBaseSrc = IMAGES.items[itemId] || fallbackSrc;
+  const itemEnSrc = IMAGES.items[`${itemId}En`];
+  const hasEnVariant = !!itemEnSrc;
+
+  let content = `<img src="${itemBaseSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
+  let buttons = [{ text: "閉じる", action: "close" }];
+
+  if (itemId === "manual") {
+    buttons = [
+      {
+        text: "読む",
+        action: () => {
+          window._nextModal = {
+            title: "クレーム処理マニュアル",
+            content: `
+                    <div style="max-width:560px; margin:0 auto; padding:26px 28px; background:#fffdf2; color:#2b2116; border:1px solid #d8c99c; box-shadow:inset 0 0 24px rgba(120,90,40,0.12), 0 6px 18px rgba(80,60,30,0.14); text-align:left; line-height:1.85; font-size:1em;">
+                      <div style="font-weight:bold; font-size:1.08em; margin-bottom:10px;">クレーム対応の極意</div>
+                      <ol style="margin:0; padding-left:1.6em;">
+                        <li>物件ファイルからクレームがあった物件の電話番号を調べる</li>
+                        <li>電話を掛ける</li>
+                        <li>謝罪する。</li>
+                        <li>対応方針を伝える</li>
+                      </ol>
+                    </div>
+                  `,
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
+          closeModal();
+        },
+      },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  if (itemId === "fileProperty") {
+    buttons = [
+      {
+        text: "中を見る",
+        action: () => {
+          const f = gameState.main.flags || (gameState.main.flags = {});
+          f.propertyReturnRoom = gameState.currentRoom;
+          closeModal();
+          changeRoom("property1");
+        },
+      },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  const addMemoInspectButton = () => {
+    if (itemId !== "memo") return;
+    buttons.unshift({
+      text: "調べる",
+      action: () => {
+        window._nextModal = {
+          title: getItemName(itemId),
+          content: "紙に線のようなへこみがあるようだ",
+          buttons: [{ text: "閉じる", action: "close" }],
+        };
+        closeModal();
+      },
+    });
+  };
+  addMemoInspectButton();
+
+  if (hasEnVariant && itemId !== "sheet" && itemId !== "sheetComplete3") {
+    const zoomImgId = `invZoom_${Date.now()}_${typeof slotIndex === "number" ? slotIndex : "selected"}`;
+    let isEn = uiLang === "en";
+    content = `<img id="${zoomImgId}" src="${isEn ? itemEnSrc : itemBaseSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
+    buttons = [
+      {
+        text: "🌐 EN/JP",
+        action: () => {
+          const target = document.getElementById(zoomImgId);
+          if (!target) return;
+          uiLang = uiLang === "en" ? "jp" : "en";
+          isEn = uiLang === "en";
+          target.src = isEn ? itemEnSrc : itemBaseSrc;
+        },
+      },
+    ];
+    addMemoInspectButton();
+
+    if (itemId === "interviewNote") {
+      buttons.push({
+        text: "裏を見る",
+        action: () => {
+          window._nextModal = {
+            title: "インタビューノート",
+            content: `<img src="${IMAGES.modals.interviewNoteBack}" style="max-width:380px;max-height:80vh;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">付箋が貼られている`,
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
+          closeModal();
+        },
+      });
+    }
+
+    if (itemId === "fileFresh") {
+      buttons.push({
+        text: "中を読む",
+        action: () => {
+          window._nextModal = {
+            title: "新人研修ファイル",
+            content: `
+                    <div style="max-width:560px; margin:0 auto; padding:24px 26px; background:#fffdf2; color:#2b2116; border:1px solid #d8c99c; box-shadow:inset 0 0 24px rgba(120,90,40,0.12); text-align:left; line-height:1.75; font-size:0.96em; white-space:pre-line;">
+■ 木造（Wooden Structure）
+軽くてコストが安い、施工が早い
+断熱性が高く、住み心地が良い
+耐火性・耐久性は他構造より劣る
+シロアリ・湿気対策が重要
+
+■ 鉄骨造（Steel Structure）
+強度が高く、間取りの自由度が高い
+品質が安定しやすい（工場製作）
+木造より耐久性が高い
+断熱性・防音性はやや弱め
+
+■ 鉄筋コンクリート造（RC）
+耐火性・耐久性・遮音性が高い
+重量があり地震時の安定性が高い
+気密性が高く、断熱設計が重要
+コストが高く、工期が長い
+                    </div>
+                  `,
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
+          closeModal();
+        },
+      });
+    }
+
+    buttons.push({ text: "閉じる", action: "close" });
+  }
+
+  showModal(getItemName(itemId), content, buttons);
+}
+
 function renderNavigation() {
   const navDiv = document.querySelector(".navigation");
   navDiv.innerHTML = "";
@@ -4742,144 +4880,7 @@ function updateInventoryDisplay() {
       magBtn.innerHTML = '<img src="https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/magnifier.png" alt="拡大">';
       magBtn.onclick = (e) => {
         e.stopPropagation();
-
-        const itemId = gameState.inventory[index];
-        const itemBaseSrc = IMAGES.items[itemId] || img.src;
-        const itemEnSrc = IMAGES.items[`${itemId}En`];
-        const hasEnVariant = !!itemEnSrc;
-
-        // デフォの中身
-        let content = `<img src="${itemBaseSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
-        let buttons = [{ text: "閉じる", action: "close" }];
-
-        if (itemId === "manual") {
-          buttons = [
-            {
-              text: "読む",
-              action: () => {
-                window._nextModal = {
-                  title: "クレーム処理マニュアル",
-                  content: `
-                    <div style="max-width:560px; margin:0 auto; padding:26px 28px; background:#fffdf2; color:#2b2116; border:1px solid #d8c99c; box-shadow:inset 0 0 24px rgba(120,90,40,0.12), 0 6px 18px rgba(80,60,30,0.14); text-align:left; line-height:1.85; font-size:1em;">
-                      <div style="font-weight:bold; font-size:1.08em; margin-bottom:10px;">クレーム対応の極意</div>
-                      <ol style="margin:0; padding-left:1.6em;">
-                        <li>物件ファイルからクレームがあった物件の電話番号を調べる</li>
-                        <li>電話を掛ける</li>
-                        <li>謝罪する。</li>
-                        <li>対応方針を伝える</li>
-                      </ol>
-                    </div>
-                  `,
-                  buttons: [{ text: "閉じる", action: "close" }],
-                };
-                closeModal();
-              },
-            },
-            { text: "閉じる", action: "close" },
-          ];
-        }
-
-        if (itemId === "fileProperty") {
-          buttons = [
-            {
-              text: "中を見る",
-              action: () => {
-                const f = gameState.main.flags || (gameState.main.flags = {});
-                f.propertyReturnRoom = gameState.currentRoom;
-                closeModal();
-                changeRoom("property1");
-              },
-            },
-            { text: "閉じる", action: "close" },
-          ];
-        }
-
-        const addMemoInspectButton = () => {
-          if (itemId !== "memo") return;
-          buttons.unshift({
-            text: "調べる",
-            action: () => {
-              window._nextModal = {
-                title: getItemName(itemId),
-                content: "紙に線のようなへこみがあるようだ",
-                buttons: [{ text: "閉じる", action: "close" }],
-              };
-              closeModal();
-            },
-          });
-        };
-        addMemoInspectButton();
-
-        if (hasEnVariant && itemId !== "sheet" && itemId !== "sheetComplete3") {
-          const zoomImgId = `invZoom_${Date.now()}_${index}`;
-          let isEn = uiLang === "en";
-          content = `<img id="${zoomImgId}" src="${isEn ? itemEnSrc : itemBaseSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
-          buttons = [
-            {
-              text: "🌐 EN/JP",
-              action: () => {
-                const target = document.getElementById(zoomImgId);
-                if (!target) return;
-                uiLang = uiLang === "en" ? "jp" : "en";
-                isEn = uiLang === "en";
-                target.src = isEn ? itemEnSrc : itemBaseSrc;
-              },
-            },
-          ];
-          addMemoInspectButton();
-
-          if (itemId === "interviewNote") {
-            buttons.push({
-              text: "裏を見る",
-              action: () => {
-                window._nextModal = {
-                  title: "インタビューノート",
-                  content: `<img src="${IMAGES.modals.interviewNoteBack}" style="max-width:380px;max-height:80vh;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">付箋が貼られている`,
-                  buttons: [{ text: "閉じる", action: "close" }],
-                };
-                closeModal();
-              },
-            });
-          }
-
-          if (itemId === "fileFresh") {
-            buttons.push({
-              text: "中を読む",
-              action: () => {
-                window._nextModal = {
-                  title: "新人研修ファイル",
-                  content: `
-                    <div style="max-width:560px; margin:0 auto; padding:24px 26px; background:#fffdf2; color:#2b2116; border:1px solid #d8c99c; box-shadow:inset 0 0 24px rgba(120,90,40,0.12); text-align:left; line-height:1.75; font-size:0.96em; white-space:pre-line;">
-■ 木造（Wooden Structure）
-軽くてコストが安い、施工が早い
-断熱性が高く、住み心地が良い
-耐火性・耐久性は他構造より劣る
-シロアリ・湿気対策が重要
-
-■ 鉄骨造（Steel Structure）
-強度が高く、間取りの自由度が高い
-品質が安定しやすい（工場製作）
-木造より耐久性が高い
-断熱性・防音性はやや弱め
-
-■ 鉄筋コンクリート造（RC）
-耐火性・耐久性・遮音性が高い
-重量があり地震時の安定性が高い
-気密性が高く、断熱設計が重要
-コストが高く、工期が長い
-                    </div>
-                  `,
-                  buttons: [{ text: "閉じる", action: "close" }],
-                };
-                closeModal();
-              },
-            });
-          }
-
-          buttons.push({ text: "閉じる", action: "close" });
-        }
-
-        showModal(getItemName(itemId), content, buttons);
+        openInventoryItemDetail(gameState.inventory[index], index, img.src);
       };
       slot.appendChild(magBtn);
     } else {
@@ -4923,8 +4924,7 @@ function updateInventoryDisplay() {
     inspectButton.disabled = !selectedItemId;
     inspectButton.onclick = () => {
       if (!selectedItemId) return;
-      const itemSrc = IMAGES.items[selectedItemId];
-      showModal(getItemName(selectedItemId), `<img src="${itemSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`, [{ text: "閉じる", action: "close" }]);
+      openInventoryItemDetail(selectedItemId, selectedSlotIndex, IMAGES.items[selectedItemId]);
     };
   }
 
