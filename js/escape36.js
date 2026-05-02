@@ -96,7 +96,7 @@ IMAGES = {
     property3: { jp: I36("property_3.webp"), en: I36("property_3_en.webp") },
     property4: { jp: I36("property_4.webp"), en: I36("property_4_en.webp") },
     property5: { jp: I36("property_5.webp"), en: I36("property_5_en.webp") },
-    end: [I36("end.webp")],
+    end: [I36("end.webp"), I36("end2.webp")],
     trueEnd: [I36("true_end.webp"), I36("true_end2.webp")],
   },
   items: {
