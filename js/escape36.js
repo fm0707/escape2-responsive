@@ -154,6 +154,7 @@ IMAGES = {
     stream: I36("modal_stream.webp"),
     bearDinner: I36("modal_bear_dinner.webp"),
     interview: I36("modal_interview.webp"),
+    goods: I36("modal_goods.webp"),
     badend: I36("badend.webp"),
   },
 };
@@ -1219,7 +1220,10 @@ let rooms = {
         width: 12.6,
         height: 8.8,
         onClick: clickWrap(function () {
-          playStaffRoomCabinetShelfOpenFx("キャビネット下段");
+          playStaffRoomCabinetShelfOpenFx("キャビネット下段", () => {
+            showModal("備品", `<img src="${IMAGES.modals.goods}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">備品が入っている。関係なさそうだ`, [{ text: "閉じる", action: "close" }]);
+            updateMessage("備品が入っている。関係なさそうだ");
+          });
         }),
         description: "キャビネット下段",
         zIndex: 5,
