@@ -2253,14 +2253,9 @@ function renderCanvasRoom() {
 
   // アイテム描画（未取得のみ）
   drawRoomItems(ctx, canvas, roomId);
-  drawEntranceShutterOpenFx(ctx, canvas, roomId);
-  drawNewKeyholderGlowFx(ctx, canvas, roomId);
-  drawPuddingTabletBlackoutFx(ctx, canvas, roomId);
-  drawCelebrationSparkleFx(ctx, canvas, roomId);
   drawMadoriRoomHighlightFx(ctx, canvas, roomId);
   drawDeskDrawerOpenFx(ctx, canvas, roomId);
   drawCabinetTopOpenFx(ctx, canvas, roomId);
-  drawSinkWaterPourFx(ctx, canvas, roomId);
 
   drawLockerDoorFx(ctx, canvas, roomId);
 
@@ -4679,6 +4674,10 @@ function updateInventoryDisplay() {
   const slots = document.querySelectorAll(".inventory-slot");
   const prevButton = document.getElementById("inventoryPrev");
   const nextButton = document.getElementById("inventoryNext");
+  const inspectButton = document.getElementById("inventoryInspect");
+  const clearButton = document.getElementById("inventoryClear");
+  const selectedName = document.getElementById("inventorySelectedName");
+  const selectedThumb = document.getElementById("inventorySelectedThumb");
   const pageSize = getInventoryPageSize();
   const pageStart = gameState.inventoryPage * pageSize;
   const isMobile = window.matchMedia("(max-width: 600px)").matches;
@@ -4901,6 +4900,40 @@ function updateInventoryDisplay() {
   if (nextButton) {
     nextButton.disabled = gameState.inventoryPage >= getInventoryPageCount() - 1;
     nextButton.onclick = () => setInventoryPage(gameState.inventoryPage + 1);
+  }
+
+  const selectedSlotIndex = typeof gameState.selectedItemSlot === "number" ? gameState.selectedItemSlot : null;
+  const selectedItemId = selectedSlotIndex !== null ? gameState.inventory[selectedSlotIndex] : null;
+
+  if (selectedThumb) {
+    selectedThumb.innerHTML = "";
+    if (selectedItemId && IMAGES.items[selectedItemId]) {
+      const thumbImg = document.createElement("img");
+      thumbImg.src = IMAGES.items[selectedItemId];
+      thumbImg.alt = getItemName(selectedItemId);
+      selectedThumb.appendChild(thumbImg);
+    }
+  }
+
+  if (selectedName) {
+    selectedName.textContent = selectedItemId ? getItemName(selectedItemId) : "なし";
+  }
+
+  if (inspectButton) {
+    inspectButton.disabled = !selectedItemId;
+    inspectButton.onclick = () => {
+      if (!selectedItemId) return;
+      const itemSrc = IMAGES.items[selectedItemId];
+      showModal(getItemName(selectedItemId), `<img src="${itemSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`, [{ text: "閉じる", action: "close" }]);
+    };
+  }
+
+  if (clearButton) {
+    clearButton.disabled = !selectedItemId;
+    clearButton.onclick = () => {
+      if (!selectedItemId) return;
+      clearUsingItem(false);
+    };
   }
 }
 
