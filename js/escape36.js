@@ -3509,7 +3509,7 @@ function showTelephoneDialer() {
       }
 
       const f = gameState.main.flags || (gameState.main.flags = {});
-      if (input === "3103") {
+      if (input === "3203") {
         if (f.complaintCallCleared) {
           const result = PHONE_CALL_FALLBACK;
           setTimeout(() => {
