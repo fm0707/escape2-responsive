@@ -654,7 +654,7 @@ let rooms = {
           }
           if (!f.cleanedBoard && gameState.selectedItem === "wetTissue") {
             f.cleanedBoard = true;
-            clearUsingItem(true);
+            removeItem("wetTissue");
             playSE?.("se-cloth");
             renderCanvasRoom?.();
             showModal(
@@ -3870,12 +3870,12 @@ function showComplaintNoiseBadEnd() {
   const content = `
     <div style="text-align:center;">
       <img src="${IMAGES.modals.badend}" alt="bad end" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">
-      <div>＃％＆＊＠！！？？</div>
+      <div>お客さんを怒らせてしまった…</div>
     </div>
   `;
   pauseBGM();
   playSE("se-shakin");
-  showModal("【BAD END:音の暴力】お客さんを怒らせてしまった…", content, [{ text: "最初から", action: "restart" }]);
+  showModal("【BAD END:音の暴力】＃％＆＊＠！！？？", content, [{ text: "最初から", action: "restart" }]);
   updateMessage("BAD END: 音の暴力");
 }
 
