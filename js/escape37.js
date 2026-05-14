@@ -3347,11 +3347,11 @@ function showEndingReport(endingId = "end") {
 // クリアログ生成（既存のがあればそのまま流用でOK）
 // アンケート
 function openFeedbackForm(endingId) {
-  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfILZd1JSjBZcfe6Xp-4_TtxKAHv-XhFPsw3Vu_-uaH5A3DvA/viewform";
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc-SJGWVTVvSyZYsp9jO2JFN-iZWguDQDc9xyy0n1sHcrSuuA/viewform";
   const endingLabel =
     {
-      trueEnd: "トゥルーエンド",
-      end: "ノーマルエンド",
+      trueEnd: "脱獄エンド",
+      end: "出撃エンド",
     }[endingId] || "エンド";
 
   const params = new URLSearchParams({
