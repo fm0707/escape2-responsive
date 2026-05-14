@@ -605,7 +605,7 @@ let rooms = {
         height: 17.9,
         onClick: clickWrap(function () {
           if (gameState.main.flags.daemonBearEating) {
-            showObj(null, "プリンに集中している。デーモンの業務がおろそかになっていないだろうか…", IMAGES.items.bearEating, "デーモンクマはプリンに集中している。デーモンの業務がおろそかになっていないだろうか…");
+            showObj(null, "プリンに集中している。<br>デーモンの業務がおろそかになっていないだろうか…", IMAGES.items.bearEating, "デーモンクマはプリンに集中している。デーモンの業務がおろそかになっていないだろうか…");
             return;
           }
           if (gameState.selectedItem === "pudding") {
