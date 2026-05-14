@@ -173,10 +173,11 @@ IMAGES = {
     bookDaemon: I37("book_daemon.webp"),
     timetable: I37("timetable.webp"),
     ghostHappy: I37("modal_ghost_happy.webp"),
+    ghostSad: I37("modal_ghost_sad.webp"),
     tapestry: I37("tapestry.webp"),
     drinkWine: I37("modal_drink_wine.webp"),
     drinkWater: I37("modal_drink_water.webp"),
-
+    fireMagicFailed: I37("modal_fire_magic_failed.webp"),
     // badend: I37("badend.webp"),
     bearPower: I37("modal_bear_power.webp"),
     bearSpell: I37("modal_bear_spell.webp"),
@@ -187,6 +188,8 @@ IMAGES = {
     badendBear2: I37("badend_bear2.webp"),
     badendDefeat: I37("badend_defeat.webp"),
     badendDrunk: I37("badend_drunk.webp"),
+    end: I37("end.mp4"),
+    endMv: I37("end.mp4"),
   },
 };
 
@@ -602,7 +605,7 @@ let rooms = {
         height: 17.9,
         onClick: clickWrap(function () {
           if (gameState.main.flags.daemonBearEating) {
-            updateMessage("デーモンクマはプリンに集中している。デーモンの業務がおろそかになっていないだろうか…");
+            showObj(null, "プリンに集中している。デーモンの業務がおろそかになっていないだろうか…", IMAGES.items.bearEating, "デーモンクマはプリンに集中している。デーモンの業務がおろそかになっていないだろうか…");
             return;
           }
           if (gameState.selectedItem === "pudding") {
@@ -1388,9 +1391,23 @@ let rooms = {
       {
         x: 65.3,
         y: 48.5,
-        width: 11.6,
+        width: 13.0,
         height: 15.7,
         onClick: clickWrap(function () {
+          if (gameState.selectedItem === "pudding") {
+            showModal(
+              "「…」",
+              `
+                <div style="text-align:center;">
+                  <img src="${IMAGES.modals.ghostSad}" alt="悲しむおばけ" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
+                  <p style="margin:0; line-height:1.8;"></p>
+                </div>
+              `,
+              [{ text: "閉じる", action: "close" }],
+            );
+            updateMessage("…");
+            return;
+          }
           const f = gameState.main.flags || (gameState.main.flags = {});
           f.talkedBackEntranceGhost = true;
           updateMessage("「あの扉さえ空けば、外に出られたのに」");
@@ -1398,7 +1415,7 @@ let rooms = {
         description: "おばけ",
         zIndex: 5,
         usable: () => !gameState.main.flags.daemonBearEating && !gameState.main.flags.daemonBearFinishedPudding,
-        item: { img: "ghost", visible: () => !gameState.main.flags.daemonBearFinishedPudding },
+        item: { img: "ghost", visible: () => !gameState.main.flags.daemonBearEating && !gameState.main.flags.daemonBearFinishedPudding },
       },
       {
         x: 77.1,
@@ -3627,6 +3644,21 @@ function showDaemonBearSpellModal() {
         showDaemonBearKillBadEnd();
         return;
       }
+      if (answer === "kindle sun") {
+        playSE("se-splay");
+        showModal(
+          "ぷす…",
+          `
+            <div style="text-align:center;">
+              <img src="${IMAGES.modals.fireMagicFailed}" alt="失敗した炎呪文" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
+              <p style="margin:0; line-height:1.8;">あなたは炎呪文の適性がないようだ。</p>
+            </div>
+          `,
+          [{ text: "閉じる", action: "close" }],
+        );
+        updateMessage("あなたは炎呪文の適性がないようだ。");
+        return;
+      }
 
       playSE?.("se-error");
       hintEl.textContent = "何も起こらない";
@@ -3886,7 +3918,7 @@ function showKingConsentModal() {
       <p style="margin:0; line-height:1.8;">王様は納得したようだ</p>
     </div>
   `;
-  showModal("「そうか！そろそろだな」", content, [{ text: "閉じる", action: "close" }], fadeToEndFromKingConsent);
+  showModal("「そうか！そろそろだな」", content, [{ text: "閉じる", action: "close" }], showEndMovieFromKingConsent);
 }
 
 function showKingDefeatConsentModal() {
@@ -3940,22 +3972,74 @@ function showDrinkModal(imgSrc, altText, showBadEndAfterClose) {
   updateMessage("一気飲みした");
 }
 
-function fadeToEndFromKingConsent() {
-  const overlay = document.getElementById("roomEffectOverlay");
-  if (overlay) {
-    overlay.style.background = "#000";
-    overlay.style.opacity = 1;
+function showEndMovieFromKingConsent() {
+  const videoId = "kingConsentEndMovie";
+  const bgm = document.getElementById("bgm");
+  const bgmToggle = document.getElementById("bgm-toggle");
+  const resumeBGMAfterMovie = isBGMPlaying;
+  let endingStarted = false;
+  if (bgm && isBGMPlaying) {
+    bgm.pause();
+    isBGMPlaying = false;
+    if (bgmToggle) bgmToggle.textContent = "🔇 BGM";
   }
 
-  setTimeout(() => {
-    changeRoom("end");
+  const goEnd = () => {
+    if (endingStarted) return;
+    endingStarted = true;
+
+    const video = document.getElementById(videoId);
+    if (video) video.pause();
+    const overlay = document.getElementById("roomEffectOverlay");
+    if (overlay) {
+      overlay.style.transition = "none";
+      overlay.style.background = "#000";
+      overlay.style.opacity = 1;
+    }
+    closeModal();
+
     setTimeout(() => {
-      if (overlay) {
-        overlay.style.opacity = 0;
-        overlay.style.background = "";
+      if (resumeBGMAfterMovie) {
+        isBGMPlaying = true;
+        if (bgmToggle) bgmToggle.textContent = "🔊 BGM";
       }
-    }, 100);
-  }, 1000);
+      changeRoom("end");
+      setTimeout(() => {
+        if (overlay) {
+          overlay.style.transition = "";
+          overlay.style.opacity = 0;
+          overlay.style.background = "";
+        }
+      }, 100);
+    }, 450);
+  };
+
+  const content = `
+    <div style="text-align:center;">
+      <video id="${videoId}" src="${IMAGES.modals.end}" autoplay playsinline controls style="width:480px;max-width:100%;display:block;margin:0 auto 16px;background:#000;"></video>
+      <p id="kingConsentEndMovieHint" style="margin:0; line-height:1.8;"></p>
+    </div>
+  `;
+
+  showModal("出撃", content, [{ text: "スキップ", action: goEnd }]);
+
+  setTimeout(() => {
+    const video = document.getElementById(videoId);
+    const hint = document.getElementById("kingConsentEndMovieHint");
+
+    if (!video) {
+      goEnd();
+      return;
+    }
+
+    video.addEventListener("ended", goEnd, { once: true });
+    const playPromise = video.play?.();
+    if (playPromise?.catch) {
+      playPromise.catch(() => {
+        if (hint) hint.textContent = "動画を再生すると出撃します。";
+      });
+    }
+  }, 0);
 }
 
 function showTimeSymbolPaperModal() {
