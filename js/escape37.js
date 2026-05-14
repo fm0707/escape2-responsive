@@ -1085,7 +1085,7 @@ let rooms = {
         width: 10.2,
         height: 6.6,
         onClick: clickWrap(function () {
-          showObj(null, "『実践黒魔法』", IMAGES.modals.bookDaemon, "黒魔法の巻物がある");
+          showObj(null, "『実践黒魔法』", IMAGES.modals.bookDaemon, "『実践黒魔法』という本がある");
         }),
         description: "本棚最下段左",
         zIndex: 5,
