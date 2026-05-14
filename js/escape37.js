@@ -178,7 +178,8 @@ IMAGES = {
     drinkWine: I37("modal_drink_wine.webp"),
     drinkWater: I37("modal_drink_water.webp"),
     fireMagicFailed: I37("modal_fire_magic_failed.webp"),
-    // badend: I37("badend.webp"),
+    puddingFlyer: I37("modal_pudding_flyer.webp"),
+    puddingFlyerEn: I37("modal_pudding_flyer_en.webp"),
     bearPower: I37("modal_bear_power.webp"),
     bearSpell: I37("modal_bear_spell.webp"),
     bearPudding: I37("modal_bear_pudding.webp"),
@@ -430,6 +431,19 @@ let rooms = {
     name: "中庭",
     description: "",
     clickableAreas: [
+      {
+        x: 59.2,
+        y: 43.3,
+        width: 2.8,
+        height: 2.5,
+        onClick: clickWrap(function () {
+          showObj(null, "", IMAGES.modals.puddingFlyer, "プリン店のチラシが貼ってある", IMAGES.modals.puddingFlyerEn);
+        }),
+        description: "プリンチラシ",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
       {
         x: 78.5,
         y: 74.5,
