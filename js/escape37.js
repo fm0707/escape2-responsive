@@ -180,6 +180,7 @@ IMAGES = {
     bearPower: I37("modal_bear_power.webp"),
     bearSpell: I37("modal_bear_spell.webp"),
     bearPudding: I37("modal_bear_pudding.webp"),
+    bearHappy: I37("modal_bear_Happy.webp"),
     bearDisappointed: I37("modal_bear_disappointed.webp"),
     badendBear: I37("badend_bear.webp"),
     badendBear2: I37("badend_bear2.webp"),
@@ -227,6 +228,7 @@ function getDefaultGameState() {
         glassWithWineDrinkCount: 0,
         foundTranceiverMessage: false,
         daemonBearArrived: false,
+        daemonBearFinishedPudding: false,
         foundTeko: false,
         foundKey: false,
         foundGlass: false,
@@ -3500,11 +3502,22 @@ function showMinisterJailBadEnd() {
 }
 
 function showDaemonBearTalkModal() {
-  showModal("デーモンベア「あ、見つかっちゃった」", `<p style="margin:0; line-height:1.8; text-align:center;"></p>`, [
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  const content = `
+    <div style="text-align:center;">
+      <img src="${IMAGES.items.daemonBear}" alt="デーモンベア" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
+      <p style="margin:0; line-height:1.8;"></p>
+    </div>
+  `;
+  const buttons = [
     { text: "あなたは誰？", action: showDaemonBearWhoModal },
     { text: "呪文を唱える", action: showDaemonBearSpellModal },
     { text: "閉じる", action: "close" },
-  ]);
+  ];
+  if (f.daemonBearFinishedPudding) {
+    buttons.splice(1, 0, { text: "美味しかった？", action: showDaemonBearPuddingAftertasteModal });
+  }
+  showModal("デーモンベア「こんにちは」", content, buttons);
 }
 
 function showDaemonBearWhoModal() {
@@ -3519,6 +3532,20 @@ function showDaemonBearWhoModal() {
     [{ text: "閉じる", action: "close" }],
   );
   updateMessage("「砦を支える可愛いデーモンだよ」");
+}
+
+function showDaemonBearPuddingAftertasteModal() {
+  showModal(
+    "「うん！」",
+    `
+      <div style="text-align:center;">
+        <img src="${IMAGES.modals.bearHappy}" alt="喜ぶデーモンベア" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
+        <p style="margin:0; line-height:1.8;">美味しかったよ</p>
+      </div>
+    `,
+    [{ text: "閉じる", action: "close" }],
+  );
+  updateMessage("美味しかったようだ");
 }
 
 function showDaemonBearPuddingModal() {
@@ -3547,6 +3574,7 @@ function startDaemonBearEatingPudding(duration = 60000) {
 
   removeItem("pudding");
   f.daemonBearEating = true;
+  f.daemonBearFinishedPudding = false;
   backEntranceFlags.backgroundState = 1;
   markProgress?.("daemon_bear_eating_pudding");
   updateMessage("デーモンベアはプリンを食べている。");
@@ -3555,6 +3583,7 @@ function startDaemonBearEatingPudding(duration = 60000) {
   if (daemonBearEatingTimer) clearTimeout(daemonBearEatingTimer);
   daemonBearEatingTimer = setTimeout(() => {
     f.daemonBearEating = false;
+    f.daemonBearFinishedPudding = true;
     backEntranceFlags.backgroundState = 0;
     daemonBearEatingTimer = null;
     if (gameState.currentRoom === "entrance" || gameState.currentRoom === "backEntrance") {
