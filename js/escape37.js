@@ -139,6 +139,7 @@ IMAGES = {
     jailHole: I37("jail_hole.webp"),
     pudding: I37("pudding.webp"),
     bearEating: I37("bearEating.webp"),
+    ghost: I37("ghost.webp"),
   },
   modals: {
     guardMaster1: I37("guard_master_1.webp"),
@@ -1385,10 +1386,10 @@ let rooms = {
     description: "",
     clickableAreas: [
       {
-        x: 68.9,
-        y: 51.8,
-        width: 10.5,
-        height: 12.6,
+        x: 65.3,
+        y: 48.5,
+        width: 11.6,
+        height: 15.7,
         onClick: clickWrap(function () {
           const f = gameState.main.flags || (gameState.main.flags = {});
           f.talkedBackEntranceGhost = true;
@@ -1396,8 +1397,8 @@ let rooms = {
         }),
         description: "おばけ",
         zIndex: 5,
-        usable: () => !gameState.main.flags.daemonBearEating,
-        item: { img: "IMAGE_KEY", visible: () => true },
+        usable: () => !gameState.main.flags.daemonBearEating && !gameState.main.flags.daemonBearFinishedPudding,
+        item: { img: "ghost", visible: () => !gameState.main.flags.daemonBearFinishedPudding },
       },
       {
         x: 77.1,
@@ -1914,9 +1915,6 @@ function getSleepingBearHint() {
 function travelWithSteps(destRoom, { useWarp = false } = {}) {
   const overlay = document.getElementById("roomEffectOverlay");
 
-  if (hasItem("puddingStrawberry")) {
-    removeItem("puddingStrawberry");
-  }
 
   playSE?.("se-ashioto");
 
@@ -3647,7 +3645,7 @@ function showDaemonBearSpellModal() {
 }
 
 function showDaemonBearKillBadEnd() {
-  const talkedGhost = !!gameState.main.flags?.talkedBackEntranceGhost;
+  const talkedGhost = !!gameState.main.flags?.talkedBackEntranceGhost && !gameState.main.flags?.daemonBearFinishedPudding;
   const animationHtml = talkedGhost
     ? `
       <div class="modal-anim frames" style="height:min(400px, 80vw);">
