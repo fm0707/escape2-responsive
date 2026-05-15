@@ -196,6 +196,7 @@ IMAGES = {
     washDish: I37("modal_wash_dish.webp"),
     ghostSoup: I37("modal_ghost_soup.webp"),
     ghostSoup2: I37("modal_ghost_soup2.webp"),
+    soup: I37("modal_soup.webp"),
     end: I37("end.mp4"),
     endMv: I37("end.mp4"),
   },
@@ -885,6 +886,10 @@ let rooms = {
               [{ text: "閉じる", action: "close" }],
             );
             updateMessage("スープを注いだ");
+            return;
+          }
+          if (gameState.main.flags.succeedFireSpell) {
+            showObj(null, "美味しそうなスープが火にかけられている", IMAGES.modals.soup, "美味しそうなスープが火にかけられている");
             return;
           }
           updateMessage("中身はスープのようだ");
