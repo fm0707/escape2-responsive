@@ -102,6 +102,7 @@ IMAGES = {
     book4: { jp: I37("book_4.webp"), en: I37("book_4_en.webp") },
 
     end: [I37("end.webp"), I37("end2.webp")],
+    trueEndBefore: [I37("true_end_before.webp")],
     trueEnd: [I37("true_end.webp")],
   },
   items: {
@@ -140,6 +141,9 @@ IMAGES = {
     pudding: I37("pudding.webp"),
     bearEating: I37("bearEating.webp"),
     ghost: I37("ghost.webp"),
+    emptyPuddingDish: I37("empty_pudding_dish.webp"),
+    cleanDish: I37("clean_dish.webp"),
+    soupDish: I37("soup_dish.webp"),
   },
   modals: {
     guardMaster1: I37("guard_master_1.webp"),
@@ -189,6 +193,9 @@ IMAGES = {
     badendBear2: I37("badend_bear2.webp"),
     badendDefeat: I37("badend_defeat.webp"),
     badendDrunk: I37("badend_drunk.webp"),
+    washDish: I37("modal_wash_dish.webp"),
+    ghostSoup: I37("modal_ghost_soup.webp"),
+    ghostSoup2: I37("modal_ghost_soup2.webp"),
     end: I37("end.mp4"),
     endMv: I37("end.mp4"),
   },
@@ -626,6 +633,14 @@ let rooms = {
             showDaemonBearPuddingModal();
             return;
           }
+          if (gameState.selectedItem === "teko") {
+            updateMessage("「まさか、それで叩いたりしないよね？」");
+            return;
+          }
+          if (gameState.selectedItem === "glassWithWine") {
+            updateMessage("「ワインを飲むと、眠くなっちゃうから…」");
+            return;
+          }
           showDaemonBearTalkModal();
         }),
         description: "デーモンクマ",
@@ -856,6 +871,22 @@ let rooms = {
         width: 16.1,
         height: 24.1,
         onClick: clickWrap(function () {
+          if (gameState.selectedItem === "cleanDish") {
+            removeItem("cleanDish");
+            addItem("soupDish");
+            showModal(
+              "スープを注いだ",
+              `
+                <div style="text-align:center;">
+                  <img src="${IMAGES.items.soupDish}" alt="スープ入りの容器" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
+                  <p style="margin:0; line-height:1.8;">スープを注いだ</p>
+                </div>
+              `,
+              [{ text: "閉じる", action: "close" }],
+            );
+            updateMessage("スープを注いだ");
+            return;
+          }
           updateMessage("中身はスープのようだ");
         }),
         description: "鍋",
@@ -1408,7 +1439,7 @@ let rooms = {
         width: 13.0,
         height: 15.7,
         onClick: clickWrap(function () {
-          if (gameState.selectedItem === "pudding") {
+          if (gameState.selectedItem === "pudding" || gameState.selectedItem === "soupDish") {
             showModal(
               "「…」",
               `
@@ -1438,7 +1469,7 @@ let rooms = {
         height: 21.1,
         onClick: clickWrap(function () {
           if (gameState.main.flags.daemonBearEating) {
-            travelToTrueEndWithLongBlackout();
+            travelToTrueEndBefore();
             return;
           }
           updateMessage("門は封印されているようだ");
@@ -1874,6 +1905,38 @@ let rooms = {
       },
     ],
   },
+  trueEndBefore: {
+    name: "門の外",
+    description: "遠くに集落が見える",
+    clickableAreas: [
+      {
+        x: 49.0,
+        y: 53.1,
+        width: 4.3,
+        height: 4.2,
+        onClick: clickWrap(function () {
+          updateMessage("あれは…？");
+        }),
+        description: "おばけ",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 64.5,
+        y: 36.6,
+        width: 23.4,
+        height: 8.2,
+        onClick: clickWrap(function () {
+          travelFromTrueEndBeforeToTrueEnd();
+        }),
+        description: "集落",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+    ],
+  },
 
   trueEnd: {
     name: "脱獄エンド",
@@ -1885,14 +1948,17 @@ let rooms = {
         width: 18.3,
         height: 25.4,
         onClick: clickWrap(function () {
+          if (gameState.selectedItem === "soupDish") {
+            showTrueEndGhostSoupModal();
+            return;
+          }
           updateMessage("窓から中をのぞいている");
         }),
         description: "お化け",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.trueEnd.flags.backgroundState == 0,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
-
       {
         x: 0,
         y: 0,
@@ -2051,6 +2117,33 @@ function travelToTrueEndWithLongBlackout() {
   }, 1600);
 }
 
+function travelToTrueEndBefore() {
+  playSE?.("se-ashioto");
+  changeRoom("trueEndBefore");
+}
+
+function travelFromTrueEndBeforeToTrueEnd() {
+  const overlay = document.getElementById("roomEffectOverlay");
+  const fx = gameState.fx || (gameState.fx = {});
+  fx.lockInput = true;
+
+  if (overlay) {
+    overlay.style.background = "#000";
+    overlay.style.opacity = 1;
+  }
+
+  setTimeout(() => {
+    changeRoom("trueEnd");
+    setTimeout(() => {
+      if (overlay) {
+        overlay.style.opacity = 0;
+        overlay.style.background = "";
+      }
+      if (gameState.fx) gameState.fx.lockInput = false;
+    }, 120);
+  }, 450);
+}
+
 // ゲーム初期化
 function initGame() {
   renderNavigation();
@@ -2180,6 +2273,8 @@ function changeRoom(roomId) {
   // BGM切替はそのまま
   if (roomId === "trueEnd") {
     changeBGM("sounds/37/hometown_biregia.mp3");
+  } else if (roomId === "trueEndBefore") {
+    changeBGM("sounds/37/backyard_de_hitori.mp3");
   } else if (roomId === "end") {
     changeBGM("sounds/37/gunkan_march.mp3");
   } else {
@@ -2191,7 +2286,7 @@ function changeRoom(roomId) {
     addNaviItem(roomId);
     renderNavigation();
   }
-  if (roomId === "trueEnd" || roomId === "end") {
+  if (roomId === "trueEnd" || roomId === "end" || roomId === "trueEndBefore") {
     gameState.openRooms = [];
     // renderNavigation();
   }
@@ -3252,6 +3347,23 @@ function handleWineBarrelClick() {
 }
 
 function handleWaterBarrelClick() {
+  if (gameState.selectedItem === "emptyPuddingDish") {
+    removeItem(gameState.selectedItem);
+    addItem("cleanDish");
+    showModal(
+      "プリンの容器を洗った",
+      `
+        <div style="text-align:center;">
+          <img src="${IMAGES.modals.washDish}" alt="洗ったプリンの容器" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
+          <p style="margin:0; line-height:1.8;">プリンの容器を洗った</p>
+        </div>
+      `,
+      [{ text: "閉じる", action: "close" }],
+    );
+    updateMessage("プリンの容器を洗った");
+    return;
+  }
+
   if (gameState.selectedItem !== "glass") {
     updateMessage("水の樽だ。");
     return;
@@ -4164,6 +4276,12 @@ function finishGuardRoomSoldierMoneyEvent() {
 }
 
 function handleGuardMasterAfterLineupClick() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.guardMasterDrinkItem) {
+    updateMessage("「いつでも出撃できそうだな」");
+    return;
+  }
+
   if (gameState.selectedItem === "glassWithWine" || gameState.selectedItem === "glassWithWater") {
     showGuardMasterDrinkEvent(gameState.selectedItem);
     return;
@@ -4206,6 +4324,27 @@ function showGuardMasterDrinkEvent(itemId) {
     updateMessage("占い師からの紙を受け取った。");
   });
   updateMessage(message);
+}
+
+function showTrueEndGhostSoupModal() {
+  const content = `
+    <div style="text-align:center;">
+      <div class="modal-anim">
+        <img src="${IMAGES.modals.ghostSoup}" alt="スープを受け取るおばけ">
+        <img src="${IMAGES.modals.ghostSoup2}" alt="スープを受け取ったおばけ">
+      </div>
+      <p style="margin:0; line-height:1.8;">話</p>
+    </div>
+  `;
+
+  playSE("se-hanko");
+  removeItem("soupDish");
+  showModal("話", content, [{ text: "閉じる", action: "close" }], () => {
+    const flags = gameState.trueEnd?.flags || (gameState.trueEnd = { flags: { backgroundState: 0 } }).flags;
+    flags.backgroundState = 1;
+    renderCanvasRoom?.();
+  });
+  updateMessage("話");
 }
 
 function showLeftSecondFloorDoorPuzzle() {
@@ -5215,75 +5354,6 @@ function useItem(slotIndex) {
     const isTsuboFixPair = (a === "tape" && b === "tsubo") || (a === "tsubo" && b === "tape");
 
     const isCurtainRodPair = (a === "curtain" && b === "rod") || (a === "rod" && b === "curtain");
-    if (isCurtainRodPair) {
-      clearUsingItem(true);
-      removeItem("curtain");
-      removeItem("rod");
-      addItem("curtainRod");
-      showModal("カーテンと突っ張り棒を組み合わせた！", `<img src="${IMAGES.items.curtainRod}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
-      updateMessage("カーテンと突っ張り棒を組み合わせた！");
-      return;
-    }
-
-    const isBatteryPenLightPair = (a === "battery" && b === "penLightEmpty") || (a === "penLightEmpty" && b === "battery");
-    if (isBatteryPenLightPair) {
-      clearUsingItem(true);
-      removeItem("battery");
-      removeItem("penLightEmpty");
-      addItem("penLight");
-      showModal("電池をペンライトにセットした", `<img src="${IMAGES.modals.batterySet}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
-      updateMessage("電池をペンライトにセットした");
-      return;
-    }
-
-    const isBatterySaturnPair = (a === "battery" && b === "objectSaturn") || (a === "objectSaturn" && b === "battery");
-    if (isBatterySaturnPair) {
-      clearUsingItem(true);
-      removeItem("battery");
-      removeItem("objectSaturn");
-      addItem("lightSaturn");
-      playSE("se-switch");
-      showModal("電池をセットした", `<img src="${IMAGES.modals.putBattery}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
-      updateMessage("電池をセットした");
-      return;
-    }
-
-    const isAlcoholTissuePair = (a === "alcohol" && b === "tissue") || (a === "tissue" && b === "alcohol");
-    if (isAlcoholTissuePair) {
-      clearUsingItem(true);
-      removeItem("alcohol");
-      removeItem("tissue");
-      addItem("wetTissue");
-      showModal("ポケットティッシュに消毒用アルコールを垂らした", `<img src="${IMAGES.modals.tissueAlcohol}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
-      updateMessage("ポケットティッシュに消毒用アルコールを垂らした");
-      return;
-    }
-
-    const isHandyLightMemoPair = (a === "handyLight" && b === "memo") || (a === "memo" && b === "handyLight");
-    if (isHandyLightMemoPair) {
-      clearUsingItem(true);
-      playSE?.("se-switch");
-      const memoLightImage = uiLang === "en" ? IMAGES.modals.memoLightEn : IMAGES.modals.memoLight;
-      showModal("メモをライトで照らした", `<img src="${memoLightImage}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
-      updateMessage("メモをライトで照らした");
-      return;
-    }
-
-    const isLoupeMapPair = (a === "loupe" && b === "map") || (a === "map" && b === "loupe");
-    if (isLoupeMapPair) {
-      clearUsingItem(true);
-      showModal("学者の虫眼鏡を使った。文字が浮かび上がっている", `<img src="${IMAGES.modals.mapN}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
-      updateMessage("学者の虫眼鏡を使った。文字が浮かび上がっている");
-      return;
-    }
-
-    const isLoupeHammerPair = (a === "loupe" && b === "hammer") || (a === "hammer" && b === "loupe");
-    if (isLoupeHammerPair) {
-      clearUsingItem(true);
-      showModal("学者の虫眼鏡を使った。文字が浮かび上がっている", `<img src="${IMAGES.modals.hammerString}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
-      updateMessage("学者の虫眼鏡を使った。文字が浮かび上がっている");
-      return;
-    }
   }
 
   if (gameState.selectedItemSlot === slotIndex) {
@@ -5324,6 +5394,9 @@ function getItemName(itemId) {
     glassWithWater: "水入りコップ",
     money: "金貨",
     pudding: "冷えた焼きプリン",
+    emptyPuddingDish: "プリンの空容器",
+    cleanDish: "きれいな容器",
+    soupDish: "スープ入りの容器",
   };
   return names[itemId] || itemId;
 }
