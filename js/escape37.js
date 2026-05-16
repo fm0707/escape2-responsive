@@ -137,10 +137,8 @@ IMAGES = {
     boxClosed: I37("box_closed.webp"),
     boxOpened: I37("box_opened.webp"),
     jailHole: I37("jail_hole.webp"),
-    pudding: I37("pudding.webp"),
     bearEating: I37("bear_eating.webp"),
     ghost: I37("ghost.webp"),
-    // emptyPuddingDish: I37("empty_pudding_dish.webp"),
     cleanDish: I37("clean_dish.webp"),
     soupDish: I37("soup_dish.webp"),
     lock: I37("lock.webp"),
@@ -182,8 +180,6 @@ IMAGES = {
     drinkWine: I37("modal_drink_wine.webp"),
     drinkWater: I37("modal_drink_water.webp"),
     fireMagicFailed: I37("modal_fire_magic_failed.webp"),
-    puddingFlyer: I37("modal_pudding_flyer.webp"),
-    puddingFlyerEn: I37("modal_pudding_flyer_en.webp"),
     bearPower: I37("modal_bear_power.webp"),
     bearSpell: I37("modal_bear_spell.webp"),
     bearSoup: I37("modal_bear_soup.webp"),
@@ -1427,7 +1423,7 @@ let rooms = {
         width: 13.0,
         height: 15.7,
         onClick: clickWrap(function () {
-          if (gameState.selectedItem === "pudding" || gameState.selectedItem === "soupDish") {
+          if (gameState.selectedItem === "soupDish") {
             showModal(
               "「…」",
               `
@@ -3198,23 +3194,6 @@ function handleWineBarrelClick() {
 }
 
 function handleWaterBarrelClick() {
-  if (gameState.selectedItem === "emptyPuddingDish") {
-    removeItem(gameState.selectedItem);
-    addItem("cleanDish");
-    showModal(
-      "プリンの容器を洗った",
-      `
-        <div style="text-align:center;">
-          <img src="${IMAGES.modals.washDish}" alt="洗ったプリンの容器" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
-          <p style="margin:0; line-height:1.8;">プリンの容器を洗った</p>
-        </div>
-      `,
-      [{ text: "閉じる", action: "close" }],
-    );
-    updateMessage("プリンの容器を洗った");
-    return;
-  }
-
   if (gameState.selectedItem !== "glass") {
     updateMessage("水の樽だ。");
     return;
@@ -4920,7 +4899,7 @@ function showMailboxPasscode() {
   };
 
   if (f.unlockMailbox) {
-    acquireItemOnce("foundMailboxMessage", "message", "郵便ポストにメッセージがある", IMAGES.items.message, "メッセージを手に入れた");
+    acquireItemOnce("foundMailboxMessage", "message", "通信ポストにメッセージがある", IMAGES.items.message, "メッセージを手に入れた");
     return;
   }
 
@@ -5219,8 +5198,6 @@ function getItemName(itemId) {
     glassWithWine: "ワイン入りコップ",
     glassWithWater: "水入りコップ",
     money: "金貨",
-    pudding: "冷えた焼きプリン",
-    emptyPuddingDish: "プリンの空容器",
     cleanDish: "きれいな容器",
     soupDish: "スープ入りの容器",
   };
