@@ -327,12 +327,12 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 15.0,
-        y: 61.6,
-        width: 17.6,
-        height: 24.0,
+        x: 18.0,
+        y: 80.0,
+        width: 18.2,
+        height: 29.8,
         onClick: clickWrap(function () {
-          updateMessage("傭兵「整列なんて正規兵にやらせとけよ。俺たちは傭兵だぜ？」");
+          updateMessage("傭兵「傭兵に限らず、足は大事だからな。いざというときはさっさと逃げないと」");
         }),
         description: "左下茶色マント傭兵",
         zIndex: 5,
@@ -3330,8 +3330,8 @@ function openFeedbackForm(endingId) {
   const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc-SJGWVTVvSyZYsp9jO2JFN-iZWguDQDc9xyy0n1sHcrSuuA/viewform";
   const endingLabel =
     {
-      trueEnd: "脱獄エンド",
-      end: "出撃エンド",
+      trueEnd: "脱〇エンド",
+      end: "出〇エンド",
     }[endingId] || "エンド";
 
   const params = new URLSearchParams({
