@@ -138,6 +138,7 @@ IMAGES = {
     boxOpened: I37("box_opened.webp"),
     jailHole: I37("jail_hole.webp"),
     bearEating: I37("bear_eating.webp"),
+    bearBack: I37("bear_back.webp"),
     ghost: I37("ghost.webp"),
     cleanDish: I37("clean_dish.webp"),
     soupDish: I37("soup_dish.webp"),
@@ -237,6 +238,8 @@ function getDefaultGameState() {
         foundMailboxMessage: false,
         foundKitchenBoxCleanDish: false,
         daemonBearArrived: false,
+        daemonBearSoupDeniedCount: 0,
+        daemonBearBackTurned: false,
         daemonBearFinishedPudding: false,
         foundTeko: false,
         foundKey: false,
@@ -626,6 +629,10 @@ let rooms = {
         width: 17.9,
         height: 17.9,
         onClick: clickWrap(function () {
+          if (gameState.main.flags.daemonBearBackTurned) {
+            updateMessage("ボクは砦を守るんだから…こんなことで怒らないぞ…ブツブツ");
+            return;
+          }
           if (gameState.main.flags.daemonBearEating) {
             showObj(null, "スープに集中している。<br>デーモンの業務がおろそかになっていないだろうか…", IMAGES.items.bearEating, "デーモンクマはスープに集中している。デーモンの業務がおろそかになっていないだろうか…");
             return;
@@ -648,7 +655,7 @@ let rooms = {
         zIndex: 5,
         usable: () => gameState.main.flags.daemonBearArrived,
         item: {
-          img: () => (gameState.main.flags.daemonBearEating ? "bearEating" : "daemonBear"),
+          img: () => (gameState.main.flags.daemonBearEating ? "bearEating" : gameState.main.flags.daemonBearBackTurned ? "bearBack" : "daemonBear"),
           visible: () => gameState.main.flags.daemonBearArrived || !!gameState.fx?.daemonBearFloatIn,
         },
       },
@@ -3534,9 +3541,23 @@ function showDaemonBearSoupModal() {
         startDaemonBearEatingSoup();
       },
     },
-    { text: "やっぱりだめ", action: showDaemonBearDisappointedModal },
+    { text: "やっぱりだめ", action: handleDaemonBearSoupDenied },
   ]);
   updateMessage("わあ。食べていいの？");
+}
+
+function handleDaemonBearSoupDenied() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  f.daemonBearSoupDeniedCount = (Number(f.daemonBearSoupDeniedCount) || 0) + 1;
+  if (f.daemonBearSoupDeniedCount >= 3) {
+    f.daemonBearBackTurned = true;
+    closeModal();
+    renderCanvasRoom?.();
+    updateMessage("ボクは砦を守るんだから…こんなことで怒らないぞ…ブツブツ");
+    return;
+  }
+
+  showDaemonBearDisappointedModal();
 }
 
 function startDaemonBearEatingSoup(duration = 60000) {
