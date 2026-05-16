@@ -3495,7 +3495,7 @@ function showDaemonBearTalkModal() {
   if (f.daemonBearFinishedPudding) {
     buttons.splice(1, 0, { text: "美味しかった？", action: showDaemonBearPuddingAftertasteModal });
   }
-  showModal("デーモンベア「こんにちは」", content, buttons);
+  showModal("デーモンベア「呼んだ？」", content, buttons);
 }
 
 function showDaemonBearWhoModal() {
