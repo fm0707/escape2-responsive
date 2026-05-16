@@ -327,10 +327,10 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 18.0,
-        y: 80.0,
-        width: 18.2,
-        height: 29.8,
+        x: 14.5,
+        y: 65.6,
+        width: 15.2,
+        height: 25.9,
         onClick: clickWrap(function () {
           updateMessage("傭兵「傭兵に限らず、足は大事だからな。いざというときはさっさと逃げないと」");
         }),
