@@ -966,7 +966,9 @@ let rooms = {
         y: 71.6,
         width: 7.8,
         height: 9.6,
-        onClick: clickWrap(function () {}),
+        onClick: clickWrap(function () {
+          updateMessage("ピッチャーがある");
+        }),
         description: "ピッチャー",
         zIndex: 5,
         usable: () => true,
