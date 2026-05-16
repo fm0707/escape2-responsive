@@ -82,7 +82,6 @@ const ICM = (file) => `${BASE_COMMON}/${file}`;
 IMAGES = {
   rooms: {
     entrance: [I37("entrance.webp")],
-    tranceiver: [I37("tranceiver.webp")],
     courtyard: [I37("courtyard.webp")],
     insideTeoshi: [I37("inside_teoshi.webp")],
     kitchen: [I37("kitchen.webp")],
@@ -139,11 +138,12 @@ IMAGES = {
     boxOpened: I37("box_opened.webp"),
     jailHole: I37("jail_hole.webp"),
     pudding: I37("pudding.webp"),
-    bearEating: I37("bearEating.webp"),
+    bearEating: I37("bear_eating.webp"),
     ghost: I37("ghost.webp"),
-    emptyPuddingDish: I37("empty_pudding_dish.webp"),
+    // emptyPuddingDish: I37("empty_pudding_dish.webp"),
     cleanDish: I37("clean_dish.webp"),
     soupDish: I37("soup_dish.webp"),
+    lock: I37("lock.webp"),
   },
   modals: {
     guardMaster1: I37("guard_master_1.webp"),
@@ -186,7 +186,7 @@ IMAGES = {
     puddingFlyerEn: I37("modal_pudding_flyer_en.webp"),
     bearPower: I37("modal_bear_power.webp"),
     bearSpell: I37("modal_bear_spell.webp"),
-    bearPudding: I37("modal_bear_pudding.webp"),
+    bearSoup: I37("modal_bear_soup.webp"),
     bearHappy: I37("modal_bear_Happy.webp"),
     bearDisappointed: I37("modal_bear_disappointed.webp"),
     badendBear: I37("badend_bear.webp"),
@@ -194,8 +194,6 @@ IMAGES = {
     badendDefeat: I37("badend_defeat.webp"),
     badendDrunk: I37("badend_drunk.webp"),
     washDish: I37("modal_wash_dish.webp"),
-    ghostSoup: I37("modal_ghost_soup.webp"),
-    ghostSoup2: I37("modal_ghost_soup2.webp"),
     soup: I37("modal_soup.webp"),
     end: I37("end.mp4"),
     endMv: I37("end.mp4"),
@@ -236,10 +234,12 @@ function getDefaultGameState() {
         unlockLeftSecondFloorLeftEntrance: false,
         unlockLeftSecondFloorDoor: false,
         unlockLeftSecondFloorButtonPushed: false,
-        unlockTranceiverUpperDoor: false,
+        unlockMailbox: false,
+        unlockKitchenBox: false,
         guardMasterDrinkItem: null,
         glassWithWineDrinkCount: 0,
-        foundTranceiverMessage: false,
+        foundMailboxMessage: false,
+        foundKitchenBoxCleanDish: false,
         daemonBearArrived: false,
         daemonBearFinishedPudding: false,
         foundTeko: false,
@@ -440,19 +440,6 @@ let rooms = {
     description: "",
     clickableAreas: [
       {
-        x: 59.2,
-        y: 43.3,
-        width: 2.8,
-        height: 2.5,
-        onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.puddingFlyer, "プリン店のチラシが貼ってある", IMAGES.modals.puddingFlyerEn);
-        }),
-        description: "プリンチラシ",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
         x: 78.5,
         y: 74.5,
         width: 5.7,
@@ -608,17 +595,34 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 83.1,
-        y: 69.0,
-        width: 16.9,
-        height: 30.4,
+        x: 82.5,
+        y: 55.0,
+        width: 17.3,
+        height: 23.0,
         onClick: clickWrap(function () {
-          changeRoom("tranceiver");
+          showMailboxPasscode();
         }),
-        description: "送受信機",
+        description: "郵便ポスト",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 86.2,
+        y: 68.8,
+        width: 5.4,
+        height: 4.8,
+        onClick: clickWrap(function () {
+          showMailboxPasscode();
+        }),
+        description: "郵便ポスト取り出し口",
+        zIndex: 6,
+        usable: () => gameState.main.flags.unlockMailbox && !gameState.main.flags.foundMailboxMessage,
+        item: {
+          img: "message",
+          visible: () => gameState.main.flags.unlockMailbox && !gameState.main.flags.foundMailboxMessage,
+          rotateDeg: -4,
+        },
       },
       {
         x: 64.5,
@@ -627,11 +631,11 @@ let rooms = {
         height: 17.9,
         onClick: clickWrap(function () {
           if (gameState.main.flags.daemonBearEating) {
-            showObj(null, "プリンに集中している。<br>デーモンの業務がおろそかになっていないだろうか…", IMAGES.items.bearEating, "デーモンクマはプリンに集中している。デーモンの業務がおろそかになっていないだろうか…");
+            showObj(null, "スープに集中している。<br>デーモンの業務がおろそかになっていないだろうか…", IMAGES.items.bearEating, "デーモンクマはスープに集中している。デーモンの業務がおろそかになっていないだろうか…");
             return;
           }
-          if (gameState.selectedItem === "pudding") {
-            showDaemonBearPuddingModal();
+          if (gameState.selectedItem === "soupDish") {
+            showDaemonBearSoupModal();
             return;
           }
           if (gameState.selectedItem === "teko") {
@@ -664,53 +668,6 @@ let rooms = {
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
-      },
-    ],
-  },
-  tranceiver: {
-    name: "メッセージ送受信器",
-    description: "",
-    clickableAreas: [
-      {
-        x: 23.2,
-        y: 2.3,
-        width: 37.4,
-        height: 34.0,
-        onClick: clickWrap(function () {
-          showTranceiverUpperDoorPasscode();
-        }),
-        description: "上扉",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 22.9,
-        y: 39.0,
-        width: 37.5,
-        height: 57.5,
-        onClick: clickWrap(function () {
-          handleTranceiverLowerDoor();
-        }),
-        description: "下扉",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
-        onClick: clickWrap(
-          function () {
-            changeRoom("entrance");
-          },
-          { allowAtNight: true },
-        ),
-        description: "送受信機戻る、出入口へ",
-        zIndex: 5,
-        item: { img: "back", visible: () => true },
       },
     ],
   },
@@ -875,12 +832,12 @@ let rooms = {
           if (gameState.selectedItem === "cleanDish") {
             removeItem("cleanDish");
             addItem("soupDish");
+            playSE("se-tea");
             showModal(
               "スープを注いだ",
               `
                 <div style="text-align:center;">
                   <img src="${IMAGES.items.soupDish}" alt="スープ入りの容器" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
-                  <p style="margin:0; line-height:1.8;">スープを注いだ</p>
                 </div>
               `,
               [{ text: "閉じる", action: "close" }],
@@ -927,6 +884,30 @@ let rooms = {
         zIndex: 5,
         usable: () => true,
         item: { img: () => (gameState.main.flags.succeedFireSpell ? "wizardSmile" : "wizard"), visible: () => true },
+      },
+      {
+        x: 25.7,
+        y: 87.8,
+        width: 12.6,
+        height: 11.1,
+        onClick: clickWrap(function () {
+          handleLockedKitchenBox();
+        }),
+        description: "鍵のかかった小箱",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 33.8,
+        y: 94.1,
+        width: 1.6,
+        height: 1.9,
+        onClick: clickWrap(function () {}),
+        description: "鍵のかかった小箱のロック",
+        zIndex: 5,
+        usable: () => false,
+        item: { img: "lock", visible: () => !gameState.main.flags.unlockKitchenBox },
       },
       {
         x: 58.8,
@@ -1460,7 +1441,7 @@ let rooms = {
           }
           const f = gameState.main.flags || (gameState.main.flags = {});
           f.talkedBackEntranceGhost = true;
-          updateMessage("「あの扉さえ空けば、外に出られたのに」");
+          updateMessage("謎のおばけ「あの扉さえ空けば、外に出られたのに」");
         }),
         description: "おばけ",
         zIndex: 5,
@@ -1953,10 +1934,6 @@ let rooms = {
         width: 18.3,
         height: 25.4,
         onClick: clickWrap(function () {
-          if (gameState.selectedItem === "soupDish") {
-            showTrueEndGhostSoupModal();
-            return;
-          }
           updateMessage("窓から中をのぞいている");
         }),
         description: "お化け",
@@ -2360,8 +2337,6 @@ function renderCanvasRoom() {
   drawRoomItems(ctx, canvas, roomId);
   drawDeskDrawerOpenFx(ctx, canvas, roomId);
   drawCabinetTopOpenFx(ctx, canvas, roomId);
-  drawTranceiverUpperDoorOpenFx(ctx, canvas, roomId);
-  drawTranceiverLowerDoorOpenFx(ctx, canvas, roomId);
   drawBarrelWinePourFx(ctx, canvas, roomId);
 
   drawLockerDoorFx(ctx, canvas, roomId);
@@ -3079,137 +3054,6 @@ function drawCabinetTopOpenFx(ctx, canvas, roomId) {
   ctx.restore();
 }
 
-function drawTranceiverUpperDoorOpenFx(ctx, canvas, roomId) {
-  drawTranceiverDoorOpenFx(ctx, canvas, roomId, "tranceiverUpperDoorOpen");
-}
-
-function drawTranceiverLowerDoorOpenFx(ctx, canvas, roomId) {
-  drawTranceiverDoorOpenFx(ctx, canvas, roomId, "tranceiverLowerDoorOpen");
-}
-
-function drawTranceiverDoorOpenFx(ctx, canvas, roomId, fxKey) {
-  const fx = gameState.fx?.[fxKey];
-  if (!fx || fx.roomId !== roomId) return;
-
-  const rect = getAreaRectPx(roomId, fx.areaDescription, canvas);
-  if (!rect) return;
-
-  const t = Math.max(0, Math.min(1, Number(fx.progress) || 0));
-  const open = Math.sin(t * Math.PI);
-  if (open <= 0.01) return;
-
-  const radius = Math.max(3, rect.h * 0.06);
-  const insetX = Math.max(4, rect.w * 0.035);
-  const insetY = Math.max(3, rect.h * 0.05);
-  const rightPullX = rect.w * 0.1 * open;
-  const rightPullY = rect.h * 0.16 * open;
-  const visibleW = rect.w * (1 - 0.22 * open);
-
-  ctx.save();
-
-  const cavity = ctx.createLinearGradient(rect.x, rect.y, rect.x, rect.y + rect.h);
-  cavity.addColorStop(0, "rgba(24, 20, 12, 0.96)");
-  cavity.addColorStop(1, "rgba(5, 4, 3, 0.96)");
-  ctx.fillStyle = cavity;
-  roundRect(ctx, rect.x, rect.y, rect.w, rect.h, radius, true, false);
-
-  ctx.strokeStyle = "rgba(255, 242, 190, 0.24)";
-  ctx.lineWidth = Math.max(1, rect.w * 0.01);
-  roundRect(ctx, rect.x + insetX, rect.y + insetY, rect.w - insetX * 2, rect.h - insetY * 2, radius, false, true);
-
-  ctx.shadowColor = "rgba(0, 0, 0, 0.34)";
-  ctx.shadowBlur = 12;
-  ctx.shadowOffsetX = Math.max(2, rect.w * 0.05) * open;
-  ctx.shadowOffsetY = Math.max(2, rect.h * 0.05) * open;
-
-  const topLeft = { x: rect.x, y: rect.y };
-  const bottomLeft = { x: rect.x, y: rect.y + rect.h };
-  const topRight = { x: rect.x + visibleW + rightPullX, y: rect.y - rightPullY };
-  const bottomRight = { x: rect.x + visibleW + rightPullX, y: rect.y + rect.h + rightPullY };
-
-  const doorFill = ctx.createLinearGradient(rect.x, rect.y, topRight.x, rect.y);
-  doorFill.addColorStop(0, "#FFF1BA");
-  doorFill.addColorStop(0.5, "#F2DD9E");
-  doorFill.addColorStop(1, "#D9BF76");
-  ctx.fillStyle = doorFill;
-  ctx.strokeStyle = "rgba(96, 78, 36, 0.9)";
-  ctx.lineWidth = Math.max(1.5, rect.w * 0.018);
-  ctx.beginPath();
-  ctx.moveTo(topLeft.x, topLeft.y);
-  ctx.lineTo(topRight.x, topRight.y);
-  ctx.lineTo(bottomRight.x, bottomRight.y);
-  ctx.lineTo(bottomLeft.x, bottomLeft.y);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.42)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(topLeft.x + 3, topLeft.y + 3);
-  ctx.lineTo(topRight.x - 3, topRight.y + 3);
-  ctx.stroke();
-
-  ctx.restore();
-}
-
-function playTranceiverUpperDoorOpenFx(onDone) {
-  playTranceiverDoorOpenFx("tranceiverUpperDoorOpen", "上扉", onDone);
-}
-
-function playTranceiverLowerDoorOpenFx(onDone) {
-  playTranceiverDoorOpenFx("tranceiverLowerDoorOpen", "下扉", onDone);
-}
-
-function playTranceiverDoorOpenFx(fxKey, areaDescription, onDone) {
-  const fx = gameState.fx || (gameState.fx = {});
-  if (gameState.currentRoom !== "tranceiver" || fx.lockInput || fx[fxKey]) {
-    onDone?.();
-    return;
-  }
-
-  fx.lockInput = true;
-  fx[fxKey] = {
-    roomId: "tranceiver",
-    areaDescription,
-    progress: 0,
-  };
-
-  playSE?.("se-door-close");
-  renderCanvasRoom?.();
-
-  const duration = 760;
-  const start = performance.now();
-  const tick = (now) => {
-    const currentFx = gameState.fx?.[fxKey];
-    if (!currentFx) {
-      if (gameState.fx) gameState.fx.lockInput = false;
-      renderCanvasRoom?.();
-      onDone?.();
-      return;
-    }
-
-    const t = Math.min(1, (now - start) / duration);
-    currentFx.progress = t;
-    renderCanvasRoom?.();
-
-    if (t < 1) {
-      requestAnimationFrame(tick);
-      return;
-    }
-
-    delete gameState.fx[fxKey];
-    gameState.fx.lockInput = false;
-    renderCanvasRoom?.();
-    onDone?.();
-  };
-
-  requestAnimationFrame(tick);
-}
-
 // ===== 演出ユーティリティ =====
 function easeOutCubic(t) {
   return 1 - Math.pow(1 - t, 3);
@@ -3694,36 +3538,36 @@ function showDaemonBearPuddingAftertasteModal() {
   updateMessage("美味しかったようだ");
 }
 
-function showDaemonBearPuddingModal() {
+function showDaemonBearSoupModal() {
   const content = `
     <div style="text-align:center;">
-      <img src="${IMAGES.modals.bearPudding}" alt="プリンを見るデーモンベア" style="width:400px;max-width:100%;display:block;margin:0 auto 16px;">
+      <img src="${IMAGES.modals.bearSoup}" alt="スープを見るデーモンベア" style="width:400px;max-width:100%;display:block;margin:0 auto 16px;">
       <p style="margin:0; line-height:1.8;"></p>
     </div>
   `;
-  showModal("「美味しそう…食べていいの？」", content, [
+  showModal("「わあ。食べていいの？」", content, [
     {
       text: "いいよ",
       action: () => {
         closeModal();
-        startDaemonBearEatingPudding();
+        startDaemonBearEatingSoup();
       },
     },
     { text: "やっぱりだめ", action: showDaemonBearDisappointedModal },
   ]);
-  updateMessage("美味しそう…食べていいの？");
+  updateMessage("わあ。食べていいの？");
 }
 
-function startDaemonBearEatingPudding(duration = 60000) {
+function startDaemonBearEatingSoup(duration = 60000) {
   const f = gameState.main.flags || (gameState.main.flags = {});
   const backEntranceFlags = gameState.backEntrance?.flags || (gameState.backEntrance = { flags: { backgroundState: 0 } }).flags;
 
-  removeItem("pudding");
+  removeItem("soupDish");
   f.daemonBearEating = true;
   f.daemonBearFinishedPudding = false;
   backEntranceFlags.backgroundState = 1;
-  markProgress?.("daemon_bear_eating_pudding");
-  updateMessage("デーモンベアはプリンを食べている。");
+  markProgress?.("daemon_bear_eating_soup");
+  updateMessage("デーモンベアは仕事を休んでスープを味わっている。");
   renderCanvasRoom?.();
 
   if (daemonBearEatingTimer) clearTimeout(daemonBearEatingTimer);
@@ -4329,27 +4173,6 @@ function showGuardMasterDrinkEvent(itemId) {
     updateMessage("占い師からの紙を受け取った。");
   });
   updateMessage(message);
-}
-
-function showTrueEndGhostSoupModal() {
-  const content = `
-    <div style="text-align:center;">
-      <div class="modal-anim">
-        <img src="${IMAGES.modals.ghostSoup}" alt="スープを受け取るおばけ">
-        <img src="${IMAGES.modals.ghostSoup2}" alt="スープを受け取ったおばけ">
-      </div>
-      <p style="margin:0; line-height:1.8;">話</p>
-    </div>
-  `;
-
-  playSE("se-hanko");
-  removeItem("soupDish");
-  showModal("話", content, [{ text: "閉じる", action: "close" }], () => {
-    const flags = gameState.trueEnd?.flags || (gameState.trueEnd = { flags: { backgroundState: 0 } }).flags;
-    flags.backgroundState = 1;
-    renderCanvasRoom?.();
-  });
-  updateMessage("話");
 }
 
 function showLeftSecondFloorDoorPuzzle() {
@@ -5080,13 +4903,13 @@ function showStaffRoomPcLogin() {
   }, 0);
 }
 
-function showTranceiverUpperDoorPasscode() {
+function showMailboxPasscode() {
   const f = gameState.main.flags || (gameState.main.flags = {});
 
   const startTransmission = () => {
     f.daemonBearArrived = false;
     changeRoom("entrance");
-    updateMessage("通信機が起動した。");
+    updateMessage("通信プロセスが起動した。");
     playDaemonBearFloatInFx(() => {
       f.daemonBearArrived = true;
       renderCanvasRoom?.();
@@ -5094,10 +4917,8 @@ function showTranceiverUpperDoorPasscode() {
     });
   };
 
-  if (f.unlockTranceiverUpperDoor) {
-    playTranceiverUpperDoorOpenFx(() => {
-      acquireItemOnce("foundTranceiverMessage", "message", "上段にメッセージがある", IMAGES.items.message, "メッセージを手に入れた");
-    });
+  if (f.unlockMailbox) {
+    acquireItemOnce("foundMailboxMessage", "message", "郵便ポストにメッセージがある", IMAGES.items.message, "メッセージを手に入れた");
     return;
   }
 
@@ -5105,26 +4926,26 @@ function showTranceiverUpperDoorPasscode() {
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
       <div style="width:min(82vw, 340px); padding:18px; box-sizing:border-box; border:2px solid #2b3340; background:#eef2f6; color:#1d2530; text-align:center;">
         <div style="font-size:1.05em; font-weight:700; margin-bottom:14px;">⚔️パスコードを入力してください</div>
-        <input id="tranceiverUpperDoorPasscode" class="puzzle-input" type="text" maxlength="4" placeholder="英字4文字" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:220px; max-width:100%; text-align:center; font-size:1.05em; letter-spacing:0.12em;">
+        <input id="mailboxPasscode" class="puzzle-input" type="text" maxlength="4" placeholder="英字4文字" autocapitalize="off" autocomplete="off" spellcheck="false" style="width:220px; max-width:100%; text-align:center; font-size:1.05em; letter-spacing:0.12em;">
       </div>
-      <button id="tranceiverUpperDoorPasscodeOk" class="ok-btn" type="button">OK</button>
-      <div id="tranceiverUpperDoorPasscodeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+      <button id="mailboxPasscodeOk" class="ok-btn" type="button">OK</button>
+      <div id="mailboxPasscodeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
   `;
 
-  showModal("上扉のロック", content, [{ text: "閉じる", action: "close" }]);
+  showModal("郵便ポストのロック", content, [{ text: "閉じる", action: "close" }]);
 
   setTimeout(() => {
-    const inputEl = document.getElementById("tranceiverUpperDoorPasscode");
-    const okBtn = document.getElementById("tranceiverUpperDoorPasscodeOk");
-    const hintEl = document.getElementById("tranceiverUpperDoorPasscodeHint");
+    const inputEl = document.getElementById("mailboxPasscode");
+    const okBtn = document.getElementById("mailboxPasscodeOk");
+    const hintEl = document.getElementById("mailboxPasscodeHint");
     if (!inputEl || !okBtn || !hintEl) return;
 
     const submit = () => {
       const answer = String(inputEl.value || "").trim();
       if (answer.toLowerCase() === "post") {
-        f.unlockTranceiverUpperDoor = true;
-        markProgress?.("unlock_tranceiver_upper_door");
+        f.unlockMailbox = true;
+        markProgress?.("unlock_mailbox");
         playSE?.("se-cyber");
         showModal("通信プロセス呼出", `<p style="margin:0; line-height:1.8; text-align:center;">ピピピ…</p>`, [{ text: "OK", action: "close" }], startTransmission);
         return;
@@ -5146,32 +4967,30 @@ function showTranceiverUpperDoorPasscode() {
   }, 0);
 }
 
-function handleTranceiverLowerDoor() {
+function handleLockedKitchenBox() {
   const f = gameState.main.flags || (gameState.main.flags = {});
 
-  if (!f.unlockTranceiverLowerDoor) {
+  if (!f.unlockKitchenBox) {
     if (gameState.selectedItem === "key") {
       removeItem("key");
-      f.unlockTranceiverLowerDoor = true;
-      markProgress?.("unlock_tranceiver_lower_door");
+      f.unlockKitchenBox = true;
+      markProgress?.("unlock_kitchen_box");
       playSE?.("se-gacha");
       renderCanvasRoom?.();
-      updateMessage("下扉のロックが解除された。");
+      updateMessage("小箱のロックが解除された。");
       return;
     }
 
-    updateMessage("下扉には鍵がかかっている。");
+    updateMessage("小箱には鍵がかかっている。");
     return;
   }
 
-  playTranceiverLowerDoorOpenFx(() => {
-    if (f.foundTranceiverPudding) {
-      updateMessage("下扉の中は空だ。");
-      return;
-    }
+  if (f.foundKitchenBoxCleanDish) {
+    updateMessage("小箱の中は空だ。");
+    return;
+  }
 
-    acquireItemOnce("foundTranceiverPudding", "pudding", "下扉の中にプリンがある", IMAGES.items.pudding, "プリンを手に入れた");
-  });
+  acquireItemOnce("foundKitchenBoxCleanDish", "cleanDish", "小箱の中にきれいな容器がある", IMAGES.items.cleanDish, "きれいな容器を手に入れた");
 }
 
 function handleDoor() {
@@ -5628,13 +5447,15 @@ function renderNavigation() {
   }
 
   // PCは従来通り（ルームボタン並べる）
-  gameState.openRooms.forEach((roomId) => {
-    const b = document.createElement("button");
-    b.className = "nav-btn";
-    b.textContent = rooms[roomId].name;
-    b.onclick = () => changeRoom(roomId);
-    navDiv.appendChild(b);
-  });
+  gameState.openRooms
+    .filter((roomId) => rooms[roomId])
+    .forEach((roomId) => {
+      const b = document.createElement("button");
+      b.className = "nav-btn";
+      b.textContent = rooms[roomId].name;
+      b.onclick = () => changeRoom(roomId);
+      navDiv.appendChild(b);
+    });
 }
 
 function openNavModal() {
@@ -5642,6 +5463,7 @@ function openNavModal() {
   const listHtml = `
     <div style="display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto;">
       ${gameState.openRooms
+        .filter((roomId) => rooms[roomId])
         .map((roomId) => {
           const isHere = roomId === cur;
           return `
@@ -6108,7 +5930,15 @@ function loadGameFromSlot(slotIndex) {
   const merged = deepMerge(def, saved);
 
   if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
+  merged.openRooms = merged.openRooms.filter((roomId) => rooms[roomId]);
+  if (merged.openRooms.length === 0) merged.openRooms = def.openRooms.slice();
   if (!merged.currentRoom || !rooms[merged.currentRoom]) merged.currentRoom = def.currentRoom;
+
+  const mergedFlags = merged.main?.flags || {};
+  if (mergedFlags.unlockTranceiverUpperDoor && !mergedFlags.unlockMailbox) mergedFlags.unlockMailbox = true;
+  if (mergedFlags.foundTranceiverMessage && !mergedFlags.foundMailboxMessage) mergedFlags.foundMailboxMessage = true;
+  if (mergedFlags.unlockTranceiverLowerDoor && !mergedFlags.unlockKitchenBox) mergedFlags.unlockKitchenBox = true;
+  if ((mergedFlags.foundTranceiverPudding || mergedFlags.foundKitchenBoxPudding) && !mergedFlags.foundKitchenBoxCleanDish) mergedFlags.foundKitchenBoxCleanDish = true;
 
   gameState = merged;
 
