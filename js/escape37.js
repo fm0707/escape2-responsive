@@ -1433,7 +1433,7 @@ let rooms = {
           }
           const f = gameState.main.flags || (gameState.main.flags = {});
           f.talkedBackEntranceGhost = true;
-          updateMessage("謎のおばけ「あの扉さえ空けば、外に出られたのに」");
+          updateMessage("謎のおばけ「あの扉さえ開けば、外に出られたのに」");
         }),
         description: "おばけ",
         zIndex: 5,
