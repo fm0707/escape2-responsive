@@ -780,19 +780,6 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
 
-      {
-        x: 64.2,
-        y: 66.7,
-        width: 5.3,
-        height: 4.2,
-        onClick: clickWrap(function () {
-          acquireItemOnce("foundTissue", "tissue", "ポケットティッシュがある", IMAGES.items.tissue, "ポケットティッシュを手に入れた");
-        }),
-        description: "ティッシュ",
-        zIndex: 5,
-        usable: () => !gameState.main.flags.foundTissue,
-        item: { img: "tissue", visible: () => !gameState.main.flags.foundTissue },
-      },
 
       {
         x: 90,
