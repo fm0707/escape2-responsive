@@ -3451,6 +3451,7 @@ function showMinisterMoneyBadEnd() {
     </div>
   `;
   pauseBGM();
+  playSE("se-soreha");
   showModal("「そ、それは…盗人め！こやつを捕らえよ！」", content, [{ text: "次へ", action: showMinisterJailBadEnd }]);
   updateMessage("そ、それは…盗人め！こやつを捕らえよ！");
 }
