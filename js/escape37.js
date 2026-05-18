@@ -193,7 +193,6 @@ IMAGES = {
     washDish: I37("modal_wash_dish.webp"),
     soup: I37("modal_soup.webp"),
     end: I37("end.mp4"),
-    endMv: I37("end.mp4"),
   },
 };
 
@@ -5789,6 +5788,21 @@ function playOptionalSE(id) {
 }
 // どこかで最初に一度だけ呼ぶ
 let loadedImages = {};
+let loadedVideos = {};
+function isVideoSrc(src) {
+  return typeof src === "string" && /\.(mp4|webm|ogg)(?:[?#].*)?$/i.test(src);
+}
+function preloadVideo(src) {
+  if (loadedVideos[src]) return;
+
+  const video = document.createElement("video");
+  video.preload = "auto";
+  video.muted = true;
+  video.playsInline = true;
+  video.src = src;
+  video.load();
+  loadedVideos[src] = video;
+}
 function preloadImages() {
   // 部屋画像
   Object.values(IMAGES.rooms).forEach((val) => {
@@ -5865,6 +5879,10 @@ function preloadImages() {
   });
   // モーダル画像
   Object.values(IMAGES.modals).forEach((src) => {
+    if (isVideoSrc(src)) {
+      preloadVideo(src);
+      return;
+    }
     if (!loadedImages[src]) {
       const img = new Image();
       img.onload = () => {
