@@ -184,7 +184,7 @@ IMAGES = {
     bearPower: I37("modal_bear_power.webp"),
     bearSpell: I37("modal_bear_spell.webp"),
     bearSoup: I37("modal_bear_soup.webp"),
-    bearHappy: I37("modal_bear_Happy.webp"),
+    bearHappy: I37("modal_bear_happy.webp"),
     bearDisappointed: I37("modal_bear_disappointed.webp"),
     badendBear: I37("badend_bear.webp"),
     badendBear2: I37("badend_bear2.webp"),
