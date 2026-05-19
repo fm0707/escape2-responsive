@@ -3470,7 +3470,7 @@ function showDaemonBearTalkModal() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   const content = `
     <div style="text-align:center;">
-      <img src="${IMAGES.items.daemonBear}" alt="デーモンベア" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
+      <img src="${IMAGES.items.daemonBear}" alt="デーモンクマ" style="width:320px;max-width:100%;display:block;margin:0 auto 16px;">
       <p style="margin:0; line-height:1.8;"></p>
     </div>
   `;
@@ -3482,12 +3482,12 @@ function showDaemonBearTalkModal() {
   if (f.daemonBearFinishedPudding) {
     buttons.splice(1, 0, { text: "美味しかった？", action: showDaemonBearPuddingAftertasteModal });
   }
-  showModal("デーモンベア「呼んだ？」", content, buttons);
+  showModal("デーモンクマ「呼んだ？」", content, buttons);
 }
 
 function showDaemonBearWhoModal() {
   showModal(
-    "デーモンベア",
+    "デーモンクマ",
     `
       <div style="text-align:center;">
         <img src="${IMAGES.modals.bearPower}" alt="デーモンベア" style="width:400px;max-width:70%;display:block;margin:0 auto 16px;">
@@ -3556,7 +3556,7 @@ function startDaemonBearEatingSoup(duration = 60000) {
   f.daemonBearFinishedPudding = false;
   backEntranceFlags.backgroundState = 1;
   markProgress?.("daemon_bear_eating_soup");
-  updateMessage("デーモンベアは仕事を休んでスープを味わっている。");
+  updateMessage("デーモンクマは仕事を休んでスープを味わっている。");
   renderCanvasRoom?.();
 
   if (daemonBearEatingTimer) clearTimeout(daemonBearEatingTimer);
