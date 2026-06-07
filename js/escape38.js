@@ -1491,7 +1491,7 @@ let rooms = {
         width: 47.7,
         height: 43.4,
         onClick: clickWrap(function () {
-          updateMessage("「良い天気だねえ」");
+          updateMessage("「本場の味だねえ」");
         }),
         description: "ケバブを食べるクマ妖精",
         zIndex: 5,
