@@ -94,7 +94,7 @@ IMAGES = {
     kitchen: [I38("kitchen.webp")],
 
     end: [I38("end.webp"), I38("end2.webp")],
-    trueEnd: [I38("true_end.webp"), I38("true_end2.webp")],
+    trueEnd: [I38("true_end.webp"), I38("true_end2.webp"), I38("true_end3.webp")],
   },
   items: {
     coin: ICM("bear_coin.png"),
@@ -211,6 +211,7 @@ IMAGES = {
     iconKebab: I38("icon_kebab.webp"),
     objectFoot: I38("modal_object_foot.webp"),
     picOasis: I38("modal_pic_oasis.webp"),
+    bearEat: I38("modal_bear_eat.webp"),
   },
 };
 
@@ -1491,11 +1492,27 @@ let rooms = {
         width: 47.7,
         height: 43.4,
         onClick: clickWrap(function () {
-          updateMessage("「本場の味だねえ」");
+          playSE?.("se-eat");
+          gameState.trueEnd.flags.backgroundState = 2;
+          renderCanvasRoom();
+          showObj(null, "「本場の味だねえ」", IMAGES.modals.bearEat, "裏庭でケバブを食べるクマ妖精");
         }),
-        description: "ケバブを食べるクマ妖精",
+        description: "裏庭でケバブを食べるクマ妖精",
         zIndex: 5,
         usable: () => gameState.trueEnd.flags.backgroundState == 1,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 14.6,
+        y: 13.9,
+        width: 69.9,
+        height: 47.6,
+        onClick: clickWrap(function () {
+          updateMessage("zzz…");
+        }),
+        description: "満腹のクマ妖精",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 2,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
