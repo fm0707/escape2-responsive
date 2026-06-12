@@ -1495,7 +1495,7 @@ let rooms = {
           playSE?.("se-eat");
           gameState.trueEnd.flags.backgroundState = 2;
           renderCanvasRoom();
-          showObj(null, "「本場の味だねえ」", IMAGES.modals.bearEat, "裏庭でケバブを食べるクマ妖精");
+          showObj(null, "「本場の味だねえ」", IMAGES.modals.bearEat, "クマ妖精はケバブサンドを完食した");
         }),
         description: "裏庭でケバブを食べるクマ妖精",
         zIndex: 5,
