@@ -4092,7 +4092,7 @@ function renderCardGrid() {
     const isComplete = max > 0 && count >= max;
     const bullets = "●".repeat(Math.min(count, max || count));
     const iconHtml = cell.icon ? `<img src="${cell.icon}" alt="" style="position:absolute;left:50%;top:43%;width:64%;height:64%;object-fit:contain;transform:translate(-50%,-50%);">` : "";
-    const labelHtml = cell.label && isCardComplete ? `<div style="position:absolute;left:50%;top:68%;transform:translate(-50%,-50%);font-size:22px;font-weight:900;line-height:1;color:#8f8f8f;text-shadow:0 0 3px #fff,0 0 3px #fff;">${escapeHtml(cell.label)}</div>` : "";
+    const labelHtml = cell.label && isCardComplete ? `<div class="notranslate" translate="no" lang="en" style="position:absolute;left:50%;top:68%;transform:translate(-50%,-50%);font-size:22px;font-weight:900;line-height:1;color:#8f8f8f;text-shadow:0 0 3px #fff,0 0 3px #fff;">${escapeHtml(cell.label)}</div>` : "";
 
     return `
       <div style="position:relative;aspect-ratio:1/1;border-right:2px solid #111;border-bottom:2px solid #111;background:${isComplete ? "#dff2dc" : "#fff"};box-sizing:border-box;overflow:hidden;">
