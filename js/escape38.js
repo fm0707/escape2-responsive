@@ -1626,7 +1626,7 @@ function initGame() {
   renderNavigation();
   changeRoom("mainDoor");
   updateInventoryDisplay();
-  updateMessage("気が付くと謎のカードを手にして見知らぬ部屋に立っていた。");
+  updateMessage("気が付くと不思議なカードを手にして見知らぬ部屋に立っていた。");
   try {
     renderStatusIcons();
   } catch (e) {}
