@@ -777,10 +777,10 @@ let rooms = {
     description: "",
     clickableAreas: [
       {
-        x: 22.0,
-        y: 26.4,
-        width: 7.3,
-        height: 7.3,
+        x: 15.2,
+        y: 25.2,
+        width: 14.0,
+        height: 18.4,
         onClick: clickWrap(function () {
           showObj(null, "", IMAGES.modals.window, "窓の外に飛行機が見える");
           findCardMarks("middleRight", ["mainCounterWindowPlaneA", "mainCounterWindowPlaneB", "mainCounterWindowPlaneC", "mainCounterWindowPlaneD", "mainCounterWindowPlaneE"], "カードが反応した");
