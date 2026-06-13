@@ -2819,7 +2819,7 @@ function handleBearFairyClick() {
     </div>
   `;
   showModal("「わあ！美味しそう！」", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("クマ妖精にケバブを渡した。クマ妖精は飛び去って行った");
+  updateMessage("クマ妖精にケバブサンドを渡した。クマ妖精は飛び去って行った");
 }
 
 // アクション名 → 実行関数
