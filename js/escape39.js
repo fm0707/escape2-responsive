@@ -3056,37 +3056,6 @@ function showTvDinnerReservationPuzzle() {
   }, 0);
 }
 
-function handleBoardClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.boardKomaPlaced && !f.bearAppear) {
-    updateMessage("クマの駒が置かれている。");
-    return;
-  }
-
-  if (gameState.selectedItem !== "koma") {
-    updateMessage("ボードゲームの盤面だ。");
-    return;
-  }
-
-  removeItem("koma");
-  f.boardKomaPlaced = true;
-  markProgress?.("board_koma_placed");
-  renderCanvasRoom?.();
-
-  const content = `
-    <div style="text-align:center;">
-      <div class="modal-anim">
-        <img src="${IMAGES.modals.komaPut}" alt="駒を置く">
-        <img src="${IMAGES.modals.komaJump}" alt="駒が跳ねる">
-      </div>
-    </div>
-  `;
-  playSE?.("se-hanko");
-  setTimeout(() => playSE?.("se-pop"), 520);
-  showModal("駒を置いた", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("クマの駒を置いた。");
-}
-
 function handleRobbyDaikonStandClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (gameState.selectedItem !== "camera") {
