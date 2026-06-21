@@ -1186,43 +1186,7 @@ let rooms = {
         usable: () => false,
         item: { img: "daikonkun", visible: () => !gameState.main.flags.foundDaikonkun },
       },
-      {
-        x: 0.6,
-        y: 70.5,
-        width: 17.0,
-        height: 7.4,
-        onClick: clickWrap(function () {
-          changeRoom("board");
-        }),
-        description: "置かれたゲーム盤",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 18.4,
-        y: 70.6,
-        width: 6.7,
-        height: 3.9,
-        onClick: clickWrap(function () {
-          showObj(null, "ボードゲームの説明書だ", IMAGES.modals.manualGame, "ボードゲームの説明書がある");
-        }),
-        description: "ゲーム説明書",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 40.5,
-        y: 66.5,
-        width: 22.8,
-        height: 22.7,
-        onClick: clickWrap(handleBearFairyClick),
-        description: "クマ妖精",
-        zIndex: 5,
-        usable: () => gameState.main.flags.bearAppear && !gameState.main.flags.gaveKebabToBearFairy,
-        item: { img: "bear", visible: () => gameState.main.flags.bearAppear && !gameState.main.flags.gaveKebabToBearFairy },
-      },
+
       {
         x: 46.2,
         y: 51.9,
@@ -1633,7 +1597,7 @@ let rooms = {
         onClick: clickWrap(handleEndBathBearClick),
         description: "お湯に浮くクマ妖精",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.end.flags.backgroundState == 1,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -1650,8 +1614,8 @@ let rooms = {
   },
 
   trueEnd: {
-    name: "レストランエンド",
-    description: "好きなものを選んで食べましょう！脱出おめでとうございます。",
+    name: "ディナーエンド",
+    description: "夕食の時間です！脱出おめでとうございます。",
     clickableAreas: [
       {
         x: 33.2,
@@ -3558,22 +3522,7 @@ function handleBoardPlacedKomaClick() {
   updateMessage("武士の駒にお茶を差し出した");
 }
 
-function showBoardBearVanishModal() {
-  playSE?.("se-fanta");
-  const content = `
-    <div style="text-align:center;">
-      <img src="${IMAGES.modals.bearVanish}" alt="消える武士の駒" style="width:400px;max-width:100%;display:block;margin:0 auto 16px;">
-      <p style="margin:0; line-height:1.8;">？</p>
-    </div>
-  `;
-  showModal("？", content, [{ text: "閉じる", action: "close" }], () => {
-    const f = gameState.main.flags || (gameState.main.flags = {});
-    f.bearAppear = true;
-    markProgress?.("bear_appear");
-    renderCanvasRoom?.();
-  });
-  updateMessage("？");
-}
+
 
 function handleBearFairyClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
@@ -3720,7 +3669,7 @@ function showEndingReport(endingId = "end") {
 // クリアログ生成（既存のがあればそのまま流用でOK）
 // アンケート
 function openFeedbackForm(endingId) {
-  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLScRTMw2Uv9hUYCsvBdnPn2tVz-qFvbIaCOZSngdzVtgVqhXmA/viewform";
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdwW2uIjVlS3JERbhPyb9zSE4bUXMoI8m-eQjTiLJ_BO_U3Wg/viewform";
   const endingLabel =
     {
       trueEnd: "ディナーエンド",
