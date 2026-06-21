@@ -519,7 +519,9 @@ let rooms = {
         y: 62.7,
         width: 7.2,
         height: 3.5,
-        onClick: clickWrap(function () {}),
+        onClick: clickWrap(function () {
+          updateMessage("メモ帳がある");
+        }),
         description: "メモ",
         zIndex: 5,
         usable: () => true,
@@ -817,7 +819,7 @@ let rooms = {
               </div>
             `;
             playSE?.("se-shutter");
-            showModal("大根くんのナイスショット", content, [{ text: "閉じる", action: "close" }]);
+            showModal("大根くんのナイスショットを撮影した", content, [{ text: "閉じる", action: "close" }]);
             updateMessage("大根くんのナイスショットを撮影した");
             return;
           }
@@ -1021,7 +1023,7 @@ let rooms = {
           if (gameState.selectedItem == "scale") {
             showObj(null, "定規を当てた。", IMAGES.modals.modelScale, "灯台の模型に定規を当てた");
           } else {
-            showObj(null, "1/100スケールの灯台の模型だ。1962年に建造されたようだ", IMAGES.modals.model, "灯台の模型がある");
+            showObj(null, "1/100スケールの灯台の模型だ。", IMAGES.modals.model, "灯台の模型がある");
           }
         }),
         description: "灯台の模型",
@@ -1604,8 +1606,8 @@ let rooms = {
     ],
   },
   restaurant: {
-    name: "レストランエンド",
-    description: "不思議な海の見える部屋から脱出できました。おめでとうございます！",
+    name: "一人でディナーエンド",
+    description: "海の見える部屋から脱出できました。おめでとうございます！",
     clickableAreas: [
       {
         x: 0,
@@ -1621,7 +1623,7 @@ let rooms = {
   },
   end: {
     name: "ノーマルエンド",
-    description: "不思議な海の見える部屋から脱出できました。おめでとうございます！",
+    description: "海の見える部屋から脱出できました。おめでとうございます！",
     clickableAreas: [
       {
         x: 53.7,
@@ -3159,6 +3161,11 @@ function handleTrueEndBuffetBearClick() {
 }
 
 function handleEndBathBearClick() {
+  if (gameState.selectedItem === "camera") {
+    updateMessage("お風呂でカメラは使えない");
+    return;
+  }
+
   if (gameState.selectedItem !== "milk") {
     showObj(null, "「いい湯だなー」", IMAGES.modals.bearBath, "クマ妖精はお風呂を堪能している");
     return;
