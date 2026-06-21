@@ -1553,7 +1553,7 @@ let rooms = {
         width: 16.3,
         height: 24.8,
         onClick: clickWrap(function () {
-          if ((gameState.selectedItem = "picDaikonkunBear")) {
+          if (gameState.selectedItem == "picDaikonkunBear") {
             updateMessage("えへへ");
             return;
           }
@@ -2745,7 +2745,7 @@ function handleSidetableDrawerClick() {
     return;
   }
   if (!f.unlockSidetableDrawer) {
-    updateMessage("引き出しは閉まっている。左右のボタンで開けられそうだ。");
+    updateMessage("引き出しは閉まっている。");
     return;
   }
 
@@ -4731,6 +4731,7 @@ function getItemName(itemId) {
     yukata: "浴衣",
     memoSafe: "金庫のメモ",
     milk: "牛乳",
+    yen300: "300円",
   };
   return names[itemId] || itemId;
 }
