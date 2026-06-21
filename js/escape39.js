@@ -1988,6 +1988,11 @@ function changeRoom(roomId) {
   gameState.currentRoom = roomId;
   const room = rooms[roomId];
   const f = gameState.main.flags || (gameState.main.flags = {});
+  if (roomId === "end" && gameState.tvDinner?.flags?.backgroundState === 0) {
+    const endFlags = gameState.end?.flags || (gameState.end = { flags: { backgroundState: 0 } }).flags;
+    endFlags.backgroundState = 0;
+  }
+
   if (roomId === "end" || roomId === "restaurant") {
     removeItemsOnEndingArrival(["key", "remocon", "cushion", "scale", "daikonkun", "memoSafe"]);
   }
