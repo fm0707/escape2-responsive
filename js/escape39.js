@@ -1696,12 +1696,12 @@ function handleHallElevatorDinnerSelect() {
 }
 
 function handleHallVendingMachineClick() {
-  if (gameState.selectedItem !== "yen300") {
-    updateMessage("飲み物の自動販売機だ。お金があれば飲み物が買えそうだ");
-    return;
-  }
   if (hasItem("milk")) {
     updateMessage("もう飲み物は買った");
+    return;
+  }
+  if (gameState.selectedItem !== "yen300") {
+    updateMessage("飲み物の自動販売機だ。お金があれば飲み物が買えそうだ");
     return;
   }
 
