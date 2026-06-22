@@ -1571,7 +1571,7 @@ let rooms = {
   },
   restaurant: {
     name: "一人でディナーエンド",
-    description: "海の見える部屋から脱出できました。おめでとうございます！",
+    description: "海が見える部屋から脱出できました。おめでとうございます！",
     clickableAreas: [
       {
         x: 0,
@@ -1587,7 +1587,7 @@ let rooms = {
   },
   end: {
     name: "ノーマルエンド",
-    description: "海の見える部屋から脱出できました。おめでとうございます！",
+    description: "海が見える部屋から脱出できました。おめでとうございます！",
     clickableAreas: [
       {
         x: 53.7,
