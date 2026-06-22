@@ -2019,6 +2019,8 @@ changeRoom = function (roomId) {
     f.badMannerPuddingAttempts = 0;
     f.badMannerPuddingRoom = "";
     f.onigiriCoinSequence = [];
+    f.sidetableButtonInputs = [];
+    f.kakejikuButtonInputs = [];
   }
 
   if (roomId === "end") {
@@ -4102,7 +4104,7 @@ function showMainTvRightDrawerPuzzle() {
         ${[0, 1, 2, 3]
           .map(
             (idx) => `
-              <button id="mainTvRightDrawerLetter${idx}" type="button" aria-label="${idx + 1}文字目" style="${squareStyle}">A</button>
+              <button id="mainTvRightDrawerLetter${idx}" class="notranslate" translate="no" lang="en" type="button" aria-label="${idx + 1}文字目" style="${squareStyle}">A</button>
             `,
           )
           .join("")}
