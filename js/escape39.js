@@ -176,6 +176,7 @@ IMAGES = {
     bearBath: I39("modal_bear_bath.webp"),
     bearHappy: I39("modal_bear_happy.webp"),
     milkGet: I39("modal_milk_get.webp"),
+    posterDaikon: I39("poster_daikon.webp"),
     badendDinner: I39("badend_dinner.webp"),
     badendDinnerEn: I39("badend_dinner_en.webp"),
   },
@@ -1436,6 +1437,19 @@ let rooms = {
     name: "エレベーターホール",
     description: "",
     clickableAreas: [
+      {
+        x: 44.4,
+        y: 17.9,
+        width: 13.1,
+        height: 13.7,
+        onClick: clickWrap(function () {
+          showObj(null, "", IMAGES.modals.posterDaikon, "大根くんのポスターだ");
+        }),
+        description: "大根君のポスター",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
       {
         x: 0.9,
         y: 13.1,
