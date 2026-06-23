@@ -177,6 +177,7 @@ IMAGES = {
     bearHappy: I39("modal_bear_happy.webp"),
     milkGet: I39("modal_milk_get.webp"),
     posterDaikon: I39("poster_daikon.webp"),
+    restaurant: I39("modal_restaurant.webp"),
     badendDinner: I39("badend_dinner.webp"),
     badendDinnerEn: I39("badend_dinner_en.webp"),
   },
@@ -4752,6 +4753,28 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
           } else {
             showDrinkModal(IMAGES.modals.drinkWater, "水を飲む");
           }
+        },
+      },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  if (itemId === "milk" && gameState.currentRoom === "restaurant") {
+    buttons = [
+      {
+        text: "飲む",
+        action: () => {
+          window._nextModal = {
+            title: "「飲食物の持ち込みはご遠慮ください」",
+            content: `
+              <img src="${IMAGES.modals.restaurant}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">
+              「お預かりいたしますね」
+            `,
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
+          closeModal();
+          removeItem("milk");
+          updateMessage("牛乳は持ち去られてしまった");
         },
       },
       { text: "閉じる", action: "close" },
