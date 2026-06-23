@@ -3958,52 +3958,51 @@ function showMainTvLeftDrawerPuzzle() {
     return;
   }
 
-  const digitStyle = [
-    "width:min(12.5vw, 54px)",
-    "height:min(12.5vw, 54px)",
-    "min-width:30px",
-    "min-height:30px",
-    "border:2px solid #555",
-    "border-radius:4px",
-    "background:#fff",
+  const tileStyle = [
+    "width:min(25vw, 112px)",
+    "height:min(25vw, 112px)",
+    "min-width:72px",
+    "min-height:72px",
+    "border:2px solid #8a8a8a",
+    "border-radius:2px",
+    "background:#b8b8b8",
     "color:#111",
-    "font-size:clamp(18px, 6vw, 30px)",
+    "font-size:clamp(30px, 11vw, 52px)",
     "font-weight:700",
     "line-height:1",
     "display:flex",
     "align-items:center",
     "justify-content:center",
-    "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08)",
-  ].join(";");
-  const arrowStyle = [
-    "width:min(12.5vw, 54px)",
-    "height:24px",
-    "min-width:30px",
-    "border:1px solid #777",
-    "border-radius:4px",
-    "background:#f4f4f4",
-    "color:#111",
-    "font-size:15px",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
+    "position:relative",
     "cursor:pointer",
     "padding:0",
+    "box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35), 0 2px 5px rgba(0,0,0,0.18)",
+  ].join(";");
+  const countStyle = [
+    "position:absolute",
+    "right:6px",
+    "bottom:5px",
+    "min-width:1.4em",
+    "height:1.4em",
+    "border-radius:999px",
+    "background:rgba(0,0,0,0.68)",
+    "color:#fff",
+    "font-size:clamp(12px, 3.5vw, 15px)",
+    "font-weight:700",
+    "line-height:1.4em",
+    "text-align:center",
+    "display:none",
   ].join(";");
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:flex; gap:2px; justify-content:center; align-items:center;">
+      <div style="display:grid; grid-template-columns:repeat(3, minmax(72px, 112px)); gap:14px; justify-content:center;">
         ${[0, 1, 2, 3, 4, 5]
           .map(
             (idx) => `
-              <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
-                <button id="mainTvLeftDrawerUp${idx}" type="button" aria-label="${idx + 1}桁目を増やす" style="${arrowStyle}">▲</button>
-                <button id="mainTvLeftDrawerDigit${idx}" type="button" aria-label="${idx + 1}桁目" style="${digitStyle}">0</button>
-                <button id="mainTvLeftDrawerDown${idx}" type="button" aria-label="${idx + 1}桁目を減らす" style="${arrowStyle}">▼</button>
-              </div>
+              <button id="mainTvLeftDrawerTile${idx}" type="button" aria-label="${idx + 1}番" style="${tileStyle}">
+                <span>${idx + 1}</span>
+                <span id="mainTvLeftDrawerCount${idx}" style="${countStyle}">0</span>
+              </button>
             `,
           )
           .join("")}
@@ -4020,43 +4019,41 @@ function showMainTvLeftDrawerPuzzle() {
     const saved = Array.isArray(f.mainTvLeftDrawerDigits) ? f.mainTvLeftDrawerDigits : [0, 0, 0, 0, 0, 0];
     const state = [0, 1, 2, 3, 4, 5].map((idx) => {
       const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value < 10 ? value : 0;
+      return Number.isInteger(value) && value >= 0 && value <= 9 ? value : 0;
     });
-    const digitBtns = [0, 1, 2, 3, 4, 5].map((idx) => document.getElementById(`mainTvLeftDrawerDigit${idx}`));
-    const upBtns = [0, 1, 2, 3, 4, 5].map((idx) => document.getElementById(`mainTvLeftDrawerUp${idx}`));
-    const downBtns = [0, 1, 2, 3, 4, 5].map((idx) => document.getElementById(`mainTvLeftDrawerDown${idx}`));
+    const tileBtns = [0, 1, 2, 3, 4, 5].map((idx) => document.getElementById(`mainTvLeftDrawerTile${idx}`));
+    const countEls = [0, 1, 2, 3, 4, 5].map((idx) => document.getElementById(`mainTvLeftDrawerCount${idx}`));
     const okBtn = document.getElementById("mainTvLeftDrawerOk");
     const hintEl = document.getElementById("mainTvLeftDrawerHint");
-    if (digitBtns.some((btn) => !btn) || upBtns.some((btn) => !btn) || downBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
+    if (tileBtns.some((btn) => !btn) || countEls.some((el) => !el) || !okBtn || !hintEl) return;
 
     const repaint = () => {
-      digitBtns.forEach((btn, idx) => {
-        btn.textContent = String(state[idx]);
+      countEls.forEach((el, idx) => {
+        el.textContent = String(state[idx]);
+        el.style.display = state[idx] > 0 ? "block" : "none";
+      });
+      tileBtns.forEach((btn, idx) => {
+        btn.style.outline = state[idx] > 0 ? "3px solid #222" : "none";
+        btn.style.outlineOffset = "-5px";
       });
       hintEl.textContent = "";
     };
 
-    const changeDigit = (idx, delta) => {
-      state[idx] = (state[idx] + delta + 10) % 10;
+    const pressTile = (idx) => {
+      state[idx] += 1;
       f.mainTvLeftDrawerDigits = state.slice();
       playSE?.("se-pi");
       repaint();
     };
 
-    digitBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => changeDigit(idx, 1));
-    });
-    upBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => changeDigit(idx, 1));
-    });
-    downBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => changeDigit(idx, -1));
+    tileBtns.forEach((btn, idx) => {
+      btn.addEventListener("click", () => pressTile(idx));
     });
 
     okBtn.addEventListener("click", () => {
       f.mainTvLeftDrawerDigits = state.slice();
-      const answer = state.join("");
-      if (answer === "262626") {
+      const isCorrect = state.every((count, idx) => count === (idx === 1 || idx === 5 ? 3 : 0));
+      if (isCorrect) {
         f.unlockMainTvLeftDrawer = true;
         markProgress?.("unlock_main_tv_left_drawer");
         playSE?.("se-gacha");
@@ -4067,6 +4064,9 @@ function showMainTvLeftDrawerPuzzle() {
       }
 
       playSE?.("se-error");
+      state.fill(0);
+      f.mainTvLeftDrawerDigits = state.slice();
+      repaint();
       hintEl.textContent = "違うようだ";
       screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
     });
