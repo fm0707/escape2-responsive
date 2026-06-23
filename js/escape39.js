@@ -3053,7 +3053,7 @@ function showTvDinnerReservationPuzzle() {
     okBtn.addEventListener("click", () => {
       normalizeDigits(minuteInput);
       normalizeDigits(secondInput);
-      if (minuteInput.value === "4" && secondInput.value === "33") {
+      if (Number(minuteInput.value) === 4 && secondInput.value === "33") {
         flags.backgroundState = 1;
         markProgress?.("reserve_tv_dinner");
         playSE?.("se-cyber");
