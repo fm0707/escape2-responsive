@@ -1002,7 +1002,7 @@ let rooms = {
         description: "掛け軸下",
         zIndex: 5,
         usable: () => true,
-        item: { img: "blackBack", visible: () => gameState.main.flags.unlockKakejiku && !gameState.main.flags.foundKakejikuScale },
+        item: { img: "blackBack", visible: () => gameState.main.flags.unlockKakejiku },
       },
       {
         x: 8.1,
