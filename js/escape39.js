@@ -3097,7 +3097,7 @@ function handleRobbyDaikonStandClick() {
 function handleTrueEndBuffetBearClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (gameState.selectedItem !== "camera") {
-    updateMessage("「マグロ！」");
+    updateMessage("「マグロだー」");
     return;
   }
 
