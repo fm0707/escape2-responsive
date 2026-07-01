@@ -374,7 +374,7 @@ let rooms = {
         onClick: clickWrap(handleProjectorCodeClick),
         description: "プロジェクターのコード",
         zIndex: 5,
-        usable: () => true,
+        usable: () => !gameState.main.flags.projectorPowerOn,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -3182,6 +3182,7 @@ function startSkyClearSequence() {
 
   setTimeout(() => {
     f.weatherSkyState = 2;
+    flashScreen("white");
     renderCanvasRoom?.();
     showToast?.("雨が止んだようだ");
   }, 900);
