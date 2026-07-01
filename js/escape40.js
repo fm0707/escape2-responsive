@@ -3658,10 +3658,12 @@ function showMainKitchenUpperCabinetPuzzle() {
   }
 
   const baseShapeStyle = [
-    "width:min(18vw, 72px)",
-    "height:min(18vw, 72px)",
-    "min-width:48px",
-    "min-height:48px",
+    "width:clamp(44px, 17vw, 72px)",
+    "height:clamp(44px, 17vw, 72px)",
+    "min-width:44px",
+    "min-height:44px",
+    "flex:0 0 auto",
+    "margin:0",
     "border:0",
     "background:#f7f4df",
     "color:#1e2a24",
@@ -3685,7 +3687,7 @@ function showMainKitchenUpperCabinetPuzzle() {
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
       <p style="margin:0; line-height:1.8; text-align:center;">上段キャビネットがロックされている。</p>
-      <div class="notranslate" translate="no" lang="en" style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap;">
+      <div class="notranslate" translate="no" lang="en" style="display:flex; gap:clamp(4px, 2vw, 10px); justify-content:center; align-items:center; flex-wrap:nowrap; max-width:100%;">
         ${[0, 1, 2, 3]
           .map(
             (idx) => `
