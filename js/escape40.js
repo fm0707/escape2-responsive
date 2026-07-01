@@ -491,7 +491,7 @@ let rooms = {
           talkToHintCharacter("main", "bear2");
         }),
         description: "現れたクマ妖精",
-        zIndex: 5,
+        zIndex: 6,
         usable: () => gameState.main.flags.bearAppear,
         item: { img: "bear", visible: () => gameState.main.flags.bearAppear },
       },
@@ -845,6 +845,19 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
+        x: 31.5,
+        y: 26.1,
+        width: 45.4,
+        height: 23.6,
+        onClick: clickWrap(function () {
+          updateMessage("彦星「一年ぶりだね」織姫「嬉しい！」再会を喜んでいるようだ");
+        }),
+        description: "織姫と彦星",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
         x: 0,
         y: 80.6,
         width: 6.4,
@@ -999,7 +1012,7 @@ let rooms = {
           showObj(null, "煙が立ち上っている", shouldUseSmokeNaname() ? IMAGES.modals.smokeNaname : IMAGES.modals.smoke, "煙が立ち上っている");
         }),
         description: "煙",
-        zIndex: 5,
+        zIndex: 6,
         usable: () => gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned,
         item: { img: () => (shouldUseSmokeNaname() ? "smokeNaname" : "smoke"), visible: () => gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned },
       },
@@ -1712,6 +1725,19 @@ let rooms = {
     name: "ノーマルエンド2",
     description: "土砂降りの雨の中、あなたは勇敢にも一歩を踏み出しました！",
     clickableAreas: [
+      {
+        x: 1.9,
+        y: 70.9,
+        width: 20.4,
+        height: 24.5,
+        onClick: clickWrap(function () {
+          updateMessage("クマ妖精は、少し心配しているようだ");
+        }),
+        description: "心配そうなクマ妖精",
+        zIndex: 5,
+        usable: () => gameState.rainEnd.flags.backgroundState == 2,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
       {
         x: 0,
         y: 0,
@@ -5264,7 +5290,7 @@ function useItem(slotIndex) {
       markProgress?.("flypan_cleaned");
       playSE?.("se-cloth");
       renderCanvasRoom?.();
-      showObj(null, "フライパンを磨いた", IMAGES.modals.cleanFlypan, "フライパンがきれいになった。");
+      showObj(null, "フライパンを磨いた", IMAGES.modals.cleanFlypan, "きれいになったフライパンをキッチンに置いた。");
       return;
     }
 
