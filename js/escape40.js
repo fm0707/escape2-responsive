@@ -1080,7 +1080,9 @@ let rooms = {
         y: 63.9,
         width: 19.6,
         height: 5.5,
-        onClick: clickWrap(function () {}),
+        onClick: clickWrap(function () {
+          updateMessage("この引き出しには、なにもないようだ");
+        }),
         description: "引き出し3段目",
         zIndex: 5,
         usable: () => true,
