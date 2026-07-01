@@ -81,6 +81,8 @@ const I40 = (file) => `${BASE_40}/${file}`;
 const ICM = (file) => `${BASE_COMMON}/${file}`;
 const S40 = (file) => `${BASE_SOUND_40}/${file}`;
 const DEFAULT_BGM = S40("tsunoruomoiha_hoshizorani.mp3");
+const tanabataSong = document.getElementById("se-tanabata-song");
+if (tanabataSong) tanabataSong.src = S40("tanabata_song.mp3");
 // ゲーム設定 - 画像パスをここで管理
 IMAGES = {
   rooms: {
