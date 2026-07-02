@@ -155,6 +155,7 @@ IMAGES = {
     raincoat: I40("raincoat.webp"),
     sweet: I40("sweet.webp"),
     pen: I40("pen.webp"),
+    memo: I40("memo.webp"),
   },
   modals: {
     smoke: I40("modal_smoke.webp"),
@@ -189,6 +190,7 @@ IMAGES = {
     teruteruGet: I40("modal_teruteru_get.webp"),
     teruteruSet: I40("modal_teruteru_set.webp"),
     drawer: I40("modal_drawer2.webp"),
+    drawerThird: I40("modal_drawer_third.webp"),
     book: I40("book.webp"),
     bookTeruteru: I40("book_teruteru.webp"),
     bookTeruteruEn: I40("book_teruteru_en.webp"),
@@ -252,6 +254,7 @@ function getDefaultGameState() {
         foundMainKitchenOvenBurntFlypan: false,
         foundMainKitchenMatch: false,
         unlockMainKitchenFreezer: false,
+        mainKitchenFreezerLetters: [0, 0, 0],
         unlockMainKitchenRefrigerator: false,
         foundMainKitchenRefrigeratorSweet: false,
         foundMainKitchenUpperCabinetJug: false,
@@ -277,6 +280,9 @@ function getDefaultGameState() {
         unlockMainDeskSecondDrawer: false,
         foundMainDeskSecondDrawerFertilizer: false,
         mainDeskSecondDrawerDigits: [1, 1],
+        unlockMainDeskThirdDrawer: false,
+        foundMainDeskThirdDrawerMemo: false,
+        mainDeskThirdDrawerBars: [0, 0, 0, 0],
         unlockMainDeskBottomDrawer: false,
         foundMainDeskBottomDrawerCleanser: false,
         mainDeskBottomDrawerSymbols: [1, 1, 1, 1, 1],
@@ -1084,9 +1090,7 @@ let rooms = {
         y: 63.9,
         width: 19.6,
         height: 5.5,
-        onClick: clickWrap(function () {
-          updateMessage("この引き出しには、なにもないようだ");
-        }),
+        onClick: clickWrap(showMainDeskThirdDrawerPuzzle),
         description: "引き出し3段目",
         zIndex: 5,
         usable: () => true,
@@ -1481,7 +1485,7 @@ let rooms = {
         height: 45.7,
         onClick: clickWrap(function () {
           const message = gameState.main.flags.gaveSweetToBearFairy ? "あなたに良いことがありますように" : "美味しいおやつが食べられますように";
-          showTanzakuModal("darkgray", "黒の短冊", message, null);
+          showBlackTanzakuModal(message);
         }),
         description: "黒の短冊",
         zIndex: 5,
@@ -3499,10 +3503,36 @@ function handleMainKitchenFreezerClick() {
     return;
   }
 
+  const letterStyle = [
+    "width:min(20vw, 76px)",
+    "height:min(20vw, 76px)",
+    "min-width:54px",
+    "min-height:54px",
+    "border:2px solid #777",
+    "border-radius:4px",
+    "background:#fff",
+    "color:#111",
+    "font-size:clamp(30px, 9vw, 42px)",
+    "font-weight:800",
+    "line-height:1",
+    "display:flex",
+    "align-items:center",
+    "justify-content:center",
+    "padding:0",
+    "cursor:pointer",
+    "box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.18)",
+  ].join(";");
   const content = `
     <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <img src="${IMAGES.modals.freezerMemo}" alt="冷凍庫のメモ" class="showobj-image">
-      <input id="mainKitchenFreezerPasscode" class="puzzle-input notranslate" type="text" maxlength="16" aria-label="英字を入力" placeholder="英字を入力" autocapitalize="off" autocomplete="off" spellcheck="false" translate="no" lang="en" style="width:220px; max-width:100%; text-align:center; font-size:1.05em; letter-spacing:0.08em;">
+      <div class="notranslate" translate="no" lang="en" style="display:flex; gap:8px; justify-content:center; align-items:center;">
+        ${[0, 1, 2]
+          .map(
+            (idx) => `
+              <button id="mainKitchenFreezerLetter${idx}" type="button" aria-label="${idx + 1}文字目" style="${letterStyle}">A</button>
+            `,
+          )
+          .join("")}
+      </div>
       <button id="mainKitchenFreezerPasscodeOk" class="ok-btn" type="button">OK</button>
       <div id="mainKitchenFreezerPasscodeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
@@ -3512,16 +3542,37 @@ function handleMainKitchenFreezerClick() {
   updateMessage("冷凍庫がロックされている。");
 
   setTimeout(() => {
-    const inputEl = document.getElementById("mainKitchenFreezerPasscode");
+    const letters = ["A", "C", "E", "I", "L", "M", "N", "T"];
+    const saved = Array.isArray(f.mainKitchenFreezerLetters) ? f.mainKitchenFreezerLetters : [0, 0, 0];
+    const state = [0, 1, 2].map((idx) => {
+      const value = Number(saved[idx]);
+      return Number.isInteger(value) && value >= 0 && value < letters.length ? value : 0;
+    });
+    const letterBtns = [0, 1, 2].map((idx) => document.getElementById(`mainKitchenFreezerLetter${idx}`));
     const okBtn = document.getElementById("mainKitchenFreezerPasscodeOk");
     const hintEl = document.getElementById("mainKitchenFreezerPasscodeHint");
-    if (!inputEl || !okBtn || !hintEl) return;
+    if (letterBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
 
-    const submit = () => {
-      const answer = String(inputEl.value || "")
-        .trim()
-        .toLowerCase();
-      if (answer === "ice") {
+    const repaint = () => {
+      letterBtns.forEach((btn, idx) => {
+        btn.textContent = letters[state[idx]];
+      });
+      hintEl.textContent = "";
+    };
+
+    letterBtns.forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        state[idx] = (state[idx] + 1) % letters.length;
+        f.mainKitchenFreezerLetters = state.slice();
+        playSE?.("se-pi");
+        repaint();
+      });
+    });
+
+    okBtn.addEventListener("click", () => {
+      f.mainKitchenFreezerLetters = state.slice();
+      const answer = state.map((index) => letters[index]).join("");
+      if (answer === "ICE") {
         f.unlockMainKitchenFreezer = true;
         markProgress?.("unlock_main_kitchen_freezer");
         playSE?.("se-gacha");
@@ -3534,16 +3585,9 @@ function handleMainKitchenFreezerClick() {
       playSE?.("se-error");
       hintEl.textContent = "違うようだ";
       screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    };
-
-    okBtn.addEventListener("click", submit);
-    inputEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        submit();
-      }
     });
-    inputEl.focus();
+
+    repaint();
   }, 0);
 }
 
@@ -4541,6 +4585,137 @@ function showMainDeskSecondDrawerPuzzle() {
   }, 0);
 }
 
+const MAIN_DESK_THIRD_DRAWER_ANSWER = Object.freeze([2, 0, 3, 1]);
+const MAIN_DESK_THIRD_DRAWER_BAR_WIDTHS = Object.freeze(["25%", "50%", "75%", "100%"]);
+
+function openMainDeskThirdDrawer() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  const roomId = "mainDesk";
+  const areaDescription = "引き出し3段目";
+  const drawerColors = {
+    frontFill: "#99562C",
+    sideTop: "#7f4524",
+    sideBottom: "#63351b",
+    gripStyle: "recessed",
+    gripColor: "#5a321f",
+    gripWidthRatio: 0.16,
+    soundId: "se-hikidashi",
+  };
+
+  const closeDrawer = () => {
+    playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
+  };
+
+  playDeskDrawerOpenFx(roomId, areaDescription, {
+    ...drawerColors,
+    keepOpen: true,
+    keepInputLocked: true,
+    onDone: () => {
+      if (f.foundMainDeskThirdDrawerMemo) {
+        updateMessage("もう何もない");
+        setTimeout(closeDrawer, 350);
+        return;
+      }
+
+      acquireItemOnce("foundMainDeskThirdDrawerMemo", "memo", "引き出しにメモがある", IMAGES.modals.drawerThird, "メモを手に入れた", closeDrawer);
+    },
+  });
+}
+
+function showMainDeskThirdDrawerPuzzle() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.unlockMainDeskThirdDrawer) {
+    openMainDeskThirdDrawer();
+    return;
+  }
+
+  const barButtonStyle = [
+    "width:min(19vw, 72px)",
+    "height:min(19vw, 72px)",
+    "min-width:52px",
+    "min-height:52px",
+    "border:2px solid #242424",
+    "border-radius:4px",
+    "background:#3f3f3f",
+    "display:flex",
+    "align-items:center",
+    "justify-content:flex-start",
+    "padding:8px",
+    "cursor:pointer",
+    "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.06), 0 2px 5px rgba(0,0,0,0.24)",
+  ].join(";");
+  const barStyle = ["display:block", "width:25%", "height:8px", "border-radius:999px", "background:#fff", "pointer-events:none", "transition:width 150ms ease"].join(";");
+  const content = `
+    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
+        ${[0, 1, 2, 3]
+          .map(
+            (idx) => `
+              <button id="mainDeskThirdDrawerBar${idx}" type="button" aria-label="${idx + 1}番目の棒" style="${barButtonStyle}">
+                <span style="${barStyle}"></span>
+              </button>
+            `,
+          )
+          .join("")}
+      </div>
+      <button id="mainDeskThirdDrawerOk" class="ok-btn" type="button">OK</button>
+      <div id="mainDeskThirdDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+    </div>
+  `;
+
+  showModal("三番目の引き出し", content, [{ text: "閉じる", action: "close" }]);
+  updateMessage("三番目の引き出しがロックされている。");
+
+  setTimeout(() => {
+    const saved = Array.isArray(f.mainDeskThirdDrawerBars) ? f.mainDeskThirdDrawerBars : [0, 0, 0, 0];
+    const state = [0, 1, 2, 3].map((idx) => {
+      const value = Number(saved[idx]);
+      return Number.isInteger(value) && value >= 0 && value <= 3 ? value : 0;
+    });
+    const barBtns = [0, 1, 2, 3].map((idx) => document.getElementById(`mainDeskThirdDrawerBar${idx}`));
+    const okBtn = document.getElementById("mainDeskThirdDrawerOk");
+    const hintEl = document.getElementById("mainDeskThirdDrawerHint");
+    if (barBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
+
+    const repaint = () => {
+      barBtns.forEach((btn, idx) => {
+        const bar = btn.querySelector("span");
+        if (bar) bar.style.width = MAIN_DESK_THIRD_DRAWER_BAR_WIDTHS[state[idx]];
+        btn.setAttribute("aria-label", `${idx + 1}番目の棒、長さ${state[idx] + 1}`);
+      });
+      hintEl.textContent = "";
+    };
+
+    barBtns.forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        state[idx] = (state[idx] + 1) % 4;
+        f.mainDeskThirdDrawerBars = state.slice();
+        playSE?.("se-pi");
+        repaint();
+      });
+    });
+
+    okBtn.addEventListener("click", () => {
+      f.mainDeskThirdDrawerBars = state.slice();
+      if (state.every((value, idx) => value === MAIN_DESK_THIRD_DRAWER_ANSWER[idx])) {
+        f.unlockMainDeskThirdDrawer = true;
+        markProgress?.("unlock_main_desk_third_drawer");
+        playSE?.("se-gacha");
+        closeModal();
+        renderCanvasRoom?.();
+        updateMessage("三番目の引き出しのロックが外れた。");
+        return;
+      }
+
+      playSE?.("se-error");
+      hintEl.textContent = "違うようだ";
+      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
+    });
+
+    repaint();
+  }, 0);
+}
+
 function openMainDeskBottomDrawer() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   const roomId = "mainDesk";
@@ -5379,6 +5554,7 @@ function getItemName(itemId) {
     yen300: "300円",
     raincoat: "レインコート",
     sweet: "七夕ゼリー",
+    memo: "メモ",
   };
   return names[itemId] || itemId;
 }
@@ -5481,22 +5657,6 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
     ];
   }
 
-  const addMemoInspectButton = () => {
-    if (itemId !== "memo") return;
-    buttons.unshift({
-      text: "調べる",
-      action: () => {
-        window._nextModal = {
-          title: getItemName(itemId),
-          content: "紙に線のようなへこみがあるようだ",
-          buttons: [{ text: "閉じる", action: "close" }],
-        };
-        closeModal();
-      },
-    });
-  };
-  addMemoInspectButton();
-
   if (hasEnVariant && itemId !== "sheet" && itemId !== "sheetComplete3") {
     const zoomImgId = `invZoom_${Date.now()}_${typeof slotIndex === "number" ? slotIndex : "selected"}`;
     let isEn = uiLang === "en";
@@ -5513,8 +5673,6 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
         },
       },
     ];
-    addMemoInspectButton();
-
     if (itemId === "interviewNote") {
       buttons.push({
         text: "裏を見る",
@@ -5857,6 +6015,35 @@ function showTanzakuModal(color, title, text, marker) {
   const markerHtml = markerContent ? `<span class="tanzaku-marker tanzaku-marker-${markerSide} notranslate" translate="no" lang="en" style="--marker-color:${marker.color || "#ff8a00"}">${markerContent}</span>` : "";
   showModal(title, `${markerHtml}<p class="tanzaku-message">${text}</p>`, [{ text: "閉じる", action: "close" }], null, {
     contentClass: `tanzaku-paper-modal tanzaku-${color}`,
+  });
+}
+
+function showBlackTanzakuModal(text, showBack = false) {
+  const frontContent = `<p class="tanzaku-message">${text}</p>`;
+  const backContent = `
+    <div
+      aria-label="長さの異なる4本の白い棒"
+      style="min-height:180px; display:flex; align-items:center; justify-content:center; gap:4px;"
+    >
+      ${MAIN_DESK_THIRD_DRAWER_ANSWER.map(
+        (value) => `
+          <span style="width:min(12vw, 64px); aspect-ratio:1; box-sizing:border-box; display:flex; align-items:center; justify-content:flex-start; padding:7px; background:#3f3f3f; border:1px solid rgba(255,255,255,0.3); border-radius:3px;">
+            <span style="display:block; width:${MAIN_DESK_THIRD_DRAWER_BAR_WIDTHS[value]}; height:8px; border-radius:999px; background:#fff;"></span>
+          </span>
+        `,
+      ).join("")}
+    </div>
+  `;
+  const buttons = [
+    {
+      text: showBack ? "表を見る" : "裏を見る",
+      action: () => showBlackTanzakuModal(text, !showBack),
+    },
+    { text: "閉じる", action: "close" },
+  ];
+
+  showModal("黒の短冊", showBack ? backContent : frontContent, buttons, null, {
+    contentClass: "tanzaku-paper-modal tanzaku-darkgray",
   });
 }
 
