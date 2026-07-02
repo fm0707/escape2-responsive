@@ -101,7 +101,7 @@ IMAGES = {
     anime6: [I40("anime_6.webp"), I40("anime_6_2.webp")],
     rainEnd: [I40("rain_end.webp"), I40("rain_end2.webp"), I40("rain_end3.webp")],
     end: [I40("end.webp")],
-    trueEnd: [I40("true_end.webp")],
+    trueEnd: [I40("true_end.webp"), I40("true_end2.webp")],
   },
   items: {
     coin: ICM("bear_coin.png"),
@@ -300,6 +300,9 @@ function getDefaultGameState() {
     },
 
     end: {
+      flags: { backgroundState: 0 },
+    },
+    trueEnd: {
       flags: { backgroundState: 0 },
     },
     rainEnd: {
@@ -1794,6 +1797,10 @@ let rooms = {
         width: 52.6,
         height: 40.2,
         onClick: clickWrap(function () {
+          if (gameState.trueEnd.flags.backgroundState == 0) {
+            gameState.trueEnd.flags.backgroundState = 1;
+            renderCanvasRoom();
+          }
           updateMessage("幸運がありますように！");
         }),
         description: "おまじないをかけるクマ妖精",
