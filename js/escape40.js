@@ -154,6 +154,7 @@ IMAGES = {
     sky2: I40("sky_2.webp"),
     raincoat: I40("raincoat.webp"),
     sweet: I40("sweet.webp"),
+    pen: I40("pen.webp"),
   },
   modals: {
     smoke: I40("modal_smoke.webp"),
@@ -1262,17 +1263,30 @@ let rooms = {
         item: { img: "tanzakuBlack", visible: () => gameState.main.flags.bearAppear },
       },
       {
-        x: 0.9,
-        y: 69.3,
-        width: 6.9,
-        height: 5.8,
+        x: 2.1,
+        y: 70.7,
+        width: 5.3,
+        height: 4.4,
         onClick: clickWrap(function () {
           updateMessage("ペンがある。短冊に願いを書くのに使ったものだろうか");
         }),
         description: "ペン",
         zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
+        usable: () => !gameState.main.flags.bearAppear,
+        item: { img: "pen", visible: () => !gameState.main.flags.bearAppear },
+      },
+      {
+        x: 20.2,
+        y: 69.4,
+        width: 5.7,
+        height: 3.5,
+        onClick: clickWrap(function () {
+          updateMessage("ペンがある。短冊に願いを書くのに使ったものだろうか");
+        }),
+        description: "ペン",
+        zIndex: 5,
+        usable: () => gameState.main.flags.bearAppear,
+        item: { img: "pen", visible: () => gameState.main.flags.bearAppear },
       },
       {
         x: 19.8,
