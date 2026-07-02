@@ -6089,7 +6089,6 @@ function loadGameFromSlot(slotIndex) {
   if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
   merged.openRooms = merged.openRooms.filter((roomId) => rooms[roomId]);
   if (merged.openRooms.length === 0) merged.openRooms = def.openRooms.slice();
-  if (!merged.openRooms.includes("mainDoor")) merged.openRooms.push("mainDoor");
   if (!merged.currentRoom || !rooms[merged.currentRoom]) merged.currentRoom = def.currentRoom;
 
   const mergedFlags = merged.main?.flags || {};
