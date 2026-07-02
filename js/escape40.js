@@ -187,7 +187,7 @@ IMAGES = {
     bearAnim3: I40("modal_bear_smoke.webp"),
     teruteruGet: I40("modal_teruteru_get.webp"),
     teruteruSet: I40("modal_teruteru_set.webp"),
-    drawer: I40("modal_drawer.webp"),
+    drawer: I40("modal_drawer2.webp"),
     book: I40("book.webp"),
     bookTeruteru: I40("book_teruteru.webp"),
     bookTeruteruEn: I40("book_teruteru_en.webp"),
