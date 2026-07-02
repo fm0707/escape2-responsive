@@ -1393,7 +1393,7 @@ let rooms = {
         width: 12.1,
         height: 41.4,
         onClick: clickWrap(function () {
-          showTanzakuModal("red", "赤い短冊", "体が重い。余計なものを落としてすっきりできますように", gameState.main.flags.flypanCleaned && !gameState.main.flags.tanzakuLightEventDone ? { text: "CLE", side: "right", color: "#ff8a00" } : null);
+          showTanzakuModal("red", "赤い短冊", "体が重い。余計なものを落としてすっきりできますように", gameState.main.flags.flypanCleaned ? { text: "CLE", side: "right", color: "#ff8a00" } : null);
         }),
         description: "赤い短冊",
         zIndex: 5,
@@ -1421,7 +1421,7 @@ let rooms = {
         width: 12.1,
         height: 31.9,
         onClick: clickWrap(function () {
-          showTanzakuModal("yellow", "黄色の短冊", "ぐるぐる回る人生に飽きた。いつか燃え尽きられますように", gameState.main.flags.foundMainDeskTopDrawerPowerCode && !gameState.main.flags.tanzakuLightEventDone ? { text: "AN", side: "left", color: "#ff8a00" } : null);
+          showTanzakuModal("yellow", "黄色の短冊", "ぐるぐる回る人生に飽きた。いつか燃え尽きられますように", gameState.main.flags.foundMainDeskTopDrawerPowerCode ? { text: "AN", side: "left", color: "#ff8a00" } : null);
         }),
         description: "黄色の短冊",
         zIndex: 5,
@@ -1435,7 +1435,7 @@ let rooms = {
         width: 18.2,
         height: 43.6,
         onClick: clickWrap(function () {
-          showTanzakuModal("white", "白い短冊", "息苦しい。綺麗な空気が吸えますように", gameState.main.flags.fanCleaned && !gameState.main.flags.tanzakuLightEventDone ? { shape: "pentagon", side: "left", color: "#1a0f08" } : null);
+          showTanzakuModal("white", "白い短冊", "息苦しい。綺麗な空気が吸えますように", gameState.main.flags.fanCleaned ? { shape: "pentagon", side: "left", color: "#1a0f08" } : null);
         }),
         description: "白い短冊",
         zIndex: 5,
@@ -1449,7 +1449,7 @@ let rooms = {
         width: 16.6,
         height: 34.7,
         onClick: clickWrap(function () {
-          showTanzakuModal("purple", "紫の短冊", "喉が渇いた。潤って綺麗な声で歌えますように", gameState.main.flags.glassMelodySolved && !gameState.main.flags.tanzakuLightEventDone ? { shape: "diamond", side: "right", color: "#1a0f08" } : null);
+          showTanzakuModal("purple", "紫の短冊", "喉が渇いた。潤って綺麗な声で歌えますように", gameState.main.flags.glassMelodySolved ? { shape: "diamond", side: "right", color: "#1a0f08" } : null);
         }),
         description: "紫の短冊",
         zIndex: 5,
@@ -3124,7 +3124,7 @@ function handleMainDeskFanClick() {
   syncSenkoBlownFlag(f);
   markProgress?.("fan_cleaned");
   renderCanvasRoom?.();
-  showObj(null, "扇風機を掃除した", IMAGES.modals.cleanFan, "扇風機のほこりを取った。");
+  showObj(null, "扇風機を掃除した", IMAGES.modals.cleanFan, "扇風機のほこりを取った。扇風機は元気に回りだした");
 }
 
 function handleMainWindowPlantClick() {
