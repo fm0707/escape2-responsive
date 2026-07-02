@@ -278,7 +278,7 @@ function getDefaultGameState() {
         mainDeskSecondDrawerDigits: [1, 1],
         unlockMainDeskBottomDrawer: false,
         foundMainDeskBottomDrawerCleanser: false,
-        mainDeskBottomDrawerSymbols: [0, 0, 0, 0, 0],
+        mainDeskBottomDrawerSymbols: [1, 1, 1, 1, 1],
         unlockMainTvLeftDrawer: false,
         foundMainTvLeftDrawerBattery: false,
         mainTvLeftDrawerDigits: [0, 0, 0, 0, 0, 0],
@@ -4586,7 +4586,7 @@ function showMainDeskBottomDrawerPuzzle() {
         ${[0, 1, 2, 3, 4]
           .map(
             (idx) => `
-              <button id="mainDeskBottomDrawerSymbol${idx}" type="button" aria-label="${idx + 1}番目" style="${symbolStyle}">●</button>
+              <button id="mainDeskBottomDrawerSymbol${idx}" type="button" aria-label="${idx + 1}番目" style="${symbolStyle}">❤</button>
             `,
           )
           .join("")}
@@ -4601,7 +4601,7 @@ function showMainDeskBottomDrawerPuzzle() {
 
   setTimeout(() => {
     const symbols = ["●", "❤"];
-    const saved = Array.isArray(f.mainDeskBottomDrawerSymbols) ? f.mainDeskBottomDrawerSymbols : [0, 0, 0, 0, 0];
+    const saved = Array.isArray(f.mainDeskBottomDrawerSymbols) ? f.mainDeskBottomDrawerSymbols : [1, 1, 1, 1, 1];
     const state = [0, 1, 2, 3, 4].map((idx) => (Number(saved[idx]) === 1 ? 1 : 0));
     const symbolBtns = [0, 1, 2, 3, 4].map((idx) => document.getElementById(`mainDeskBottomDrawerSymbol${idx}`));
     const okBtn = document.getElementById("mainDeskBottomDrawerOk");
@@ -4633,7 +4633,7 @@ function showMainDeskBottomDrawerPuzzle() {
         playSE?.("se-gacha");
         closeModal();
         renderCanvasRoom?.();
-        updateMessage("机の一番下の引き出しのロックが外れた。");
+        updateMessage("一番下の引き出しのロックが外れた。");
         return;
       }
 
