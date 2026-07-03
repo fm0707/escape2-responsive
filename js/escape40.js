@@ -189,7 +189,9 @@ IMAGES = {
     bearAnim3: I40("modal_bear_smoke.webp"),
     teruteruGet: I40("modal_teruteru_get.webp"),
     teruteruSet: I40("modal_teruteru_set.webp"),
-    drawer: I40("modal_drawer2.webp"),
+    drawer: I40("modal_drawer_tanzaku.webp"),
+    drawerEmpty: I40("modal_drawer_empty.webp"),
+
     drawerThird: I40("modal_drawer_third.webp"),
     book: I40("book.webp"),
     bookTeruteru: I40("book_teruteru.webp"),
@@ -1300,7 +1302,7 @@ let rooms = {
         height: 7.4,
         onClick: clickWrap(function () {
           playSE?.("se-hikidashi");
-          showObj(null, "引き出しには七夕モチーフのトランプが入っている", IMAGES.modals.drawer, "引き出しを開けた。");
+          showObj(null, "引き出しを開けた", gameState.main.flags.bearAppear ? IMAGES.modals.drawerEmpty : IMAGES.modals.drawer, gameState.main.flags.bearAppear ? "からっぽだ" : "短冊の残りのようだ");
         }),
         description: "引き出し",
         zIndex: 5,
