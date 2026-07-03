@@ -116,14 +116,14 @@ IMAGES = {
     blackBack: ICM("common/black_back.png"),
     lang_en: ICM("common/en2.png"),
     lang_jp: ICM("common/jp.png"),
-    // key: ICM("common/key.webp"),
+    key: ICM("common/key.webp"),
     battery: ICM("common/battery.webp"),
     driver: ICM("common/driver.webp"),
 
     anime1: [I40("anime_1.webp")],
     anime4: [I40("anime_4.webp")],
 
-    key: I40("key.webp"),
+    // key: I40("key.webp"),
     match: I40("match.webp"),
     smoke: I40("smoke.webp"),
     smokeNaname: I40("smoke_naname.webp"),
