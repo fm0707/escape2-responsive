@@ -3135,7 +3135,7 @@ function syncSenkoBlownFlag(flags) {
 function handleMainDeskFanClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (f.fanCleaned) {
-    updateMessage("扇風機は回っている。");
+    updateMessage("扇風機は元気に回転している。");
     return;
   }
 
@@ -3155,7 +3155,7 @@ function handleMainDeskFanClick() {
 function handleMainWindowPlantClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (f.useFertilizer) {
-    updateMessage("植物は元気になって、輝いている。");
+    updateMessage("植物は元気になって、ツヤツヤと輝いている。");
     return;
   }
 
@@ -3263,7 +3263,7 @@ function handleMainDeskCupClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (f.pourWater) {
     if (f.glassMelodySolved) {
-      updateMessage("コップからきれいな音がした。");
+      updateMessage("コップを使って、きれいな音を奏でることができた。");
       return;
     }
     if (!hasItem("stick")) {
@@ -3574,6 +3574,7 @@ function handleMainKitchenFreezerClick() {
       const answer = state.map((index) => letters[index]).join("");
       if (answer === "ICE") {
         f.unlockMainKitchenFreezer = true;
+        removeItem("memo");
         markProgress?.("unlock_main_kitchen_freezer");
         playSE?.("se-gacha");
         closeModal();
