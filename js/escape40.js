@@ -471,19 +471,6 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 16.5,
-        y: 61.7,
-        width: 11.6,
-        height: 11.6,
-        onClick: clickWrap(function () {
-          updateMessage("余った短冊が置いてある");
-        }),
-        description: "横向きの黒い短冊",
-        zIndex: 5,
-        usable: () => !gameState.main.flags.bearAppear,
-        item: { img: "tanzakuBlackYoko", visible: () => !gameState.main.flags.bearAppear },
-      },
-      {
         x: 38.2,
         y: 48.9,
         width: 19.4,
