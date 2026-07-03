@@ -203,8 +203,11 @@ IMAGES = {
     bearReceive: I40("modal_bear_receive.webp"),
     bearEat: I40("modal_bear_eat.webp"),
     cups: I40("modal_cups.webp"),
-    // badendDinner: I40("badend_dinner.webp"),
-    // badendDinnerEn: I40("badend_dinner_en.webp"),
+    hikoboshiReceive: I40("modal_hikoboshi_receive.webp"),
+    hikoboshiChallenge: I40("modal_hikoboshi_chanllange.webp"),
+    hikoboshiSink: I40("modal_hikoboshi_sink.webp"),
+    badendSky: I40("modal_bad_sky.webp"),
+    badendSky2: I40("modal_bad_sky2.webp"),
   },
 };
 
@@ -580,7 +583,7 @@ let rooms = {
         onClick: clickWrap(function () {
           updateMessage("織姫は、悲しそうにしている");
         }),
-        description: "織姫",
+        description: "悲しむ織姫",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
@@ -640,9 +643,9 @@ let rooms = {
         width: 19.9,
         height: 19.8,
         onClick: clickWrap(function () {
-          updateMessage("彦星は、悲しそうにしている");
+          handleAnime2SadHikoboshiClick();
         }),
-        description: "彦星",
+        description: "悲しむ彦星",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
@@ -3069,6 +3072,44 @@ function handleMainDoorBearSweetClick() {
   `;
   showModal("クマ妖精に七夕ゼリーを渡した", content, [{ text: "閉じる", action: "close" }]);
   updateMessage("クマ妖精は七夕ゼリーをあっという間に完食した");
+}
+
+function handleAnime2SadHikoboshiClick() {
+  if (gameState.selectedItem !== "raincoat") {
+    updateMessage("彦星は、悲しそうにしている");
+    return;
+  }
+
+  removeItem("raincoat");
+  renderCanvasRoom?.();
+  playSE?.("se-bukubuku");
+
+  const content = `
+    <div class="modal-anim frames" style="aspect-ratio:1 / 1;">
+      <img src="${IMAGES.modals.hikoboshiReceive}" alt="レインコートを受け取る彦星">
+      <img src="${IMAGES.modals.hikoboshiChallenge}" alt="天の川へ挑む彦星">
+      <img src="${IMAGES.modals.hikoboshiSink}" alt="天の川に沈む彦星">
+    </div>
+  `;
+
+  showModal("彦星「おお、織姫のためならば…」", content, [
+    {
+      text: "次へ",
+      action: () => {
+        const badEndContent = `
+          <div class="modal-anim">
+            <img src="${IMAGES.modals.badendSky}" alt="弱まるアルタイルの輝き">
+            <img src="${IMAGES.modals.badendSky2}" alt="輝きを失ったアルタイル">
+          </div>
+        `;
+        pauseBGM();
+        playSE?.("se-frog");
+        showModal("【BAD END】アルタイルの輝きは弱まっていく…", badEndContent, [{ text: "最初から", action: "restart" }]);
+        updateMessage("BAD END: アルタイルの輝きは弱まっていく…");
+      },
+    },
+  ]);
+  updateMessage("彦星「おお、織姫のためならば…」");
 }
 
 function handleMainDoorCabinetClick() {
