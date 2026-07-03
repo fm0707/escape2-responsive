@@ -197,7 +197,7 @@ IMAGES = {
     bookTeruteru: I40("book_teruteru.webp"),
     bookTeruteruEn: I40("book_teruteru_en.webp"),
     refrigeratorMemo: I40("refrigerator_memo.webp"),
-    freezerMemo: I40("freezer_memo.webp"),
+    freezerMemo: I40("modal_freezer_mamo.webp"),
     icetray: I40("ice_tray.webp"),
     underSink: I40("modal_under_sink.webp"),
     bearReceive: I40("modal_bear_receive.webp"),
@@ -494,7 +494,7 @@ let rooms = {
             return;
           }
           if (gameState.selectedItem === "raincoat") {
-            updateMessage("ボクには大きいみたい");
+            updateMessage("「ボクには大きいみたい」");
             return;
           }
           if (gameState.main.flags.weatherSkyState < 2 && gameState.main.flags.gaveSweetToBearFairy) {
@@ -523,9 +523,9 @@ let rooms = {
         width: 7.7,
         height: 7.0,
         onClick: clickWrap(function () {
-          acquireItemOnce("foundTeruteru", "teruteru", "テルテル坊主が落ちている", IMAGES.modals.teruteruGet, "テルテル坊主を拾った");
+          acquireItemOnce("foundTeruteru", "teruteru", "てるてる坊主が落ちている", IMAGES.modals.teruteruGet, "てるてる坊主を拾った");
         }),
-        description: "落ちているテルテル坊主",
+        description: "落ちているてるてる坊主",
         zIndex: 5,
         usable: () => gameState.main.flags.bearAppear && !gameState.main.flags.foundTeruteru,
         item: { img: "teruteru", visible: () => gameState.main.flags.bearAppear && !gameState.main.flags.foundTeruteru },
@@ -1374,9 +1374,9 @@ let rooms = {
         width: 7.0,
         height: 12.6,
         onClick: clickWrap(function () {
-          updateMessage("テルテル坊主がぶら下がっている");
+          updateMessage("てるてる坊主がぶら下がっている");
         }),
-        description: "テルテル坊主表示位置",
+        description: "てるてる坊主表示位置",
         zIndex: 5,
         usable: () => gameState.main.flags.teruteruSet,
         item: { img: "teruteru", visible: () => gameState.main.flags.teruteruSet },
@@ -3255,7 +3255,7 @@ function handleMainWindowPlantClick() {
 function handleMainWindowHookClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (f.teruteruSet) {
-    updateMessage("テルテル坊主がかかっている。");
+    updateMessage("てるてる坊主がかかっている。");
     return;
   }
 
@@ -3269,8 +3269,8 @@ function handleMainWindowHookClick() {
   markProgress?.("set_teruteru");
   renderCanvasRoom?.();
 
-  showModal("テルテル坊主をかけた", `<img src="${IMAGES.modals.teruteruSet}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }], startSkyClearSequence);
-  updateMessage("テルテル坊主をかけた");
+  showModal("てるてる坊主をかけた", `<img src="${IMAGES.modals.teruteruSet}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }], startSkyClearSequence);
+  updateMessage("てるてる坊主をかけた");
 }
 
 function startSkyClearSequence() {
@@ -3597,6 +3597,7 @@ function handleMainKitchenFreezerClick() {
   ].join(";");
   const content = `
     <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <img src="${IMAGES.modals.freezerMemo}" alt="冷凍庫のメモ" class="showobj-image">
       <div class="notranslate" translate="no" lang="en" style="display:flex; gap:8px; justify-content:center; align-items:center;">
         ${[0, 1, 2]
           .map(
@@ -5614,18 +5615,9 @@ function getItemName(itemId) {
     fertilizer: "肥料",
     jug: "水差し",
     jugWater: "水の入った水差し",
-    battery: "電池",
+    teruteru: "てるてる坊主",
     driver: "ドライバー",
-    camera: "カメラ",
-    picDaikonkun: "大根くんの写真",
-    picDaikonkunBear: "大根くんとクマ妖精の写真",
-    picBear: "クマ妖精の写真",
-    daikonkun: "大根くんのぬいぐるみ",
-    scale: "定規",
-    yukata: "浴衣",
-    memoSafe: "金庫のメモ",
-    milk: "牛乳",
-    yen300: "300円",
+
     raincoat: "レインコート",
     sweet: "七夕ゼリー",
     memo: "メモ",
