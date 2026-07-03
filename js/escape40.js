@@ -200,6 +200,7 @@ IMAGES = {
     underSink: I40("modal_under_sink.webp"),
     bearReceive: I40("modal_bear_receive.webp"),
     bearEat: I40("modal_bear_eat.webp"),
+    cups: I40("modal_cups.webp"),
     // badendDinner: I40("badend_dinner.webp"),
     // badendDinnerEn: I40("badend_dinner_en.webp"),
   },
@@ -1456,7 +1457,7 @@ let rooms = {
         width: 18.2,
         height: 43.6,
         onClick: clickWrap(function () {
-          showTanzakuModal("white", "白い短冊", "息苦しい。綺麗な空気が吸えますように", gameState.main.flags.fanCleaned ? { shape: "pentagon", side: "left", color: "#1a0f08" } : null);
+          showTanzakuModal("white", "白い短冊", "息苦しい。綺麗な空気が吸えますように", gameState.main.flags.fanCleaned ? { shape: "sparkle", side: "left", color: "#1a0f08" } : null);
         }),
         description: "白い短冊",
         zIndex: 5,
@@ -1470,7 +1471,7 @@ let rooms = {
         width: 16.6,
         height: 34.7,
         onClick: clickWrap(function () {
-          showTanzakuModal("purple", "紫の短冊", "喉が渇いた。潤って綺麗な声で歌えますように", gameState.main.flags.glassMelodySolved ? { shape: "diamond", side: "right", color: "#1a0f08" } : null);
+          showTanzakuModal("purple", "紫の短冊", "喉が渇いた。潤って綺麗な声で歌えますように", gameState.main.flags.glassMelodySolved ? { text: "♪", side: "right", color: "#1a0f08" } : null);
         }),
         description: "紫の短冊",
         zIndex: 5,
@@ -3263,7 +3264,7 @@ function handleMainDeskCupClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (f.pourWater) {
     if (f.glassMelodySolved) {
-      updateMessage("コップを使って、きれいな音を奏でることができた。");
+      showObj(null, "", IMAGES.modals.cups, "コップを使って、きれいな音を奏でることができた。");
       return;
     }
     if (!hasItem("stick")) {
@@ -4525,7 +4526,7 @@ function showMainDeskSecondDrawerPuzzle() {
         ${[0, 1]
           .map(
             (idx) => `
-              <button id="mainDeskSecondDrawerDigit${idx}" type="button" aria-label="${idx + 1}桁目" style="${digitStyles[idx]}">1</button>
+              <button id="mainDeskSecondDrawerDigit${idx}" type="button" aria-label="${idx + 1}桁目" style="${digitStyles[idx]}">0</button>
             `,
           )
           .join("")}
@@ -4544,10 +4545,10 @@ function showMainDeskSecondDrawerPuzzle() {
     const hintEl = document.getElementById("mainDeskSecondDrawerHint");
     if (digitBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
 
-    const saved = Array.isArray(f.mainDeskSecondDrawerDigits) ? f.mainDeskSecondDrawerDigits : [1, 1];
+    const saved = Array.isArray(f.mainDeskSecondDrawerDigits) ? f.mainDeskSecondDrawerDigits : [0, 0];
     const state = [0, 1].map((idx) => {
       const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 1 && value <= 13 ? value : 1;
+      return Number.isInteger(value) && value >= 0 && value <= 9 ? value : 0;
     });
     const repaint = () => {
       digitBtns.forEach((btn, idx) => {
@@ -4558,7 +4559,7 @@ function showMainDeskSecondDrawerPuzzle() {
 
     digitBtns.forEach((btn, idx) => {
       btn.addEventListener("click", () => {
-        state[idx] = state[idx] >= 13 ? 1 : state[idx] + 1;
+        state[idx] = (state[idx] + 1) % 10;
         f.mainDeskSecondDrawerDigits = state.slice();
         playSE?.("se-pi");
         repaint();
@@ -4567,7 +4568,7 @@ function showMainDeskSecondDrawerPuzzle() {
 
     okBtn.addEventListener("click", () => {
       f.mainDeskSecondDrawerDigits = state.slice();
-      if (state[0] === 1 && state[1] === 13) {
+      if (state[0] === 7 && state[1] === 3) {
         f.unlockMainDeskSecondDrawer = true;
         markProgress?.("unlock_main_desk_second_drawer");
         playSE?.("se-gacha");
@@ -6006,10 +6007,8 @@ function showModal(title, content, buttons, onSequenceSuccess, options) {
 function showTanzakuModal(color, title, text, marker) {
   const markerSide = marker?.side === "right" ? "right" : "left";
   let markerContent = "";
-  if (marker?.shape === "pentagon") {
-    markerContent = `<svg class="tanzaku-marker-shape" viewBox="0 0 48 48" aria-hidden="true"><polygon points="24 4 44 19 36 44 12 44 4 19"></polygon></svg>`;
-  } else if (marker?.shape === "diamond") {
-    markerContent = `<svg class="tanzaku-marker-shape" viewBox="0 0 48 48" aria-hidden="true"><polygon points="24 4 44 24 24 44 4 24"></polygon></svg>`;
+  if (marker?.shape === "sparkle") {
+    markerContent = `<svg class="tanzaku-marker-shape" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 C25.5 15.5 32.5 22.5 45 24 C32.5 25.5 25.5 32.5 24 45 C22.5 32.5 15.5 25.5 3 24 C15.5 22.5 22.5 15.5 24 3 Z"></path></svg>`;
   } else if (marker?.text) {
     markerContent = marker.text;
   }
