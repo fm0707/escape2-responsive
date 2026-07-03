@@ -493,6 +493,10 @@ let rooms = {
             handleMainDoorBearSweetClick();
             return;
           }
+          if (gameState.selectedItem === "raincoat") {
+            updateMessage("ボクには大きいみたい");
+            return;
+          }
           if (gameState.main.flags.weatherSkyState < 2 && gameState.main.flags.gaveSweetToBearFairy) {
             talkToHintCharacter("main", "bear3");
             return;
