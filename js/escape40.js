@@ -1457,7 +1457,7 @@ let rooms = {
         width: 18.2,
         height: 43.6,
         onClick: clickWrap(function () {
-          showTanzakuModal("white", "白い短冊", "息苦しい。綺麗な空気が吸えますように", gameState.main.flags.fanCleaned ? { shape: "sparkle", side: "left", color: "#1a0f08" } : null);
+          showTanzakuModal("white", "白い短冊", "息苦しい。綺麗な空気が吸えますように", gameState.main.flags.fanCleaned ? { text: "★", side: "left", color: "#1a0f08" } : null);
         }),
         description: "白い短冊",
         zIndex: 5,
@@ -2398,6 +2398,31 @@ function drawFanSpinLines(ctx, canvas, roomId) {
     ctx.lineTo(cx + Math.cos(angle) * radius * 0.85, cy + Math.sin(angle) * radius * 0.85);
     ctx.stroke();
   }
+
+  const stars = [
+    { x: cx + radius * 1.38, y: cy - radius * 0.68, size: radius * 0.24 },
+    { x: cx + radius * 1.72, y: cy, size: radius * 0.19 },
+    { x: cx + radius * 1.38, y: cy + radius * 0.68, size: radius * 0.15 },
+  ];
+  stars.forEach((star) => {
+    ctx.beginPath();
+    for (let point = 0; point < 10; point++) {
+      const angle = -Math.PI / 2 + (point * Math.PI) / 5;
+      const pointRadius = point % 2 === 0 ? star.size : star.size * 0.42;
+      const px = star.x + Math.cos(angle) * pointRadius;
+      const py = star.y + Math.sin(angle) * pointRadius;
+      if (point === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.globalAlpha = 0.95;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+    ctx.strokeStyle = "rgba(20, 34, 42, 0.78)";
+    ctx.lineWidth = Math.max(1.2, radius * 0.055);
+    ctx.lineJoin = "round";
+    ctx.fill();
+    ctx.stroke();
+  });
 
   ctx.restore();
 }
@@ -6006,12 +6031,7 @@ function showModal(title, content, buttons, onSequenceSuccess, options) {
 
 function showTanzakuModal(color, title, text, marker) {
   const markerSide = marker?.side === "right" ? "right" : "left";
-  let markerContent = "";
-  if (marker?.shape === "sparkle") {
-    markerContent = `<svg class="tanzaku-marker-shape" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 C25.5 15.5 32.5 22.5 45 24 C32.5 25.5 25.5 32.5 24 45 C22.5 32.5 15.5 25.5 3 24 C15.5 22.5 22.5 15.5 24 3 Z"></path></svg>`;
-  } else if (marker?.text) {
-    markerContent = marker.text;
-  }
+  const markerContent = marker?.text || "";
   const markerHtml = markerContent ? `<span class="tanzaku-marker tanzaku-marker-${markerSide} notranslate" translate="no" lang="en" style="--marker-color:${marker.color || "#ff8a00"}">${markerContent}</span>` : "";
   showModal(title, `${markerHtml}<p class="tanzaku-message">${text}</p>`, [{ text: "閉じる", action: "close" }], null, {
     contentClass: `tanzaku-paper-modal tanzaku-${color}`,
