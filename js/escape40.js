@@ -1749,10 +1749,10 @@ let rooms = {
     description: "土砂降りの雨の中、あなたは勇敢にも一歩を踏み出しました！",
     clickableAreas: [
       {
-        x: 1.9,
-        y: 70.9,
-        width: 20.4,
-        height: 24.5,
+        x: 2.8,
+        y: 65.7,
+        width: 22.0,
+        height: 23.4,
         onClick: clickWrap(function () {
           updateMessage("クマ妖精は、少し心配しているようだ");
         }),
