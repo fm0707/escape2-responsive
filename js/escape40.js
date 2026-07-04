@@ -4018,9 +4018,9 @@ function showEndingReport(endingId = "end") {
   // 今作用エンド情報
   const ENDING_INFO = {
     trueEnd: {
-      title: "🐟 DINNER END",
+      title: "🎍 TRUE END",
       label: "DINNER END",
-      desc: "脱出してお風呂、ご飯を楽しみました",
+      desc: "追加の願いをかなえて、無事に脱出しました",
     },
 
     end: {
