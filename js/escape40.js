@@ -4019,7 +4019,7 @@ function showEndingReport(endingId = "end") {
   const ENDING_INFO = {
     trueEnd: {
       title: "🎍 TRUE END",
-      label: "DINNER END",
+      label: "TRUE END",
       desc: "追加の願いをかなえて、無事に脱出しました",
     },
 
