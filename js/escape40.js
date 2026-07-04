@@ -206,6 +206,7 @@ IMAGES = {
     hikoboshiReceive: I40("modal_hikoboshi_receive.webp"),
     hikoboshiChallenge: I40("modal_hikoboshi_chanllange.webp"),
     hikoboshiSink: I40("modal_hikoboshi_sink.webp"),
+    bearCoat: I40("modal_bear_coat.webp"),
     badendSky: I40("modal_bad_sky.webp"),
     badendSky2: I40("modal_bad_sky2.webp"),
   },
@@ -481,7 +482,7 @@ let rooms = {
             return;
           }
           if (gameState.selectedItem === "raincoat") {
-            updateMessage("「ボクには大きいみたい」");
+            showObj(null, "「ボクには大きいみたい」", IMAGES.modals.bearCoat, "クマ妖精からレインコートを返された");
             return;
           }
           if (gameState.main.flags.weatherSkyState < 2 && gameState.main.flags.gaveSweetToBearFairy) {
