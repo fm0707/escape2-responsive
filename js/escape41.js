@@ -162,7 +162,8 @@ IMAGES = {
     tankFill: I41("modal_tank_fill.webp"),
     adminImage: I41("modal_admin_image.webp"),
     shelf: I41("modal_shelf.webp"),
-    boxOpen: I41("modal_box_open.webp"),
+    boxOpen1: I41("modal_box_open_1.webp"),
+    boxOpen2: I41("modal_box_open_2.webp"),
     boxOpenf: I41("modal_box_open.webp"),
     bearUpset: I41("modal_bear_upset.webp"),
     bearGeton: I41("modal_bear_geton.webp"),
@@ -3804,7 +3805,13 @@ function showReceivedCargoBoxModal() {
         f.receiveCargo = false;
         closeModal();
         renderCanvasRoom?.();
-        showModal("箱を開けた", `<img src="${IMAGES.modals.boxOpen}" class="showobj-image" alt="開いた箱">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+        const content = `
+          <div class="modal-anim">
+            <img src="${IMAGES.modals.boxOpen1}" alt="箱を開ける">
+            <img src="${IMAGES.modals.boxOpen2}" alt="箱を開けた">
+          </div>
+        `;
+        showModal("箱を開けた", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
         updateMessage("箱を開けた。");
       },
     },
