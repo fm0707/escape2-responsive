@@ -3471,7 +3471,7 @@ function showTransferPanelModal() {
   const energyValue = energyOk ? 88 : 24;
   const disabledAttr = unlocked ? "" : " disabled";
   const panelStyle = ["max-width:560px", "margin:0 auto", "padding:18px", "border-radius:6px", "background:linear-gradient(180deg,#2b3338,#151b1f)", "color:#edf7ff", "border:2px solid #6f7d86", "box-shadow:inset 0 0 22px rgba(255,255,255,0.08),0 8px 24px rgba(0,0,0,0.3)"].join(";");
-  const buttonBase = ["border:1px solid #7f919c", "border-radius:4px", "background:#27353c", "color:#fff", "font-size:1.04em", "font-weight:800", "cursor:pointer", "box-sizing:border-box"].join(";");
+  const buttonBase = ["border:1px solid #7f919c", "border-radius:4px", "background:#27353c", "color:#fff", "font-size:1.04em", "font-weight:800", "cursor:pointer", "box-sizing:border-box", "touch-action:manipulation", "user-select:none"].join(";");
   const inactiveButton = "opacity:0.44; cursor:not-allowed;";
   const leverStyle = [
     buttonBase,
@@ -3558,7 +3558,8 @@ function showTransferPanelModal() {
     if (!transferBtn) return;
 
     const reopen = () => showTransferPanelModal();
-    const destinations = ["1", "2", "3", "3.65", "4", "5"];
+    const destinations = ["1", "2", "3", "4", "5"];
+    const LONG_PRESS_MS = 700;
 
     leverBtn?.addEventListener("click", () => {
       if (!getTransferPanelState().started) return;
@@ -3573,6 +3574,14 @@ function showTransferPanelModal() {
     const moveDestination = (delta) => {
       const state = getTransferPanelState();
       if (!state.started) return;
+      if (state.destination === "3.65") {
+        state.destination = delta > 0 ? "4" : "3";
+        state.status = `DEST ${state.destination}`;
+        playSE?.("se-pi");
+        closeModal();
+        reopen();
+        return;
+      }
       const idx = Math.max(0, destinations.indexOf(state.destination));
       state.destination = destinations[(idx + delta + destinations.length) % destinations.length];
       state.status = `DEST ${state.destination}`;
@@ -3580,8 +3589,50 @@ function showTransferPanelModal() {
       closeModal();
       reopen();
     };
-    prevBtn?.addEventListener("click", () => moveDestination(-1));
-    nextBtn?.addEventListener("click", () => moveDestination(1));
+    const bindDestinationButton = (btn, delta, allowHiddenDestination = false) => {
+      if (!btn) return;
+      let longPressTimer = null;
+      let longPressHandled = false;
+
+      const clearLongPress = () => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      };
+
+      btn.addEventListener("pointerdown", (e) => {
+        if (!getTransferPanelState().started) return;
+        longPressHandled = false;
+        btn.setPointerCapture?.(e.pointerId);
+        if (allowHiddenDestination) {
+          clearLongPress();
+          longPressTimer = setTimeout(() => {
+            const state = getTransferPanelState();
+            if (!state.started || state.destination !== "3") return;
+            longPressHandled = true;
+            state.destination = "3.65";
+            state.status = "DEST 3.65";
+            playSE?.("se-kachi");
+            const valueEl = document.getElementById("transferDestinationValue");
+            const displayEl = document.getElementById("transferMagicDisplay");
+            if (valueEl) valueEl.textContent = state.destination;
+            if (displayEl) displayEl.textContent = getTransferPanelStatusLabel(state.status, state.mode);
+          }, LONG_PRESS_MS);
+        }
+      });
+
+      btn.addEventListener("pointerup", () => {
+        clearLongPress();
+        if (longPressHandled) return;
+        moveDestination(delta);
+      });
+      btn.addEventListener("pointerleave", clearLongPress);
+      btn.addEventListener("pointercancel", clearLongPress);
+    };
+
+    bindDestinationButton(prevBtn, -1);
+    bindDestinationButton(nextBtn, 1, true);
     messageInput?.addEventListener("input", () => {
       const state = getTransferPanelState();
       if (!state.started) return;
