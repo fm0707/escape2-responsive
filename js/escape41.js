@@ -3397,9 +3397,9 @@ function handleMainAdminDoorEnergyTankClick() {
   f.unlockManageBoard = true;
   markProgress?.("unlock_manage_board");
   playSE?.("se-tea");
-  showModal("エネルギータンクにマジカルポーションを注いだ", `<img src="${IMAGES.modals.tankFill}" class="showobj-image" alt="エネルギータンク">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+  showModal("エネルギータンクにテラパワーエナジーを注いだ", `<img src="${IMAGES.modals.tankFill}" class="showobj-image" alt="エネルギータンク">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
   renderCanvasRoom?.();
-  updateMessage("マジカルポーションをタンクに注いだ");
+  updateMessage("テラパワーエナジーをタンクに注いだ");
 }
 
 function handleMainAdminDoorControlPanelClick() {
@@ -4557,7 +4557,7 @@ function openMainChestThirdDrawer() {
         return;
       }
 
-      acquireItemOnce("foundMainChestThirdDrawerMagicalPotion", "magicalPotion", "引き出しにマジカルポーションがある", IMAGES.items.magicalPotion, "マジカルポーションを手に入れた", closeDrawer);
+      acquireItemOnce("foundMainChestThirdDrawerMagicalPotion", "magicalPotion", "引き出しにテラパワーエナジーがある", IMAGES.items.magicalPotion, "テラパワーエナジーを手に入れた", closeDrawer);
     },
   });
 }
@@ -5248,7 +5248,7 @@ function getItemName(itemId) {
     bag: "魔法の配達かばん",
     hat: "魔法の制帽",
     paper: "穴が開いた紙切れ",
-    magicalPotion: "マジカルポーション",
+    magicalPotion: "テラパワーエナジー",
     manjuBox: "溶岩まんじゅうの箱",
 
     driver: "ドライバー",
