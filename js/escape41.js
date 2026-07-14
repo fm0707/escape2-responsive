@@ -211,17 +211,11 @@ function getDefaultGameState() {
         foundPaper: false,
         foundFan: false,
         foundManjuBox: false,
-        foundWashitsuSafeYen300: false,
         foundMainDoorCabinetKey: false,
-        foundMainDeskTopDrawerPowerCode: false,
-        foundMainDeskSecondDrawerFertilizer: false,
-        foundMainDeskThirdDrawerMemo: false,
         foundMainChestTopDrawerEnvelopeNostamp: false,
         foundMainChestSecondDrawerHat: false,
         foundMainChestThirdDrawerMagicalPotion: false,
         unlockMainDoorCabinet: false,
-        unlockSafe: false,
-        unlockMainDeskSecondDrawer: false,
         unlockBox: false,
         unlockMainChestTopDrawer: false,
         unlockMainChestSecondDrawer: false,
@@ -234,12 +228,8 @@ function getDefaultGameState() {
         receiveManjuBox: false,
         bearAppear: false,
         gaveSweetToBearFairy: false,
-        projectorPowerOn: false,
         fanCleaned: false,
-        useFertilizer: false,
         flypanCleaned: false,
-        fireSenko: false,
-        senkoBurned: false,
         glassMelodySolved: false,
         boardDeskRewritten: false,
         boardDoorRewritten: false,
@@ -248,10 +238,7 @@ function getDefaultGameState() {
         boardDoorAnswers: {},
         boardAdminLetters: [0, 0, 0, 0],
         mainDoorCabinetInputs: [],
-        washitsuSafeDigits: [],
-        washitsuSafeDialNumber: 0,
         mainDeskStampSelection: [],
-        mainDeskSecondDrawerDigits: [0, 0],
         mainDeskBoxLetters: [0, 0, 0, 0, 0],
         mainChestTopDrawerColors: [0, 0, 0, 0],
         mainChestSecondDrawerDigits: { top: 1, right: 1, left: 1, bottom: 1 },
@@ -297,9 +284,7 @@ function getDefaultGameState() {
     trueEnd: {
       flags: { backgroundState: 0 },
     },
-    rainEnd: {
-      flags: { backgroundState: 0 },
-    },
+
     selectedItem: null,
     selectedItemSlot: null,
     usingItem: null,
@@ -309,16 +294,6 @@ function getDefaultGameState() {
 
 let gameState = getDefaultGameState();
 let daemonBearEatingTimer = null;
-
-function shouldUseSmokeNaname() {
-  const f = gameState.main?.flags || {};
-  return !!(f.fireSenko && !f.senkoBurned && f.fanCleaned);
-}
-
-function areAllTanzakuLit() {
-  const f = gameState.main?.flags || {};
-  return !!(f.flypanCleaned && f.useFertilizer && f.foundMainDeskTopDrawerPowerCode && f.fanCleaned && f.glassMelodySolved);
-}
 
 const SHIWAKE_BOXES = [
   { slot: 1, label: "WATER", color: "#0072B2" },
@@ -1825,10 +1800,6 @@ const END_IDS = new Set(["end", "trueEnd"]);
 // ===== changeRoom フック：=====
 const _changeRoom_custom = changeRoom;
 changeRoom = function (roomId) {
-  if (roomId === "rainEnd") {
-    const rainEndFlags = gameState.rainEnd?.flags || (gameState.rainEnd = { flags: { backgroundState: 0 } }).flags;
-    rainEndFlags.backgroundState = gameState.main.flags.gaveSweetToBearFairy ? 2 : gameState.inventory.includes("sweet") ? 1 : 0;
-  }
   _changeRoom_custom.apply(this, arguments);
 
   if (END_IDS.has(roomId)) {
@@ -3164,26 +3135,6 @@ function playDeskDrawerCloseFx(roomId, areaDescription, options = {}) {
   requestAnimationFrame(tick);
 }
 
-function handleProjectorCodeClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.projectorPowerOn) {
-    updateMessage("延長コードは接続されている。");
-    return;
-  }
-
-  if (gameState.selectedItem !== "powerCode") {
-    updateMessage("プロジェクターのコードがコンセントまで届かない。");
-    return;
-  }
-
-  removeItem("powerCode");
-  f.projectorPowerOn = true;
-  markProgress?.("projector_power_on");
-  playSE?.("se-mouse");
-  renderCanvasRoom?.();
-  showObj(null, "延長コードを接続した", IMAGES.modals.codeConnect, "延長コードを接続した。");
-}
-
 function handleMainDoorBookClick() {
   const description = "「日本の言い伝え」という本がある。";
   const content = `<img src="${IMAGES.modals.book}" alt="日本の言い伝えの本" class="showobj-image">`;
@@ -3368,11 +3319,7 @@ function handleMainDoorCabinetClick() {
   }, 0);
 }
 
-function syncSenkoBlownFlag(flags) {
-  if (!flags) return false;
-  flags.senkoBlown = !!flags.senkoBurned && !!flags.fanCleaned;
-  return flags.senkoBlown;
-}
+
 
 function handleMainDeskFanClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
@@ -3388,37 +3335,9 @@ function handleMainDeskFanClick() {
 
   removeItem("mop");
   f.fanCleaned = true;
-  syncSenkoBlownFlag(f);
   markProgress?.("fan_cleaned");
   renderCanvasRoom?.();
   showObj(null, "扇風機を掃除した", IMAGES.modals.cleanFan, "扇風機のほこりを取った。扇風機は元気に回りだした");
-}
-
-function handleMainWindowPlantClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.useFertilizer) {
-    updateMessage("植物は元気になって、ツヤツヤと輝いている。");
-    return;
-  }
-
-  if (gameState.selectedItem !== "fertilizer") {
-    updateMessage("植物はあまり元気が無いようだ");
-    return;
-  }
-
-  removeItem("fertilizer");
-  f.useFertilizer = true;
-  markProgress?.("use_fertilizer");
-  renderCanvasRoom?.();
-
-  const content = `
-    <div class="modal-anim">
-      <img src="${IMAGES.modals.plant}" alt="肥料をあげる前の植物">
-      <img src="${IMAGES.modals.plantShine}" alt="元気になって輝く植物">
-    </div>
-  `;
-  showModal("肥料を使った", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("植物は元気になった。");
 }
 
 function handleBoardDeskWifiClick() {
@@ -3788,16 +3707,16 @@ function startTrueEndManjuBoxTransition() {
   if (fx.lockInput) return;
 
   fx.lockInput = true;
-  flashScreen("black", 2200);
+  flashScreen("black", 3200);
   setTimeout(() => {
     gameState.trueEnd.flags.backgroundState = 1;
     removeItem("manjuBox");
-    changeBGM(S41("Heliopause_Waltz.mp3"));
     renderCanvasRoom();
-  }, 850);
+    updateMessage("いつの間にか涼しい和室に着いていた");
+  }, 1400);
   setTimeout(() => {
     if (gameState.fx) gameState.fx.lockInput = false;
-  }, 2200);
+  }, 3200);
 }
 
 function showReceivedCargoBoxModal() {
@@ -4176,9 +4095,7 @@ function showEndingReport(endingId = "end") {
     case "end":
       secretText = "👣 脱出おめでとうございます";
       break;
-    case "rainEnd":
-      secretText = "👣 脱出おめでとうございます";
-      break;
+
     default:
       secretText = "";
   }
@@ -4348,248 +4265,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-function showWashitsuSafePuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockSafe) {
-    if (!f.foundWashitsuSafeYen300) {
-      acquireItemOnce("foundWashitsuSafeYen300", "yen300", "金庫の中に300円がある", IMAGES.items.yen300, "300円を手に入れた");
-      return;
-    }
-
-    updateMessage("金庫は開いている。");
-    return;
-  }
-
-  const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  const dialSize = "min(72vw, 320px)";
-  const numberStyle = [
-    "position:absolute",
-    "left:50%",
-    "top:50%",
-    "width:34px",
-    "height:34px",
-    "border-radius:50%",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "background:#f4f6f7",
-    "color:#17232c",
-    "font-size:18px",
-    "font-weight:800",
-    "box-shadow:0 1px 3px rgba(0,0,0,0.22)",
-    "user-select:none",
-    "pointer-events:none",
-  ].join(";");
-  const numberMarks = numbers
-    .map((num) => {
-      const angle = num * 36;
-      const rad = (angle * Math.PI) / 180;
-      const x = 50 + Math.sin(rad) * 34;
-      const y = 50 - Math.cos(rad) * 34;
-      return `<span class="safe-dial-number" data-safe-number="${num}" style="${numberStyle}; left:${x}%; top:${y}%; transform:translate(-50%, -50%);">${num}</span>`;
-    })
-    .join("");
-  const content = `
-    <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div id="washitsuSafeDial" role="slider" aria-label="金庫のダイヤル" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"
-        style="position:relative; width:${dialSize}; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 36% 30%, #75899a 0%, #324554 50%, #14232d 100%); border:10px solid #d8e0e6; box-shadow:inset 0 0 0 10px #eef3f6, inset 0 0 24px rgba(0,0,0,0.45), 0 8px 18px rgba(0,0,0,0.32); cursor:pointer; touch-action:none;">
-        <div style="position:absolute; left:50%; top:8px; width:4px; height:26px; border-radius:4px; background:#fff; transform:translateX(-50%); box-shadow:0 1px 2px rgba(0,0,0,0.28);"></div>
-        ${numberMarks}
-        <div id="washitsuSafeDialCenter" style="position:absolute; left:50%; top:50%; width:82px; height:82px; border-radius:50%; transform:translate(-50%, -50%); background:radial-gradient(circle at 38% 32%, #dce7ef, #8ea2b0 68%, #334655 100%); color:#14232d; display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:900; box-shadow:inset 0 2px 7px rgba(255,255,255,0.48), inset 0 -5px 10px rgba(0,0,0,0.28);">0</div>
-      </div>
-      <div id="washitsuSafeInput" style="display:grid; grid-template-columns:repeat(4, 46px); gap:8px; justify-content:center;"></div>
-      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-        <button id="washitsuSafeEnter" class="text-btn" type="button">入力</button>
-        <button id="washitsuSafeBack" class="text-btn" type="button">戻す</button>
-        <button id="washitsuSafeOk" class="ok-btn" type="button">OK</button>
-      </div>
-      <div id="washitsuSafeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("金庫のダイヤル", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("金庫にダイヤルが付いている。");
-
-  setTimeout(() => {
-    const savedDigits = Array.isArray(f.washitsuSafeDigits) ? f.washitsuSafeDigits : [];
-    const digits = savedDigits
-      .map((value) => Number(value))
-      .filter((value) => Number.isInteger(value) && value >= 0 && value <= 9)
-      .slice(0, 4);
-    const savedDial = Number(f.washitsuSafeDialNumber);
-    let selected = Number.isInteger(savedDial) && savedDial >= 0 && savedDial <= 9 ? savedDial : 0;
-    const dial = document.getElementById("washitsuSafeDial");
-    const center = document.getElementById("washitsuSafeDialCenter");
-    const inputEl = document.getElementById("washitsuSafeInput");
-    const enterBtn = document.getElementById("washitsuSafeEnter");
-    const backBtn = document.getElementById("washitsuSafeBack");
-    const okBtn = document.getElementById("washitsuSafeOk");
-    const hintEl = document.getElementById("washitsuSafeHint");
-    const numberEls = Array.from(document.querySelectorAll(".safe-dial-number"));
-    if (!dial || !center || !inputEl || !enterBtn || !backBtn || !okBtn || !hintEl) return;
-
-    const saveState = () => {
-      f.washitsuSafeDigits = digits.slice();
-      f.washitsuSafeDialNumber = selected;
-    };
-
-    const repaint = () => {
-      center.textContent = String(selected);
-      dial.setAttribute("aria-valuenow", String(selected));
-      numberEls.forEach((el) => {
-        const isSelected = Number(el.dataset.safeNumber) === selected;
-        el.style.backgroundColor = isSelected ? "#ffe49b" : "#f4f6f7";
-        el.style.color = isSelected ? "#111" : "#17232c";
-      });
-      inputEl.innerHTML = [0, 1, 2, 3]
-        .map((idx) => {
-          const value = digits[idx] ?? "";
-          return `<div style="width:46px;height:46px;border:2px solid #555;border-radius:4px;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;box-sizing:border-box;">${value}</div>`;
-        })
-        .join("");
-      hintEl.textContent = "";
-    };
-
-    const setFromPointer = (e) => {
-      const rect = dial.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      const deg = ((Math.atan2(dx, -dy) * 180) / Math.PI + 360) % 360;
-      selected = Math.round(deg / 36) % 10;
-      saveState();
-      repaint();
-    };
-
-    let dragging = false;
-    dial.addEventListener("pointerdown", (e) => {
-      dragging = true;
-      dial.setPointerCapture?.(e.pointerId);
-      setFromPointer(e);
-      playSE?.("se-pi");
-    });
-    dial.addEventListener("pointermove", (e) => {
-      if (!dragging) return;
-      setFromPointer(e);
-    });
-    dial.addEventListener("pointerup", () => {
-      dragging = false;
-    });
-    dial.addEventListener("pointercancel", () => {
-      dragging = false;
-    });
-
-    enterBtn.addEventListener("click", () => {
-      if (digits.length >= 4) {
-        digits.shift();
-      }
-      digits.push(selected);
-      saveState();
-      playSE?.("se-kachi");
-      repaint();
-    });
-
-    backBtn.addEventListener("click", () => {
-      digits.pop();
-      saveState();
-      playSE?.("se-kachi");
-      repaint();
-    });
-
-    okBtn.addEventListener("click", () => {
-      saveState();
-      if (digits.join("") === "1624") {
-        f.unlockSafe = true;
-        markProgress?.("unlock_safe");
-        playSE?.("se-gacha");
-        closeModal();
-        renderCanvasRoom?.();
-        updateMessage("金庫のロックが外れた。");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
-}
-
-function openMainDeskTopDrawer() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  const roomId = "mainDesk";
-  const areaDescription = "引き出し最上段";
-  const drawerColors = {
-    frontFill: "#99562C",
-    sideTop: "#7f4524",
-    sideBottom: "#63351b",
-    gripStyle: "recessed",
-    gripColor: "#5a321f",
-    gripWidthRatio: 0.16,
-    soundId: "se-hikidashi",
-  };
-
-  const closeDrawer = () => {
-    playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
-  };
-
-  playDeskDrawerOpenFx(roomId, areaDescription, {
-    ...drawerColors,
-    keepOpen: true,
-    keepInputLocked: true,
-    onDone: () => {
-      if (f.foundMainDeskTopDrawerPowerCode) {
-        updateMessage("もう何もない");
-        setTimeout(closeDrawer, 350);
-        return;
-      }
-
-      acquireItemOnce("foundMainDeskTopDrawerPowerCode", "powerCode", "引き出しに延長コードがある", IMAGES.items.powerCode, "延長コードを手に入れた", closeDrawer);
-      f.senkoBurned = true;
-      syncSenkoBlownFlag(f);
-      markProgress?.("senko_burned");
-      renderCanvasRoom?.();
-    },
-  });
-}
-
-function openMainDeskSecondDrawer() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  const roomId = "mainDesk";
-  const areaDescription = "引き出し2段目";
-  const drawerColors = {
-    frontFill: "#99562C",
-    sideTop: "#7f4524",
-    sideBottom: "#63351b",
-    gripStyle: "recessed",
-    gripColor: "#5a321f",
-    gripWidthRatio: 0.16,
-    soundId: "se-hikidashi",
-  };
-
-  playDeskDrawerOpenFx(roomId, areaDescription, {
-    ...drawerColors,
-    keepOpen: true,
-    keepInputLocked: true,
-    onDone: () => {
-      if (f.foundMainDeskSecondDrawerFertilizer) {
-        updateMessage("もう何もない");
-        setTimeout(() => {
-          playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
-        }, 350);
-        return;
-      }
-
-      acquireItemOnce("foundMainDeskSecondDrawerFertilizer", "fertilizer", "引き出しに肥料がある", IMAGES.items.fertilizer, "肥料を手に入れた", () => {
-        playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
-      });
-    },
-  });
-}
-
 function showMainDeskStampPuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   if (f.clearMainDeskStampPuzzle) {
@@ -4701,136 +4376,6 @@ function showMainDeskStampPuzzle() {
 
     repaint();
   }, 0);
-}
-
-function showMainDeskSecondDrawerPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainDeskSecondDrawer) {
-    openMainDeskSecondDrawer();
-    return;
-  }
-
-  const baseDigitStyle = [
-    "width:min(20vw, 76px)",
-    "height:min(20vw, 76px)",
-    "min-width:54px",
-    "min-height:54px",
-    "border:2px solid #777",
-    "border-radius:4px",
-    "color:#111",
-    "font-size:clamp(32px, 9vw, 44px)",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "padding:0",
-    "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.18)",
-  ].join(";");
-  const digitStyles = [`${baseDigitStyle};background:#9876b5;border-color:#64477e;color:#fff`, `${baseDigitStyle};background:#fff`];
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-        ${[0, 1]
-          .map(
-            (idx) => `
-              <button id="mainDeskSecondDrawerDigit${idx}" type="button" aria-label="${idx + 1}桁目" style="${digitStyles[idx]}">0</button>
-            `,
-          )
-          .join("")}
-      </div>
-      <button id="mainDeskSecondDrawerOk" class="ok-btn" type="button">OK</button>
-      <div id="mainDeskSecondDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("二番目の引き出し", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("二番目の引き出しがロックされている。");
-
-  setTimeout(() => {
-    const digitBtns = [0, 1].map((idx) => document.getElementById(`mainDeskSecondDrawerDigit${idx}`));
-    const okBtn = document.getElementById("mainDeskSecondDrawerOk");
-    const hintEl = document.getElementById("mainDeskSecondDrawerHint");
-    if (digitBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
-
-    const saved = Array.isArray(f.mainDeskSecondDrawerDigits) ? f.mainDeskSecondDrawerDigits : [0, 0];
-    const state = [0, 1].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value <= 9 ? value : 0;
-    });
-    const repaint = () => {
-      digitBtns.forEach((btn, idx) => {
-        btn.textContent = String(state[idx]);
-      });
-      hintEl.textContent = "";
-    };
-
-    digitBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        state[idx] = (state[idx] + 1) % 10;
-        f.mainDeskSecondDrawerDigits = state.slice();
-        playSE?.("se-pi");
-        repaint();
-      });
-    });
-
-    okBtn.addEventListener("click", () => {
-      f.mainDeskSecondDrawerDigits = state.slice();
-      if (state[0] === 7 && state[1] === 3) {
-        f.unlockMainDeskSecondDrawer = true;
-        markProgress?.("unlock_main_desk_second_drawer");
-        playSE?.("se-gacha");
-        closeModal();
-        renderCanvasRoom?.();
-        updateMessage("二番目の引き出しのロックが外れた。");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
-}
-
-const MAIN_DESK_THIRD_DRAWER_ANSWER = Object.freeze([2, 0, 3, 1]);
-const MAIN_DESK_THIRD_DRAWER_BAR_WIDTHS = Object.freeze(["25%", "50%", "75%", "100%"]);
-
-function openMainDeskThirdDrawer() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  const roomId = "mainDesk";
-  const areaDescription = "引き出し3段目";
-  const drawerColors = {
-    frontFill: "#99562C",
-    sideTop: "#7f4524",
-    sideBottom: "#63351b",
-    gripStyle: "recessed",
-    gripColor: "#5a321f",
-    gripWidthRatio: 0.16,
-    soundId: "se-hikidashi",
-  };
-
-  const closeDrawer = () => {
-    playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
-  };
-
-  playDeskDrawerOpenFx(roomId, areaDescription, {
-    ...drawerColors,
-    keepOpen: true,
-    keepInputLocked: true,
-    onDone: () => {
-      if (f.foundMainDeskThirdDrawerMemo) {
-        updateMessage("もう何もない");
-        setTimeout(closeDrawer, 350);
-        return;
-      }
-
-      acquireItemOnce("foundMainDeskThirdDrawerMemo", "memo", "引き出しにメモがある", IMAGES.modals.drawerThird, "メモを手に入れた", closeDrawer);
-    },
-  });
 }
 
 function showMainDeskBoxPuzzle() {
@@ -6184,35 +5729,6 @@ function showTanzakuModal(color, title, text, marker) {
   });
 }
 
-function showBlackTanzakuModal(text, showBack = false) {
-  const frontContent = `<p class="tanzaku-message">${text}</p>`;
-  const backContent = `
-    <div
-      aria-label="長さの異なる4本の白い棒"
-      style="min-height:180px; display:flex; align-items:center; justify-content:center; gap:4px;"
-    >
-      ${MAIN_DESK_THIRD_DRAWER_ANSWER.map(
-        (value) => `
-          <span style="width:min(12vw, 64px); aspect-ratio:1; box-sizing:border-box; display:flex; align-items:center; justify-content:flex-start; padding:7px; background:#3f3f3f; border:1px solid rgba(255,255,255,0.3); border-radius:3px;">
-            <span style="display:block; width:${MAIN_DESK_THIRD_DRAWER_BAR_WIDTHS[value]}; height:8px; border-radius:999px; background:#fff;"></span>
-          </span>
-        `,
-      ).join("")}
-    </div>
-  `;
-  const buttons = [
-    {
-      text: showBack ? "表を見る" : "裏を見る",
-      action: () => showBlackTanzakuModal(text, !showBack),
-    },
-    { text: "閉じる", action: "close" },
-  ];
-
-  showModal("黒の短冊", showBack ? backContent : frontContent, buttons, null, {
-    contentClass: "tanzaku-paper-modal tanzaku-darkgray",
-  });
-}
-
 function closeModal() {
   document.getElementById("modal").style.display = "none";
   // 次のモーダルが登録されていれば表示
@@ -6465,9 +5981,6 @@ function loadGameFromSlot(slotIndex) {
   if (merged.openRooms.length === 0) merged.openRooms = def.openRooms.slice();
   if (!merged.currentRoom || !rooms[merged.currentRoom]) merged.currentRoom = def.currentRoom;
 
-  const mergedFlags = merged.main?.flags || {};
-  if (mergedFlags.foundMainDeskTopDrawerPowerCode) mergedFlags.senkoBurned = true;
-  syncSenkoBlownFlag(mergedFlags);
   gameState = merged;
 
   changeRoom(gameState.currentRoom);
