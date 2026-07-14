@@ -989,6 +989,17 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
+        x: 64.4,
+        y: 65.7,
+        width: 14.2,
+        height: 10.5,
+        onClick: clickWrap(showMainDeskDraftLetterModal),
+        description: "書きかけの手紙",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
         x: 38.8,
         y: 81.1,
         width: 13.9,
@@ -3039,6 +3050,16 @@ function showMainDeskBaggageModal(step = 1) {
       showMainDeskBaggageModal(currentStep + 1);
     });
   }
+}
+
+function showMainDeskDraftLetterModal() {
+  const content = `
+    <div style="max-width:420px; margin:0 auto; padding:26px 30px; background:#fff8dc; color:#2a2116; border:1px solid #d9c58d; box-shadow:inset 0 0 28px rgba(130,95,35,0.14), 0 6px 18px rgba(60,40,20,0.18); text-align:left; line-height:1.9; font-size:1.04em;">
+      行き先が見つからないときは、その場所を強く念じながら、進む力をしばらく込めてみるといい。
+    </div>
+  `;
+  showModal("書きかけの手紙", content, [{ text: "閉じる", action: "close" }]);
+  updateMessage("書きかけの手紙がある。");
 }
 
 function playDeskDrawerOpenFx(roomId, areaDescription, options = {}) {
