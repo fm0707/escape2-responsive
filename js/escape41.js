@@ -204,6 +204,72 @@ function getDefaultGameState() {
       flags: {
         clearShiwake: false,
         openShutter: false,
+        lettersShineEventDone: false,
+        lettersShineModalShown: false,
+        foundCard: false,
+        foundBag: false,
+        foundPaper: false,
+        foundFan: false,
+        foundManjuBox: false,
+        foundWashitsuSafeYen300: false,
+        foundMainDoorCabinetKey: false,
+        foundMainDeskTopDrawerPowerCode: false,
+        foundMainDeskSecondDrawerFertilizer: false,
+        foundMainDeskThirdDrawerMemo: false,
+        foundMainChestTopDrawerEnvelopeNostamp: false,
+        foundMainChestSecondDrawerHat: false,
+        foundMainChestThirdDrawerMagicalPotion: false,
+        unlockMainDoorCabinet: false,
+        unlockSafe: false,
+        unlockMainDeskSecondDrawer: false,
+        unlockBox: false,
+        unlockMainChestTopDrawer: false,
+        unlockMainChestSecondDrawer: false,
+        unlockMainChestThirdDrawer: false,
+        unlockManageBoard: false,
+        unlockAdminDoor: false,
+        clearMainDeskStampPuzzle: false,
+        chargeEnergy: false,
+        receiveCargo: false,
+        receiveManjuBox: false,
+        bearAppear: false,
+        gaveSweetToBearFairy: false,
+        projectorPowerOn: false,
+        fanCleaned: false,
+        useFertilizer: false,
+        flypanCleaned: false,
+        fireSenko: false,
+        senkoBurned: false,
+        glassMelodySolved: false,
+        boardDeskRewritten: false,
+        boardDoorRewritten: false,
+        boardChestRewritten: false,
+        boardAdminRewritten: false,
+        boardDoorAnswers: {},
+        boardAdminLetters: [0, 0, 0, 0],
+        mainDoorCabinetInputs: [],
+        washitsuSafeDigits: [],
+        washitsuSafeDialNumber: 0,
+        mainDeskStampSelection: [],
+        mainDeskSecondDrawerDigits: [0, 0],
+        mainDeskBoxLetters: [0, 0, 0, 0, 0],
+        mainChestTopDrawerColors: [0, 0, 0, 0],
+        mainChestSecondDrawerDigits: { top: 1, right: 1, left: 1, bottom: 1 },
+        mainChestThirdDrawerDigits: [0, 0, 0],
+        transferPanel: {
+          started: false,
+          mode: "receive",
+          destination: "1",
+          message: "",
+          status: "RECEIVE READY",
+        },
+        returnShelfItems: {},
+        transferBearFanOpenedCount: 0,
+        glassWithWineDrinkCount: 0,
+        sheetStamps: {},
+        timePhase: 0,
+        weatherSkyState: 0,
+        isNight: false,
         talkTo: { bear: 0, wizard: 0 },
       },
     },
@@ -218,9 +284,13 @@ function getDefaultGameState() {
       flags: {
         selectedEnvelope: null,
         solved: false,
+        envelopeStampPlaced: false,
       },
     },
 
+    tvDinner: {
+      flags: { backgroundState: 0 },
+    },
     end: {
       flags: { backgroundState: 0 },
     },
@@ -541,7 +611,7 @@ let rooms = {
 
           if (!hasItem("bag") || !hasItem("hat")) {
             playMainDoorLetterErrorFlash();
-            playSE?.("se-error");
+            playSE?.("se-pon");
             showToast("退室チェックエラー。配達員の装備が揃っていません");
             updateMessage("退室チェックエラー。配達員の装備が揃っていません");
             return;
@@ -1163,6 +1233,19 @@ let rooms = {
         item: { img: "bear", visible: () => gameState.main.flags.bearAppear },
       },
       {
+        x: 1.5,
+        y: 56.5,
+        width: 10.5,
+        height: 9.6,
+        onClick: clickWrap(function () {
+          updateMessage("はかりの数字は動いていない。クマ妖精は浮いているのかもしれない");
+        }),
+        description: "はかり",
+        zIndex: 5,
+        usable: () => gameState.main.flags.bearAppear,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
         x: 39.6,
         y: 70.1,
         width: 18.0,
@@ -1437,9 +1520,7 @@ let rooms = {
         height: 38.2,
         onClick: clickWrap(function () {
           if (hasItem("manjuBox")) {
-            gameState.trueEnd.flags.backgroundState = 1;
-            removeItem("manjuBox");
-            renderCanvasRoom();
+            startTrueEndManjuBoxTransition();
             return;
           } else {
             updateMessage("地球にもうすぐ着きそうだ");
@@ -1721,10 +1802,11 @@ function changeRoom(roomId) {
 
   // BGM切替はそのまま
   if (roomId === "trueEnd") {
-    changeBGM(S41("space_hopper.mp3"));
+    const trueEndBgState = gameState.trueEnd?.flags?.backgroundState ?? 0;
+    changeBGM(trueEndBgState === 1 ? S41("otenba_jenifer.mp3") : S41("space_hopper.mp3"));
   } else if (roomId === "end") {
     const endBgState = gameState.end?.flags?.backgroundState ?? 0;
-    changeBGM(endBgState === 0 ? S41("Heliopause_Waltz.mp3") : S41("tabiyukeba.mp3"));
+    changeBGM(endBgState === 0 ? S41("Heliopause_Waltz.mp3") : S41("Heliopause_Waltz.mp3"));
   } else {
     changeBGM(DEFAULT_BGM);
   }
@@ -1738,7 +1820,7 @@ function changeRoom(roomId) {
   renderNavigation();
 }
 
-const END_IDS = new Set(["end", "trueEnd", "rainEnd"]);
+const END_IDS = new Set(["end", "trueEnd"]);
 
 // ===== changeRoom フック：=====
 const _changeRoom_custom = changeRoom;
@@ -1799,14 +1881,8 @@ function renderCanvasRoom() {
   drawRoomItems(ctx, canvas, roomId);
   drawMainDoorLetterStatusFlash(ctx, canvas, roomId);
   drawShiwakeEnvelopeSelection(ctx, canvas, roomId);
-  drawFanSpinLines(ctx, canvas, roomId);
   drawClickableAreaGlows(ctx, canvas, roomId);
   drawDeskDrawerOpenFx(ctx, canvas, roomId);
-  drawCabinetTopOpenFx(ctx, canvas, roomId);
-
-  drawLockerDoorFx(ctx, canvas, roomId);
-
-  drawMainWindowSkyOverlay(ctx, canvas, roomId);
 
   // ★ ここから重なり優先のhover枠線を描画
   if (hoveredAreaIndex !== null && hoveredAreaIndex !== undefined) {
@@ -2510,94 +2586,9 @@ function drawRoomItems(ctx, canvas, roomId) {
   });
 }
 
-function drawFanSpinLines(ctx, canvas, roomId) {
-  if (roomId !== "mainDesk" || !gameState.main?.flags?.fanCleaned) return;
 
-  const room = rooms[roomId];
-  const area = room?.clickableAreas?.find((a) => a.description === "扇風機の円形部分");
-  if (!area) return;
 
-  const { x, y, w, h } = getAreaDrawRect(area, canvas);
-  const cx = x + w / 2;
-  const cy = y + h / 2;
-  const radius = Math.min(w, h) * 0.46;
-  const innerRadius = radius * 0.22;
 
-  ctx.save();
-  ctx.lineCap = "round";
-
-  for (let i = 0; i < 6; i++) {
-    const angle = -Math.PI / 7 + (i * Math.PI * 2) / 6;
-    const start = angle - Math.PI / 9;
-    const end = angle + Math.PI / 9;
-
-    ctx.globalAlpha = 0.74;
-    ctx.strokeStyle = "rgba(20, 34, 42, 0.78)";
-    ctx.lineWidth = Math.max(2.4, radius * 0.13);
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, start, end);
-    ctx.stroke();
-
-    ctx.globalAlpha = 0.95;
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.96)";
-    ctx.lineWidth = Math.max(1.4, radius * 0.075);
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, start, end);
-    ctx.stroke();
-  }
-
-  ctx.globalAlpha = 0.92;
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
-  ctx.lineWidth = Math.max(1.4, radius * 0.055);
-  for (let i = 0; i < 3; i++) {
-    const angle = Math.PI / 5 + (i * Math.PI * 2) / 3;
-    ctx.beginPath();
-    ctx.moveTo(cx + Math.cos(angle) * innerRadius, cy + Math.sin(angle) * innerRadius);
-    ctx.lineTo(cx + Math.cos(angle) * radius * 0.85, cy + Math.sin(angle) * radius * 0.85);
-    ctx.stroke();
-  }
-
-  const stars = [
-    { x: cx + radius * 1.38, y: cy - radius * 0.68, size: radius * 0.24 },
-    { x: cx + radius * 1.72, y: cy, size: radius * 0.19 },
-    { x: cx + radius * 1.38, y: cy + radius * 0.68, size: radius * 0.15 },
-  ];
-  stars.forEach((star) => {
-    ctx.beginPath();
-    for (let point = 0; point < 10; point++) {
-      const angle = -Math.PI / 2 + (point * Math.PI) / 5;
-      const pointRadius = point % 2 === 0 ? star.size : star.size * 0.42;
-      const px = star.x + Math.cos(angle) * pointRadius;
-      const py = star.y + Math.sin(angle) * pointRadius;
-      if (point === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.closePath();
-    ctx.globalAlpha = 0.95;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
-    ctx.strokeStyle = "rgba(20, 34, 42, 0.78)";
-    ctx.lineWidth = Math.max(1.2, radius * 0.055);
-    ctx.lineJoin = "round";
-    ctx.fill();
-    ctx.stroke();
-  });
-
-  ctx.restore();
-}
-
-function drawMainWindowSkyOverlay(ctx, canvas, roomId) {
-  if (roomId !== "mainWindow") return;
-  const skyState = Number(gameState.main?.flags?.weatherSkyState) || 0;
-  if (skyState <= 0) return;
-
-  const key = skyState === 1 ? "sky1" : "sky2";
-  const img = loadedImages[IMAGES.items[key]];
-  if (!img || !img.complete || img.naturalWidth <= 0) return;
-
-  ctx.save();
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  ctx.restore();
-}
 
 function playMainDoorFlagShakeFx() {
   const fx = gameState.fx || (gameState.fx = {});
@@ -2759,107 +2750,6 @@ function playLockerDoorOpenFx(roomId, areaDescription, options = {}) {
   };
 
   requestAnimationFrame(tick);
-}
-
-function drawLockerDoorFx(ctx, canvas, roomId) {
-  const fx = gameState.fx?.lockerDoorOpen;
-  if (!fx || fx.roomId !== roomId) return;
-
-  const rect = getAreaRectPx(roomId, fx.areaDescription, canvas);
-  if (!rect) return;
-
-  const t = Math.max(0, Math.min(1, fx.progress || 0));
-  const openEase = Math.sin(t * Math.PI);
-  const visibleRatio = Math.max(0.08, 1 - openEase * 0.92);
-  const panelW = rect.w * visibleRatio;
-  const hingeSide = fx.hingeSide === "left" ? "left" : "right";
-  const panelX = hingeSide === "left" ? rect.x : rect.x + rect.w - panelW;
-  const hingeW = Math.max(3, rect.w * 0.05);
-  const shadowW = rect.w * 0.22 * openEase;
-  const woodBase = ctx.createLinearGradient(panelX, rect.y, panelX + panelW, rect.y);
-  const panelColors = Array.isArray(fx.panelColors) && fx.panelColors.length === 3 ? fx.panelColors : ["#b98e68", "#D1A781", "#a77d59"];
-  const gripStyle = fx.gripStyle === "roundTop" || fx.gripStyle === "slimSilver" ? fx.gripStyle : "capsule";
-  const gripColor = fx.gripColor || "#6f7982";
-  woodBase.addColorStop(0, panelColors[0]);
-  woodBase.addColorStop(0.45, panelColors[1]);
-  woodBase.addColorStop(1, panelColors[2]);
-
-  ctx.save();
-
-  if (openEase > 0.02) {
-    const cavity = ctx.createLinearGradient(rect.x, rect.y, rect.x + rect.w, rect.y);
-    cavity.addColorStop(0, "rgba(8, 4, 2, 0.98)");
-    cavity.addColorStop(0.55, "rgba(16, 9, 5, 0.94)");
-    cavity.addColorStop(1, "rgba(26, 14, 8, 0.88)");
-    ctx.fillStyle = cavity;
-    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    if (hingeSide === "left") {
-      ctx.fillRect(rect.x, rect.y, shadowW, rect.h);
-    } else {
-      ctx.fillRect(rect.x + rect.w - shadowW, rect.y, shadowW, rect.h);
-    }
-  }
-
-  ctx.fillStyle = woodBase;
-  ctx.fillRect(panelX, rect.y, panelW, rect.h);
-
-  ctx.strokeStyle = "rgba(52, 26, 10, 0.95)";
-  ctx.lineWidth = Math.max(2, rect.w * 0.03);
-  ctx.strokeRect(panelX, rect.y, panelW, rect.h);
-
-  ctx.fillStyle = "#7f8a95";
-  ctx.fillRect(hingeSide === "left" ? rect.x : rect.x + rect.w - hingeW, rect.y, hingeW, rect.h);
-
-  const gripH = gripStyle === "slimSilver" ? Math.max(18, rect.h * 0.34) : Math.max(14, rect.h * 0.165);
-  const gripW = gripStyle === "slimSilver" ? Math.max(4, rect.w * 0.055) : Math.max(5, rect.w * 0.11);
-  const gripInset = Math.max(rect.w * 0.1, panelW * 0.14);
-  const gripX = hingeSide === "left" ? panelX + panelW - gripInset - gripW : panelX + gripInset;
-  const gripY = gripStyle === "roundTop" ? rect.y + rect.h * 0.08 : gripStyle === "slimSilver" ? rect.y + rect.h * 0.24 : rect.y + (rect.h - gripH) / 2 + rect.h * 0.03;
-  const gripR = Math.max(2, gripW * 0.45);
-
-  if (gripStyle === "roundTop") {
-    const knobR = Math.max(5, gripW * 0.58);
-    const knobCx = gripX + gripW / 2;
-    const knobCy = gripY + knobR;
-    ctx.fillStyle = gripColor;
-    ctx.beginPath();
-    ctx.arc(knobCx, knobCy, knobR, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.3)";
-    ctx.lineWidth = Math.max(1, knobR * 0.15);
-    ctx.beginPath();
-    ctx.arc(knobCx - knobR * 0.12, knobCy - knobR * 0.12, knobR * 0.72, Math.PI * 1.1, Math.PI * 1.8);
-    ctx.stroke();
-  } else {
-    if (gripStyle === "slimSilver") {
-      const metal = ctx.createLinearGradient(gripX, gripY, gripX + gripW, gripY);
-      metal.addColorStop(0, "#7f858b");
-      metal.addColorStop(0.35, gripColor);
-      metal.addColorStop(0.7, "#f7f9fb");
-      metal.addColorStop(1, "#8b9299");
-      ctx.fillStyle = metal;
-    } else {
-      ctx.fillStyle = gripColor;
-    }
-    roundRect(ctx, gripX, gripY, gripW, gripH, gripR, true, false);
-
-    ctx.fillStyle = gripStyle === "slimSilver" ? "#858c93" : "#58626b";
-    ctx.beginPath();
-    ctx.arc(gripX + gripW / 2, gripY, gripW * 0.55, 0, Math.PI * 2);
-    ctx.arc(gripX + gripW / 2, gripY + gripH, gripW * 0.55, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.28)";
-    ctx.lineWidth = Math.max(1, gripW * 0.18);
-    ctx.beginPath();
-    ctx.moveTo(gripX + gripW * 0.28, gripY + gripW * 0.2);
-    ctx.lineTo(gripX + gripW * 0.28, gripY + gripH - gripW * 0.2);
-    ctx.stroke();
-  }
-
-  ctx.restore();
 }
 
 function drawDeskDrawerOpenFx(ctx, canvas, roomId) {
@@ -3054,81 +2944,7 @@ function drawDeskDrawerOpenFx(ctx, canvas, roomId) {
   ctx.restore();
 }
 
-function drawCabinetTopOpenFx(ctx, canvas, roomId) {
-  const fx = gameState.fx?.cabinetTopOpen;
-  if (!fx || fx.roomId !== roomId) return;
 
-  const rect = getAreaRectPx(roomId, fx.areaDescription, canvas);
-  if (!rect) return;
-
-  const t = Math.max(0, Math.min(1, Number(fx.progress) || 0));
-  const eased = easeOutCubic(t);
-  if (eased <= 0) return;
-
-  const insetX = Math.max(4, rect.w * 0.025);
-  const insetY = Math.max(3, rect.h * 0.05);
-  const radius = Math.max(3, rect.h * 0.08);
-  const topY = rect.y;
-  const bottomY = rect.y + rect.h * (1 - 0.32 * eased);
-  const bottomOutset = rect.w * 0.22 * eased;
-
-  ctx.save();
-
-  ctx.fillStyle = "rgba(0, 0, 0, 0.58)";
-  roundRect(ctx, rect.x, rect.y, rect.w, rect.h, radius, true, false);
-
-  const cavity = ctx.createLinearGradient(rect.x, rect.y, rect.x, rect.y + rect.h);
-  cavity.addColorStop(0, "rgba(22, 14, 9, 0.96)");
-  cavity.addColorStop(1, "rgba(8, 5, 4, 0.96)");
-  ctx.fillStyle = cavity;
-  roundRect(ctx, rect.x + insetX, rect.y + insetY, rect.w - insetX * 2, rect.h - insetY * 2, radius, true, false);
-  ctx.strokeStyle = "rgba(255, 220, 160, 0.16)";
-  ctx.lineWidth = 1;
-  roundRect(ctx, rect.x + insetX, rect.y + insetY, rect.w - insetX * 2, rect.h - insetY * 2, radius, false, true);
-
-  ctx.shadowColor = "rgba(0,0,0,0.32)";
-  ctx.shadowBlur = 10;
-  ctx.shadowOffsetY = Math.max(2, rect.h * 0.06);
-
-  const frontFill = fx.frontFill || null;
-  if (frontFill) {
-    ctx.fillStyle = frontFill;
-  } else {
-    const doorColor = ctx.createLinearGradient(rect.x, topY, rect.x, bottomY);
-    doorColor.addColorStop(0, "#9aa3ab");
-    doorColor.addColorStop(0.5, "#869099");
-    doorColor.addColorStop(1, "#6f7a84");
-    ctx.fillStyle = doorColor;
-  }
-  ctx.strokeStyle = "rgba(48, 56, 64, 0.95)";
-  ctx.lineWidth = Math.max(1.4, rect.h * 0.035);
-  ctx.beginPath();
-  ctx.moveTo(rect.x, topY);
-  ctx.lineTo(rect.x + rect.w, topY);
-  ctx.lineTo(rect.x + rect.w + bottomOutset, bottomY);
-  ctx.lineTo(rect.x - bottomOutset, bottomY);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetY = 0;
-  ctx.strokeStyle = "rgba(255,255,255,0.16)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(rect.x + 2, topY + 2);
-  ctx.lineTo(rect.x + rect.w - 2, topY + 2);
-  ctx.stroke();
-
-  const gripW = Math.max(24, rect.w * 0.32);
-  const gripH = Math.max(3, rect.h * 0.06);
-  const gripX = rect.x + rect.w / 2 - gripW / 2;
-  const gripY = topY + (bottomY - topY) * 0.66;
-  ctx.fillStyle = "#C9D4D8";
-  roundRect(ctx, gripX, gripY, gripW, gripH, Math.max(3, gripH * 0.45), true, false);
-
-  ctx.restore();
-}
 
 // ===== 演出ユーティリティ =====
 function easeOutCubic(t) {
@@ -3641,8 +3457,8 @@ function handleBoardDoorTableClick() {
 
   const answers = getBoardDoorAnswersFlag();
   const imgSrc = answers.seasideAddress ? IMAGES.modals.paperOnSuccess : IMAGES.modals.paperOnFailure;
-  showModal("住所変更届", `<img src="${imgSrc}" class="showobj-image" alt="住所変更届">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
-  updateMessage("住所変更届を表に重ねてみた");
+  showModal("穴が開いた紙を重ねてみた", `<img src="${imgSrc}" class="showobj-image" alt="穴が開いた紙">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+  updateMessage("穴が開いた紙を表に重ねてみた");
 }
 
 function handleMainAdminDoorEnergyTankClick() {
@@ -3897,9 +3713,10 @@ function showTransferPanelModal() {
       }
       if (hasItem("hat") || hasItem("bag") || hasItem("card")) {
         state.status = "OVER WEIGHT";
+        const wasShutterOpen = !!f.openShutter;
         f.openShutter = true;
         playSE?.("se-error");
-        playSE?.("se-shutter-open");
+        if (!wasShutterOpen) playSE?.("se-shutter-open");
         showToast("負荷超過を検出しました。備品返却を推奨します");
         renderCanvasRoom();
         screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
@@ -3927,8 +3744,8 @@ function showTransferPanelModal() {
 }
 
 function startTransferTrueEndSequence() {
-  playSE?.("se-gogogo");
-  updateMessage("転送を受け付けた。");
+  playSE?.("se-pinponpan");
+  updateMessage("転送が受け付けられた。");
   showTransferCountdownModal();
 }
 
@@ -3964,6 +3781,23 @@ function showTransferBearBoardingModal() {
       },
     },
   ]);
+}
+
+function startTrueEndManjuBoxTransition() {
+  const fx = gameState.fx || (gameState.fx = {});
+  if (fx.lockInput) return;
+
+  fx.lockInput = true;
+  flashScreen("black", 2200);
+  setTimeout(() => {
+    gameState.trueEnd.flags.backgroundState = 1;
+    removeItem("manjuBox");
+    changeBGM(S41("Heliopause_Waltz.mp3"));
+    renderCanvasRoom();
+  }, 850);
+  setTimeout(() => {
+    if (gameState.fx) gameState.fx.lockInput = false;
+  }, 2200);
 }
 
 function showReceivedCargoBoxModal() {
