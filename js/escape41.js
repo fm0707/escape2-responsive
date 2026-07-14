@@ -74,34 +74,25 @@ const canvas = document.getElementById("gameCanvas");
 let DEV_MODE = false;
 let uiLang = "jp"; // 'jp' | 'en'
 const USE_LOCAL_ASSETS = location.protocol === "file:" || location.hostname === "localhost" || location.search.includes("localimg=1");
-const BASE_40 = USE_LOCAL_ASSETS ? "images/40" : "https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/40";
-const BASE_SOUND_40 = USE_LOCAL_ASSETS ? "sounds/40" : "https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/sounds/40";
+const BASE_41 = USE_LOCAL_ASSETS ? "images/41" : "https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images/41";
+const BASE_SOUND_41 = USE_LOCAL_ASSETS ? "sounds/41" : "https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/sounds/41";
 const BASE_COMMON = USE_LOCAL_ASSETS ? "images" : "https://pub-40dbb77d211c4285aa9d00400f68651b.r2.dev/images";
-const I40 = (file) => `${BASE_40}/${file}`;
+const I41 = (file) => `${BASE_41}/${file}`;
 const ICM = (file) => `${BASE_COMMON}/${file}`;
-const S40 = (file) => `${BASE_SOUND_40}/${file}`;
-const DEFAULT_BGM = S40("tsunoruomoiha_hoshizorani.mp3");
-const tanabataSong = document.getElementById("se-tanabata-song");
-if (tanabataSong) tanabataSong.src = S40("tanabata_song.mp3");
+const S41 = (file) => `${BASE_SOUND_41}/${file}`;
+const DEFAULT_BGM = S41("furukimachi_no_yugure.mp3");
+
 // ゲーム設定 - 画像パスをここで管理
 IMAGES = {
   rooms: {
-    mainDoor: [I40("main_door.webp")],
-    mainDesk: [I40("main_desk.webp")],
-    mainWindow: [I40("main_window.webp")],
-    mainKitchen: [I40("main_kitchen.webp")],
-    calendar: [I40("calendar.webp")],
-    sasaZoom: [I40("sasa_zoom.webp")],
-    freezer: [I40("freezer.webp")],
-    anime1: [I40("anime_1.webp")],
-    anime2: [I40("anime_2.webp")],
-    anime3: [I40("anime_3.webp")],
-    anime4: [I40("anime_4.webp")],
-    anime5: [I40("anime_5.webp")],
-    anime6: [I40("anime_6.webp"), I40("anime_6_2.webp")],
-    rainEnd: [I40("rain_end.webp"), I40("rain_end2.webp"), I40("rain_end3.webp")],
-    end: [I40("end.webp")],
-    trueEnd: [I40("true_end.webp"), I40("true_end2.webp")],
+    mainDoor: [I41("main_door.webp")],
+    mainDesk: [I41("main_desk.webp")],
+    mainChest: [I41("main_chest.webp")],
+    mainAdminDoor: [I41("main_admin_door.webp")],
+    transferRoom: [I41("transfer_room.webp")],
+
+    end: [I41("end.webp"), I41("end2.webp")],
+    trueEnd: [I41("true_end.webp"), I41("true_end2.webp")],
   },
   items: {
     coin: ICM("bear_coin.png"),
@@ -120,100 +111,70 @@ IMAGES = {
     battery: ICM("common/battery.webp"),
     driver: ICM("common/driver.webp"),
 
-    anime1: [I40("anime_1.webp")],
-    anime4: [I40("anime_4.webp")],
+    envelope1: I41("envelope_1.webp"),
+    envelope2: I41("envelope_2.webp"),
+    envelope3: I41("envelope_3.webp"),
+    envelope4: I41("envelope_4.webp"),
+    envelope5: I41("envelope_5.webp"),
+    envelopes: I41("envelopes.webp"),
+    envelopeNostamp: I41("envelope_nostamp.webp"),
+    envelopeStamp: I41("envelope_stamp.webp"),
+    enveloipeNostamps: I41("envelope_nostamp.webp"),
+    enveloipeStamps: I41("envelope_stamp.webp"),
+    stampStar: I41("stamp_star.webp"),
+    stampHeart: I41("stamp_heart.webp"),
+    stampTriangle: I41("stamp_triangle.webp"),
+    stampSun: I41("stamp_sun.webp"),
+    card: I41("card.webp"),
+    lockManage: I41("lock_manage.webp"),
+    wifi2: I41("wifi_2.webp"),
+    wifi3: I41("wifi_3.webp"),
+    wifi4: I41("wifi_4.webp"),
+    wifi2Black: I41("wifi_2_black.webp"),
+    flag: I41("flag.webp"),
+    fanClosed: I41("fan_closed.webp"),
+    fanOpened: I41("fan_opened.webp"),
+    fanPart: I41("fan_part.webp"),
+    bag: I41("bag.webp"),
+    hat: I41("hat.webp"),
+    potionBack: I41("potion_back.webp"),
+    paper: I41("paper.webp"),
+    boxClosed: I41("box_closed.webp"),
+    insideShutter: I41("inside_shutter.webp"),
+    cargoTag: I41("cargo_tag.webp"),
+    manjuBox: I41("manju_box.webp"),
 
-    // key: I40("key.webp"),
-    match: I40("match.webp"),
-    smoke: I40("smoke.webp"),
-    smokeNaname: I40("smoke_naname.webp"),
-    katoriSenkoBefore: I40("katori_senko_before.webp"),
-    katoriSenko: I40("katori_senko.webp"),
-    katoriSenkoBurnt: I40("katori_senko_burnt.webp"),
-    katoriSenkoBlown: I40("katori_senko_blown.webp"),
-    codeAfter: I40("code_after.webp"),
-    powerCode: I40("power_code.webp"),
-    cleanser: I40("cleanser.webp"),
-    burntFlypan: I40("burnt_flypan.webp"),
-    flypan: I40("flypan.webp"),
-    lockCabinet: I40("lock_cabinet.webp"),
-    mop: I40("mop.webp"),
-    dust: I40("dust.webp"),
-    jug: I40("jug.webp"),
-    jugWater: I40("jug_water.webp"),
-    cupWater: I40("cup_water.webp"),
-    ash: I40("ash.webp"),
-    stick: I40("stick.webp"),
-    fertilizer: I40("fertilizer.webp"),
-    fog: I40("fog.webp"),
-    shine: I40("shine.webp"),
-    teruteru: I40("teruteru.webp"),
-    tanzakuBlack: I40("tanzaku_black.webp"),
-    tanzakuBlackYoko: I40("tanzaku_black_yoko.webp"),
-    sky1: I40("sky_1.webp"),
-    sky2: I40("sky_2.webp"),
-    raincoat: I40("raincoat.webp"),
-    sweet: I40("sweet.webp"),
-    pen: I40("pen.webp"),
-    memo: I40("memo.webp"),
+    // key: I41("key.webp"),
+    magicalPotion: I41("magical_potion.webp"),
   },
   modals: {
-    smoke: I40("modal_smoke.webp"),
-    smokeNaname: I40("modal_smoke_naname.webp"),
-    oil: I40("modal_oil.webp"),
-    mustard: I40("modal_mustard.webp"),
-    codeConnect: I40("modal_code_connect.webp"),
-    katoriSenko: I40("modal_katori_senko.webp"),
-    orihimeSode: I40("modal_orihime_sode.webp"),
-    hikoboshiSode: I40("modal_hikoboshi_sode.webp"),
-    insideOven: I40("modal_inside_oven.webp"),
-    cleanFlypan: I40("modal_clean_flypan.webp"),
-    flypanShine: I40("modal_flypan_shine.webp"),
-    cleanFan: I40("modal_fan_clean.webp"),
-    rug: I40("modal_rug.webp"),
-    rugAfter: I40("modal_rug_after.webp"),
-    jugPour: I40("modal_jug_pour.webp"),
-    modalL: I40("modal_l.webp"),
-    modalA: I40("modal_a.webp"),
-    modalK: I40("modal_k.webp"),
-    modalE: I40("modal_e.webp"),
-    plant: I40("modal_plant.webp"),
-    plantShine: I40("modal_plant_shine.webp"),
-    stick: I40("modal_stick.webp"),
-    tanzakuAnim1: I40("modal_tanzaku_anim_1.webp"),
-    tanzakuAnim2: I40("modal_tanzaku_anim_2.webp"),
-    tanzakuAnim3: I40("modal_tanzaku_anim_3.webp"),
-    tanzakuAnim4: I40("modal_tanzaku_anim_4.webp"),
-    bearAnim1: I40("modal_bear_stop.webp"),
-    bearAnim2: I40("modal_bear_notice.webp"),
-    bearAnim3: I40("modal_bear_smoke.webp"),
-    teruteruGet: I40("modal_teruteru_get.webp"),
-    teruteruSet: I40("modal_teruteru_set.webp"),
-    drawer: I40("modal_drawer_tanzaku.webp"),
-    drawerEmpty: I40("modal_drawer_empty.webp"),
-
-    drawerThird: I40("modal_drawer_third.webp"),
-    book: I40("book.webp"),
-    bookTeruteru: I40("book_teruteru.webp"),
-    bookTeruteruEn: I40("book_teruteru_en.webp"),
-    refrigeratorMemo: I40("refrigerator_memo.webp"),
-    freezerMemo: I40("modal_freezer_mamo.webp"),
-    icetray: I40("ice_tray.webp"),
-    underSink: I40("modal_under_sink.webp"),
-    bearReceive: I40("modal_bear_receive.webp"),
-    bearEat: I40("modal_bear_eat.webp"),
-    cups: I40("modal_cups.webp"),
-    hikoboshiReceive: I40("modal_hikoboshi_receive.webp"),
-    hikoboshiChallenge: I40("modal_hikoboshi_chanllange.webp"),
-    hikoboshiSink: I40("modal_hikoboshi_sink.webp"),
-    bearCoat: I40("modal_bear_coat.webp"),
-    badendSky: I40("modal_bad_sky.webp"),
-    badendSky2: I40("modal_bad_sky2.webp"),
+    deliveryRecord: I41("modal_delivery_record.webp"),
+    sign: I41("modal_sign.webp"),
+    signZoom: I41("modal_sign_zoom.webp"),
+    baggage1: I41("modal_baggage_1.webp"),
+    baggage2: I41("modal_baggage_2.webp"),
+    baggage3: I41("modal_baggage_3.webp"),
+    lettersShine1: I41("modal_letters_shine_1.webp"),
+    lettersShine2: I41("modal_letters_shine_2.webp"),
+    lettersShine3: I41("modal_letters_shine_3.webp"),
+    paperOnFailure: I41("modal_paper_on_failure.webp"),
+    paperOnSuccess: I41("modal_paper_on_success.webp"),
+    tankFill: I41("modal_tank_fill.webp"),
+    adminImage: I41("modal_admin_image.webp"),
+    shelf: I41("modal_shelf.webp"),
+    boxOpen: I41("modal_box_open.webp"),
+    boxOpenf: I41("modal_box_open.webp"),
+    bearUpset: I41("modal_bear_upset.webp"),
+    bearGeton: I41("modal_bear_geton.webp"),
+    flyer: I41("modal_flyer.webp"),
+    deliver: I41("modal_deliver.webp"),
+    kabuki: I41("modal_kabuki.webp"),
+    badend: I41("badend.webp"),
   },
 };
 
 // ゲーム状態
-const SAVE_KEY = "escapeGameState40";
+const SAVE_KEY = "escapeGameState41";
 const SAVE_VERSION = 1;
 const SAVE_KEYS = [SAVE_KEY + "_1", SAVE_KEY + "_2"];
 
@@ -235,82 +196,29 @@ const SAVE_KEYS = [SAVE_KEY + "_1", SAVE_KEY + "_2"];
 
 function getDefaultGameState() {
   return {
-    currentRoom: "mainWindow",
-    openRooms: ["mainWindow"],
+    currentRoom: "mainDoor",
+    openRooms: ["mainDoor"],
     openRoomsTmp: [],
     inventory: [],
     main: {
       flags: {
-        fireSenko: false,
-        senkoBurned: false,
-        senkoBlown: false,
-        projectorPowerOn: false,
-        fanCleaned: false,
-        pourWater: false,
-        glassMelodySolved: false,
-        glassMelodyInputs: [],
-        flypanCleaned: false,
-        useFertilizer: false,
-        tanzakuLightEventDone: false,
-        timePhase: 0,
-        isNight: false,
-        foundTeruteru: false,
-        teruteruSet: false,
-        weatherSkyState: 0,
-        foundMainKitchenStick: false,
-        foundMainKitchenOvenBurntFlypan: false,
-        foundMainKitchenMatch: false,
-        unlockMainKitchenFreezer: false,
-        mainKitchenFreezerLetters: [0, 0, 0],
-        unlockMainKitchenRefrigerator: false,
-        foundMainKitchenRefrigeratorSweet: false,
-        foundMainKitchenUpperCabinetJug: false,
-        unlockMainKitchenUpperCabinet: false,
-        mainKitchenUpperCabinetLetters: [0, 0, 0, 0],
-        foundMainKitchenLowerRightCabinetMop: false,
-        unlockMainKitchenLowerRightCabinet: false,
-        mainKitchenLowerRightCabinetLetters: [0, 0, 0, 0, 0],
-        unlockMainKitchenLowerLeftCabinet: false,
-        foundMainKitchenLowerLeftCabinetRaincoat: false,
-        unlockMainDoorCabinet: false,
-        mainDoorCabinetInputs: [],
-        foundMainDoorCabinetKey: false,
-        bearAppear: false,
-        gaveSweetToBearFairy: false,
-        unlockSafe: false,
-        foundWashitsuSafeYen300: false,
-        washitsuSafeDigits: [],
-        washitsuSafeDialNumber: 0,
-        unlockMainDeskTopDrawer: false,
-        foundMainDeskTopDrawerPowerCode: false,
-        mainDeskTopDrawerDigits: [0, 0, 0, 0],
-        unlockMainDeskSecondDrawer: false,
-        foundMainDeskSecondDrawerFertilizer: false,
-        mainDeskSecondDrawerDigits: [1, 1],
-        unlockMainDeskThirdDrawer: false,
-        foundMainDeskThirdDrawerMemo: false,
-        mainDeskThirdDrawerBars: [0, 0, 0, 0],
-        unlockMainDeskBottomDrawer: false,
-        foundMainDeskBottomDrawerCleanser: false,
-        mainDeskBottomDrawerSymbols: [1, 1, 1, 1, 1],
-        unlockMainTvLeftDrawer: false,
-        foundMainTvLeftDrawerBattery: false,
-        mainTvLeftDrawerDigits: [0, 0, 0, 0, 0, 0],
-        unlockMainTvRightDrawer: false,
-        foundMainTvRightDrawerMemoSafe: false,
-        mainTvRightDrawerLetters: [0, 0, 0, 0],
-        unlockBox: false,
-        mainDoorBoxDigits: [0, 0, 0, 0],
-        glassWithWineDrinkCount: 0,
+        clearShiwake: false,
+        openShutter: false,
         talkTo: { bear: 0, wizard: 0 },
       },
     },
-
-    tvDinner: {
-      flags: { backgroundState: 0 },
-    },
-    anime6: {
-      flags: { backgroundState: 0 },
+    shiwake: {
+      envelopes: {
+        envelope1: null,
+        envelope2: null,
+        envelope3: null,
+        envelope4: null,
+        envelope5: null,
+      },
+      flags: {
+        selectedEnvelope: null,
+        solved: false,
+      },
     },
 
     end: {
@@ -342,118 +250,321 @@ function areAllTanzakuLit() {
   return !!(f.flypanCleaned && f.useFertilizer && f.foundMainDeskTopDrawerPowerCode && f.fanCleaned && f.glassMelodySolved);
 }
 
+const SHIWAKE_BOXES = [
+  { slot: 1, label: "WATER", color: "#0072B2" },
+  { slot: 2, label: "GOLDEN", color: "#F0E442" },
+  { slot: 3, label: "MOON", color: "#CC79A7" },
+  { slot: 4, label: "FIRE", color: "#D55E00" },
+  { slot: 5, label: "WOOD", color: "#009E73" },
+];
+const SHIWAKE_ENVELOPES = ["envelope1", "envelope2", "envelope3", "envelope4", "envelope5"];
+const SHIWAKE_CORRECT = { envelope1: 3, envelope2: 1, envelope3: 5, envelope4: 2, envelope5: 4 };
+
+function getShiwakeState() {
+  if (!gameState.shiwake) gameState.shiwake = {};
+  if (!gameState.shiwake.envelopes) gameState.shiwake.envelopes = {};
+  SHIWAKE_ENVELOPES.forEach((key) => {
+    if (!(key in gameState.shiwake.envelopes)) gameState.shiwake.envelopes[key] = null;
+  });
+  if (!gameState.shiwake.flags) gameState.shiwake.flags = {};
+  return gameState.shiwake;
+}
+
+function getShiwakeBoxArea(slot) {
+  const idx = slot - 1;
+  return { x: 2 + idx * 19.4, y: 9, width: 18.4, height: 48 };
+}
+
+function getShiwakeEnvelopeHomeArea(index) {
+  return { x: 4 + index * 18.7, y: 61, width: 17.5, height: 15.5 };
+}
+
+function getShiwakeOkArea() {
+  return { x: 50, y: 83, width: 12.5, height: 8.8 };
+}
+
+function getShiwakeZoomArea() {
+  return { x: 38, y: 83, width: 9, height: 8.8 };
+}
+
+function getShiwakeEnvelopeArea(envelopeKey) {
+  const state = getShiwakeState();
+  const slot = state.envelopes[envelopeKey];
+  const index = SHIWAKE_ENVELOPES.indexOf(envelopeKey);
+  if (!slot) return getShiwakeEnvelopeHomeArea(index);
+
+  const box = getShiwakeBoxArea(slot);
+  const inSlot = SHIWAKE_ENVELOPES.filter((key) => state.envelopes[key] === slot);
+  const order = Math.max(0, inSlot.indexOf(envelopeKey));
+  return {
+    x: box.x + 1.4,
+    y: box.y + 13.8 + order * 6.0,
+    width: box.width - 2.8,
+    height: 11.3,
+  };
+}
+
+function selectShiwakeEnvelope(envelopeKey) {
+  const state = getShiwakeState();
+  if (state.flags.solved) return;
+  state.flags.selectedEnvelope = state.flags.selectedEnvelope === envelopeKey ? null : envelopeKey;
+  updateMessage(state.flags.selectedEnvelope ? `${envelopeKey.replace("envelope", "封筒")}を選んだ` : "封筒の選択をやめた");
+  renderCanvasRoom();
+}
+
+function moveSelectedShiwakeEnvelope(slot) {
+  if (tryPlaceStampedEnvelopeInShiwake(slot)) return;
+
+  const state = getShiwakeState();
+  const selected = state.flags.selectedEnvelope;
+  if (!selected) {
+    if (state.flags.solved || gameState.main.flags.clearShiwake) {
+      updateMessage("仕分けは完了している");
+      return;
+    }
+    updateMessage("移動する封筒を選んでください");
+    return;
+  }
+  state.envelopes[selected] = slot;
+  updateMessage(`${selected.replace("envelope", "封筒")}を${slot}番の箱に入れた`);
+  renderCanvasRoom();
+}
+
+function tryPlaceStampedEnvelopeInShiwake(slot) {
+  if (gameState.selectedItem !== "envelopeStamp") return false;
+
+  const state = getShiwakeState();
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.clearShiwake) {
+    updateMessage("まず、最初の5つの封筒を仕分けよう");
+    return true;
+  }
+
+  if (state.flags.envelopeStampPlaced || f.lettersShineEventDone) {
+    updateMessage("切手を貼った封筒はもう置いてある");
+    return true;
+  }
+
+  if (slot !== 2) {
+    playSE?.("se-error");
+    updateMessage("ここに置くものではないようだ");
+    return true;
+  }
+
+  state.flags.envelopeStampPlaced = true;
+  markProgress?.("letters_shine_event");
+  removeItem("envelopeStamp");
+  startShiwakeBoxesShine();
+  setTimeout(() => {
+    f.lettersShineEventDone = true;
+    renderCanvasRoom?.();
+    tryShowLettersShineModal();
+  }, 650);
+  updateMessage("切手を貼った封筒をGOLDENの仕分け箱に置くと、封筒が光ってどこかへ移動したようだ");
+  return true;
+}
+
+function startShiwakeBoxesShine() {
+  const fx = gameState.fx || (gameState.fx = {});
+  fx.shiwakeBoxesShineUntil = Date.now() + 900;
+  playSE?.("se-fanta");
+
+  const tick = () => {
+    renderCanvasRoom?.();
+    if ((gameState.fx?.shiwakeBoxesShineUntil || 0) > Date.now()) {
+      requestAnimationFrame(tick);
+    }
+  };
+  tick();
+}
+
+function showLettersShineModal() {
+  const frames = [IMAGES.modals.lettersShine1, IMAGES.modals.lettersShine2, IMAGES.modals.lettersShine3];
+  const content = `
+    <div class="modal-anim frames" style="aspect-ratio:1 / 1;">
+      ${frames.map((src) => `<img src="${src}" alt="">`).join("")}
+    </div>
+  `;
+  showModal("封筒が光った", content, [{ text: "閉じる", action: "close" }]);
+}
+
+function tryShowLettersShineModal() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.clearShiwake || !f.lettersShineEventDone || f.lettersShineModalShown) return;
+  f.lettersShineModalShown = true;
+  showLettersShineModal();
+}
+
+function showSelectedShiwakeEnvelope() {
+  const selected = getShiwakeState().flags.selectedEnvelope;
+  if (!selected) {
+    updateMessage("拡大する封筒を選んでください");
+    return;
+  }
+  showObj(null, "", IMAGES.items[selected], `${selected.replace("envelope", "封筒")}を確認した`);
+}
+
+function checkShiwakeAnswer() {
+  const state = getShiwakeState();
+  if (state.flags.solved) return;
+
+  const ok = SHIWAKE_ENVELOPES.every((key) => state.envelopes[key] === SHIWAKE_CORRECT[key]);
+  if (ok) {
+    state.flags.solved = true;
+    state.flags.selectedEnvelope = null;
+    gameState.main.flags.clearShiwake = true;
+    playSE?.("se-clear");
+    showModal("仕分け完了", "<p>正しく仕分けできた。近くで物音がしたようだ</p>", [{ text: "閉じる", action: "close" }], tryShowLettersShineModal);
+    updateMessage("正しく仕分けできた。近くで物音がしたようだ");
+  } else {
+    updateMessage("仕分けが違うようだ");
+  }
+  renderCanvasRoom();
+}
+
 // 部屋データ
 let rooms = {
+  shiwake: {
+    name: "郵便仕分け室",
+    description: "",
+    clickableAreas: [
+      ...SHIWAKE_BOXES.map((box) => ({
+        x: () => getShiwakeBoxArea(box.slot).x,
+        y: () => getShiwakeBoxArea(box.slot).y,
+        width: () => getShiwakeBoxArea(box.slot).width,
+        height: () => getShiwakeBoxArea(box.slot).height,
+        onClick: clickWrap(() => moveSelectedShiwakeEnvelope(box.slot)),
+        description: `${box.label}の仕分け箱`,
+        zIndex: 4,
+        usable: () => true,
+      })),
+      ...SHIWAKE_ENVELOPES.map((key) => ({
+        x: () => getShiwakeEnvelopeArea(key).x,
+        y: () => getShiwakeEnvelopeArea(key).y,
+        width: () => getShiwakeEnvelopeArea(key).width,
+        height: () => getShiwakeEnvelopeArea(key).height,
+        onClick: clickWrap(() => selectShiwakeEnvelope(key)),
+        description: key.replace("envelope", "封筒"),
+        zIndex: 9,
+        usable: () => !getShiwakeState().flags.solved,
+        item: { img: key, visible: () => !gameState.main.flags.lettersShineEventDone },
+      })),
+      {
+        x: () => getShiwakeZoomArea().x,
+        y: () => getShiwakeZoomArea().y,
+        width: () => getShiwakeZoomArea().width,
+        height: () => getShiwakeZoomArea().height,
+        onClick: clickWrap(showSelectedShiwakeEnvelope),
+        description: "虫眼鏡ボタン",
+        zIndex: 6,
+        usable: () => true,
+      },
+      {
+        x: () => getShiwakeOkArea().x,
+        y: () => getShiwakeOkArea().y,
+        width: () => getShiwakeOkArea().width,
+        height: () => getShiwakeOkArea().height,
+        onClick: clickWrap(checkShiwakeAnswer),
+        description: "OKボタン",
+        zIndex: 6,
+        usable: () => !getShiwakeState().flags.solved,
+      },
+      {
+        x: 89,
+        y: 84,
+        width: 8,
+        height: 8,
+        onClick: clickWrap(function () {
+          changeRoom("mainChest");
+        }),
+        description: "仕分け室戻る",
+        zIndex: 7,
+        usable: () => true,
+        item: { img: "back", visible: () => true },
+      },
+    ],
+  },
   mainDoor: {
-    name: "ドア前",
+    name: "郵便局の出口ドア前",
     description: "",
     clickableAreas: [
       {
-        x: 29.8,
-        y: 69.0,
-        width: 14.1,
-        height: 6.0,
+        x: 38,
+        y: 2.6,
+        width: 21.9,
+        height: 21.9,
         onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.modalK, "飾り皿が飾られている");
+          if (gameState.selectedItem === "fanOpened") {
+            playMainDoorFlagShakeFx();
+            updateMessage("開いた扇子で旗をあおいだ。");
+            return;
+          }
+
+          updateMessage("旗が飾られている。");
         }),
-        description: "飾り皿",
+        description: "旗右",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "flag", visible: () => true },
+      },
+      {
+        x: 6.3,
+        y: 27.4,
+        width: 28.8,
+        height: 22.4,
+        onClick: clickWrap(function () {
+          changeRoom("boardDoor");
+        }),
+        description: "ドア横黒板",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 15.1,
-        y: 69.6,
-        width: 13.5,
-        height: 5.3,
-        onClick: clickWrap(handleMainDoorBookClick),
-        description: "本",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 100,
+        x: 61.1,
+        y: 11.2,
+        width: 8.5,
+        height: 5.5,
         onClick: clickWrap(function () {}),
-        description: "延長コードと光",
+        description: "ドア上手紙マーク",
         zIndex: 5,
         usable: () => false,
-        item: { img: "codeAfter", visible: () => gameState.main.flags.projectorPowerOn },
-      },
-      {
-        x: 45.6,
-        y: 85.3,
-        width: 17.3,
-        height: 11.9,
-        onClick: clickWrap(handleProjectorCodeClick),
-        description: "プロジェクターのコード",
-        zIndex: 5,
-        usable: () => !gameState.main.flags.projectorPowerOn,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 30.3,
-        y: 79.3,
-        width: 13.8,
-        height: 6.9,
+        x: 50.5,
+        y: 26.7,
+        width: 29.3,
+        height: 60.9,
         onClick: clickWrap(function () {
-          if (gameState.main.flags.projectorPowerOn) {
-            updateMessage("プロジェクターは動作している");
+          if (gameState.fx?.mainDoorExitPending) return;
+
+          if (!hasItem("bag") || !hasItem("hat")) {
+            playMainDoorLetterErrorFlash();
+            playSE?.("se-error");
+            showToast("退室チェックエラー。配達員の装備が揃っていません");
+            updateMessage("退室チェックエラー。配達員の装備が揃っていません");
             return;
           }
-          updateMessage("プロジェクターがある");
-        }),
-        description: "プロジェクター",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 13.2,
-        y: 26.1,
-        width: 48.8,
-        height: 31.5,
-        onClick: clickWrap(function () {
-          if (gameState.main.flags.projectorPowerOn) {
-            changeRoom(gameState.main.flags.tanzakuLightEventDone ? "anime4" : "anime1");
-            return;
-          }
-          updateMessage("白いスクリーンだ");
-        }),
-        description: "スクリーン",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: () => (gameState.main.flags.tanzakuLightEventDone ? "anime4" : "anime1"), visible: () => gameState.main.flags.projectorPowerOn },
-      },
-      {
-        x: 72.3,
-        y: 31.7,
-        width: 21.0,
-        height: 48.1,
-        onClick: clickWrap(function () {
-          const weatherSkyState = Number(gameState.main.flags.weatherSkyState) || 0;
-          if (weatherSkyState === 2) {
-            travelWithSteps(gameState.main.flags.gaveSweetToBearFairy ? "trueEnd" : "end");
-            return;
-          }
-          if (weatherSkyState < 2 && gameState.inventory.includes("raincoat")) {
-            showModal("レインコートを着て外に出ますか？", "", [
-              {
-                text: "はい",
-                action: () => {
-                  removeItem("raincoat");
-                  closeModal();
-                  travelWithSteps("rainEnd");
-                },
-              },
-              { text: "いいえ", action: "close" },
-            ]);
-            return;
-          }
-          updateMessage("外は激しく雨が降っているようだ。出るのは危険かもしれない");
+
+          playMainDoorLetterClearFlash();
+          playSE?.("se-fanta");
+          showToast("退室チェッククリア。配達員を送出します");
+          removeItemsOnEndingArrival(["bag", "hat"]);
+
+          const fx = gameState.fx || (gameState.fx = {});
+          fx.mainDoorExitPending = true;
+          fx.lockInput = true;
+          setTimeout(() => {
+            flashScreen("black", 900);
+          }, 850);
+          setTimeout(() => {
+            if (gameState.fx) {
+              delete gameState.fx.mainDoorExitPending;
+              gameState.fx.lockInput = false;
+            }
+            changeRoom("end");
+          }, 1050);
         }),
         description: "ドア",
         zIndex: 5,
@@ -461,66 +572,245 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 45.0,
-        y: 69.8,
-        width: 14.0,
-        height: 10.3,
-        onClick: clickWrap(handleMainDoorCabinetClick),
-        description: "キャビネット",
+        x: 6.8,
+        y: 68.8,
+        width: 35.8,
+        height: 28.1,
+        onClick: clickWrap(showMainDoorSignModal),
+        description: "看板",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 38.2,
-        y: 48.9,
-        width: 19.4,
-        height: 19.0,
-        onClick: clickWrap(function () {
-          if (gameState.selectedItem === "sweet") {
-            handleMainDoorBearSweetClick();
-            return;
-          }
-          if (gameState.selectedItem === "raincoat") {
-            showObj(null, "「ボクには大きいみたい」", IMAGES.modals.bearCoat, "クマ妖精からレインコートを返された");
-            return;
-          }
-          if (gameState.main.flags.weatherSkyState < 2 && gameState.main.flags.gaveSweetToBearFairy) {
-            talkToHintCharacter("main", "bear3");
-            return;
-          }
-          if (gameState.main.flags.weatherSkyState < 2) {
-            talkToHintCharacter("main", "bear");
-            return;
-          }
-
-          if (gameState.main.flags.weatherSkyState == 2 && gameState.main.flags.gaveSweetToBearFairy) {
-            talkToHintCharacter("main", "bear4");
-            return;
-          }
-          talkToHintCharacter("main", "bear2");
-        }),
-        description: "現れたクマ妖精",
-        zIndex: 6,
-        usable: () => gameState.main.flags.bearAppear,
-        item: { img: "bear", visible: () => gameState.main.flags.bearAppear },
+        x: 0,
+        y: 50.6,
+        width: 6.4,
+        height: 6.4,
+        onClick: clickWrap(
+          function () {
+            changeRoom("mainChest");
+          },
+          { allowAtNight: true },
+        ),
+        description: "ドア面左、たんす面へ",
+        zIndex: 5,
+        item: { img: "arrowLeft", visible: () => true },
       },
       {
-        x: 59.2,
-        y: 83.0,
-        width: 7.7,
-        height: 7.0,
-        onClick: clickWrap(function () {
-          acquireItemOnce("foundTeruteru", "teruteru", "てるてる坊主が落ちている", IMAGES.modals.teruteruGet, "てるてる坊主を拾った");
-        }),
-        description: "落ちているてるてる坊主",
+        x: 93.6,
+        y: 50.6,
+        width: 6.4,
+        height: 6.4,
+        onClick: clickWrap(
+          function () {
+            changeRoom("mainAdminDoor");
+          },
+          { allowAtNight: true },
+        ),
+        description: "ドア面右、転送室ドア面へ",
         zIndex: 5,
-        usable: () => gameState.main.flags.bearAppear && !gameState.main.flags.foundTeruteru,
-        item: { img: "teruteru", visible: () => gameState.main.flags.bearAppear && !gameState.main.flags.foundTeruteru },
+        item: { img: "arrowRight", visible: () => true },
+      },
+    ],
+  },
+  boardDoor: {
+    name: "黒板",
+    description: "",
+    clickableAreas: [
+      {
+        x: 90,
+        y: 88,
+        width: 8,
+        height: 8,
+        onClick: clickWrap(
+          function () {
+            changeRoom("mainDoor");
+          },
+          { allowAtNight: true },
+        ),
+        description: "黒板戻る",
+        zIndex: 10,
+        item: { img: "back", visible: () => true },
+      },
+      {
+        x: 38.5,
+        y: 76.5,
+        width: 23,
+        height: 20,
+        onClick: clickWrap(handleBoardDoorWifiClick),
+        description: "黒板下の通信機",
+        zIndex: 8,
+        usable: () => true,
+        item: { img: "wifi4", visible: () => true },
+      },
+      {
+        x: () => getBoardDoorTableMetrics().x,
+        y: () => getBoardDoorTableMetrics().y,
+        width: () => getBoardDoorTableMetrics().width,
+        height: () => getBoardDoorTableMetrics().height,
+        onClick: clickWrap(handleBoardDoorTableClick),
+        description: "ドア横黒板の表",
+        zIndex: 6,
+        usable: () => !!(gameState.main.flags || {}).boardDoorRewritten,
+      },
+      {
+        x: () => getBoardDoorCellArea("seasideAddress").x,
+        y: () => getBoardDoorCellArea("seasideAddress").y,
+        width: () => getBoardDoorCellArea("seasideAddress").width,
+        height: () => getBoardDoorCellArea("seasideAddress").height,
+        onClick: clickWrap(() => showBoardDoorAnswerInput("seasideAddress")),
+        description: "ドア横黒板 ADDRESS 不明欄",
+        zIndex: 7,
+        usable: () => isBoardDoorBlankClickable("seasideAddress"),
+      },
+      {
+        x: () => getBoardDoorCellArea("solisArea").x,
+        y: () => getBoardDoorCellArea("solisArea").y,
+        width: () => getBoardDoorCellArea("solisArea").width,
+        height: () => getBoardDoorCellArea("solisArea").height,
+        onClick: clickWrap(() => showBoardDoorAnswerInput("solisArea")),
+        description: "ドア横黒板 AREA 不明欄",
+        zIndex: 7,
+        usable: () => isBoardDoorBlankClickable("solisArea"),
+      },
+    ],
+  },
+  mainChest: {
+    name: "タンスのある面",
+    description: "",
+    clickableAreas: [
+      {
+        x: 25.0,
+        y: 46.0,
+        width: 45.2,
+        height: 7.2,
+        onClick: clickWrap(function () {
+          changeRoom("shiwake");
+        }),
+        description: "仕分けボックス",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 67.6,
+        y: 49.0,
+        width: 10.9,
+        height: 3.9,
+        onClick: clickWrap(function () {}),
+        description: "封筒",
+        zIndex: 5,
+        usable: () => false,
+        item: { img: "envelopes", visible: () => !gameState.main.flags.clearShiwake },
+      },
+      {
+        x: 44.8,
+        y: 32.7,
+        width: 13.2,
+        height: 7.5,
+        onClick: clickWrap(function () {
+          acquireItemOnce("foundCard", "card", "魔力を放つカードがある", IMAGES.items.card, "魔法のカードを手に入れた");
+        }),
+        description: "壁の隠し収納",
+        zIndex: 5,
+        usable: () => gameState.main.flags.clearShiwake,
+        item: { img: "blackBack", visible: () => gameState.main.flags.clearShiwake },
+      },
+      {
+        x: 47.4,
+        y: 34.1,
+        width: 7.9,
+        height: 4.8,
+        onClick: clickWrap(function () {}),
+        description: "壁の隠し収納の中のカード",
+        zIndex: 5,
+        usable: () => false,
+        item: { img: "card", visible: () => gameState.main.flags.clearShiwake && !gameState.main.flags.foundCard },
+      },
+      {
+        x: 3.0,
+        y: 25.3,
+        width: 20.6,
+        height: 24.2,
+        onClick: clickWrap(function () {
+          changeRoom("boardChest");
+        }),
+        description: "引き出しそばの黒板",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 26.1,
+        y: 58.7,
+        width: 48.1,
+        height: 6.6,
+        onClick: clickWrap(showMainChestTopDrawerPuzzle),
+        description: "引き出し一段目",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 26.2,
+        y: 67.5,
+        width: 47.9,
+        height: 6.7,
+        onClick: clickWrap(showMainChestSecondDrawerPuzzle),
+        description: "引き出し2段目",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 25.9,
+        y: 76.3,
+        width: 48.0,
+        height: 6.6,
+        onClick: clickWrap(showMainChestThirdDrawerPuzzle),
+        description: "引き出し3段目",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 75.2,
+        y: 72.4,
+        width: 24.4,
+        height: 22.9,
+        onClick: clickWrap(function () {
+          if (!gameState.main.flags.lettersShineEventDone) {
+            updateMessage("かばんが置かれている");
+            return;
+          }
+          acquireItemOnce("foundBag", "bag", "かばんがある", IMAGES.items.bag, "かばんを手に入れた");
+        }),
+        description: "かばん",
+        zIndex: 5,
+        usable: () => !gameState.main.flags.foundBag,
+        glowWhen: () => gameState.main.flags.lettersShineEventDone && !gameState.main.flags.foundBag,
+        glowColor: "255, 248, 178",
+        glowCheck: false,
+        glowSoft: true,
+        item: { img: "bag", visible: () => !gameState.main.flags.foundBag },
+      },
+      {
+        x: 83.7,
+        y: 81.0,
+        width: 12.9,
+        height: 8.9,
+        onClick: clickWrap(function () {
+          acquireItemOnce("foundPaper", "paper", "紙が落ちている", IMAGES.items.paper, "穴が開いた紙を手に入れた");
+        }),
+        description: "かばんを取った後に落ちている神",
+        zIndex: 5,
+        usable: () => gameState.main.flags.foundBag && !gameState.main.flags.foundPaper,
+        item: { img: "paper", visible: () => gameState.main.flags.foundBag && !gameState.main.flags.foundPaper },
       },
       {
         x: 0,
-        y: 80.6,
+        y: 50.6,
         width: 6.4,
         height: 6.4,
         onClick: clickWrap(
@@ -529,374 +819,56 @@ let rooms = {
           },
           { allowAtNight: true },
         ),
-        description: "ドア面左、机面へ",
+        description: "たんす面左、机面へ",
         zIndex: 5,
         item: { img: "arrowLeft", visible: () => true },
       },
       {
         x: 93.6,
-        y: 80.6,
+        y: 50.6,
         width: 6.4,
         height: 6.4,
         onClick: clickWrap(
           function () {
-            changeRoom("mainKitchen");
+            changeRoom("mainDoor");
           },
           { allowAtNight: true },
         ),
-        description: "ドア面右、キッチン面へ",
+        description: "たんす面右、ドア面へ",
         zIndex: 5,
         item: { img: "arrowRight", visible: () => true },
       },
     ],
   },
-  anime1: {
-    name: "七夕アニメ",
-    description: "左岸の織姫です",
+  boardChest: {
+    name: "黒板",
+    description: "",
     clickableAreas: [
       {
-        x: 22.3,
-        y: 53.2,
-        width: 11.6,
-        height: 13.1,
-        onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.orihimeSode, "織姫の衣装だ");
-        }),
-        description: "織姫の袖",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 9.8,
-        y: 33.7,
-        width: 16.9,
-        height: 17.1,
-        onClick: clickWrap(function () {
-          updateMessage("織姫は、悲しそうにしている");
-        }),
-        description: "悲しむ織姫",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 93.6,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime2");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ1右、2へ",
-        zIndex: 5,
-        item: { img: "arrowRight", visible: () => true },
-      },
-      {
         x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
+        y: 88,
+        width: 8,
+        height: 8,
         onClick: clickWrap(
           function () {
-            changeRoom("mainDoor");
+            changeRoom("mainChest");
           },
           { allowAtNight: true },
         ),
-        description: "アニメ戻る",
-        zIndex: 5,
+        description: "黒板戻る",
+        zIndex: 10,
         item: { img: "back", visible: () => true },
       },
-    ],
-  },
-  anime2: {
-    name: "七夕アニメ",
-    description: "右岸の彦星です",
-    clickableAreas: [
       {
-        x: 63.6,
-        y: 39.0,
-        width: 14.7,
-        height: 13.9,
-        onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.hikoboshiSode, "彦星の衣装だ");
-        }),
-        description: "彦星の袖",
-        zIndex: 5,
+        x: 38.5,
+        y: 76.5,
+        width: 23,
+        height: 20,
+        onClick: clickWrap(handleBoardChestWifiClick),
+        description: "黒板下の通信機",
+        zIndex: 8,
         usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 75.1,
-        y: 15.5,
-        width: 19.9,
-        height: 19.8,
-        onClick: clickWrap(function () {
-          handleAnime2SadHikoboshiClick();
-        }),
-        description: "悲しむ彦星",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 0,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime1");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ2左、1へ",
-        zIndex: 5,
-        item: { img: "arrowLeft", visible: () => true },
-      },
-      {
-        x: 93.6,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime3");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ2右、3へ",
-        zIndex: 5,
-        item: { img: "arrowRight", visible: () => true },
-      },
-      {
-        x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainDoor");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ戻る",
-        zIndex: 5,
-        item: { img: "back", visible: () => true },
-      },
-    ],
-  },
-  anime3: {
-    name: "七夕アニメ",
-    description: "大雨で増水した天の川です",
-    clickableAreas: [
-      {
-        x: 0,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime2");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ3左、2へ",
-        zIndex: 5,
-        item: { img: "arrowLeft", visible: () => true },
-      },
-
-      {
-        x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainDoor");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ戻る",
-        zIndex: 5,
-        item: { img: "back", visible: () => true },
-      },
-    ],
-  },
-  anime4: {
-    name: "七夕アニメ",
-    description: "左岸の織姫です",
-    clickableAreas: [
-      {
-        x: 9.8,
-        y: 33.7,
-        width: 16.9,
-        height: 17.1,
-        onClick: clickWrap(function () {
-          updateMessage("織姫は、笑顔だ");
-        }),
-        description: "織姫",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 93.6,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime5");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ4右、5へ",
-        zIndex: 5,
-        item: { img: "arrowRight", visible: () => true },
-      },
-      {
-        x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainDoor");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ戻る",
-        zIndex: 5,
-        item: { img: "back", visible: () => true },
-      },
-    ],
-  },
-  anime5: {
-    name: "七夕アニメ",
-    description: "右岸の彦星です",
-    clickableAreas: [
-      {
-        x: 75.1,
-        y: 15.5,
-        width: 19.9,
-        height: 19.8,
-        onClick: clickWrap(function () {
-          updateMessage("彦星は、笑顔だ");
-        }),
-        description: "彦星",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 0,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime4");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ5左、4へ",
-        zIndex: 5,
-        item: { img: "arrowLeft", visible: () => true },
-      },
-      {
-        x: 93.6,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime6");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ5右、6へ",
-        zIndex: 5,
-        item: { img: "arrowRight", visible: () => true },
-      },
-      {
-        x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainDoor");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ戻る",
-        zIndex: 5,
-        item: { img: "back", visible: () => true },
-      },
-    ],
-  },
-  anime6: {
-    name: "七夕アニメ",
-    description: "天の川にかかった光の橋で出会えた織姫と彦星です",
-    clickableAreas: [
-      {
-        x: 71.6,
-        y: 0.6,
-        width: 27.7,
-        height: 27.7,
-        onClick: clickWrap(handleAnime6RunningBearClick),
-        description: "走るクマ妖精",
-        zIndex: 5,
-        usable: () => !gameState.main.flags.bearAppear,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 31.5,
-        y: 26.1,
-        width: 45.4,
-        height: 23.6,
-        onClick: clickWrap(function () {
-          updateMessage("彦星「一年ぶりだね」織姫「嬉しい！」再会を喜んでいるようだ");
-        }),
-        description: "織姫と彦星",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 0,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("anime5");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ6左、5へ",
-        zIndex: 5,
-        item: { img: "arrowLeft", visible: () => true },
-      },
-
-      {
-        x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainDoor");
-          },
-          { allowAtNight: true },
-        ),
-        description: "アニメ戻る",
-        zIndex: 5,
-        item: { img: "back", visible: () => true },
+        item: { img: "wifi2", visible: () => true },
       },
     ],
   },
@@ -905,590 +877,303 @@ let rooms = {
     description: "",
     clickableAreas: [
       {
-        x: 6.5,
-        y: 13.4,
-        width: 22.6,
-        height: 22.4,
+        x: 18.7,
+        y: 27.2,
+        width: 31.6,
+        height: 22.1,
         onClick: clickWrap(function () {
-          changeRoom("calendar");
+          changeRoom("boardDesk");
         }),
-        description: "カレンダー",
+        description: "デスク前の黒板",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 70.5,
-        y: 5.4,
-        width: 14.9,
-        height: 12.9,
-        onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.modalA, "額縁が飾られている");
-        }),
-        description: "ひし形の額縁",
+        x: 15.9,
+        y: 53.2,
+        width: 14.8,
+        height: 13.3,
+        onClick: clickWrap(showMainDeskBoxPuzzle),
+        description: "机上の箱",
         zIndex: 5,
         usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 13.5,
-        y: 35.9,
-        width: 10.9,
-        height: 10.4,
-        onClick: clickWrap(function () {}),
-        description: "ほこり",
-        zIndex: 5,
-        usable: () => false,
-        item: { img: "dust", visible: () => !gameState.main.flags.fanCleaned },
-      },
-      {
-        x: 13.6,
-        y: 38.5,
-        width: 10.9,
-        height: 14.8,
-        onClick: clickWrap(handleMainDeskFanClick),
-        description: "扇風機",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 11.1,
-        y: 36.6,
-        width: 16.3,
-        height: 15.0,
-        onClick: clickWrap(function () {}),
-        description: "扇風機の円形部分",
-        zIndex: 5,
-        usable: () => false,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 49.9,
-        y: 45.0,
-        width: 11.8,
-        height: 10.6,
-        onClick: clickWrap(handleKatoriSenkoClick),
-        description: "蚊取り線香",
-        zIndex: 5,
-        usable: () => !gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned,
-        item: { img: "katoriSenkoBefore", visible: () => !gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned },
-      },
-      {
-        x: 49.9,
-        y: 45.0,
-        width: 11.8,
-        height: 10.6,
-        onClick: clickWrap(function () {
-          updateMessage("蚊取り線香に火がついている。");
-        }),
-        description: "火が付いた蚊取り線香",
-        zIndex: 5,
-        usable: () => gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned,
-        item: { img: "katoriSenko", visible: () => gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned },
-      },
-      {
-        x: 49.9,
-        y: 45.0,
-        width: 11.8,
-        height: 10.6,
-        onClick: clickWrap(function () {
-          updateMessage("蚊取り線香は燃え尽きた。");
-        }),
-        description: "燃え尽きた蚊取り線香",
-        zIndex: 5,
-        usable: () => gameState.main.flags.senkoBurned && !gameState.main.flags.senkoBlown,
-        item: { img: "katoriSenkoBurnt", visible: () => gameState.main.flags.senkoBurned && !gameState.main.flags.senkoBlown },
-      },
-      {
-        x: 49.9,
-        y: 45.0,
-        width: 11.8,
-        height: 10.6,
-        onClick: clickWrap(function () {
-          updateMessage("蚊取り線香は燃え尽きた。");
-        }),
-        description: "灰が飛ばされた蚊取り線香",
-        zIndex: 5,
-        usable: () => gameState.main.flags.senkoBurned && gameState.main.flags.senkoBlown,
-        item: { img: "katoriSenkoBlown", visible: () => gameState.main.flags.senkoBurned && gameState.main.flags.senkoBlown },
-      },
-      {
-        x: 50.1,
-        y: 24.8,
-        width: 27.7,
-        height: 24.4,
-        onClick: clickWrap(function () {
-          showObj(null, "煙が立ち上っている", shouldUseSmokeNaname() ? IMAGES.modals.smokeNaname : IMAGES.modals.smoke, "煙が立ち上っている");
-        }),
-        description: "煙",
-        zIndex: 6,
-        usable: () => gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned,
-        item: { img: () => (shouldUseSmokeNaname() ? "smokeNaname" : "smoke"), visible: () => gameState.main.flags.fireSenko && !gameState.main.flags.senkoBurned },
-      },
-      {
-        x: 48.5,
-        y: 83.5,
-        width: 39.1,
-        height: 15.3,
-        onClick: clickWrap(function () {
-          showObj(null, "床にマットが敷かれている", gameState.main.flags.fanCleaned && gameState.main.flags.senkoBurned ? IMAGES.modals.rugAfter : IMAGES.modals.rug, "床にマットが敷かれている");
-        }),
-        description: "ラグ",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "ash", visible: () => gameState.main.flags.fanCleaned && gameState.main.flags.senkoBurned },
-      },
-      {
-        x: 72.2,
-        y: 37.0,
-        width: 22.7,
-        height: 8.8,
-        onClick: clickWrap(handleMainDeskCupClick),
-        description: "コップ",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 100,
-        onClick: clickWrap(function () {}),
-        description: "コップの水",
-        zIndex: 5,
-        usable: () => false,
-        item: { img: "cupWater", visible: () => gameState.main.flags.pourWater },
-      },
-      {
-        x: 75.5,
-        y: 49.2,
-        width: 19.3,
-        height: 5.4,
-        onClick: clickWrap(showMainDeskTopDrawerPuzzle),
-        description: "引き出し最上段",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 75.6,
-        y: 56.7,
-        width: 19.2,
-        height: 5.4,
-        onClick: clickWrap(showMainDeskSecondDrawerPuzzle),
-        description: "引き出し2段目",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 75.4,
-        y: 63.9,
-        width: 19.6,
-        height: 5.5,
-        onClick: clickWrap(showMainDeskThirdDrawerPuzzle),
-        description: "引き出し3段目",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 75.6,
-        y: 71.5,
-        width: 19.2,
-        height: 5.4,
-        onClick: clickWrap(showMainDeskBottomDrawerPuzzle),
-        description: "引き出し最下段",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-
-      {
-        x: 0,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainWindow");
-          },
-          { allowAtNight: true },
-        ),
-        description: "机がある面左、窓面へ",
-        zIndex: 5,
-        item: { img: "arrowLeft", visible: () => true },
-      },
-      {
-        x: 93.6,
-        y: 80.6,
-        width: 6.4,
-        height: 6.4,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainDoor");
-          },
-          { allowAtNight: true },
-        ),
-        description: "机がある面右、ドア面へ",
-        zIndex: 5,
-        item: { img: "arrowRight", visible: () => true },
-      },
-    ],
-  },
-  calendar: {
-    name: "カレンダー",
-    description: "",
-    clickableAreas: [
-      {
-        x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
-        onClick: clickWrap(
-          function () {
-            changeRoom("mainDesk");
-          },
-          { allowAtNight: true },
-        ),
-        description: "カレンダー戻る",
-        zIndex: 5,
-        item: { img: "back", visible: () => true },
-      },
-    ],
-  },
-  mainWindow: {
-    name: "窓のある面",
-    description: "",
-    clickableAreas: [
-      {
-        x: 77.2,
-        y: 13.4,
-        width: 14.6,
-        height: 12.1,
-        onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.modalE, "額縁が飾られている。少し色あせている。");
-        }),
-        description: "三角形の額縁",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 1.1,
-        y: 21.8,
-        width: 30.3,
-        height: 47.4,
-        onClick: clickWrap(function () {
-          if (!gameState.main.flags.tanzakuLightEventDone && areAllTanzakuLit()) {
-            showTanzakuLightEvent();
-            return;
-          }
-          changeRoom("sasaZoom");
-        }),
-        description: "笹飾り",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 4.0,
-        y: 37.2,
-        width: 3.4,
-        height: 10.4,
-        onClick: clickWrap(function () {}),
-        description: "赤い短冊",
-        zIndex: 5,
-        usable: () => false,
-        glowWhen: () => gameState.main.flags.flypanCleaned && !gameState.main.flags.tanzakuLightEventDone,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 10.8,
-        y: 40.0,
-        width: 3.3,
-        height: 10.2,
-        onClick: clickWrap(function () {}),
-        description: "青い短冊",
-        zIndex: 5,
-        usable: () => false,
-        glowWhen: () => gameState.main.flags.useFertilizer && !gameState.main.flags.tanzakuLightEventDone,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
         x: 17.3,
-        y: 41.9,
-        width: 4.0,
-        height: 9.6,
+        y: 54.8,
+        width: 12.5,
+        height: 5.6,
         onClick: clickWrap(function () {}),
-        description: "黄色い短冊",
+        description: "机上の箱開いた後の黒部分",
         zIndex: 5,
         usable: () => false,
-        glowWhen: () => gameState.main.flags.foundMainDeskTopDrawerPowerCode && !gameState.main.flags.tanzakuLightEventDone,
-        item: { img: "IMAGE_KEY", visible: () => true },
+        item: { img: "blackBack", visible: () => gameState.main.flags.unlockBox },
       },
       {
-        x: 26.2,
-        y: 41.2,
-        width: 4.6,
-        height: 9.6,
-        onClick: clickWrap(function () {}),
-        description: "白い短冊",
-        zIndex: 5,
-        usable: () => false,
-        glowWhen: () => gameState.main.flags.fanCleaned && !gameState.main.flags.tanzakuLightEventDone,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 22.1,
-        y: 55.0,
-        width: 4.4,
-        height: 9.6,
-        onClick: clickWrap(function () {}),
-        description: "紫の短冊",
-        zIndex: 5,
-        usable: () => false,
-        glowWhen: () => gameState.main.flags.glassMelodySolved && !gameState.main.flags.tanzakuLightEventDone,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 5.0,
-        y: 50.7,
-        width: 3.1,
-        height: 10.1,
-        onClick: clickWrap(function () {}),
-        description: "黒の短冊",
-        zIndex: 5,
-        usable: () => false,
-        item: { img: "tanzakuBlack", visible: () => gameState.main.flags.bearAppear },
-      },
-      {
-        x: 2.1,
-        y: 70.7,
-        width: 5.3,
-        height: 4.4,
+        x: 17.5,
+        y: 55.6,
+        width: 11.6,
+        height: 4.1,
         onClick: clickWrap(function () {
-          updateMessage("ペンがある。短冊に願いを書くのに使ったものだろうか");
+          acquireItemOnce("foundFan", "fanClosed", "箱の中に扇子がある", IMAGES.items.fanClosed, "扇子を手に入れた");
         }),
-        description: "ペン",
+        description: "机上の箱開いた後の黒部分内部の扇子",
         zIndex: 5,
-        usable: () => !gameState.main.flags.bearAppear,
-        item: { img: "pen", visible: () => !gameState.main.flags.bearAppear },
+        usable: () => gameState.main.flags.unlockBox && !gameState.main.flags.foundFan,
+        item: { img: "fanPart", visible: () => gameState.main.flags.unlockBox && !gameState.main.flags.foundFan },
       },
+
       {
-        x: 20.2,
-        y: 69.4,
-        width: 5.7,
-        height: 3.5,
+        x: 30.7,
+        y: 55.4,
+        width: 28.7,
+        height: 18.6,
         onClick: clickWrap(function () {
-          updateMessage("ペンがある。短冊に願いを書くのに使ったものだろうか");
-        }),
-        description: "ペン",
-        zIndex: 5,
-        usable: () => gameState.main.flags.bearAppear,
-        item: { img: "pen", visible: () => gameState.main.flags.bearAppear },
-      },
-      {
-        x: 19.8,
-        y: 74.3,
-        width: 10.8,
-        height: 7.4,
-        onClick: clickWrap(function () {
-          playSE?.("se-hikidashi");
-          showObj(null, "引き出しを開けた", gameState.main.flags.bearAppear ? IMAGES.modals.drawerEmpty : IMAGES.modals.drawer, gameState.main.flags.bearAppear ? "からっぽだ" : "短冊の残りのようだ");
-        }),
-        description: "引き出し",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 79.4,
-        y: 48.6,
-        width: 19.7,
-        height: 15.5,
-        onClick: clickWrap(function () {}),
-        description: "霧または輝き",
-        zIndex: 5,
-        usable: () => false,
-        item: { img: () => (!gameState.main.flags.useFertilizer ? "fog" : "shine"), visible: () => true },
-      },
-      {
-        x: 79.9,
-        y: 44.0,
-        width: 17.9,
-        height: 31.9,
-        onClick: clickWrap(function () {
-          handleMainWindowPlantClick();
-        }),
-        description: "観葉植物",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 33.1,
-        y: 15.3,
-        width: 34.0,
-        height: 47.7,
-        onClick: clickWrap(function () {
-          if (gameState.main.flags.weatherSkyState < 2) {
-            updateMessage("雨が激しくふっている。星は見えない");
+          if (hasItem("envelopeNostamp")) {
+            showMainDeskStampPuzzle();
             return;
           }
-          updateMessage("雨がやみ、綺麗な夜空が見える");
+
+          updateMessage("業務用のデスクだ。封筒に切手を貼ったりすることができそうだ");
         }),
-        description: "窓",
+        description: "デスク上",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 72.9,
-        y: 35.8,
-        width: 6.8,
-        height: 12.5,
-        onClick: clickWrap(handleMainWindowHookClick),
-        description: "窓際のフック",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 73.7,
-        y: 45.5,
-        width: 7.0,
-        height: 12.6,
+        x: 38.8,
+        y: 81.1,
+        width: 13.9,
+        height: 13.9,
         onClick: clickWrap(function () {
-          updateMessage("てるてる坊主がぶら下がっている");
+          updateMessage("椅子がある");
         }),
-        description: "てるてる坊主表示位置",
+        description: "椅子",
         zIndex: 5,
-        usable: () => gameState.main.flags.teruteruSet,
-        item: { img: "teruteru", visible: () => gameState.main.flags.teruteruSet },
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 79.2,
+        y: 65.1,
+        width: 20.3,
+        height: 25.7,
+        onClick: clickWrap(function () {
+          showMainDeskBaggageModal(1);
+        }),
+        description: "置かれた荷物",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 57.5,
+        y: 39.4,
+        width: 19.9,
+        height: 13.4,
+        onClick: clickWrap(function () {
+          showObj(null, "皮袋の中に配達記録がある", IMAGES.modals.deliveryRecord, "配達記録がある");
+        }),
+        description: "デスク上の袋",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
       },
 
       {
         x: 0,
-        y: 80.6,
+        y: 50.6,
         width: 6.4,
         height: 6.4,
         onClick: clickWrap(
           function () {
-            changeRoom("mainKitchen");
+            changeRoom("mainAdminDoor");
           },
           { allowAtNight: true },
         ),
-        description: "窓面左、キッチン面へ",
+        description: "机がある面左、転送室ドア面へ",
         zIndex: 5,
         item: { img: "arrowLeft", visible: () => true },
       },
       {
         x: 93.6,
-        y: 80.6,
+        y: 50.6,
         width: 6.4,
         height: 6.4,
+        onClick: clickWrap(
+          function () {
+            changeRoom("mainChest");
+          },
+          { allowAtNight: true },
+        ),
+        description: "机がある面右、たんす面へ",
+        zIndex: 5,
+        item: { img: "arrowRight", visible: () => true },
+      },
+    ],
+  },
+  boardDesk: {
+    name: "黒板",
+    description: "",
+    clickableAreas: [
+      {
+        x: 90,
+        y: 88,
+        width: 8,
+        height: 8,
         onClick: clickWrap(
           function () {
             changeRoom("mainDesk");
           },
           { allowAtNight: true },
         ),
-        description: "窓面右、机面へ",
-        zIndex: 5,
-        item: { img: "arrowRight", visible: () => true },
+        description: "黒板戻る",
+        zIndex: 10,
+        item: { img: "back", visible: () => true },
+      },
+      {
+        x: 38.5,
+        y: 76.5,
+        width: 23,
+        height: 20,
+        onClick: clickWrap(handleBoardDeskWifiClick),
+        description: "黒板下の通信機",
+        zIndex: 8,
+        usable: () => true,
+        item: { img: "wifi3", visible: () => true },
       },
     ],
   },
-  sasaZoom: {
-    name: "七夕の笹飾り",
+  transferRoom: {
+    name: "荷物の転送室",
     description: "",
     clickableAreas: [
       {
-        x: 6.7,
-        y: 2.2,
-        width: 12.1,
-        height: 41.4,
-        onClick: clickWrap(function () {
-          showTanzakuModal("red", "赤い短冊", "体が重い。余計なものを落としてすっきりできますように", gameState.main.flags.flypanCleaned ? { text: "CLE", side: "right", color: "#ff8a00" } : null);
-        }),
-        description: "赤い短冊",
+        x: 40.5,
+        y: 21.5,
+        width: 18.4,
+        height: 29.1,
+        onClick: clickWrap(showTransferPanelModal),
+        description: "操作パネル",
         zIndex: 5,
         usable: () => true,
-        glowWhen: () => gameState.main.flags.flypanCleaned && !gameState.main.flags.tanzakuLightEventDone,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 31.2,
-        y: 16.5,
-        width: 12.0,
-        height: 39.1,
+        x: 43.3,
+        y: 52.8,
+        width: 14.2,
+        height: 13.7,
+        onClick: clickWrap(showReceivedCargoBoxModal),
+        description: "受信した箱",
+        zIndex: 5,
+        usable: () => gameState.main.flags.receiveCargo && !gameState.main.flags.bearAppear,
+        item: { img: "boxClosed", visible: () => gameState.main.flags.receiveCargo && !gameState.main.flags.bearAppear },
+      },
+      {
+        x: 43.8,
+        y: 58.5,
+        width: 9.4,
+        height: 8.9,
         onClick: clickWrap(function () {
-          showTanzakuModal("blue", "青い短冊", "元気が出ない。もう一度きらきら輝けますように");
+          acquireItemOnce("foundManjuBox", "manjuBox", "溶岩饅頭を手に入れた", IMAGES.items.manjuBox, "溶岩饅頭を手に入れた");
         }),
-        description: "青い短冊",
+        description: "受信した饅頭ボックス",
+        zIndex: 5,
+        usable: () => !gameState.main.flags.foundManjuBox && gameState.main.flags.receiveManjuBox,
+        item: { img: "manjuBox", visible: () => !gameState.main.flags.foundManjuBox && gameState.main.flags.receiveManjuBox },
+      },
+      {
+        x: 78.5,
+        y: 24.9,
+        width: 18.5,
+        height: 21.9,
+        onClick: clickWrap(handleReturnShelfClick),
+        description: "備品棚のシャッター",
         zIndex: 5,
         usable: () => true,
-        glowWhen: () => gameState.main.flags.useFertilizer && !gameState.main.flags.tanzakuLightEventDone,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 54.4,
-        y: 23.4,
-        width: 12.1,
-        height: 31.9,
-        onClick: clickWrap(function () {
-          showTanzakuModal("yellow", "黄色の短冊", "ぐるぐる回る人生に飽きた。いつか燃え尽きられますように", gameState.main.flags.foundMainDeskTopDrawerPowerCode ? { text: "AN", side: "left", color: "#ff8a00" } : null);
-        }),
-        description: "黄色の短冊",
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        onClick: clickWrap(function () {}),
+        description: "備品棚のシャッター内部",
         zIndex: 5,
-        usable: () => true,
-        glowWhen: () => gameState.main.flags.foundMainDeskTopDrawerPowerCode && !gameState.main.flags.tanzakuLightEventDone,
-        item: { img: "IMAGE_KEY", visible: () => true },
+        usable: () => false,
+        item: { img: "insideShutter", visible: () => gameState.main.flags.openShutter },
       },
       {
-        x: 81.5,
-        y: 17.5,
-        width: 18.2,
-        height: 43.6,
-        onClick: clickWrap(function () {
-          showTanzakuModal("white", "白い短冊", "息苦しい。綺麗な空気が吸えますように", gameState.main.flags.fanCleaned ? { text: "★", side: "left", color: "#1a0f08" } : null);
-        }),
-        description: "白い短冊",
-        zIndex: 5,
-        usable: () => true,
-        glowWhen: () => gameState.main.flags.fanCleaned && !gameState.main.flags.tanzakuLightEventDone,
-        item: { img: "IMAGE_KEY", visible: () => true },
+        x: 78.7,
+        y: 24.8,
+        width: 12.8,
+        height: 11.4,
+        onClick: clickWrap(() => retrieveReturnShelfItem("hat")),
+        description: "シャッター内帽子",
+        zIndex: 8,
+        usable: () => isReturnShelfItemPlaced("hat"),
+        item: { img: "hat", visible: () => isReturnShelfItemPlaced("hat") },
       },
       {
-        x: 67.1,
-        y: 64.2,
-        width: 16.6,
-        height: 34.7,
-        onClick: clickWrap(function () {
-          showTanzakuModal("purple", "紫の短冊", "喉が渇いた。潤って綺麗な声で歌えますように", gameState.main.flags.glassMelodySolved ? { text: "♪", side: "right", color: "#1a0f08" } : null);
-        }),
-        description: "紫の短冊",
-        zIndex: 5,
-        usable: () => true,
-        glowWhen: () => gameState.main.flags.glassMelodySolved && !gameState.main.flags.tanzakuLightEventDone,
-        item: { img: "IMAGE_KEY", visible: () => true },
+        x: 78.1,
+        y: 35.1,
+        width: 10.6,
+        height: 10.7,
+        onClick: clickWrap(() => retrieveReturnShelfItem("card")),
+        description: "シャッター内カード",
+        zIndex: 8,
+        usable: () => isReturnShelfItemPlaced("card"),
+        item: { img: "card", visible: () => isReturnShelfItemPlaced("card") },
       },
       {
-        x: 11.0,
-        y: 51.1,
-        width: 15.8,
-        height: 45.7,
+        x: 85.3,
+        y: 33.5,
+        width: 12.6,
+        height: 12.7,
+        onClick: clickWrap(() => retrieveReturnShelfItem("bag")),
+        description: "シャッター内かばん",
+        zIndex: 8,
+        usable: () => isReturnShelfItemPlaced("bag"),
+        item: { img: "bag", visible: () => isReturnShelfItemPlaced("bag") },
+      },
+      {
+        x: 5.4,
+        y: 62.1,
+        width: 20.6,
+        height: 20.6,
         onClick: clickWrap(function () {
-          const message = gameState.main.flags.gaveSweetToBearFairy ? "あなたに良いことがありますように" : "美味しいおやつが食べられますように";
-          showBlackTanzakuModal(message);
+          if (gameState.selectedItem == "manjuBox") {
+            updateMessage("「わあ、美味しそうー。ボクのおやつ？」");
+            return;
+          }
+          if (gameState.selectedItem === "fanOpened") {
+            handleTransferBearFanOpenedUse();
+            return;
+          }
+          talkToHintCharacter("main", "bear");
         }),
-        description: "黒の短冊",
+        description: "クマ妖精",
         zIndex: 5,
         usable: () => gameState.main.flags.bearAppear,
-        item: { img: "tanzakuBlack", visible: () => gameState.main.flags.bearAppear },
+        item: { img: "bear", visible: () => gameState.main.flags.bearAppear },
+      },
+      {
+        x: 39.6,
+        y: 70.1,
+        width: 18.0,
+        height: 13.0,
+        onClick: clickWrap(function () {
+          showObj(null, "", IMAGES.items.cargoTag, "荷札が落ちている");
+        }),
+        description: "破れた荷札",
+        zIndex: 5,
+        usable: () => gameState.main.flags.bearAppear,
+        item: { img: "cargoTag", visible: () => gameState.main.flags.bearAppear },
       },
       {
         x: 90,
@@ -1497,190 +1182,111 @@ let rooms = {
         height: 10,
         onClick: clickWrap(
           function () {
-            changeRoom("mainWindow");
+            changeRoom("mainAdminDoor");
           },
           { allowAtNight: true },
         ),
-        description: "笹飾り戻る",
+        description: "転送室戻る",
         zIndex: 5,
         item: { img: "back", visible: () => true },
       },
     ],
   },
-  mainKitchen: {
-    name: "キッチンがある面",
+
+  mainAdminDoor: {
+    name: "奥の部屋へのドアがある面",
     description: "",
     clickableAreas: [
       {
-        x: 14.8,
-        y: 24.1,
-        width: 9.4,
-        height: 11.1,
-        onClick: clickWrap(function () {
-          acquireItemOnce("foundMainKitchenStick", "stick", "箸立てに箸が入っている", IMAGES.modals.stick, "箸を手に入れた");
-        }),
-        description: "箸立て",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 86.6,
-        y: 26.0,
-        width: 8.9,
-        height: 8.8,
-        onClick: clickWrap(function () {
-          showObj(null, "ケチャップとマスタードがある", IMAGES.modals.mustard, "ケチャップとマスタードがある");
-        }),
-        description: "マスタード",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 24.9,
-        y: 12.9,
-        width: 9.9,
-        height: 10.4,
-        onClick: clickWrap(function () {
-          showObj(null, "オイルとソースがある", IMAGES.modals.oil, "オイルとソースがある");
-        }),
-        description: "オイル",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 35.9,
-        y: 9.3,
-        width: 13.2,
-        height: 13.6,
-        onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.modalL, "時計がある");
-        }),
-        description: "時計",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 49.9,
-        y: 62.5,
-        width: 25.3,
-        height: 4.0,
-        onClick: clickWrap(function () {
-          handleMainKitchenDrawerClick();
-        }),
-        description: "横長引き出し",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 76.1,
-        y: 65.9,
-        width: 20.9,
-        height: 13.7,
-        onClick: clickWrap(handleMainKitchenOvenClick),
-        description: "オーブン",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 72.9,
-        y: 46.2,
-        width: 13.1,
-        height: 10.4,
-        onClick: clickWrap(function () {
-          showObj(null, "", IMAGES.modals.flypanShine, "フライパンは、ピカピカだ");
-        }),
-        description: "きれいになったフライパン",
-        zIndex: 5,
-        usable: () => gameState.main.flags.flypanCleaned,
-        item: { img: "flypan", visible: () => gameState.main.flags.flypanCleaned },
-      },
-      {
-        x: 57.9,
-        y: 72.9,
-        width: 10.9,
-        height: 3.8,
+        x: 67.7,
+        y: 60.4,
+        width: 0.6,
+        height: 1.7,
         onClick: clickWrap(function () {}),
-        description: "下段キャビネット右のロック",
+        description: "ドアロック部",
         zIndex: 5,
         usable: () => false,
-        item: { img: "lockCabinet", visible: () => !gameState.main.flags.unlockMainKitchenLowerRightCabinet },
+        item: { img: () => (gameState.main.flags.unlockAdminDoor ? "greenBack" : "redBack"), visible: () => true },
       },
       {
-        x: 50.0,
-        y: 67.2,
-        width: 24.9,
-        height: 12.5,
-        onClick: clickWrap(showMainKitchenLowerRightCabinetPuzzle),
-        description: "下段キャビネット右",
+        x: 69.0,
+        y: 36.7,
+        width: 20.0,
+        height: 50.6,
+        onClick: clickWrap(function () {
+          if (gameState.main.flags.unlockAdminDoor) {
+            changeRoom("transferRoom");
+            return;
+          }
+
+          updateMessage("室内のドアはロックされている。");
+        }),
+        description: "転送室ドア",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 23.9,
-        y: 62.6,
-        width: 25.2,
-        height: 16.5,
-        onClick: clickWrap(handleMainKitchenLowerLeftCabinetClick),
-        description: "シンク下キャビネット",
+        x: 41.3,
+        y: 39.6,
+        width: 15.8,
+        height: 21.3,
+        onClick: clickWrap(function () {
+          showObj(null, "", IMAGES.modals.shelf, "棚がある");
+        }),
+        description: "棚",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 24.9,
-        y: 23.4,
-        width: 24.6,
-        height: 12.5,
-        onClick: clickWrap(handleMainKitchenUpperCabinetClick),
-        description: "上段キャビネット",
+        x: 11.0,
+        y: 26.6,
+        width: 29.3,
+        height: 36.8,
+        onClick: clickWrap(handleMainAdminDoorControlPanelClick),
+        description: "制御盤",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 26.0,
-        y: 44.3,
-        width: 14.6,
-        height: 13.6,
-        onClick: clickWrap(handleMainKitchenFaucetClick),
-        description: "蛇口",
+        x: 21.3,
+        y: 41.2,
+        width: 9.3,
+        height: 5.8,
+        onClick: clickWrap(function () {}),
+        description: "制御盤ロック",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "lockManage", visible: () => !gameState.main.flags.unlockManageBoard },
+      },
+      {
+        x: 4.3,
+        y: 63.8,
+        width: 12.6,
+        height: 11.1,
+        onClick: clickWrap(handleMainAdminDoorEnergyTankClick),
+        description: "エネルギータンク",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 2.8,
-        y: 43.1,
-        width: 19.7,
-        height: 11.0,
-        onClick: clickWrap(handleMainKitchenFreezerClick),
-        description: "冷凍庫",
+        x: 6.0,
+        y: 66.9,
+        width: 9.6,
+        height: 6.3,
+        onClick: clickWrap(function () {}),
+        description: "タンク内エネルギー表示部",
         zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 2.9,
-        y: 55.1,
-        width: 19.1,
-        height: 26.4,
-        onClick: clickWrap(handleMainKitchenRefrigeratorClick),
-        description: "冷蔵庫下段",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
+        usable: () => false,
+        item: { img: "potionBack", visible: () => gameState.main.flags.chargeEnergy },
       },
 
       {
         x: 0,
-        y: 80.6,
+        y: 50.6,
         width: 6.4,
         height: 6.4,
         onClick: clickWrap(
@@ -1689,105 +1295,109 @@ let rooms = {
           },
           { allowAtNight: true },
         ),
-        description: "キッチン面左、ドア面へ",
+        description: "転送室ドア面左、ドア面へ",
         zIndex: 5,
         item: { img: "arrowLeft", visible: () => true },
       },
       {
         x: 93.6,
-        y: 80.6,
+        y: 50.6,
         width: 6.4,
         height: 6.4,
         onClick: clickWrap(
           function () {
-            changeRoom("mainWindow");
+            changeRoom("mainDesk");
           },
           { allowAtNight: true },
         ),
-        description: "キッチン面右、窓面へ",
+        description: "転送室ドア右、机面へ",
         zIndex: 5,
         item: { img: "arrowRight", visible: () => true },
       },
     ],
   },
-  freezer: {
-    name: "冷凍庫内部",
+
+  boardAdmin: {
+    name: "管理制御盤",
     description: "",
     clickableAreas: [
       {
-        x: 10.1,
-        y: 52.2,
-        width: 65.0,
-        height: 38.6,
-        onClick: clickWrap(function () {
-          showObj(null, "製氷皿がある", IMAGES.modals.icetray, "製氷皿がある");
-        }),
-        description: "製氷皿",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
         x: 90,
-        y: 90,
-        width: 10,
-        height: 10,
+        y: 88,
+        width: 8,
+        height: 8,
         onClick: clickWrap(
           function () {
-            changeRoom("mainKitchen");
+            changeRoom("mainAdminDoor");
           },
           { allowAtNight: true },
         ),
-        description: "冷凍庫戻る",
-        zIndex: 5,
+        description: "制御盤戻る",
+        zIndex: 10,
         item: { img: "back", visible: () => true },
+      },
+      {
+        x: 38.5,
+        y: 76.5,
+        width: 23,
+        height: 20,
+        onClick: clickWrap(handleBoardAdminWifiClick),
+        description: "制御盤下の通信機",
+        zIndex: 8,
+        usable: () => true,
+        item: { img: "wifi2Black", visible: () => true },
+      },
+      ...[0, 1, 2, 3].map((idx) => ({
+        x: () => getBoardAdminLetterArea(idx).x,
+        y: () => getBoardAdminLetterArea(idx).y,
+        width: () => getBoardAdminLetterArea(idx).width,
+        height: () => getBoardAdminLetterArea(idx).height,
+        onClick: clickWrap(() => cycleBoardAdminLetter(idx)),
+        description: `管理制御盤 ${idx + 1}文字目`,
+        zIndex: 7,
+        usable: () => !((gameState.main.flags || {}).boardAdminRewritten || (gameState.main.flags || {}).unlockAdminDoor),
+      })),
+      {
+        x: () => getBoardAdminOkArea().x,
+        y: () => getBoardAdminOkArea().y,
+        width: () => getBoardAdminOkArea().width,
+        height: () => getBoardAdminOkArea().height,
+        onClick: clickWrap(checkBoardAdminAnswer),
+        description: "管理制御盤 OK",
+        zIndex: 7,
+        usable: () => !((gameState.main.flags || {}).boardAdminRewritten || (gameState.main.flags || {}).unlockAdminDoor),
       },
     ],
   },
-  rainEnd: {
-    name: "ノーマルエンド2",
-    description: "土砂降りの雨の中、あなたは勇敢にも一歩を踏み出しました！",
+
+  end: {
+    name: "ノーマルエンド",
+    description: "不思議な郵便局から脱出できました。配達を頑張りましょう",
     clickableAreas: [
       {
-        x: 2.8,
-        y: 65.7,
-        width: 22.0,
-        height: 23.4,
+        x: 30.0,
+        y: 46.8,
+        width: 17.1,
+        height: 37.8,
         onClick: clickWrap(function () {
-          updateMessage("クマ妖精は、少し心配しているようだ");
+          updateMessage("帽子をかぶると、配達員の心得が頭に浮かんできた。そうだ。きっと自分は配達員だったんだ");
         }),
-        description: "心配そうなクマ妖精",
+        description: "配達員",
         zIndex: 5,
-        usable: () => gameState.rainEnd.flags.backgroundState == 2,
+        usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 100,
+        x: 15.5,
+        y: 70.5,
+        width: 12.8,
+        height: 15.1,
         onClick: clickWrap(function () {
-          showEndingReport("rainEnd");
+          updateMessage("「郵便屋さんになるの？がんばってー」");
         }),
-        description: "ノーマルエンド2",
-      },
-    ],
-  },
-  end: {
-    name: "ノーマルエンド",
-    description: "雨の夜の部屋から脱出できました。おめでとうございます！",
-    clickableAreas: [
-      {
-        x: 67.2,
-        y: 64.0,
-        width: 27.1,
-        height: 27.1,
-        onClick: clickWrap(function () {
-          updateMessage("クマ妖精は手を振っている");
-        }),
-        description: "手を振るクマ妖精",
+        description: "見送るクマ妖精",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.end.flags.backgroundState == 1,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -1805,36 +1415,65 @@ let rooms = {
 
   trueEnd: {
     name: "トゥルーエンド",
-    description: "クマ妖精がなにかおまじないをかけてくれています！脱出おめでとうございます。",
+    description: "クマ妖精と一緒に地球に向かっています。脱出おめでとうございます。",
     clickableAreas: [
       {
-        x: 21.7,
-        y: 54.1,
-        width: 52.6,
-        height: 40.2,
+        x: 15.5,
+        y: 17.7,
+        width: 20.5,
+        height: 24.3,
         onClick: clickWrap(function () {
-          if (gameState.trueEnd.flags.backgroundState == 0) {
-            gameState.trueEnd.flags.backgroundState = 1;
-            renderCanvasRoom();
-          }
-          updateMessage("幸運がありますように！");
+          updateMessage("もうすぐ着くね");
         }),
-        description: "おまじないをかけるクマ妖精",
+        description: "宇宙のクマ妖精",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.trueEnd.flags.backgroundState == 0,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
-        x: 56.8,
-        y: 14.0,
-        width: 18.1,
-        height: 16.0,
+        x: 48.1,
+        y: 60.8,
+        width: 50.6,
+        height: 38.2,
         onClick: clickWrap(function () {
-          updateMessage("うっすらと何かが見える");
+          if (hasItem("manjuBox")) {
+            gameState.trueEnd.flags.backgroundState = 1;
+            removeItem("manjuBox");
+            renderCanvasRoom();
+            return;
+          } else {
+            updateMessage("地球にもうすぐ着きそうだ");
+          }
         }),
-        description: "織姫と彦星",
+        description: "地球",
         zIndex: 5,
-        usable: () => true,
+        usable: () => gameState.trueEnd.flags.backgroundState == 0,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 32.4,
+        y: 0.7,
+        width: 32.9,
+        height: 14.1,
+        onClick: clickWrap(function () {
+          updateMessage("外は猛暑ですが、お部屋はとても涼しいです");
+        }),
+        description: "エアコン",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 1,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 14.5,
+        y: 21.7,
+        width: 70.9,
+        height: 51.9,
+        onClick: clickWrap(function () {
+          updateMessage("美味しいと良いね");
+        }),
+        description: "まんじゅうを食べるクマとプレイヤー",
+        zIndex: 5,
+        usable: () => gameState.trueEnd.flags.backgroundState == 1,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -1855,42 +1494,9 @@ let rooms = {
 
 const hintMessages = {
   main: {
-    bear: ["「呼んだ？」", "「ふう、間に合った」"],
-    bear2: ["「雨が止んだね」", "「えへへ」"],
-    bear3: ["「わーい」", "「願いが叶ったよ。書いてみるものだね」"],
-    bear4: ["「わーい！」", "「願いが叶ったよ。雨も止んだね」"],
+    bear: ["「呼んだ？」", "「呼ばれたような気がしたんだ」", "「でも、ちょっと帰りたいかも」"],
   },
 };
-
-function showDinnerReservationBadEnd() {
-  closeModal();
-  playSE?.("se-elevator2");
-
-  const overlay = document.getElementById("roomEffectOverlay");
-  if (overlay) {
-    overlay.classList.remove("warp-active");
-    overlay.style.background = "#000";
-    overlay.style.opacity = 1;
-  }
-
-  setTimeout(() => {
-    if (overlay) {
-      overlay.style.opacity = 0;
-      overlay.style.background = "";
-    }
-
-    playSE?.("se-android");
-    const imgSrc = uiLang === "en" ? IMAGES.modals.badendDinnerEn : IMAGES.modals.badendDinner;
-    const content = `
-      <div style="text-align:center;">
-        <img src="${imgSrc}" alt="レストランなのはな" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">
-      </div>
-    `;
-    pauseBGM();
-    showModal("【BAD END】予約のない食事", content, [{ text: "最初から", action: "restart" }]);
-    updateMessage("BAD END: 予約のない食事");
-  }, 2000);
-}
 
 function travelWithSteps(destRoom, { useWarp = false } = {}) {
   const overlay = document.getElementById("roomEffectOverlay");
@@ -1939,11 +1545,11 @@ function travelWithSteps(destRoom, { useWarp = false } = {}) {
   }, 260);
 }
 
-function travelWithStepsTrueEnd() {
+function travelWithStepsTrueEnd(soundId = "se-ashioto") {
   const overlay = document.getElementById("roomEffectOverlay");
   const destRoom = "trueEnd";
 
-  playSE?.("se-ashioto");
+  playSE?.(soundId);
 
   // 画面を黒フェードに
   if (overlay) {
@@ -1979,19 +1585,24 @@ function travelWithStepsTrueEnd() {
 // ゲーム初期化
 function initGame() {
   renderNavigation();
-  changeRoom("mainWindow");
+  changeRoom("mainDoor");
   updateInventoryDisplay();
-  updateMessage("気が付くと雨が降る景色が見える部屋に立っていた。");
+  updateMessage("気が付くと見知らぬ郵便局に立っていた");
   try {
     renderStatusIcons();
   } catch (e) {}
 }
 
+function resolveAreaMetric(area, key) {
+  const value = area[key];
+  return typeof value === "function" ? value() : value;
+}
+
 function getAreaDrawRect(area, canvas) {
-  const baseX = (area.x / 100) * canvas.width;
-  const baseY = (area.y / 100) * canvas.height;
-  const baseW = (area.width / 100) * canvas.width;
-  const baseH = (area.height / 100) * canvas.height;
+  const baseX = (resolveAreaMetric(area, "x") / 100) * canvas.width;
+  const baseY = (resolveAreaMetric(area, "y") / 100) * canvas.height;
+  const baseW = (resolveAreaMetric(area, "width") / 100) * canvas.width;
+  const baseH = (resolveAreaMetric(area, "height") / 100) * canvas.height;
   let x = baseX;
   let y = baseY;
   let w = baseW;
@@ -2090,13 +1701,13 @@ function changeRoom(roomId) {
   gameState.currentRoom = roomId;
   const room = rooms[roomId];
   const f = gameState.main.flags || (gameState.main.flags = {});
-  if (roomId === "end" && gameState.tvDinner?.flags?.backgroundState === 0) {
+  if (roomId === "end") {
     const endFlags = gameState.end?.flags || (gameState.end = { flags: { backgroundState: 0 } }).flags;
-    endFlags.backgroundState = 0;
-  }
-
-  if (roomId === "end" || roomId === "restaurant") {
-    removeItemsOnEndingArrival(["key", "remocon", "cushion", "scale", "daikonkun", "memoSafe"]);
+    if (f.bearAppear) {
+      endFlags.backgroundState = 1;
+    } else if (gameState.tvDinner?.flags?.backgroundState === 0) {
+      endFlags.backgroundState = 0;
+    }
   }
 
   // 背景＋アイテム＋クリックエリアをcanvasで全部再描画
@@ -2110,19 +1721,17 @@ function changeRoom(roomId) {
 
   // BGM切替はそのまま
   if (roomId === "trueEnd") {
-    changeBGM(S40("playback_eighties.mp3"));
+    changeBGM(S41("space_hopper.mp3"));
   } else if (roomId === "end") {
     const endBgState = gameState.end?.flags?.backgroundState ?? 0;
-    changeBGM(endBgState === 0 ? S40("midnight_party.mp3") : S40("tabiyukeba.mp3"));
-  } else if (roomId === "rainEnd") {
-    changeBGM(S40("Echo_In_The_Rain.mp3"));
+    changeBGM(endBgState === 0 ? S41("Heliopause_Waltz.mp3") : S41("tabiyukeba.mp3"));
   } else {
     changeBGM(DEFAULT_BGM);
   }
 
   // nav
 
-  if (roomId === "trueEnd" || roomId === "end" || roomId === "rainEnd") {
+  if (roomId === "trueEnd" || roomId === "end") {
     gameState.openRooms = [];
     // renderNavigation();
   }
@@ -2167,7 +1776,7 @@ function renderCanvasRoom() {
 
   // 背景描画
   const bgImg = loadedImages[bgImgSrc];
-  if (bgImg && bgImg.complete) {
+  if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
     ctx.save();
     const phase = gameState.main?.flags?.timePhase ?? 0;
     const isNight = phase === 2;
@@ -2180,8 +1789,16 @@ function renderCanvasRoom() {
     ctx.restore();
   }
 
+  drawShiwakePuzzle(ctx, canvas, roomId);
+  drawBoardDoor(ctx, canvas, roomId);
+  drawBoardChest(ctx, canvas, roomId);
+  drawBoardDesk(ctx, canvas, roomId);
+  drawBoardAdmin(ctx, canvas, roomId);
+
   // アイテム描画（未取得のみ）
   drawRoomItems(ctx, canvas, roomId);
+  drawMainDoorLetterStatusFlash(ctx, canvas, roomId);
+  drawShiwakeEnvelopeSelection(ctx, canvas, roomId);
   drawFanSpinLines(ctx, canvas, roomId);
   drawClickableAreaGlows(ctx, canvas, roomId);
   drawDeskDrawerOpenFx(ctx, canvas, roomId);
@@ -2259,6 +1876,26 @@ function drawClickableAreaGlows(ctx, canvas, roomId) {
     ctx.shadowColor = `rgba(${color}, 1)`;
     ctx.shadowBlur = Math.max(18, Math.min(w, h) * 1.35);
 
+    if (area.glowSoft) {
+      const cx = x + w / 2;
+      const cy = y + h / 2;
+      const pulse = 0.82 + 0.18 * Math.sin(Date.now() / 180);
+      ctx.globalCompositeOperation = "lighter";
+      [
+        { rx: w * 0.72, ry: h * 0.62, alpha: 0.2 },
+        { rx: w * 0.46, ry: h * 0.4, alpha: 0.28 },
+      ].forEach((layer) => {
+        ctx.shadowColor = `rgba(${color}, ${0.9 * pulse})`;
+        ctx.shadowBlur = Math.max(22, Math.min(w, h) * 0.75);
+        ctx.fillStyle = `rgba(${color}, ${layer.alpha * pulse})`;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, layer.rx, layer.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+      return;
+    }
+
     const glow = ctx.createLinearGradient(x, y, x + w, y);
     glow.addColorStop(0, `rgba(${color}, 0.18)`);
     glow.addColorStop(0.5, `rgba(${color}, 0.70)`);
@@ -2285,6 +1922,515 @@ function drawClickableAreaGlows(ctx, canvas, roomId) {
     }
     ctx.restore();
   });
+}
+
+function drawShiwakePuzzle(ctx, canvas, roomId) {
+  if (roomId !== "shiwake") return;
+
+  const state = getShiwakeState();
+  const shineActive = (gameState.fx?.shiwakeBoxesShineUntil || 0) > Date.now();
+  ctx.save();
+  ctx.fillStyle = "#BF7536";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  SHIWAKE_BOXES.forEach((box) => {
+    const rect = getAreaDrawRect(getShiwakeBoxArea(box.slot), canvas);
+    const labelH = rect.h * 0.24;
+    const textColor = box.slot === 2 ? "#2f2710" : "#fff";
+
+    ctx.fillStyle = "rgba(218, 220, 220, 0.94)";
+    ctx.strokeStyle = "rgba(50, 32, 22, 0.95)";
+    ctx.lineWidth = Math.max(2, canvas.width * 0.003);
+    roundRect(ctx, rect.x, rect.y, rect.w, rect.h, 8, true, true);
+
+    ctx.fillStyle = box.color;
+    roundRect(ctx, rect.x + 4, rect.y + 4, rect.w - 8, labelH, 5, true, false);
+
+    ctx.fillStyle = textColor;
+    ctx.font = `bold ${Math.round(canvas.height * 0.035)}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(box.label, rect.x + rect.w / 2, rect.y + 4 + labelH / 2);
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
+    ctx.fillRect(rect.x + rect.w * 0.12, rect.y + rect.h * 0.35, rect.w * 0.76, Math.max(2, rect.h * 0.035));
+
+    if (state.flags.solved) {
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(rect.x + 7, rect.y + 7, rect.w - 14, rect.h - 14);
+    }
+
+    if (shineActive) {
+      const pulse = 0.55 + 0.35 * Math.sin(Date.now() / 70);
+      ctx.save();
+      ctx.shadowColor = "rgba(255, 248, 178, 1)";
+      ctx.shadowBlur = Math.max(18, canvas.width * 0.035);
+      ctx.strokeStyle = `rgba(255, 248, 178, ${pulse})`;
+      ctx.lineWidth = Math.max(4, canvas.width * 0.006);
+      roundRect(ctx, rect.x + 6, rect.y + 6, rect.w - 12, rect.h - 12, 8, false, true);
+      ctx.fillStyle = `rgba(255, 248, 178, ${pulse * 0.22})`;
+      roundRect(ctx, rect.x + 6, rect.y + 6, rect.w - 12, rect.h - 12, 8, true, false);
+      ctx.restore();
+    }
+  });
+
+  if (state.flags.envelopeStampPlaced && !gameState.main.flags.lettersShineEventDone) {
+    const boxRect = getAreaDrawRect(getShiwakeBoxArea(2), canvas);
+    const img = loadedImages[IMAGES.items.envelopeStamp];
+    if (img && img.complete && img.naturalWidth > 0) {
+      const w = boxRect.w * 0.78;
+      const h = boxRect.h * 0.22;
+      const x = boxRect.x + (boxRect.w - w) / 2;
+      const y = boxRect.y + boxRect.h * 0.58;
+      ctx.drawImage(img, x, y, w, h);
+    }
+  }
+
+  const zoomRect = getAreaDrawRect(getShiwakeZoomArea(), canvas);
+  ctx.fillStyle = "#f7f2e8";
+  ctx.strokeStyle = "#4d3425";
+  ctx.lineWidth = 3;
+  roundRect(ctx, zoomRect.x, zoomRect.y, zoomRect.w, zoomRect.h, 7, true, true);
+  ctx.strokeStyle = "#3d281e";
+  ctx.lineWidth = Math.max(3, canvas.width * 0.004);
+  ctx.beginPath();
+  ctx.arc(zoomRect.x + zoomRect.w * 0.43, zoomRect.y + zoomRect.h * 0.42, Math.min(zoomRect.w, zoomRect.h) * 0.22, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(zoomRect.x + zoomRect.w * 0.58, zoomRect.y + zoomRect.h * 0.58);
+  ctx.lineTo(zoomRect.x + zoomRect.w * 0.75, zoomRect.y + zoomRect.h * 0.75);
+  ctx.stroke();
+
+  const okRect = getAreaDrawRect(getShiwakeOkArea(), canvas);
+  ctx.fillStyle = state.flags.solved ? "#009E73" : "#f7f2e8";
+  ctx.strokeStyle = "#4d3425";
+  ctx.lineWidth = 3;
+  roundRect(ctx, okRect.x, okRect.y, okRect.w, okRect.h, 7, true, true);
+  ctx.fillStyle = state.flags.solved ? "#fff" : "#3d281e";
+  ctx.font = `bold ${Math.round(canvas.height * 0.035)}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("OK", okRect.x + okRect.w / 2, okRect.y + okRect.h / 2);
+
+  ctx.restore();
+}
+
+const BOARD_DOOR_ROWS = [
+  { address: "104", area: "MOON AREA", name: "SCOTT" },
+  { address: "218", area: "FIRE AREA", name: "ALICE" },
+  { address: "? ? ?", area: "MOON AREA", name: "MARINA" },
+  { address: "402", area: "GOLDEN AREA", name: "JIRO" },
+  { address: "540", area: "? ? ?", name: "EMI" },
+];
+
+const BOARD_DOOR_BLANKS = {
+  seasideAddress: { row: 2, col: "address", answer: "307", label: "ADDRESS" },
+  solisArea: { row: 4, col: "area", answer: "GOLDEN", label: "AREA" },
+};
+const BOARD_DOOR_AREA_OPTIONS = ["WATER", "GOLDEN", "MOON", "FIRE", "WOOD"];
+
+function getBoardDoorAnswersFlag() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.boardDoorAnswers || typeof f.boardDoorAnswers !== "object") f.boardDoorAnswers = {};
+  return f.boardDoorAnswers;
+}
+
+function getBoardDoorDisplayRows() {
+  const answers = getBoardDoorAnswersFlag();
+  return BOARD_DOOR_ROWS.map((row) => ({ ...row })).map((row, idx) => {
+    Object.entries(BOARD_DOOR_BLANKS).forEach(([key, blank]) => {
+      if (blank.row === idx && answers[key]) row[blank.col] = blank.answer;
+    });
+    return row;
+  });
+}
+
+function getBoardDoorTableMetrics() {
+  return { x: 2, y: 9.5, width: 96, height: 61 };
+}
+
+function getBoardDoorCellArea(key) {
+  const blank = BOARD_DOOR_BLANKS[key];
+  const table = getBoardDoorTableMetrics();
+  const rowH = table.height / 6;
+  const colRects = {
+    address: { x: table.x, width: table.width * 0.26 },
+    area: { x: table.x + table.width * 0.26, width: table.width * 0.42 },
+    name: { x: table.x + table.width * 0.68, width: table.width * 0.32 },
+  };
+  const col = colRects[blank.col];
+  return {
+    x: col.x,
+    y: table.y + rowH * (blank.row + 1),
+    width: col.width,
+    height: rowH,
+  };
+}
+
+function isBoardDoorBlankClickable(key) {
+  const f = gameState.main.flags || {};
+  return !!f.boardDoorRewritten && !getBoardDoorAnswersFlag()[key];
+}
+
+function drawBoardDoor(ctx, canvas, roomId) {
+  if (roomId !== "boardDoor") return;
+
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  ctx.save();
+  ctx.fillStyle = "#274f3d";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const table = getBoardDoorTableMetrics();
+  const x = canvas.width * (table.x / 100);
+  const y = canvas.height * (table.y / 100);
+  const w = canvas.width * (table.width / 100);
+  const h = canvas.height * (table.height / 100);
+  ctx.fillStyle = "#030604";
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = "rgba(230, 244, 222, 0.7)";
+  ctx.lineWidth = Math.max(1, canvas.width * 0.0018);
+  ctx.strokeRect(x, y, w, h);
+
+  if (!f.boardDoorRewritten) {
+    const deliverImg = loadedImages[IMAGES.modals.deliver];
+    if (deliverImg && deliverImg.complete && deliverImg.naturalWidth > 0) {
+      const scale = Math.min(w / deliverImg.naturalWidth, h / deliverImg.naturalHeight);
+      const imgW = deliverImg.naturalWidth * scale;
+      const imgH = deliverImg.naturalHeight * scale;
+      ctx.drawImage(deliverImg, x + (w - imgW) / 2, y + (h - imgH) / 2, imgW, imgH);
+    }
+    ctx.restore();
+    return;
+  }
+
+  const rowH = h / 6;
+  const col1X = x + w * 0.016;
+  const col2X = x + w * 0.276;
+  const col3X = x + w * 0.705;
+  const fontSize = Math.round(canvas.width * 0.033);
+
+  ctx.strokeStyle = "rgba(230, 244, 222, 0.18)";
+  for (let i = 1; i < 6; i++) {
+    const ly = y + rowH * i;
+    ctx.beginPath();
+    ctx.moveTo(x, ly);
+    ctx.lineTo(x + w, ly);
+    ctx.stroke();
+  }
+
+  drawBoardDeskText(ctx, "ADDRESS", col1X, y + rowH / 2, fontSize, "#eef7e8", "left", 800);
+  drawBoardDeskText(ctx, "AREA", col2X, y + rowH / 2, fontSize, "#eef7e8", "left", 800);
+  drawBoardDeskText(ctx, "NAME", col3X, y + rowH / 2, fontSize, "#eef7e8", "left", 800);
+
+  const boardDoorAnswers = getBoardDoorAnswersFlag();
+  const highlightNameSecondLetter = !!(boardDoorAnswers.seasideAddress && boardDoorAnswers.solisArea);
+  getBoardDoorDisplayRows().forEach((row, idx) => {
+    const cy = y + rowH * (idx + 1.5);
+    drawBoardDeskText(ctx, row.address, col1X, cy, fontSize, "#eef7e8", "left", 800);
+    drawBoardDeskText(ctx, row.area, col2X, cy, fontSize, "#eef7e8", "left", 800);
+    drawBoardDoorNameText(ctx, row.name, col3X, cy, fontSize, highlightNameSecondLetter);
+  });
+
+  ctx.strokeStyle = "#ffd84d";
+  ctx.lineWidth = Math.max(3, canvas.width * 0.004);
+  ctx.lineCap = "round";
+  const cornerLen = Math.min(w, h) * 0.16;
+  ctx.beginPath();
+  ctx.moveTo(x, y + cornerLen);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x + cornerLen, y);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawBoardDoorNameText(ctx, name, x, y, size, highlightSecondLetter) {
+  const text = String(name || "");
+  if (!highlightSecondLetter || text.length < 2) {
+    drawBoardDeskText(ctx, text, x, y, size, "#eef7e8", "left", 800);
+    return;
+  }
+
+  ctx.save();
+  ctx.font = `800 ${size}px "Yu Gothic", "Hiragino Sans", "Meiryo", sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+
+  let cursorX = x;
+  Array.from(text).forEach((ch, idx) => {
+    ctx.fillStyle = idx === 1 ? "#ffd84d" : "#eef7e8";
+    ctx.fillText(ch, cursorX, y);
+    cursorX += ctx.measureText(ch).width;
+  });
+  ctx.restore();
+}
+
+const BOARD_CHEST_BEFORE_LINES = [
+  { fare: "240G", marks: "❤ ★" },
+  { fare: "210G", marks: "☀ ❤" },
+  { fare: "180G", marks: "★ ▲ " },
+];
+
+const BOARD_CHEST_AFTER_LINES = [{ fare: "270G", marks: "☀ ★" }];
+
+function drawBoardChest(ctx, canvas, roomId) {
+  if (roomId !== "boardChest") return;
+
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  const lines = f.boardChestRewritten ? BOARD_CHEST_AFTER_LINES : BOARD_CHEST_BEFORE_LINES;
+  const panelX = canvas.width * 0.08;
+  const panelY = canvas.height * 0.12;
+  const panelW = canvas.width * 0.84;
+  const panelH = canvas.height * 0.56;
+  const fontSize = Math.round(canvas.width * (f.boardChestRewritten ? 0.072 : 0.064));
+  const gap = panelH / (lines.length + 1);
+
+  ctx.save();
+  ctx.fillStyle = "#274f3d";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#071710";
+  ctx.fillRect(panelX, panelY, panelW, panelH);
+  ctx.strokeStyle = "rgba(230, 244, 222, 0.78)";
+  ctx.lineWidth = Math.max(2, canvas.width * 0.003);
+  ctx.strokeRect(panelX, panelY, panelW, panelH);
+
+  lines.forEach((line, idx) => {
+    const y = panelY + gap * (idx + 1);
+    drawBoardDeskText(ctx, line.fare, panelX + panelW * 0.34, y, fontSize, "#f4fbef", "right", 900);
+    drawBoardDeskText(ctx, line.marks, panelX + panelW * 0.43, y, fontSize, "#f4fbef", "left", 900);
+  });
+
+  ctx.restore();
+}
+
+const BOARD_DESK_AREAS = [
+  { no: "1", en: "WATER AREA", shortEn: "WATER" },
+  { no: "2", en: "GOLDEN AREA", shortEn: "GOLDEN" },
+  { no: "3", en: "MOON AREA", shortEn: "MOON" },
+  { no: "4", en: "FIRE AREA", shortEn: "FIRE" },
+  { no: "5", en: "WOOD AREA", shortEn: "WOOD" },
+];
+
+const BOARD_DESK_FARE_TABLE = [
+  ["30G", "180G", "240G", "270G", "300G"],
+  ["180G", "30G", "150G", "240G", "270G"],
+  ["240G", "150G", "30G", "180G", "240G"],
+  ["270G", "240G", "180G", "30G", "150G"],
+  ["300G", "270G", "240G", "150G", "30G"],
+];
+
+function drawBoardDesk(ctx, canvas, roomId) {
+  if (roomId !== "boardDesk") return;
+
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  ctx.save();
+  ctx.fillStyle = "#274f3d";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+  ctx.fillRect(canvas.width * 0.02, canvas.height * 0.08, canvas.width * 0.96, canvas.height * 0.66);
+
+  if (f.boardDeskRewritten) {
+    drawBoardDeskFareTable(ctx, canvas);
+  } else {
+    drawBoardDeskAreaList(ctx, canvas);
+  }
+
+  ctx.restore();
+}
+
+const BOARD_ADMIN_LETTERS = ["A", "B", "C", "E", "K", "P", "S", "T"];
+
+function getBoardAdminLetterArea(index) {
+  return { x: 22 + index * 14.5, y: 55, width: 12, height: 12 };
+}
+
+function getBoardAdminOkArea() {
+  return { x: 44, y: 68.5, width: 12, height: 7.5 };
+}
+
+function getBoardAdminLetterState() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!Array.isArray(f.boardAdminLetters)) f.boardAdminLetters = [0, 0, 0, 0];
+  f.boardAdminLetters = [0, 1, 2, 3].map((idx) => {
+    const value = Number(f.boardAdminLetters[idx]);
+    return Number.isInteger(value) && value >= 0 && value < BOARD_ADMIN_LETTERS.length ? value : 0;
+  });
+  return f.boardAdminLetters;
+}
+
+function drawBoardAdmin(ctx, canvas, roomId) {
+  if (roomId !== "boardAdmin") return;
+
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  ctx.save();
+  ctx.fillStyle = "#EEAB48";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (f.boardAdminRewritten) {
+    const flyerImg = loadedImages[IMAGES.modals.flyer];
+    if (flyerImg && flyerImg.complete && flyerImg.naturalWidth > 0) {
+      const maxW = canvas.width * 0.98;
+      const maxH = canvas.height * 0.86;
+      const scale = Math.min(maxW / flyerImg.naturalWidth, maxH / flyerImg.naturalHeight);
+      const w = flyerImg.naturalWidth * scale;
+      const h = flyerImg.naturalHeight * scale;
+      ctx.drawImage(flyerImg, (canvas.width - w) / 2, canvas.height * 0.04, w, h);
+    } else {
+      ctx.fillStyle = "rgba(255, 255, 255, 0.24)";
+      roundRect(ctx, canvas.width * 0.18, canvas.height * 0.17, canvas.width * 0.64, canvas.height * 0.46, 8, true, false);
+    }
+    ctx.restore();
+    return;
+  }
+
+  const img = loadedImages[IMAGES.modals.adminImage];
+  if (img && img.complete && img.naturalWidth > 0) {
+    const maxW = canvas.width * 0.72;
+    const maxH = canvas.height * 0.38;
+    const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+    const w = img.naturalWidth * scale;
+    const h = img.naturalHeight * scale;
+    ctx.drawImage(img, (canvas.width - w) / 2, canvas.height * 0.09, w, h);
+  }
+
+  const state = getBoardAdminLetterState();
+  const fontSize = Math.round(canvas.width * 0.045);
+  [0, 1, 2, 3].forEach((idx) => {
+    const area = getBoardAdminLetterArea(idx);
+    const rect = {
+      x: canvas.width * (area.x / 100),
+      y: canvas.height * (area.y / 100),
+      w: canvas.width * (area.width / 100),
+      h: canvas.height * (area.height / 100),
+    };
+    ctx.fillStyle = "#fff";
+    ctx.strokeStyle = "#555";
+    ctx.lineWidth = Math.max(2, canvas.width * 0.002);
+    roundRect(ctx, rect.x, rect.y, rect.w, rect.h, 4, true, true);
+    drawBoardDeskText(ctx, BOARD_ADMIN_LETTERS[state[idx]], rect.x + rect.w / 2, rect.y + rect.h / 2, fontSize, "#111", "center", 900);
+  });
+
+  const okArea = getBoardAdminOkArea();
+  const okRect = {
+    x: canvas.width * (okArea.x / 100),
+    y: canvas.height * (okArea.y / 100),
+    w: canvas.width * (okArea.width / 100),
+    h: canvas.height * (okArea.height / 100),
+  };
+  ctx.fillStyle = "#1f4d35";
+  ctx.strokeStyle = "#163826";
+  ctx.lineWidth = Math.max(2, canvas.width * 0.002);
+  roundRect(ctx, okRect.x, okRect.y, okRect.w, okRect.h, 6, true, true);
+  drawBoardDeskText(ctx, "OK", okRect.x + okRect.w / 2, okRect.y + okRect.h / 2, Math.round(canvas.width * 0.026), "#fff", "center", 900);
+
+  ctx.restore();
+}
+
+function drawBoardDeskAreaList(ctx, canvas) {
+  const x = canvas.width * 0.04;
+  const y = canvas.height * 0.14;
+  const w = canvas.width * 0.92;
+  const h = canvas.height * 0.53;
+  const rowH = h / 6;
+  const col1W = w * 0.34;
+
+  ctx.fillStyle = "#071710";
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = "rgba(230, 244, 222, 0.78)";
+  ctx.lineWidth = Math.max(1, canvas.width * 0.002);
+  ctx.strokeRect(x, y, w, h);
+
+  ctx.fillStyle = "rgba(230, 244, 222, 0.12)";
+  ctx.fillRect(x, y, w, rowH);
+
+  for (let i = 1; i < 6; i++) {
+    const ly = y + rowH * i;
+    ctx.beginPath();
+    ctx.moveTo(x, ly);
+    ctx.lineTo(x + w, ly);
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.moveTo(x + col1W, y);
+  ctx.lineTo(x + col1W, y + h);
+  ctx.stroke();
+
+  drawBoardDeskText(ctx, "AREA No", x + col1W / 2, y + rowH / 2, Math.round(canvas.width * 0.029), "#eef7e8", "center", 800);
+  drawBoardDeskText(ctx, "AREA NAME", x + col1W + (w - col1W) / 2, y + rowH / 2, Math.round(canvas.width * 0.029), "#eef7e8", "center", 800);
+
+  BOARD_DESK_AREAS.forEach((area, idx) => {
+    const cy = y + rowH * (idx + 1.5);
+    drawBoardDeskText(ctx, area.no, x + col1W / 2, cy, Math.round(canvas.width * 0.03), "#f4fbef", "center", 800);
+    drawBoardDeskText(ctx, area.en, x + col1W + (w - col1W) / 2, cy, Math.round(canvas.width * 0.03), "#f4fbef", "center", 800);
+  });
+}
+
+function drawBoardDeskFareTable(ctx, canvas) {
+  const x = canvas.width * 0.01;
+  const y = canvas.height * 0.095;
+  const w = canvas.width * 0.98;
+  const h = canvas.height * 0.61;
+  const rowH = h / 6;
+  const firstColW = w * 0.19;
+  const colW = (w - firstColW) / 5;
+
+  ctx.fillStyle = "#030604";
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = "rgba(230, 244, 222, 0.7)";
+  ctx.lineWidth = Math.max(1, canvas.width * 0.0018);
+  ctx.strokeRect(x, y, w, h);
+
+  ctx.strokeStyle = "rgba(230, 244, 222, 0.18)";
+  for (let i = 1; i < 6; i++) {
+    const ly = y + rowH * i;
+    ctx.beginPath();
+    ctx.moveTo(x, ly);
+    ctx.lineTo(x + w, ly);
+    ctx.stroke();
+  }
+
+  const headerFont = Math.round(canvas.width * 0.03);
+  const bodyFont = Math.round(canvas.width * 0.03);
+  drawBoardDeskText(ctx, "FROM / TO", x + firstColW * 0.04, y + rowH / 2, headerFont, "#eef7e8", "left", 800);
+
+  BOARD_DESK_AREAS.forEach((area, idx) => {
+    const cx = x + firstColW + colW * (idx + 0.5);
+    drawBoardDeskText(ctx, area.shortEn, cx, y + rowH / 2, headerFont, "#eef7e8", "center", 800);
+  });
+
+  BOARD_DESK_AREAS.forEach((area, rowIdx) => {
+    const cy = y + rowH * (rowIdx + 1.5);
+    drawBoardDeskText(ctx, area.shortEn, x + firstColW * 0.04, cy, bodyFont, "#eef7e8", "left", 800);
+    BOARD_DESK_FARE_TABLE[rowIdx].forEach((value, colIdx) => {
+      const cx = x + firstColW + colW * (colIdx + 0.5);
+      drawBoardDeskText(ctx, value, cx, cy, bodyFont, "#eef7e8", "center", 800);
+    });
+  });
+}
+
+function drawBoardDeskText(ctx, text, x, y, size, color, align = "center", weight = 700) {
+  ctx.fillStyle = color;
+  ctx.font = `${weight} ${size}px "Yu Gothic", "Hiragino Sans", "Meiryo", sans-serif`;
+  ctx.textAlign = align;
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, x, y);
+}
+
+function drawShiwakeEnvelopeSelection(ctx, canvas, roomId) {
+  if (roomId !== "shiwake") return;
+  const selected = getShiwakeState().flags.selectedEnvelope;
+  if (!selected) return;
+
+  const rect = getAreaDrawRect(getShiwakeEnvelopeArea(selected), canvas);
+  ctx.save();
+  ctx.strokeStyle = "gold";
+  ctx.lineWidth = Math.max(3, canvas.width * 0.004);
+  ctx.setLineDash([8, 5]);
+  ctx.strokeRect(rect.x - 4, rect.y - 4, rect.w + 8, rect.h + 8);
+  ctx.restore();
 }
 
 function drawRoomItems(ctx, canvas, roomId) {
@@ -2327,10 +2473,25 @@ function drawRoomItems(ctx, canvas, roomId) {
           px += spiralX;
         }
 
+        let pendulumRad = 0;
+        const flagShakeFx = roomId === "mainDoor" && key === "flag" ? fx.mainDoorFlagShake : null;
+        if (flagShakeFx?.roomId === "mainDoor") {
+          const t = Math.max(0, Math.min(1, Number(flagShakeFx.progress) || 0));
+          const decay = Math.pow(1 - t, 1.45);
+          pendulumRad = Math.sin(t * Math.PI * 4.5) * ((22 * Math.PI) / 180) * decay;
+        }
+
         // ★ drawRoomItems 内：ctx.drawImage(img, px, py, w, h); を置き換え
         const rotDeg = area.item && typeof area.item.rotateDeg === "function" ? area.item.rotateDeg() : area.item ? area.item.rotateDeg : 0;
 
-        if (rotDeg) {
+        if (pendulumRad) {
+          const pivotX = px + w * 0.5;
+          const pivotY = py + h * 0.06;
+
+          ctx.translate(pivotX, pivotY);
+          ctx.rotate(pendulumRad);
+          ctx.drawImage(img, -w * 0.5, -h * 0.06, w, h);
+        } else if (rotDeg) {
           const rad = (rotDeg * Math.PI) / 180;
           const cx = px + w / 2;
           const cy = py + h / 2;
@@ -2435,6 +2596,124 @@ function drawMainWindowSkyOverlay(ctx, canvas, roomId) {
 
   ctx.save();
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  ctx.restore();
+}
+
+function playMainDoorFlagShakeFx() {
+  const fx = gameState.fx || (gameState.fx = {});
+  const id = Date.now();
+  fx.mainDoorFlagShake = {
+    id,
+    roomId: "mainDoor",
+    progress: 0,
+  };
+
+  renderCanvasRoom?.();
+
+  const duration = 1100;
+  const start = performance.now();
+  const tick = (now) => {
+    const currentFx = gameState.fx?.mainDoorFlagShake;
+    if (!currentFx || currentFx.id !== id) return;
+
+    const t = Math.min(1, (now - start) / duration);
+    currentFx.progress = t;
+    renderCanvasRoom?.();
+
+    if (t < 1) {
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    delete gameState.fx.mainDoorFlagShake;
+    renderCanvasRoom?.();
+  };
+
+  requestAnimationFrame(tick);
+}
+
+function playMainDoorLetterErrorFlash() {
+  playMainDoorLetterStatusFlash("error");
+}
+
+function playMainDoorLetterClearFlash() {
+  playMainDoorLetterStatusFlash("clear");
+}
+
+function playMainDoorLetterStatusFlash(variant = "error") {
+  const fx = gameState.fx || (gameState.fx = {});
+  const id = Date.now();
+  fx.mainDoorLetterStatusFlash = {
+    id,
+    roomId: "mainDoor",
+    progress: 0,
+    variant,
+  };
+
+  renderCanvasRoom?.();
+
+  const duration = 1300;
+  const start = performance.now();
+  const tick = (now) => {
+    const currentFx = gameState.fx?.mainDoorLetterStatusFlash;
+    if (!currentFx || currentFx.id !== id) return;
+
+    const t = Math.min(1, (now - start) / duration);
+    currentFx.progress = t;
+    renderCanvasRoom?.();
+
+    if (t < 1) {
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    delete gameState.fx.mainDoorLetterStatusFlash;
+    renderCanvasRoom?.();
+  };
+
+  requestAnimationFrame(tick);
+}
+
+function drawMainDoorLetterStatusFlash(ctx, canvas, roomId) {
+  const fx = gameState.fx?.mainDoorLetterStatusFlash;
+  if (!fx || fx.roomId !== roomId) return;
+
+  const rect = getAreaRectPx(roomId, "ドア上手紙マーク", canvas);
+  if (!rect) return;
+
+  const t = Math.max(0, Math.min(1, Number(fx.progress) || 0));
+  const blink = Math.sin(t * Math.PI * 8);
+  const alpha = (0.18 + Math.max(0, blink) * 0.62) * (1 - Math.max(0, t - 0.82) / 0.18);
+  if (alpha <= 0) return;
+
+  const padX = rect.w * 0.16;
+  const padY = rect.h * 0.12;
+  const x = rect.x - padX;
+  const y = rect.y - padY;
+  const w = rect.w + padX * 2;
+  const h = rect.h + padY * 2;
+  const isClear = fx.variant === "clear";
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = isClear ? "rgba(30, 190, 82, 0.46)" : "rgba(230, 24, 24, 0.46)";
+  ctx.strokeStyle = isClear ? "rgba(32, 230, 96, 0.98)" : "rgba(255, 20, 20, 0.98)";
+  ctx.lineWidth = Math.max(2, Math.min(w, h) * 0.09);
+  ctx.shadowColor = isClear ? "rgba(0, 220, 80, 0.9)" : "rgba(255, 0, 0, 0.9)";
+  ctx.shadowBlur = Math.max(8, Math.min(w, h) * 0.45);
+  roundRect(ctx, x, y, w, h, Math.max(4, h * 0.18), true, true);
+
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = Math.max(1.5, Math.min(w, h) * 0.055);
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.12, y + h * 0.26);
+  ctx.lineTo(x + w * 0.5, y + h * 0.58);
+  ctx.lineTo(x + w * 0.88, y + h * 0.26);
+  ctx.moveTo(x + w * 0.12, y + h * 0.74);
+  ctx.lineTo(x + w * 0.38, y + h * 0.48);
+  ctx.moveTo(x + w * 0.88, y + h * 0.74);
+  ctx.lineTo(x + w * 0.62, y + h * 0.48);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -2645,6 +2924,72 @@ function drawDeskDrawerOpenFx(ctx, canvas, roomId) {
   const gripH = Math.max(6, rect.h * 0.22);
   const gripX = rect.x + rect.w / 2 - gripW / 2;
   const gripY = frontY + Math.max(4, rect.h * 0.12);
+  if (gripStyle === "archedHandle") {
+    const handleW = Math.max(22, rect.w * 0.2);
+    const handleH = Math.max(9, rect.h * 0.36);
+    const leftX = rect.x + rect.w / 2 - handleW / 2;
+    const rightX = rect.x + rect.w / 2 + handleW / 2;
+    const topY = frontY + rect.h * 0.28;
+    const bottomY = topY + handleH;
+    const knobR = Math.max(4, rect.h * 0.18);
+    const strokeW = Math.max(3, rect.h * 0.1);
+
+    ctx.shadowColor = "rgba(0,0,0,0.35)";
+    ctx.shadowBlur = 2;
+    ctx.shadowOffsetY = Math.max(1, rect.h * 0.03);
+
+    [leftX, rightX].forEach((cx) => {
+      const base = ctx.createRadialGradient(cx - knobR * 0.3, topY - knobR * 0.35, knobR * 0.2, cx, topY, knobR);
+      base.addColorStop(0, "#5d5960");
+      base.addColorStop(0.45, gripColor);
+      base.addColorStop(1, "#111013");
+      ctx.fillStyle = base;
+      ctx.beginPath();
+      ctx.arc(cx, topY, knobR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#111013";
+      ctx.lineWidth = Math.max(1, strokeW * 0.28);
+      ctx.stroke();
+    });
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111013";
+    ctx.lineWidth = strokeW + Math.max(1, strokeW * 0.45);
+    ctx.beginPath();
+    ctx.moveTo(leftX, topY);
+    ctx.quadraticCurveTo(leftX, bottomY, leftX + handleW * 0.18, bottomY);
+    ctx.lineTo(rightX - handleW * 0.18, bottomY);
+    ctx.quadraticCurveTo(rightX, bottomY, rightX, topY);
+    ctx.stroke();
+
+    const handleGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
+    handleGrad.addColorStop(0, "#5d5960");
+    handleGrad.addColorStop(0.45, gripColor);
+    handleGrad.addColorStop(1, "#171619");
+    ctx.strokeStyle = handleGrad;
+    ctx.lineWidth = strokeW;
+    ctx.beginPath();
+    ctx.moveTo(leftX, topY);
+    ctx.quadraticCurveTo(leftX, bottomY, leftX + handleW * 0.18, bottomY);
+    ctx.lineTo(rightX - handleW * 0.18, bottomY);
+    ctx.quadraticCurveTo(rightX, bottomY, rightX, topY);
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = "rgba(255,255,255,0.28)";
+    ctx.lineWidth = Math.max(1, strokeW * 0.18);
+    ctx.beginPath();
+    ctx.moveTo(leftX + strokeW * 0.25, topY + strokeW * 0.15);
+    ctx.quadraticCurveTo(leftX + strokeW * 0.25, bottomY - strokeW * 0.35, leftX + handleW * 0.2, bottomY - strokeW * 0.35);
+    ctx.lineTo(rightX - handleW * 0.2, bottomY - strokeW * 0.35);
+    ctx.stroke();
+
+    ctx.restore();
+    return;
+  }
+
   if (gripStyle === "recessed") {
     const gripWidthRatio = Number(fx.gripWidthRatio) || 0.32;
     const recessedW = Math.max(12, rect.w * gripWidthRatio);
@@ -2887,6 +3232,26 @@ function acquireItemOnce(flagKey, itemId, title, imgSrc, msg, onAfterClose) {
 
   showModal(title, `<img src="${imgSrc}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }], afterClose);
   updateMessage(msg);
+}
+
+function showMainDeskBaggageModal(step = 1) {
+  const currentStep = Math.max(1, Math.min(3, Number(step) || 1));
+  const imgSrc = IMAGES.modals[`baggage${currentStep}`];
+  const imageId = `mainDeskBaggageImage${currentStep}`;
+  const text = currentStep === 3 ? `<p style="text-align:center;margin:0 0 16px;">荷物の配送票が貼られている</p>` : "";
+  const cursor = currentStep < 3 ? "cursor:pointer;" : "";
+  const content = `
+    <img id="${imageId}" src="${imgSrc}" alt="置かれた荷物" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;${cursor}">
+    ${text}
+  `;
+
+  showModal("置かれた荷物", content, [{ text: "閉じる", action: "close" }]);
+
+  if (currentStep < 3) {
+    document.getElementById(imageId)?.addEventListener("click", () => {
+      showMainDeskBaggageModal(currentStep + 1);
+    });
+  }
 }
 
 function playDeskDrawerOpenFx(roomId, areaDescription, options = {}) {
@@ -3240,475 +3605,578 @@ function handleMainWindowPlantClick() {
   updateMessage("植物は元気になった。");
 }
 
-function handleMainWindowHookClick() {
+function handleBoardDeskWifiClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.teruteruSet) {
-    updateMessage("てるてる坊主がかかっている。");
+
+  if (gameState.selectedItem !== "card") {
+    updateMessage("なにかをかざす場所のようだ");
     return;
   }
 
-  if (gameState.selectedItem !== "teruteru") {
-    updateMessage("窓際に小さなフックがある。");
+  f.boardDeskRewritten = !f.boardDeskRewritten;
+  playSE?.("se-cyber");
+  renderCanvasRoom();
+  updateMessage(f.boardDeskRewritten ? "カードの力で黒板の内容が書き換わった" : "カードの力で黒板の内容が元に戻った");
+}
+
+function handleBoardDoorWifiClick() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+
+  if (gameState.selectedItem !== "card") {
+    updateMessage("なにかをかざす場所のようだ");
     return;
   }
 
-  removeItem("teruteru");
-  f.teruteruSet = true;
-  markProgress?.("set_teruteru");
-  renderCanvasRoom?.();
-
-  showModal("てるてる坊主をかけた", `<img src="${IMAGES.modals.teruteruSet}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }], startSkyClearSequence);
-  updateMessage("てるてる坊主をかけた");
+  f.boardDoorRewritten = !f.boardDoorRewritten;
+  playSE?.("se-cyber");
+  renderCanvasRoom();
+  updateMessage(f.boardDoorRewritten ? "カードの力で黒板の内容が書き換わった" : "カードの力で黒板の内容が元に戻った");
 }
 
-function startSkyClearSequence() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  f.weatherSkyState = 1;
-  renderCanvasRoom?.();
+function handleBoardDoorTableClick() {
+  if (gameState.selectedItem !== "paper") {
+    updateMessage("住所録だ");
+    return;
+  }
 
-  setTimeout(() => {
-    f.weatherSkyState = 2;
-    flashScreen("white");
-    renderCanvasRoom?.();
-    showToast?.("雨が止んだようだ");
-  }, 900);
+  const answers = getBoardDoorAnswersFlag();
+  const imgSrc = answers.seasideAddress ? IMAGES.modals.paperOnSuccess : IMAGES.modals.paperOnFailure;
+  showModal("住所変更届", `<img src="${imgSrc}" class="showobj-image" alt="住所変更届">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+  updateMessage("住所変更届を表に重ねてみた");
 }
 
-function showTanzakuLightEvent() {
+function handleMainAdminDoorEnergyTankClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  f.tanzakuLightEventDone = true;
-  markProgress?.("tanzaku_light_event");
-  playSE?.("se-fanta");
-  renderCanvasRoom?.();
+  if (f.unlockManageBoard) {
+    updateMessage("エネルギーは満たされている");
+    return;
+  }
 
+  if (gameState.selectedItem !== "magicalPotion") {
+    updateMessage("容器の中は、ほとんど空っぽだ");
+    return;
+  }
+
+  removeItem("magicalPotion");
+  f.chargeEnergy = true;
+  f.unlockManageBoard = true;
+  markProgress?.("unlock_manage_board");
+  playSE?.("se-tea");
+  showModal("エネルギータンクにマジカルポーションを注いだ", `<img src="${IMAGES.modals.tankFill}" class="showobj-image" alt="エネルギータンク">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+  renderCanvasRoom?.();
+  updateMessage("マジカルポーションをタンクに注いだ");
+}
+
+function handleMainAdminDoorControlPanelClick() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.unlockManageBoard) {
+    updateMessage("エネルギー切れのようだ");
+    return;
+  }
+
+  changeRoom("boardAdmin");
+}
+
+function getTransferPanelState() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.transferPanel || typeof f.transferPanel !== "object") {
+    f.transferPanel = {
+      started: false,
+      mode: "receive",
+      destination: "1",
+      message: "",
+      status: "RECEIVE READY",
+    };
+  }
+
+  const st = f.transferPanel;
+  st.started = !!st.started;
+  st.mode = st.mode === "send" ? "send" : "receive";
+  if (!["1", "2", "3", "3.65", "4", "5"].includes(st.destination)) st.destination = "1";
+  st.message = typeof st.message === "string" ? st.message.slice(0, 80) : "";
+  if (!st.status) st.status = st.started ? "PANEL READY" : "RECEIVE READY";
+  return st;
+}
+
+function getTransferPanelStatusLabel(status, mode = "receive") {
+  const labels = {
+    "RECEIVE READY": "受信待機 / RECEIVE READY",
+    "PANEL READY": "操作可能 / PANEL READY",
+    "SEND MODE": "送信モード / SEND MODE",
+    "RECEIVE MODE": "受信モード / RECEIVE MODE",
+    "CARGO RECEIVED": "荷物受信 / CARGO RECEIVED",
+    "CARGO READY": "荷物待機 / CARGO READY",
+    "RECEIVE FAILED": "何も受信できなかった / RECEIVE FAILED",
+    "ENERGY LOW": "エネルギー不足 / ENERGY LOW",
+    "OVER WEIGHT": "負荷超過 / LOAD OVER",
+    "TRANSFER COMPLETE": "転送完了 / TRANSFER COMPLETE",
+  };
+  if (labels[status]) return labels[status];
+  if (String(status || "").startsWith("DEST ")) {
+    const value = String(status).slice(5);
+    return mode === "send" ? `送信先 ${value} / DEST ${value}` : `受信元 ${value} / SOURCE ${value}`;
+  }
+  return status || "受信待機 / RECEIVE READY";
+}
+
+function showTransferPanelModal() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  const st = getTransferPanelState();
+  if (f.receiveCargo && !f.bearAppear) {
+    updateMessage("箱が邪魔で操作しづらい");
+    return;
+  }
+
+  const unlocked = !!st.started;
+  const energyOk = !!f.unlockManageBoard;
+  const hasCargo = !!f.receiveCargo;
+  const carrierItemsTooHeavy = hasItem("hat") || hasItem("bag") || hasItem("card");
+  const weightOver = st.mode === "send" && (carrierItemsTooHeavy || (hasCargo && st.destination !== "3.65"));
+  const weightValue = weightOver ? 126 : !hasCargo ? 28 : 72;
+  const energyValue = energyOk ? 88 : 24;
+  const disabledAttr = unlocked ? "" : " disabled";
+  const panelStyle = ["max-width:560px", "margin:0 auto", "padding:18px", "border-radius:6px", "background:linear-gradient(180deg,#2b3338,#151b1f)", "color:#edf7ff", "border:2px solid #6f7d86", "box-shadow:inset 0 0 22px rgba(255,255,255,0.08),0 8px 24px rgba(0,0,0,0.3)"].join(";");
+  const buttonBase = ["border:1px solid #7f919c", "border-radius:4px", "background:#27353c", "color:#fff", "font-size:1.04em", "font-weight:800", "cursor:pointer", "box-sizing:border-box"].join(";");
+  const inactiveButton = "opacity:0.44; cursor:not-allowed;";
+  const leverStyle = [
+    buttonBase,
+    "width:min(76vw,300px)",
+    "height:56px",
+    "position:relative",
+    "background:#111a1f",
+    "display:flex",
+    "align-items:center",
+    "justify-content:space-between",
+    "padding:5px 12px",
+    "font-size:0.92em",
+    "line-height:1.15",
+    "letter-spacing:0.02em",
+    unlocked ? "" : inactiveButton,
+  ].join(";");
+  const knobLeft = st.mode === "send" ? "calc(100% - 51px)" : "5px";
+  const displayText = getTransferPanelStatusLabel(st.status || (unlocked ? "PANEL READY" : "RECEIVE READY"), st.mode);
+  const routeLabel = st.mode === "send" ? "送信先 / DEST" : "受信元 / SOURCE";
+  const meter = (id, value, over, ok) => {
+    const needleDeg = -132 + Math.min(1.15, Math.max(0, value / 100)) * 264;
+    const accent = over ? "#ff334d" : ok ? "#38d274" : "#ffd25a";
+    return `
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <div style="font-size:0.9em; font-weight:900; letter-spacing:0.04em; text-align:center;">${id}</div>
+        <div style="position:relative; width:82px; height:82px; border-radius:50%; background:radial-gradient(circle at 45% 42%,#34454f 0,#162127 62%,#080c0f 100%); border:5px solid #c9d5dc; box-shadow:inset 0 0 10px rgba(0,0,0,0.7),0 2px 8px rgba(0,0,0,0.35);">
+          <div style="position:absolute; left:50%; top:50%; width:4px; height:31px; background:${accent}; border-radius:4px; transform-origin:50% 92%; transform:translate(-50%,-92%) rotate(${needleDeg}deg); box-shadow:0 0 8px ${accent};"></div>
+          <div style="position:absolute; left:50%; top:50%; width:12px; height:12px; border-radius:50%; background:#e8f0f3; transform:translate(-50%,-50%);"></div>
+          <div style="position:absolute; left:50%; bottom:9px; transform:translateX(-50%); font-size:11px; font-weight:900; color:${accent};">${over ? "超過/OVER" : ok ? "OK" : "低/LOW"}</div>
+        </div>
+      </div>`;
+  };
   const content = `
-    <div class="modal-anim frames" style="aspect-ratio:1 / 1;">
-      <img src="${IMAGES.modals.tanzakuAnim1}" alt="短冊の光 1">
-      <img src="${IMAGES.modals.tanzakuAnim2}" alt="短冊の光 2">
-      <img src="${IMAGES.modals.tanzakuAnim3}" alt="短冊の光 3">
-      <img src="${IMAGES.modals.tanzakuAnim4}" alt="短冊の光 4">
-    </div>
-  `;
-  showModal("短冊の光が…？", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("短冊の光が…？");
-}
-
-function handleAnime6RunningBearClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.bearAppear) {
-    updateMessage("クマ妖精が現れた。");
-    return;
-  }
-
-  const content = `
-    <div class="modal-anim frames" style="aspect-ratio:1 / 1;">
-      <img src="${IMAGES.modals.bearAnim1}" alt="走るクマ妖精 1">
-      <img src="${IMAGES.modals.bearAnim2}" alt="走るクマ妖精 2">
-      <img src="${IMAGES.modals.bearAnim3}" alt="走るクマ妖精 3">
-    </div>
-  `;
-
-  showModal("間に合わなかったね。…ん？", content, [{ text: "閉じる", action: "close" }], () => {
-    playSE?.("se-fanta");
-    const anime6Flags = gameState.anime6?.flags || (gameState.anime6 = { flags: { backgroundState: 0 } }).flags;
-    anime6Flags.backgroundState = 1;
-    f.bearAppear = true;
-    markProgress?.("anime6_bear_appear");
-    renderCanvasRoom?.();
-    updateMessage("間に合わなかったね。…ん？");
-  });
-  updateMessage("間に合わなかったね。…ん？");
-}
-
-function handleMainDeskCupClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.pourWater) {
-    if (f.glassMelodySolved) {
-      showObj(null, "", IMAGES.modals.cups, "コップを使って、きれいな音を奏でることができた。");
-      return;
-    }
-    if (!hasItem("stick")) {
-      updateMessage("水が入ったコップが並んでいる。叩いたら音が出るかもしれない。");
-      return;
-    }
-    showGlassMelodyPuzzle();
-    return;
-  }
-
-  if (gameState.selectedItem !== "jugWater") {
-    updateMessage("目盛りが付いたコップがある。中には何も入っていない");
-    return;
-  }
-
-  removeItem("jugWater");
-  f.pourWater = true;
-  markProgress?.("pour_water_into_cup");
-  playSE?.("se-water");
-  renderCanvasRoom?.();
-  updateMessage("コップに水を注いだ。");
-}
-
-function showGlassMelodyPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  const cups = [
-    { note: "do", soundId: "se-do", water: 70 },
-    { note: "fa", soundId: "se-fa", water: 40 },
-    { note: "so", soundId: "se-so", water: 30 },
-    { note: "ra", soundId: "se-ra", water: 20 },
-  ];
-  const content = `
-    <div class="glass-melody-panel">
-      <div class="glass-melody-row notranslate" translate="no">
-        ${cups
-          .map(
-            (cup, idx) => `
-              <button id="glassMelodyCup${idx}" class="glass-melody-button" type="button" aria-label="左から${idx + 1}番目のコップ">
-                <span class="glass-melody-cup">
-                  <span class="glass-melody-water" style="height:${cup.water}%;"></span>
-                  <span class="glass-melody-highlight"></span>
-                </span>
-              </button>
-            `,
-          )
-          .join("")}
+    <div id="transferPanelRoot" style="${panelStyle}">
+      <style>
+        @keyframes transferButtonPulse {
+          0%, 100% { box-shadow:0 0 0 rgba(104, 210, 255, 0); filter:brightness(1); }
+          50% { box-shadow:0 0 18px rgba(104, 210, 255, 0.92); filter:brightness(1.22); }
+        }
+      </style>
+      <div style="display:flex; justify-content:center; gap:44px; font-size:1.02em; font-weight:900; letter-spacing:0.08em; margin-bottom:8px;">
+        <span style="color:${st.mode === "receive" ? "#8be8ff" : "#75858c"};">受信 / RECEIVE</span>
+        <span style="color:${st.mode === "send" ? "#8be8ff" : "#75858c"};">送信 / SEND</span>
       </div>
-      <div id="glassMelodyProgress" class="glass-melody-progress" aria-label="入力回数"></div>
-      <button id="glassMelodyReset" class="text-btn" type="button">リセット</button>
-      <div id="glassMelodyHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+      <div style="display:flex; justify-content:center; margin-bottom:16px;">
+        <button id="transferModeLever" type="button"${disabledAttr} style="${leverStyle}" aria-label="送受信モード切替">
+          <span>受信<br>RECEIVE</span><span>送信<br>SEND</span>
+          <span style="position:absolute; left:${knobLeft}; top:5px; width:46px; height:34px; border-radius:4px; background:linear-gradient(180deg,#e9f2f7,#8296a1); box-shadow:0 2px 6px rgba(0,0,0,0.45); transition:left 160ms ease;"></span>
+        </button>
+      </div>
+      <div id="transferMagicDisplay" style="margin:0 auto 18px; width:min(82vw,380px); min-height:70px; border-radius:999px; background:radial-gradient(circle at 50% 45%,#1577d9 0,#073f83 62%,#041d3f 100%); color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; padding:10px 22px; font-size:1.12em; font-weight:900; letter-spacing:0.02em; box-shadow:inset 0 0 22px rgba(255,255,255,0.34),0 0 18px rgba(64,165,255,0.55);">${displayText}</div>
+      <div style="display:flex; justify-content:center; gap:min(12vw,84px); margin-bottom:18px;">
+        ${meter("負荷 / LOAD", weightValue, weightOver, hasCargo)}
+        ${meter("エネルギー / ENERGY", energyValue, false, energyOk)}
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:5px; margin-bottom:18px;">
+        <div style="font-size:0.9em; font-weight:900; letter-spacing:0.04em; color:#cfe8ef;">${unlocked ? routeLabel : "受信元 / SOURCE"}</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
+          <button id="transferDestPrev" type="button"${disabledAttr} style="${buttonBase}; width:42px; height:38px; font-size:20px; ${unlocked ? "" : inactiveButton}" aria-label="転送先を戻す">◀</button>
+          <div style="min-width:120px; height:42px; display:flex; align-items:center; justify-content:center; border-radius:4px; background:#0a1519; border:1px solid #6c838f; color:#dff9ff; font-size:1.42em; font-weight:900; letter-spacing:0.08em;">
+            <span id="transferDestinationValue" class="notranslate" translate="no" lang="en">${unlocked ? st.destination : ""}</span>
+          </div>
+          <button id="transferDestNext" type="button"${disabledAttr} style="${buttonBase}; width:42px; height:38px; font-size:20px; ${unlocked ? "" : inactiveButton}" aria-label="転送先を進める">▶</button>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:5px; margin:0 auto 14px; width:min(82vw,380px);">
+        <label for="transferMessageInput" style="font-size:0.9em; font-weight:900; letter-spacing:0.04em;">メッセージ / MESSAGE</label>
+        <input id="transferMessageInput" type="text" maxlength="80"${disabledAttr} value="${escapeHtml(st.message)}" placeholder="${unlocked ? "MESSAGE" : "入力不可 / LOCKED"}" style="width:100%; box-sizing:border-box; padding:9px 10px; border-radius:4px; border:1px solid #6c838f; background:${unlocked ? "#081217" : "#20282d"}; color:${unlocked ? "#dff9ff" : "#87949b"}; font-size:1em; font-weight:800;">
+      </div>
+      <div style="display:flex; justify-content:center;">
+        <button id="transferExecute" class="ok-btn" type="button" style="min-width:190px; ${unlocked ? "" : "animation:transferButtonPulse 950ms ease-in-out infinite;"}">転送 / TRANSFER</button>
+      </div>
     </div>
   `;
 
-  showModal("水の入ったコップ", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("水の量が違う4つのコップが並んでいる。");
+  showModal("転送操作パネル / Transfer Panel", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
 
   setTimeout(() => {
-    const answer = ["do", "do", "fa", "so", "ra", "ra", "ra"];
-    const allowedNotes = new Set(cups.map((cup) => cup.note));
-    const saved = Array.isArray(f.glassMelodyInputs) ? f.glassMelodyInputs : [];
-    const inputs = saved.filter((note) => allowedNotes.has(note)).slice(0, answer.length);
-    const cupBtns = cups.map((_, idx) => document.getElementById(`glassMelodyCup${idx}`));
-    const resetBtn = document.getElementById("glassMelodyReset");
-    const progressEl = document.getElementById("glassMelodyProgress");
-    const hintEl = document.getElementById("glassMelodyHint");
-    if (cupBtns.some((btn) => !btn) || !resetBtn || !progressEl || !hintEl) return;
+    const leverBtn = document.getElementById("transferModeLever");
+    const prevBtn = document.getElementById("transferDestPrev");
+    const nextBtn = document.getElementById("transferDestNext");
+    const messageInput = document.getElementById("transferMessageInput");
+    const transferBtn = document.getElementById("transferExecute");
+    if (!transferBtn) return;
 
-    let acceptingInput = inputs.length < answer.length;
-    const repaint = () => {
-      progressEl.innerHTML = answer.map((_, idx) => `<span class="glass-melody-dot${idx < inputs.length ? " is-filled" : ""}"></span>`).join("");
+    const reopen = () => showTransferPanelModal();
+    const destinations = ["1", "2", "3", "3.65", "4", "5"];
+
+    leverBtn?.addEventListener("click", () => {
+      if (!getTransferPanelState().started) return;
+      const state = getTransferPanelState();
+      state.mode = state.mode === "receive" ? "send" : "receive";
+      state.status = state.mode === "send" ? "SEND MODE" : "RECEIVE MODE";
+      playSE?.("se-pi");
+      closeModal();
+      reopen();
+    });
+
+    const moveDestination = (delta) => {
+      const state = getTransferPanelState();
+      if (!state.started) return;
+      const idx = Math.max(0, destinations.indexOf(state.destination));
+      state.destination = destinations[(idx + delta + destinations.length) % destinations.length];
+      state.status = `DEST ${state.destination}`;
+      playSE?.("se-pi");
+      closeModal();
+      reopen();
     };
-    const resetInputs = (showMessage) => {
-      inputs.length = 0;
-      f.glassMelodyInputs = [];
-      acceptingInput = true;
-      cupBtns.forEach((btn) => {
-        btn.disabled = false;
-      });
-      resetBtn.disabled = false;
-      repaint();
-      hintEl.textContent = showMessage ? "違うようだ" : "";
-    };
+    prevBtn?.addEventListener("click", () => moveDestination(-1));
+    nextBtn?.addEventListener("click", () => moveDestination(1));
+    messageInput?.addEventListener("input", () => {
+      const state = getTransferPanelState();
+      if (!state.started) return;
+      state.message = messageInput.value.slice(0, 80);
+    });
 
-    cupBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        if (!acceptingInput) return;
-        const cup = cups[idx];
-        inputs.push(cup.note);
-        f.glassMelodyInputs = inputs.slice();
-        playSE?.(cup.soundId);
-        btn.classList.remove("is-struck");
-        void btn.offsetWidth;
-        btn.classList.add("is-struck");
-        hintEl.textContent = "";
-        repaint();
+    transferBtn.addEventListener("click", () => {
+      const state = getTransferPanelState();
+      if (!state.started) {
+        state.started = true;
+        state.mode = "receive";
+        state.status = "CARGO RECEIVED";
+        f.receiveCargo = true;
+        markProgress?.("transfer_receive_cargo");
+        playSE?.("se-fanta");
+        renderCanvasRoom?.();
+        closeModal();
+        updateMessage("荷物を受信した。");
+        return;
+      }
 
-        if (inputs.length < answer.length) return;
-        acceptingInput = false;
-        cupBtns.forEach((button) => {
-          button.disabled = true;
-        });
-        resetBtn.disabled = true;
-
-        const isCorrect = inputs.every((note, inputIdx) => note === answer[inputIdx]);
-        if (!isCorrect) {
-          setTimeout(() => {
-            playSE?.("se-error");
-            resetInputs(true);
-            screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-          }, 350);
+      if (state.mode === "receive") {
+        if (state.destination === "4" && /lava/i.test(state.message || "")) {
+          state.status = "CARGO RECEIVED";
+          f.receiveCargo = true;
+          f.receiveManjuBox = true;
+          playSE?.("se-fanta");
+          renderCanvasRoom?.();
+          closeModal();
+          updateMessage("荷物を受信した。");
           return;
         }
 
-        f.glassMelodySolved = true;
-        f.glassMelodyInputs = [];
-        removeItem("stick");
-        markProgress?.("solve_glass_melody");
-        renderCanvasRoom?.();
-        setTimeout(() => {
-          window._nextModal = {
-            title: "メロディ",
-            content: `<p style="margin:10px 0; line-height:1.8; text-align:center;">どこからかメロディが流れた。</p>`,
-            buttons: [{ text: "閉じる", action: "close" }],
-            after: () => playSE?.("se-tanabata-song"),
-          };
-          closeModal();
-          updateMessage("どこからかメロディが流れた。");
-        }, 450);
-      });
-    });
-
-    resetBtn.addEventListener("click", () => {
-      if (!acceptingInput) return;
-      playSE?.("se-click");
-      resetInputs(false);
-    });
-
-    if (inputs.length >= answer.length) resetInputs(false);
-    else repaint();
-  }, 0);
-}
-
-function handleKatoriSenkoClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.fireSenko) {
-    updateMessage("蚊取り線香に火がついている。");
-    return;
-  }
-
-  if (gameState.selectedItem !== "match") {
-    updateMessage("蚊取り線香だ。火をつけられそうだ。");
-    return;
-  }
-
-  removeItem("match");
-  f.fireSenko = true;
-  markProgress?.("fire_katori_senko");
-  playSE?.("se-match");
-  renderCanvasRoom?.();
-  showObj(null, "蚊取り線香に火をつけた", IMAGES.modals.katoriSenko, "蚊取り線香に火をつけた。");
-}
-
-function handleMainKitchenOvenClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.foundMainKitchenOvenBurntFlypan) {
-    updateMessage("オーブンの中にはもう何もない。");
-    return;
-  }
-
-  if (gameState.inventory.length >= 14) {
-    updateMessage("アイテム欄がいっぱいだ。どこかで減らしてこよう");
-    return;
-  }
-
-  f.foundMainKitchenOvenBurntFlypan = true;
-  markProgress?.("found_main_kitchen_oven_burnt_flypan");
-  addItem("burntFlypan");
-  playSE?.("se-door-close");
-  renderCanvasRoom?.();
-  showObj(null, "オーブンの中", IMAGES.modals.insideOven, "焦げたフライパンを手に入れた。");
-}
-
-function handleMainKitchenFaucetClick() {
-  if (gameState.selectedItem === "jugWater") {
-    updateMessage("水差しには水が入っている。");
-    return;
-  }
-
-  if (gameState.selectedItem !== "jug") {
-    updateMessage("蛇口がある。");
-    return;
-  }
-
-  removeItem("jug");
-  addItem("jugWater");
-  playSE?.("se-tea");
-  showObj(null, "水をくんだ", IMAGES.modals.jugPour, "水差しに水を入れた。");
-}
-
-function handleMainKitchenLowerLeftCabinetClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (!f.unlockMainKitchenLowerLeftCabinet) {
-    if (gameState.selectedItem !== "key") {
-      updateMessage("シンク下キャビネットには鍵がかかっている。");
-      return;
-    }
-
-    removeItem("key");
-    f.unlockMainKitchenLowerLeftCabinet = true;
-    markProgress?.("unlock_main_kitchen_lower_left_cabinet");
-    playSE?.("se-gacha");
-    renderCanvasRoom?.();
-    updateMessage("シンク下キャビネットのロックが外れた。");
-    return;
-  }
-
-  if (f.foundMainKitchenLowerLeftCabinetRaincoat) {
-    updateMessage("もうなにもない");
-    return;
-  }
-  if (gameState.inventory.length >= 14) {
-    updateMessage("アイテム欄がいっぱいだ。どこかで減らしてこよう");
-    return;
-  }
-
-  f.foundMainKitchenLowerLeftCabinetRaincoat = true;
-  markProgress?.("found_main_kitchen_lower_left_cabinet_raincoat");
-  addItem("raincoat");
-  renderCanvasRoom?.();
-  showObj(null, "シンク下にレインコートがある", IMAGES.modals.underSink, "レインコートを手に入れた");
-}
-
-function handleMainKitchenFreezerClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainKitchenFreezer) {
-    changeRoom("freezer");
-    return;
-  }
-
-  const letterStyle = [
-    "width:min(20vw, 76px)",
-    "height:min(20vw, 76px)",
-    "min-width:54px",
-    "min-height:54px",
-    "border:2px solid #777",
-    "border-radius:4px",
-    "background:#fff",
-    "color:#111",
-    "font-size:clamp(30px, 9vw, 42px)",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "padding:0",
-    "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.18)",
-  ].join(";");
-  const content = `
-    <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <img src="${IMAGES.modals.freezerMemo}" alt="冷凍庫のメモ" class="showobj-image">
-      <div class="notranslate" translate="no" lang="en" style="display:flex; gap:8px; justify-content:center; align-items:center;">
-        ${[0, 1, 2]
-          .map(
-            (idx) => `
-              <button id="mainKitchenFreezerLetter${idx}" type="button" aria-label="${idx + 1}文字目" style="${letterStyle}">A</button>
-            `,
-          )
-          .join("")}
-      </div>
-      <button id="mainKitchenFreezerPasscodeOk" class="ok-btn" type="button">OK</button>
-      <div id="mainKitchenFreezerPasscodeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("冷凍庫", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
-  updateMessage("冷凍庫がロックされている。");
-
-  setTimeout(() => {
-    const letters = ["A", "C", "E", "I", "L", "M", "N", "T"];
-    const saved = Array.isArray(f.mainKitchenFreezerLetters) ? f.mainKitchenFreezerLetters : [0, 0, 0];
-    const state = [0, 1, 2].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value < letters.length ? value : 0;
-    });
-    const letterBtns = [0, 1, 2].map((idx) => document.getElementById(`mainKitchenFreezerLetter${idx}`));
-    const okBtn = document.getElementById("mainKitchenFreezerPasscodeOk");
-    const hintEl = document.getElementById("mainKitchenFreezerPasscodeHint");
-    if (letterBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
-
-    const repaint = () => {
-      letterBtns.forEach((btn, idx) => {
-        btn.textContent = letters[state[idx]];
-      });
-      hintEl.textContent = "";
-    };
-
-    letterBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        state[idx] = (state[idx] + 1) % letters.length;
-        f.mainKitchenFreezerLetters = state.slice();
-        playSE?.("se-pi");
-        repaint();
-      });
-    });
-
-    okBtn.addEventListener("click", () => {
-      f.mainKitchenFreezerLetters = state.slice();
-      const answer = state.map((index) => letters[index]).join("");
-      if (answer === "ICE") {
-        f.unlockMainKitchenFreezer = true;
-        removeItem("memo");
-        markProgress?.("unlock_main_kitchen_freezer");
-        playSE?.("se-gacha");
+        state.status = "RECEIVE FAILED";
+        playSE?.("se-error");
         closeModal();
-        renderCanvasRoom?.();
-        updateMessage("冷凍庫のロックが外れた。");
+        reopen();
         return;
       }
 
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
+      if (!f.unlockManageBoard) {
+        state.status = "ENERGY LOW";
+        playSE?.("se-error");
+        screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
+        closeModal();
+        reopen();
+        return;
+      }
+      if (hasItem("hat") || hasItem("bag") || hasItem("card")) {
+        state.status = "OVER WEIGHT";
+        f.openShutter = true;
+        playSE?.("se-error");
+        playSE?.("se-shutter-open");
+        showToast("負荷超過を検出しました。備品返却を推奨します");
+        renderCanvasRoom();
+        screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
+        closeModal();
+        return;
+      }
+      if (state.destination !== "3.65") {
+        state.status = "OVER WEIGHT";
+        playSE?.("se-error");
+        showToast("送出に失敗しました");
+        screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
+        closeModal();
+        reopen();
+        return;
+      }
 
-    repaint();
+      f.receiveCargo = false;
+      state.status = "TRANSFER COMPLETE";
+      markProgress?.("transfer_send_cargo");
+      closeModal();
+      renderCanvasRoom?.();
+      startTransferTrueEndSequence();
+    });
   }, 0);
 }
 
-function handleMainKitchenRefrigeratorClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainKitchenRefrigerator) {
-    if (f.foundMainKitchenRefrigeratorSweet) {
-      updateMessage("もう何もない");
-      return;
-    }
-    if (gameState.inventory.length >= 14) {
-      updateMessage("アイテム欄がいっぱいだ。どこかで減らしてこよう");
-      return;
-    }
+function startTransferTrueEndSequence() {
+  playSE?.("se-gogogo");
+  updateMessage("転送を受け付けた。");
+  showTransferCountdownModal();
+}
 
-    f.foundMainKitchenRefrigeratorSweet = true;
-    markProgress?.("found_main_kitchen_refrigerator_sweet");
-    addItem("sweet");
-    renderCanvasRoom?.();
-    showObj(null, "冷蔵庫の中にゼリーがあった", IMAGES.items.sweet, "七夕ゼリーを手に入れた。");
+function showTransferCountdownModal() {
+  showModal("転送受付", `<div style="text-align:center; font-size:1.2em; font-weight:800; line-height:1.8;">転送を受け付けました。<br>カウントダウン。<br><span class="notranslate" translate="no" lang="en" style="font-size:1.5em; letter-spacing:0.08em;">5, 4, 3, 2, 1...</span></div>`, [
+    {
+      text: "次へ",
+      action: () => {
+        closeModal();
+        showTransferBearBoardingModal();
+      },
+    },
+  ]);
+}
+
+function showTransferBearBoardingModal() {
+  const content = `
+    <div class="modal-anim">
+      <img src="${IMAGES.modals.bearUpset}" alt="慌てるクマ妖精">
+      <img src="${IMAGES.modals.bearGeton}" alt="転送に乗り込むクマ妖精">
+    </div>
+    <div style="text-align:center; font-size:1.15em; font-weight:800; margin-top:10px;">えー！待ってー</div>
+  `;
+  showModal("転送開始", content, [
+    {
+      text: "次へ",
+      action: () => {
+        closeModal();
+        flashScreen("black", 900);
+        setTimeout(() => {
+          travelWithStepsTrueEnd("se-fanta");
+        }, 220);
+      },
+    },
+  ]);
+}
+
+function showReceivedCargoBoxModal() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.receiveCargo || f.bearAppear) return;
+
+  showModal("箱を開けますか？", "", [
+    {
+      text: "開ける",
+      action: () => {
+        playSE?.("se-piko");
+        f.bearAppear = true;
+        f.receiveCargo = false;
+        closeModal();
+        renderCanvasRoom?.();
+        showModal("箱を開けた", `<img src="${IMAGES.modals.boxOpen}" class="showobj-image" alt="開いた箱">`, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+        updateMessage("箱を開けた。");
+      },
+    },
+    { text: "閉じる", action: "close" },
+  ]);
+}
+
+function handleTransferBearFanOpenedUse() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  f.transferBearFanOpenedCount = (Number(f.transferBearFanOpenedCount) || 0) + 1;
+
+  if (f.transferBearFanOpenedCount >= 3) {
+    playSE?.("se-gogogo");
+    const content = `
+      <img src="${IMAGES.modals.badend}" class="showobj-image" alt="クマの眼光">
+      <p style="text-align:center; font-weight:800; line-height:1.8; margin-top:14px;">
+        「そんなにボクの本気ポーズが見たいの…？」<br>
+        あなたは気が遠くなり意識を失った。
+      </p>
+    `;
+    showModal("【BAD END】クマの眼光", content, [{ text: "最初から", action: "restart" }], null, { contentClass: "showobj-modal" });
+    updateMessage("BAD END: クマの眼光");
     return;
   }
 
-  const content = `
-    <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <img src="${IMAGES.modals.refrigeratorMemo}" alt="冷蔵庫下段のメモ" class="showobj-image">
-      <input id="mainKitchenRefrigeratorPasscode" class="puzzle-input notranslate" type="text" maxlength="16" aria-label="英字を入力" placeholder="英字を入力" autocapitalize="off" autocomplete="off" spellcheck="false" translate="no" lang="en" style="width:220px; max-width:100%; text-align:center; font-size:1.05em; letter-spacing:0.08em;">
-      <button id="mainKitchenRefrigeratorPasscodeOk" class="ok-btn" type="button">OK</button>
-      <div id="mainKitchenRefrigeratorPasscodeHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
+  showObj(null, "ドドン！", IMAGES.modals.kabuki, "クマ妖精はポーズをとっている。扇子は返してもらった");
+  playSE("se-dodon");
+}
 
-  showModal("冷蔵庫下段", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
-  updateMessage("冷蔵庫下段がロックされている。");
+const RETURN_SHELF_ITEMS = {
+  hat: "制帽",
+  bag: "かばん",
+  card: "カード",
+};
+
+function getReturnShelfItems() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.returnShelfItems || typeof f.returnShelfItems !== "object") f.returnShelfItems = {};
+  return f.returnShelfItems;
+}
+
+function isReturnShelfItemPlaced(itemId) {
+  const f = gameState.main.flags || {};
+  return !!(f.openShutter && getReturnShelfItems()[itemId]);
+}
+
+function handleReturnShelfClick() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (!f.openShutter) {
+    updateMessage("シャッターは閉まっている");
+    return;
+  }
+
+  const itemId = gameState.selectedItem;
+  if (!RETURN_SHELF_ITEMS[itemId]) {
+    updateMessage("備品を返却できそうだ");
+    return;
+  }
+
+  const shelfItems = getReturnShelfItems();
+  if (shelfItems[itemId]) {
+    updateMessage(`${RETURN_SHELF_ITEMS[itemId]}はすでに備品棚に置いてある`);
+    return;
+  }
+
+  removeItem(itemId);
+  shelfItems[itemId] = true;
+  playSE?.("se-item");
+  renderCanvasRoom?.();
+  updateMessage(`${RETURN_SHELF_ITEMS[itemId]}を備品棚に置いた`);
+}
+
+function retrieveReturnShelfItem(itemId) {
+  const shelfItems = getReturnShelfItems();
+  if (!shelfItems[itemId]) return;
+  if (gameState.inventory.length >= 14) {
+    updateMessage("アイテム欄がいっぱいだ。");
+    return;
+  }
+
+  shelfItems[itemId] = false;
+  addItem(itemId);
+  renderCanvasRoom?.();
+  updateMessage(`${RETURN_SHELF_ITEMS[itemId]}を備品棚から取り戻した`);
+}
+
+function handleBoardAdminWifiClick() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+
+  if (gameState.selectedItem !== "card") {
+    updateMessage("なにかをかざす場所のようだ");
+    return;
+  }
+
+  f.boardAdminRewritten = !f.boardAdminRewritten;
+  playSE?.("se-cyber");
+  renderCanvasRoom();
+  updateMessage(f.boardAdminRewritten ? "カードの力で制御盤の画面が切り替わった" : "カードの力で制御盤の画面が元に戻った");
+}
+
+function cycleBoardAdminLetter(index) {
+  if ((gameState.main.flags || {}).unlockAdminDoor) {
+    updateMessage("ロックは解除されている");
+    return;
+  }
+
+  const state = getBoardAdminLetterState();
+  state[index] = (state[index] + 1) % BOARD_ADMIN_LETTERS.length;
+  playSE?.("se-pi");
+  renderCanvasRoom();
+}
+
+function checkBoardAdminAnswer() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.unlockAdminDoor) {
+    updateMessage("ロックは解除されている");
+    return;
+  }
+
+  const answer = getBoardAdminLetterState()
+    .map((idx) => BOARD_ADMIN_LETTERS[idx])
+    .join("");
+  if (answer === "PACK") {
+    f.unlockAdminDoor = true;
+    markProgress?.("unlock_admin_door");
+    playSE?.("se-gacha");
+    renderCanvasRoom();
+    updateMessage("近くのドアから音がした");
+    return;
+  }
+
+  playSE?.("se-error");
+  updateMessage("違うようだ");
+}
+
+function normalizeBoardDoorAnswer(value) {
+  return String(value || "")
+    .trim()
+    .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xfee0))
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+}
+
+function showBoardDoorAnswerInput(key) {
+  const blank = BOARD_DOOR_BLANKS[key];
+  if (!blank || !isBoardDoorBlankClickable(key)) return;
+
+  if (blank.col === "address") {
+    showBoardDoorAddressInput(key, blank);
+    return;
+  }
+
+  if (blank.col === "area") {
+    showBoardDoorAreaInput(key, blank);
+    return;
+  }
+
+  showBoardDoorNameInput(key, blank);
+}
+
+function submitBoardDoorAnswer(key, value, hintEl, inputEl = null) {
+  const blank = BOARD_DOOR_BLANKS[key];
+  const normalized = normalizeBoardDoorAnswer(value);
+  const answer = normalizeBoardDoorAnswer(blank.answer);
+  if (normalized === answer) {
+    getBoardDoorAnswersFlag()[key] = true;
+    playSE?.("se-clear");
+    closeModal();
+    renderCanvasRoom();
+    updateMessage("黒板の空欄が埋まった");
+    return true;
+  }
+
+  playSE?.("se-error");
+  if (hintEl) hintEl.textContent = "違うようだ";
+  inputEl?.select?.();
+  return false;
+}
+
+function showBoardDoorNameInput(key, blank) {
+  const content = `
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+      <input id="boardDoorAnswerInput" class="puzzle-input notranslate" type="text" maxlength="24" aria-label="${blank.label}を入力" placeholder="${blank.label}" autocapitalize="off" autocomplete="off" spellcheck="false" translate="no" lang="en" style="width:220px; max-width:100%; text-align:center; font-size:1.1em; letter-spacing:0.08em;">
+      <button id="boardDoorAnswerOk" class="ok-btn" type="button">OK</button>
+      <div id="boardDoorAnswerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+    </div>`;
+
+  showModal("黒板の空欄", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
 
   setTimeout(() => {
-    const inputEl = document.getElementById("mainKitchenRefrigeratorPasscode");
-    const okBtn = document.getElementById("mainKitchenRefrigeratorPasscodeOk");
-    const hintEl = document.getElementById("mainKitchenRefrigeratorPasscodeHint");
+    const inputEl = document.getElementById("boardDoorAnswerInput");
+    const okBtn = document.getElementById("boardDoorAnswerOk");
+    const hintEl = document.getElementById("boardDoorAnswerHint");
     if (!inputEl || !okBtn || !hintEl) return;
 
     const submit = () => {
-      const answer = String(inputEl.value || "")
-        .trim()
-        .toLowerCase();
-      if (answer === "fruit") {
-        f.unlockMainKitchenRefrigerator = true;
-        markProgress?.("unlock_main_kitchen_refrigerator");
-        playSE?.("se-gacha");
-        closeModal();
-        renderCanvasRoom?.();
-        updateMessage("冷蔵庫下段のロックが外れた。");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
+      submitBoardDoorAnswer(key, inputEl.value, hintEl, inputEl);
     };
 
     okBtn.addEventListener("click", submit);
@@ -3722,38 +4190,79 @@ function handleMainKitchenRefrigeratorClick() {
   }, 0);
 }
 
-function handleMainKitchenDrawerClick() {
+function showBoardDoorAddressInput(key, blank) {
+  const digitStyle = "width:54px;height:54px;border:2px solid #555;border-radius:4px;background:#fff;color:#111;font-size:28px;font-weight:900;text-align:center;";
+  const content = `
+    <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <div style="display:flex; gap:10px; justify-content:center;">
+        <button id="boardDoorAddressDigit0" type="button" aria-label="1桁目" style="${digitStyle}">0</button>
+        <button id="boardDoorAddressDigit1" type="button" aria-label="2桁目" style="${digitStyle}">0</button>
+        <button id="boardDoorAddressDigit2" type="button" aria-label="3桁目" style="${digitStyle}">0</button>
+      </div>
+      <button id="boardDoorAddressOk" class="ok-btn" type="button">OK</button>
+      <div id="boardDoorAddressHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+    </div>`;
+
+  showModal("黒板の空欄", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+
+  setTimeout(() => {
+    const digits = [0, 0, 0];
+    const digitBtns = digits.map((_, idx) => document.getElementById(`boardDoorAddressDigit${idx}`));
+    const okBtn = document.getElementById("boardDoorAddressOk");
+    const hintEl = document.getElementById("boardDoorAddressHint");
+    if (digitBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
+
+    const render = () => digitBtns.forEach((btn, idx) => (btn.textContent = String(digits[idx])));
+    digitBtns.forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        digits[idx] = (digits[idx] + 1) % 10;
+        render();
+      });
+    });
+    okBtn.addEventListener("click", () => submitBoardDoorAnswer(key, digits.join(""), hintEl));
+    render();
+  }, 0);
+}
+
+function showBoardDoorAreaInput(key, blank) {
+  let selectedIdx = 0;
+  const content = `
+    <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <button id="boardDoorAreaChoice" type="button" class="text-btn notranslate" translate="no" lang="en" style="min-width:220px; padding:12px 18px; font-size:1.1em; font-weight:800; letter-spacing:0.08em; background:#1f4d35; color:#fff; border-color:#163826;">${BOARD_DOOR_AREA_OPTIONS[selectedIdx]}</button>
+      <button id="boardDoorAreaOk" class="ok-btn" type="button">OK</button>
+      <div id="boardDoorAreaHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+    </div>`;
+
+  showModal("黒板の空欄", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+
+  setTimeout(() => {
+    const choiceBtn = document.getElementById("boardDoorAreaChoice");
+    const okBtn = document.getElementById("boardDoorAreaOk");
+    const hintEl = document.getElementById("boardDoorAreaHint");
+    if (!choiceBtn || !okBtn || !hintEl) return;
+
+    const render = () => (choiceBtn.textContent = BOARD_DOOR_AREA_OPTIONS[selectedIdx]);
+    choiceBtn.addEventListener("click", () => {
+      selectedIdx = (selectedIdx + 1) % BOARD_DOOR_AREA_OPTIONS.length;
+      render();
+    });
+    okBtn.addEventListener("click", () => submitBoardDoorAnswer(key, BOARD_DOOR_AREA_OPTIONS[selectedIdx], hintEl));
+    render();
+  }, 0);
+}
+
+function handleBoardChestWifiClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  const roomId = "mainKitchen";
-  const areaDescription = "横長引き出し";
-  const drawerColors = {
-    frontFill: "#E2E2DF",
-    sideTop: "#c9c9c5",
-    sideBottom: "#aaa9a5",
-    gripStyle: "recessed",
-    gripColor: "#777773",
-    gripWidthRatio: 0.16,
-    soundId: "se-hikidashi",
-  };
 
-  const closeDrawer = () => {
-    playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
-  };
+  if (gameState.selectedItem !== "card") {
+    updateMessage("なにかをかざす場所のようだ");
+    return;
+  }
 
-  playDeskDrawerOpenFx(roomId, areaDescription, {
-    ...drawerColors,
-    keepOpen: true,
-    keepInputLocked: true,
-    onDone: () => {
-      if (f.foundMainKitchenMatch) {
-        updateMessage("もう何もない");
-        setTimeout(closeDrawer, 350);
-        return;
-      }
-
-      acquireItemOnce("foundMainKitchenMatch", "match", "引き出しにマッチがある", IMAGES.items.match, "マッチを手に入れた", closeDrawer);
-    },
-  });
+  f.boardChestRewritten = !f.boardChestRewritten;
+  playSE?.("se-cyber");
+  renderCanvasRoom();
+  updateMessage(f.boardChestRewritten ? "カードの力で黒板の内容が書き換わった" : "カードの力で黒板の内容が元に戻った");
 }
 
 function clickWrap(fn, { allowAtNight = false, allowAfterTaxi = false } = {}) {
@@ -3769,215 +4278,6 @@ function clickWrap(fn, { allowAtNight = false, allowAfterTaxi = false } = {}) {
     gameState.selectedItemSlot = null;
     updateInventoryDisplay();
   };
-}
-
-function handleMainKitchenUpperCabinetClick() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainKitchenUpperCabinet) {
-    acquireItemOnce("foundMainKitchenUpperCabinetJug", "jug", "上段キャビネットに水差しが入っている", IMAGES.items.jug, "水差しを手に入れた");
-    return;
-  }
-
-  showMainKitchenUpperCabinetPuzzle();
-}
-
-function showMainKitchenUpperCabinetPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainKitchenUpperCabinet) {
-    handleMainKitchenUpperCabinetClick();
-    return;
-  }
-
-  const baseShapeStyle = [
-    "width:clamp(44px, 17vw, 72px)",
-    "height:clamp(44px, 17vw, 72px)",
-    "min-width:44px",
-    "min-height:44px",
-    "flex:0 0 auto",
-    "margin:0",
-    "border:0",
-    "background:#f7f4df",
-    "color:#1e2a24",
-    "font-size:clamp(26px, 8vw, 38px)",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "padding:0",
-    "cursor:pointer",
-    "filter:drop-shadow(0 2px 4px rgba(0,0,0,0.24))",
-  ].join("; ");
-  const shapeStyles = [
-    `${baseShapeStyle}; border-radius:50%; background:#fff`,
-    `${baseShapeStyle}; clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); background:#fff`,
-    `${baseShapeStyle}; clip-path:polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); background:#fff`,
-    `${baseShapeStyle}; clip-path:polygon(50% 0%, 100% 100%, 0% 100%); background:#fff; align-items:flex-end; padding-bottom:min(4vw, 14px)`,
-  ];
-
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <p style="margin:0; line-height:1.8; text-align:center;">上段キャビネットがロックされている。</p>
-      <div class="notranslate" translate="no" lang="en" style="display:flex; gap:clamp(4px, 2vw, 10px); justify-content:center; align-items:center; flex-wrap:nowrap; max-width:100%;">
-        ${[0, 1, 2, 3]
-          .map(
-            (idx) => `
-              <button id="mainKitchenUpperCabinetLetter${idx}" type="button" class="notranslate" translate="no" lang="en" aria-label="${idx + 1}文字目" style="${shapeStyles[idx]}">A</button>
-            `,
-          )
-          .join("")}
-      </div>
-      <button id="mainKitchenUpperCabinetOk" class="ok-btn" type="button">OK</button>
-      <div id="mainKitchenUpperCabinetHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("上段キャビネット", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("上段キャビネットがロックされている。");
-
-  setTimeout(() => {
-    const letters = ["A", "C", "E", "K", "L", "O", "S", "V"];
-    const saved = Array.isArray(f.mainKitchenUpperCabinetLetters) ? f.mainKitchenUpperCabinetLetters : [0, 0, 0, 0];
-    const state = [0, 1, 2, 3].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value < letters.length ? value : 0;
-    });
-    const letterBtns = [0, 1, 2, 3].map((idx) => document.getElementById(`mainKitchenUpperCabinetLetter${idx}`));
-    const okBtn = document.getElementById("mainKitchenUpperCabinetOk");
-    const hintEl = document.getElementById("mainKitchenUpperCabinetHint");
-    if (letterBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
-
-    const repaint = () => {
-      letterBtns.forEach((btn, idx) => {
-        btn.textContent = letters[state[idx]];
-      });
-      hintEl.textContent = "";
-    };
-
-    letterBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        state[idx] = (state[idx] + 1) % letters.length;
-        f.mainKitchenUpperCabinetLetters = state.slice();
-        playSE?.("se-pi");
-        repaint();
-      });
-    });
-
-    okBtn.addEventListener("click", () => {
-      f.mainKitchenUpperCabinetLetters = state.slice();
-      const answer = state.map((index) => letters[index]).join("");
-      if (answer === "LAKE") {
-        f.unlockMainKitchenUpperCabinet = true;
-        markProgress?.("unlock_main_kitchen_upper_cabinet");
-        playSE?.("se-gacha");
-        closeModal();
-        renderCanvasRoom?.();
-        updateMessage("上段キャビネットのロックが外れた。");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
-}
-
-function showMainKitchenLowerRightCabinetPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainKitchenLowerRightCabinet) {
-    acquireItemOnce("foundMainKitchenLowerRightCabinetMop", "mop", "キャビネットに掃除用のほこり取りが入っている", IMAGES.items.mop, "掃除用のほこり取りを手に入れた");
-    return;
-  }
-
-  const letterStyle = [
-    "width:min(16vw, 68px)",
-    "height:min(16vw, 68px)",
-    "min-width:48px",
-    "min-height:48px",
-    "border:2px solid #777",
-    "border-radius:4px",
-    "background:#fff",
-    "color:#111",
-    "font-size:clamp(26px, 7vw, 38px)",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "padding:0",
-    "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.18)",
-  ].join(";");
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div class="notranslate" translate="no" lang="en" style="display:flex; gap:6px; justify-content:center; align-items:center;">
-        ${[0, 1, 2, 3, 4]
-          .map(
-            (idx) => `
-              <button id="mainKitchenLowerRightCabinetLetter${idx}" type="button" class="notranslate" translate="no" lang="en" aria-label="${idx + 1}文字目" style="${letterStyle}">A</button>
-            `,
-          )
-          .join("")}
-      </div>
-      <button id="mainKitchenLowerRightCabinetOk" class="ok-btn" type="button">OK</button>
-      <div id="mainKitchenLowerRightCabinetHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("赤と黄色に塗られたキャビネット", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("赤と黄色に塗られたキャビネットがロックされている。");
-
-  setTimeout(() => {
-    const letters = ["A", "C", "E", "L", "N", "O", "P", "R", "T"];
-    const saved = Array.isArray(f.mainKitchenLowerRightCabinetLetters) ? f.mainKitchenLowerRightCabinetLetters : [0, 0, 0, 0, 0];
-    const state = [0, 1, 2, 3, 4].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value < letters.length ? value : 0;
-    });
-    const letterBtns = [0, 1, 2, 3, 4].map((idx) => document.getElementById(`mainKitchenLowerRightCabinetLetter${idx}`));
-    const okBtn = document.getElementById("mainKitchenLowerRightCabinetOk");
-    const hintEl = document.getElementById("mainKitchenLowerRightCabinetHint");
-    if (letterBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
-
-    const repaint = () => {
-      letterBtns.forEach((btn, idx) => {
-        btn.textContent = letters[state[idx]];
-      });
-      hintEl.textContent = "";
-    };
-
-    letterBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        state[idx] = (state[idx] + 1) % letters.length;
-        f.mainKitchenLowerRightCabinetLetters = state.slice();
-        playSE?.("se-pi");
-        repaint();
-      });
-    });
-
-    okBtn.addEventListener("click", () => {
-      f.mainKitchenLowerRightCabinetLetters = state.slice();
-      const answer = state.map((index) => letters[index]).join("");
-      if (answer === "CLEAN") {
-        f.unlockMainKitchenLowerRightCabinet = true;
-        markProgress?.("unlock_main_kitchen_lower_right_cabinet");
-        playSE?.("se-gacha");
-        closeModal();
-        renderCanvasRoom?.();
-        updateMessage("赤と黄色に塗られたキャビネットのロックが外れた。");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
 }
 
 // アクション名 → 実行関数
@@ -4018,20 +4318,15 @@ function showEndingReport(endingId = "end") {
   // 今作用エンド情報
   const ENDING_INFO = {
     trueEnd: {
-      title: "🎍 TRUE END",
+      title: "🌎 TRUE END",
       label: "TRUE END",
-      desc: "追加の願いをかなえて、無事に脱出しました",
+      desc: "何とか地球に帰れそうです、おめでとうございます！",
     },
 
     end: {
-      title: "🌟 NORMAL END ",
+      title: "✉ NORMAL END ",
       label: "NORMAL",
-      desc: "みんなの願いをかなえ、無事に脱出しました",
-    },
-    rainEnd: {
-      title: "☔ NORMAL END2 ",
-      label: "NORMAL2",
-      desc: "雨の中頑張ってお家に帰りましょう",
+      desc: "配達員としてがんばりましょう。脱出おめでとうございます！",
     },
   };
 
@@ -4093,12 +4388,11 @@ function showEndingReport(endingId = "end") {
 // クリアログ生成（既存のがあればそのまま流用でOK）
 // アンケート
 function openFeedbackForm(endingId) {
-  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfqGLrLDVjLffn5u7bTHlPrANSnTrshVVQzRsBsKy5E4g6V4Q/viewform";
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLScM2OJAKuVqP4GBFw__FHgUxf9u9PCERuBtqgl8p5LZyDzHlw/viewform";
   const endingLabel =
     {
       trueEnd: "トゥルーエンド",
       end: "ノーマルエンド",
-      rainEnd: "ノーマルエンド2",
     }[endingId] || "エンド";
 
   const params = new URLSearchParams({
@@ -4428,99 +4722,6 @@ function openMainDeskTopDrawer() {
   });
 }
 
-function showMainDeskTopDrawerPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainDeskTopDrawer) {
-    openMainDeskTopDrawer();
-    return;
-  }
-
-  const digitStyle = [
-    "width:min(19vw, 72px)",
-    "height:min(19vw, 72px)",
-    "min-width:52px",
-    "min-height:52px",
-    "border:2px solid #777",
-    "border-radius:4px",
-    "background:#fff",
-    "color:#111",
-    "font-size:clamp(30px, 9vw, 42px)",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "padding:0",
-    "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.18)",
-  ].join(";");
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
-        ${[0, 1, 2, 3]
-          .map(
-            (idx) => `
-              <button id="mainDeskTopDrawerDigit${idx}" type="button" aria-label="${idx + 1}桁目" style="${digitStyle}">0</button>
-            `,
-          )
-          .join("")}
-      </div>
-      <button id="mainDeskTopDrawerOk" class="ok-btn" type="button">OK</button>
-      <div id="mainDeskTopDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("一番上の引き出し", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("一番上の引き出しがロックされている。");
-
-  setTimeout(() => {
-    const digitBtns = [0, 1, 2, 3].map((idx) => document.getElementById(`mainDeskTopDrawerDigit${idx}`));
-    const okBtn = document.getElementById("mainDeskTopDrawerOk");
-    const hintEl = document.getElementById("mainDeskTopDrawerHint");
-    if (digitBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
-
-    const saved = Array.isArray(f.mainDeskTopDrawerDigits) ? f.mainDeskTopDrawerDigits : [0, 0, 0, 0];
-    const state = [0, 1, 2, 3].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value <= 9 ? value : 0;
-    });
-    const repaint = () => {
-      digitBtns.forEach((btn, idx) => {
-        btn.textContent = String(state[idx]);
-      });
-      hintEl.textContent = "";
-    };
-
-    digitBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        state[idx] = (state[idx] + 1) % 10;
-        f.mainDeskTopDrawerDigits = state.slice();
-        playSE?.("se-pi");
-        repaint();
-      });
-    });
-
-    okBtn.addEventListener("click", () => {
-      f.mainDeskTopDrawerDigits = state.slice();
-      if (state.join("") === "4024") {
-        f.unlockMainDeskTopDrawer = true;
-        markProgress?.("unlock_main_desk_top_drawer");
-        playSE?.("se-gacha");
-        closeModal();
-        renderCanvasRoom?.();
-        updateMessage("一番上の引き出しのロックが外れた。");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
-}
-
 function openMainDeskSecondDrawer() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   const roomId = "mainDesk";
@@ -4553,6 +4754,119 @@ function openMainDeskSecondDrawer() {
       });
     },
   });
+}
+
+function showMainDeskStampPuzzle() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.clearMainDeskStampPuzzle) {
+    updateMessage("封筒に切手を貼り終えている。");
+    return;
+  }
+
+  const stampOptions = [
+    { id: "star", img: IMAGES.items.stampStar, label: "星の切手", disabled: true },
+    { id: "heart", img: IMAGES.items.stampHeart, label: "ハートの切手" },
+    { id: "triangle", img: IMAGES.items.stampTriangle, label: "三角の切手" },
+    { id: "sun", img: IMAGES.items.stampSun, label: "太陽の切手" },
+  ];
+  const saved = Array.isArray(f.mainDeskStampSelection) ? f.mainDeskStampSelection.filter((id) => stampOptions.some((opt) => opt.id === id && !opt.disabled)).slice(0, 2) : [];
+  const slotStyle = ["width:min(28vw, 112px)", "height:min(18vw, 76px)", "min-width:82px", "min-height:58px", "border:2px dashed #8b6d4e", "border-radius:4px", "background:#fff8e8", "display:flex", "align-items:center", "justify-content:center"].join(";");
+  const stampButtonStyle = ["width:min(24vw, 88px)", "height:min(24vw, 88px)", "min-width:68px", "min-height:68px", "border:2px solid #7b6249", "border-radius:4px", "background:#fff", "padding:5px", "cursor:pointer", "display:flex", "align-items:center", "justify-content:center"].join(";");
+  const stampImgStyle = "max-width:100%;max-height:100%;object-fit:contain;display:block;";
+  const content = `
+    <div style="margin-top:0; display:flex; flex-direction:column; align-items:center; gap:8px;">
+      <img src="${IMAGES.items.envelopeNostamp}" alt="切手のない封筒" style="width:min(82vw, 400px); max-height:210px; object-fit:contain; display:block;">
+      <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
+        <div id="mainDeskStampSlot0" style="${slotStyle};"></div>
+        <div id="mainDeskStampSlot1" style="${slotStyle};"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2, minmax(68px, 88px)); gap:8px; justify-content:center; align-items:center;">
+        ${stampOptions
+          .map(
+            (opt) => `
+              <button id="mainDeskStampButton_${opt.id}" type="button" aria-label="${opt.label}" style="${stampButtonStyle};${opt.disabled ? "filter:grayscale(1);opacity:0.42;" : ""}">
+                <img src="${opt.img}" alt="${opt.label}" style="${stampImgStyle}">
+              </button>
+            `,
+          )
+          .join("")}
+      </div>
+      <button id="mainDeskStampOk" class="ok-btn" type="button">OK</button>
+      <div id="mainDeskStampHint" style="min-height:1em; font-size:0.9em; line-height:1.1; text-align:center;"></div>
+    </div>
+  `;
+
+  showModal("切手を選ぶ", content, [{ text: "閉じる", action: "close" }]);
+  updateMessage("封筒に貼る切手を選ぼう。");
+
+  setTimeout(() => {
+    const slotEls = [0, 1].map((idx) => document.getElementById(`mainDeskStampSlot${idx}`));
+    const okBtn = document.getElementById("mainDeskStampOk");
+    const hintEl = document.getElementById("mainDeskStampHint");
+    if (slotEls.some((el) => !el) || !okBtn || !hintEl) return;
+
+    const selected = saved.slice();
+    const repaint = () => {
+      slotEls.forEach((slotEl, idx) => {
+        const stampId = selected[idx];
+        const opt = stampOptions.find((item) => item.id === stampId);
+        slotEl.innerHTML = opt ? `<img src="${opt.img}" alt="${opt.label}" style="${stampImgStyle}">` : "";
+      });
+      stampOptions.forEach((opt) => {
+        const btn = document.getElementById(`mainDeskStampButton_${opt.id}`);
+        if (!btn || opt.disabled) return;
+        btn.style.outline = selected.includes(opt.id) ? "3px solid #2f8cff" : "none";
+      });
+      hintEl.textContent = "";
+    };
+
+    stampOptions.forEach((opt) => {
+      const btn = document.getElementById(`mainDeskStampButton_${opt.id}`);
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        if (opt.disabled) {
+          playSE?.("se-error");
+          hintEl.textContent = "星の切手は品切れなようだ";
+          return;
+        }
+
+        if (selected.length < 2) {
+          selected.push(opt.id);
+        } else {
+          selected.shift();
+          selected.push(opt.id);
+        }
+        f.mainDeskStampSelection = selected.slice();
+        playSE?.("se-pi");
+        repaint();
+      });
+    });
+
+    okBtn.addEventListener("click", () => {
+      f.mainDeskStampSelection = selected.slice();
+      const answer = selected.slice().sort().join(",");
+      if (answer === ["sun", "triangle"].sort().join(",")) {
+        f.clearMainDeskStampPuzzle = true;
+        markProgress?.("clear_main_desk_stamp_puzzle");
+        playSE?.("se-clear");
+        removeItem("envelopeNostamp");
+        if (!hasItem("envelopeStamp")) {
+          gameState.inventory.push("envelopeStamp");
+          updateInventoryDisplay();
+        }
+        closeModal();
+        showModal("封筒に切手を貼った", `<img src="${IMAGES.items.envelopeStamp}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
+        updateMessage("封筒に切手を貼った。");
+        return;
+      }
+
+      playSE?.("se-error");
+      hintEl.textContent = "違うようだ";
+      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
+    });
+
+    repaint();
+  }, 0);
 }
 
 function showMainDeskSecondDrawerPuzzle() {
@@ -4685,88 +4999,81 @@ function openMainDeskThirdDrawer() {
   });
 }
 
-function showMainDeskThirdDrawerPuzzle() {
+function showMainDeskBoxPuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainDeskThirdDrawer) {
-    openMainDeskThirdDrawer();
+  if (f.unlockBox) {
+    acquireItemOnce("foundFan", "fanClosed", "箱の中に扇子がある", IMAGES.items.fanClosed, "扇子を手に入れた");
     return;
   }
 
-  const barButtonStyle = [
-    "width:min(19vw, 72px)",
-    "height:min(19vw, 72px)",
-    "min-width:52px",
-    "min-height:52px",
-    "border:2px solid #242424",
+  const letters = ["A", "C", "E", "H", "I", "L", "M", "N", "O", "S"];
+  const cellStyle = [
+    "width:min(18vw, 54px)",
+    "height:min(11vh, 48px)",
+    "min-width:44px",
+    "min-height:38px",
+    "border:2px solid #0b4d21",
     "border-radius:4px",
-    "background:#3f3f3f",
-    "display:flex",
-    "align-items:center",
-    "justify-content:flex-start",
-    "padding:8px",
+    "background:#01320E",
+    "color:#FFD84D",
+    "font-size:28px",
+    "font-weight:900",
+    "line-height:1",
+    "text-align:center",
     "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.06), 0 2px 5px rgba(0,0,0,0.24)",
+    "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.08), 0 2px 5px rgba(0,0,0,0.22)",
   ].join(";");
-  const barStyle = ["display:block", "width:25%", "height:8px", "border-radius:999px", "background:#fff", "pointer-events:none", "transition:width 150ms ease"].join(";");
   const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
-        ${[0, 1, 2, 3]
-          .map(
-            (idx) => `
-              <button id="mainDeskThirdDrawerBar${idx}" type="button" aria-label="${idx + 1}番目の棒" style="${barButtonStyle}">
-                <span style="${barStyle}"></span>
-              </button>
-            `,
-          )
-          .join("")}
+    <div style="margin-top:6px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+      <div style="display:flex; flex-direction:column; gap:5px; justify-content:center; align-items:center;">
+        ${[0, 1, 2, 3, 4].map((idx) => `<button id="mainDeskBoxLetter${idx}" class="notranslate" translate="no" lang="en" type="button" aria-label="${idx + 1}文字目" style="${cellStyle}">A</button>`).join("")}
       </div>
-      <button id="mainDeskThirdDrawerOk" class="ok-btn" type="button">OK</button>
-      <div id="mainDeskThirdDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+      <button id="mainDeskBoxOk" class="ok-btn" type="button">OK</button>
+      <div id="mainDeskBoxHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
   `;
 
-  showModal("三番目の引き出し", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("三番目の引き出しがロックされている。");
+  showModal("机上の箱", content, [{ text: "閉じる", action: "close" }]);
+  updateMessage("机上の箱がロックされている。");
 
   setTimeout(() => {
-    const saved = Array.isArray(f.mainDeskThirdDrawerBars) ? f.mainDeskThirdDrawerBars : [0, 0, 0, 0];
-    const state = [0, 1, 2, 3].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value <= 3 ? value : 0;
-    });
-    const barBtns = [0, 1, 2, 3].map((idx) => document.getElementById(`mainDeskThirdDrawerBar${idx}`));
-    const okBtn = document.getElementById("mainDeskThirdDrawerOk");
-    const hintEl = document.getElementById("mainDeskThirdDrawerHint");
-    if (barBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
+    const letterBtns = [0, 1, 2, 3, 4].map((idx) => document.getElementById(`mainDeskBoxLetter${idx}`));
+    const okBtn = document.getElementById("mainDeskBoxOk");
+    const hintEl = document.getElementById("mainDeskBoxHint");
+    if (letterBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
 
-    const repaint = () => {
-      barBtns.forEach((btn, idx) => {
-        const bar = btn.querySelector("span");
-        if (bar) bar.style.width = MAIN_DESK_THIRD_DRAWER_BAR_WIDTHS[state[idx]];
-        btn.setAttribute("aria-label", `${idx + 1}番目の棒、長さ${state[idx] + 1}`);
+    const saved = Array.isArray(f.mainDeskBoxLetters) ? f.mainDeskBoxLetters : [0, 0, 0, 0, 0];
+    const state = [0, 1, 2, 3, 4].map((idx) => {
+      const value = Number(saved[idx]);
+      return Number.isInteger(value) && value >= 0 && value < letters.length ? value : 0;
+    });
+    const render = () => {
+      letterBtns.forEach((btn, idx) => {
+        btn.textContent = letters[state[idx]];
       });
       hintEl.textContent = "";
     };
 
-    barBtns.forEach((btn, idx) => {
+    letterBtns.forEach((btn, idx) => {
       btn.addEventListener("click", () => {
-        state[idx] = (state[idx] + 1) % 4;
-        f.mainDeskThirdDrawerBars = state.slice();
+        state[idx] = (state[idx] + 1) % letters.length;
+        f.mainDeskBoxLetters = state.slice();
         playSE?.("se-pi");
-        repaint();
+        render();
       });
     });
+    render();
 
     okBtn.addEventListener("click", () => {
-      f.mainDeskThirdDrawerBars = state.slice();
-      if (state.every((value, idx) => value === MAIN_DESK_THIRD_DRAWER_ANSWER[idx])) {
-        f.unlockMainDeskThirdDrawer = true;
-        markProgress?.("unlock_main_desk_third_drawer");
+      f.mainDeskBoxLetters = state.slice();
+      const answer = state.map((letterIdx) => letters[letterIdx]).join("");
+      if (answer === "CLAIM") {
+        f.unlockBox = true;
+        markProgress?.("unlock_main_desk_box");
         playSE?.("se-gacha");
         closeModal();
         renderCanvasRoom?.();
-        updateMessage("三番目の引き出しのロックが外れた。");
+        updateMessage("机上の箱のロックが外れた。");
         return;
       }
 
@@ -4774,22 +5081,19 @@ function showMainDeskThirdDrawerPuzzle() {
       hintEl.textContent = "違うようだ";
       screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
     });
-
-    repaint();
   }, 0);
 }
 
-function openMainDeskBottomDrawer() {
+function openMainChestTopDrawer() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  const roomId = "mainDesk";
-  const areaDescription = "引き出し最下段";
+  const roomId = "mainChest";
+  const areaDescription = "引き出し一段目";
   const drawerColors = {
-    frontFill: "#99562C",
-    sideTop: "#7f4524",
-    sideBottom: "#63351b",
-    gripStyle: "recessed",
-    gripColor: "#5a321f",
-    gripWidthRatio: 0.16,
+    frontFill: "#A05A27",
+    sideTop: "#8d4c22",
+    sideBottom: "#6c3718",
+    gripStyle: "archedHandle",
+    gripColor: "#252326",
     soundId: "se-hikidashi",
   };
 
@@ -4802,97 +5106,146 @@ function openMainDeskBottomDrawer() {
     keepOpen: true,
     keepInputLocked: true,
     onDone: () => {
-      if (f.foundMainDeskBottomDrawerCleanser) {
+      if (f.foundMainChestTopDrawerEnvelopeNostamp) {
         updateMessage("もう何もない");
         setTimeout(closeDrawer, 350);
         return;
       }
 
-      acquireItemOnce("foundMainDeskBottomDrawerCleanser", "cleanser", "引き出しにクレンザーがある", IMAGES.items.cleanser, "クレンザーを手に入れた", closeDrawer);
+      acquireItemOnce("foundMainChestTopDrawerEnvelopeNostamp", "envelopeNostamp", "引き出しに封筒がある", IMAGES.items.envelopeNostamp, "切手のない封筒を手に入れた", closeDrawer);
     },
   });
 }
 
-function showMainDeskBottomDrawerPuzzle() {
+function openMainChestSecondDrawer() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainDeskBottomDrawer) {
-    openMainDeskBottomDrawer();
+  const roomId = "mainChest";
+  const areaDescription = "引き出し2段目";
+  const drawerColors = {
+    frontFill: "#A05A27",
+    sideTop: "#8d4c22",
+    sideBottom: "#6c3718",
+    gripStyle: "archedHandle",
+    gripColor: "#252326",
+    soundId: "se-hikidashi",
+  };
+
+  const closeDrawer = () => {
+    playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
+  };
+
+  playDeskDrawerOpenFx(roomId, areaDescription, {
+    ...drawerColors,
+    keepOpen: true,
+    keepInputLocked: true,
+    onDone: () => {
+      if (f.foundMainChestSecondDrawerHat) {
+        updateMessage("もう何もない");
+        setTimeout(closeDrawer, 350);
+        return;
+      }
+
+      acquireItemOnce("foundMainChestSecondDrawerHat", "hat", "引き出しに制帽がある", IMAGES.items.hat, "制帽を手に入れた", closeDrawer);
+    },
+  });
+}
+
+function openMainChestThirdDrawer() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  const roomId = "mainChest";
+  const areaDescription = "引き出し3段目";
+  const drawerColors = {
+    frontFill: "#A05A27",
+    sideTop: "#8d4c22",
+    sideBottom: "#6c3718",
+    gripStyle: "archedHandle",
+    gripColor: "#252326",
+    soundId: "se-hikidashi",
+  };
+
+  const closeDrawer = () => {
+    playDeskDrawerCloseFx(roomId, areaDescription, { soundId: drawerColors.soundId });
+  };
+
+  playDeskDrawerOpenFx(roomId, areaDescription, {
+    ...drawerColors,
+    keepOpen: true,
+    keepInputLocked: true,
+    onDone: () => {
+      if (f.foundMainChestThirdDrawerMagicalPotion) {
+        updateMessage("もう何もない");
+        setTimeout(closeDrawer, 350);
+        return;
+      }
+
+      acquireItemOnce("foundMainChestThirdDrawerMagicalPotion", "magicalPotion", "引き出しにマジカルポーションがある", IMAGES.items.magicalPotion, "マジカルポーションを手に入れた", closeDrawer);
+    },
+  });
+}
+
+function showMainChestTopDrawerPuzzle() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.unlockMainChestTopDrawer) {
+    openMainChestTopDrawer();
     return;
   }
 
-  const symbolStyle = [
-    "width:min(16vw, 68px)",
-    "height:min(16vw, 68px)",
-    "min-width:48px",
-    "min-height:48px",
-    "border:2px solid #777",
-    "border-radius:4px",
-    "background:#fff",
-    "color:#111",
-    "font-size:clamp(25px, 7vw, 36px)",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "padding:0",
-    "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.18)",
-  ].join(";");
+  const colors = ["#fff", "#FFF513", "#FF1329", "#B913FF", "#898989", "#13D5FF"];
+  const answer = ["#FFF513", "#FFF513", "#B913FF", "#13D5FF"];
+  const cellStyle = ["width:min(22vw, 78px)", "height:min(22vw, 78px)", "min-width:56px", "min-height:56px", "border:2px solid #5b4a3c", "border-radius:4px", "padding:0", "cursor:pointer", "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.28), 0 2px 5px rgba(0,0,0,0.2)"].join(";");
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
-        ${[0, 1, 2, 3, 4]
-          .map(
-            (idx) => `
-              <button id="mainDeskBottomDrawerSymbol${idx}" type="button" aria-label="${idx + 1}番目" style="${symbolStyle}">❤</button>
-            `,
-          )
-          .join("")}
+      <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 78px)); gap:10px; justify-content:center; align-items:center;">
+        ${[0, 1, 2, 3].map((idx) => `<button id="mainChestTopDrawerCell${idx}" type="button" aria-label="${idx + 1}番目の色" style="${cellStyle};"></button>`).join("")}
       </div>
-      <button id="mainDeskBottomDrawerOk" class="ok-btn" type="button">OK</button>
-      <div id="mainDeskBottomDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+      <button id="mainChestTopDrawerOk" class="ok-btn" type="button">OK</button>
+      <div id="mainChestTopDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
   `;
 
-  showModal("一番下の引き出し", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("一番下の引き出しがロックされている。");
+  showModal("一段目の引き出し", content, [{ text: "閉じる", action: "close" }]);
+  updateMessage("一段目の引き出しがロックされている。");
 
   setTimeout(() => {
-    const symbols = ["●", "❤"];
-    const saved = Array.isArray(f.mainDeskBottomDrawerSymbols) ? f.mainDeskBottomDrawerSymbols : [1, 1, 1, 1, 1];
-    const state = [0, 1, 2, 3, 4].map((idx) => (Number(saved[idx]) === 1 ? 1 : 0));
-    const symbolBtns = [0, 1, 2, 3, 4].map((idx) => document.getElementById(`mainDeskBottomDrawerSymbol${idx}`));
-    const okBtn = document.getElementById("mainDeskBottomDrawerOk");
-    const hintEl = document.getElementById("mainDeskBottomDrawerHint");
-    if (symbolBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
+    const cellBtns = [0, 1, 2, 3].map((idx) => document.getElementById(`mainChestTopDrawerCell${idx}`));
+    const okBtn = document.getElementById("mainChestTopDrawerOk");
+    const hintEl = document.getElementById("mainChestTopDrawerHint");
+    if (cellBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
 
+    const saved = Array.isArray(f.mainChestTopDrawerColors) ? f.mainChestTopDrawerColors : [0, 0, 0, 0];
+    const state = [0, 1, 2, 3].map((idx) => {
+      const value = Number(saved[idx]);
+      return Number.isInteger(value) && value >= 0 && value < colors.length ? value : 0;
+    });
     const repaint = () => {
-      symbolBtns.forEach((btn, idx) => {
-        btn.textContent = symbols[state[idx]];
-        btn.style.color = "#111";
+      cellBtns.forEach((btn, idx) => {
+        const color = colors[state[idx]];
+        btn.style.background = color;
+        btn.style.borderColor = color.toLowerCase() === "#fff" ? "#b8b8b8" : "#5b4a3c";
       });
       hintEl.textContent = "";
     };
 
-    symbolBtns.forEach((btn, idx) => {
+    cellBtns.forEach((btn, idx) => {
       btn.addEventListener("click", () => {
-        state[idx] = state[idx] === 0 ? 1 : 0;
-        f.mainDeskBottomDrawerSymbols = state.slice();
+        state[idx] = (state[idx] + 1) % colors.length;
+        f.mainChestTopDrawerColors = state.slice();
         playSE?.("se-pi");
         repaint();
       });
     });
+    repaint();
 
     okBtn.addEventListener("click", () => {
-      f.mainDeskBottomDrawerSymbols = state.slice();
-      if (state.join("") === "01001") {
-        f.unlockMainDeskBottomDrawer = true;
-        markProgress?.("unlock_main_desk_bottom_drawer");
+      f.mainChestTopDrawerColors = state.slice();
+      const selected = state.map((colorIdx) => colors[colorIdx]);
+      if (selected.every((color, idx) => color.toUpperCase() === answer[idx].toUpperCase())) {
+        f.unlockMainChestTopDrawer = true;
+        markProgress?.("unlock_main_chest_top_drawer");
         playSE?.("se-gacha");
         closeModal();
         renderCanvasRoom?.();
-        updateMessage("一番下の引き出しのロックが外れた。");
+        updateMessage("一段目の引き出しのロックが外れた。");
         return;
       }
 
@@ -4900,290 +5253,189 @@ function showMainDeskBottomDrawerPuzzle() {
       hintEl.textContent = "違うようだ";
       screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
     });
-
-    repaint();
   }, 0);
 }
 
-function showMainTvLeftDrawerPuzzle() {
+function showMainChestSecondDrawerPuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainTvLeftDrawer) {
-    acquireItemOnce("foundMainTvLeftDrawerBattery", "battery", "テレビ台の左の引き出しに電池がある", IMAGES.items.battery, "電池を手に入れた");
+  if (f.unlockMainChestSecondDrawer) {
+    openMainChestSecondDrawer();
     return;
   }
 
   const tileStyle = [
-    "width:min(25vw, 112px)",
-    "height:min(25vw, 112px)",
-    "min-width:72px",
-    "min-height:72px",
-    "border:2px solid #8a8a8a",
-    "border-radius:2px",
-    "background:#b8b8b8",
-    "color:#111",
-    "font-size:clamp(30px, 11vw, 52px)",
-    "font-weight:700",
+    "width:min(20vw, 68px)",
+    "height:min(20vw, 68px)",
+    "min-width:52px",
+    "min-height:52px",
+    "border:2px solid rgba(255,255,255,0.72)",
+    "border-radius:4px",
+    "color:#fff",
+    "font-size:30px",
+    "font-weight:900",
     "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "position:relative",
+    "text-align:center",
     "cursor:pointer",
-    "padding:0",
-    "box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35), 0 2px 5px rgba(0,0,0,0.18)",
+    "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.12), 0 2px 5px rgba(0,0,0,0.22)",
   ].join(";");
-  const countStyle = ["position:absolute", "right:6px", "bottom:5px", "min-width:1.4em", "height:1.4em", "border-radius:999px", "background:rgba(0,0,0,0.68)", "color:#fff", "font-size:clamp(12px, 3.5vw, 15px)", "font-weight:700", "line-height:1.4em", "text-align:center", "display:none"].join(";");
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:grid; grid-template-columns:repeat(3, minmax(72px, 112px)); gap:14px; justify-content:center;">
-        ${[0, 1, 2, 3, 4, 5]
-          .map(
-            (idx) => `
-              <button id="mainTvLeftDrawerTile${idx}" type="button" aria-label="${idx + 1}番" style="${tileStyle}">
-                <span>${idx + 1}</span>
-                <span id="mainTvLeftDrawerCount${idx}" style="${countStyle}">0</span>
-              </button>
-            `,
-          )
-          .join("")}
+      <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 68px)); grid-template-rows:repeat(3, minmax(0, 68px)); gap:8px; justify-content:center; align-items:center;">
+        <button id="mainChestSecondDrawerDigitTop" type="button" aria-label="上の数字" style="${tileStyle}; grid-column:2; grid-row:1; background:#EEAB48; color:#111;">1</button>
+        <button id="mainChestSecondDrawerDigitLeft" type="button" aria-label="左の数字" style="${tileStyle}; grid-column:1; grid-row:2; background:#01320E;">1</button>
+        <button id="mainChestSecondDrawerDigitRight" type="button" aria-label="右の数字" style="${tileStyle}; grid-column:3; grid-row:2; background:#01320E;">1</button>
+        <button id="mainChestSecondDrawerDigitBottom" type="button" aria-label="下の数字" style="${tileStyle}; grid-column:2; grid-row:3; background:#01320E;">1</button>
       </div>
-      <button id="mainTvLeftDrawerOk" class="ok-btn" type="button">OK</button>
-      <div id="mainTvLeftDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+      <button id="mainChestSecondDrawerOk" class="ok-btn" type="button">OK</button>
+      <div id="mainChestSecondDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
   `;
 
-  showModal("テレビ台の左の引き出し", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("テレビ台の左の引き出しがロックされている。");
+  showModal("二段目の引き出し", content, [{ text: "閉じる", action: "close" }]);
+  updateMessage("二段目の引き出しがロックされている。");
 
   setTimeout(() => {
-    const saved = Array.isArray(f.mainTvLeftDrawerDigits) ? f.mainTvLeftDrawerDigits : [0, 0, 0, 0, 0, 0];
-    const state = [0, 1, 2, 3, 4, 5].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value <= 9 ? value : 0;
-    });
-    const tileBtns = [0, 1, 2, 3, 4, 5].map((idx) => document.getElementById(`mainTvLeftDrawerTile${idx}`));
-    const countEls = [0, 1, 2, 3, 4, 5].map((idx) => document.getElementById(`mainTvLeftDrawerCount${idx}`));
-    const okBtn = document.getElementById("mainTvLeftDrawerOk");
-    const hintEl = document.getElementById("mainTvLeftDrawerHint");
-    if (tileBtns.some((btn) => !btn) || countEls.some((el) => !el) || !okBtn || !hintEl) return;
+    const positions = ["top", "right", "left", "bottom"];
+    const ids = {
+      top: "mainChestSecondDrawerDigitTop",
+      right: "mainChestSecondDrawerDigitRight",
+      left: "mainChestSecondDrawerDigitLeft",
+      bottom: "mainChestSecondDrawerDigitBottom",
+    };
+    const digitBtns = positions.map((pos) => document.getElementById(ids[pos]));
+    const okBtn = document.getElementById("mainChestSecondDrawerOk");
+    const hintEl = document.getElementById("mainChestSecondDrawerHint");
+    if (digitBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
 
-    const repaint = () => {
-      countEls.forEach((el, idx) => {
-        el.textContent = String(state[idx]);
-        el.style.display = state[idx] > 0 ? "block" : "none";
-      });
-      tileBtns.forEach((btn, idx) => {
-        btn.style.outline = state[idx] > 0 ? "3px solid #222" : "none";
-        btn.style.outlineOffset = "-5px";
+    const saved = f.mainChestSecondDrawerDigits && typeof f.mainChestSecondDrawerDigits === "object" ? f.mainChestSecondDrawerDigits : {};
+    const state = {
+      top: Number.isInteger(Number(saved.top)) && Number(saved.top) >= 1 && Number(saved.top) <= 5 ? Number(saved.top) : 1,
+      right: Number.isInteger(Number(saved.right)) && Number(saved.right) >= 1 && Number(saved.right) <= 5 ? Number(saved.right) : 1,
+      left: Number.isInteger(Number(saved.left)) && Number(saved.left) >= 1 && Number(saved.left) <= 5 ? Number(saved.left) : 1,
+      bottom: Number.isInteger(Number(saved.bottom)) && Number(saved.bottom) >= 1 && Number(saved.bottom) <= 5 ? Number(saved.bottom) : 1,
+    };
+    const saveState = () => {
+      f.mainChestSecondDrawerDigits = { top: state.top, right: state.right, left: state.left, bottom: state.bottom };
+    };
+    const render = () => {
+      positions.forEach((pos, idx) => {
+        digitBtns[idx].textContent = String(state[pos]);
       });
       hintEl.textContent = "";
     };
 
-    const pressTile = (idx) => {
-      state[idx] += 1;
-      f.mainTvLeftDrawerDigits = state.slice();
-      playSE?.("se-pi");
-      repaint();
-    };
-
-    tileBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => pressTile(idx));
+    positions.forEach((pos, idx) => {
+      digitBtns[idx].addEventListener("click", () => {
+        state[pos] = state[pos] >= 5 ? 1 : state[pos] + 1;
+        saveState();
+        playSE?.("se-pi");
+        render();
+      });
     });
+    render();
 
     okBtn.addEventListener("click", () => {
-      f.mainTvLeftDrawerDigits = state.slice();
-      const isCorrect = state.every((count, idx) => count === (idx === 1 || idx === 5 ? 3 : 0));
-      if (isCorrect) {
-        f.unlockMainTvLeftDrawer = true;
-        markProgress?.("unlock_main_tv_left_drawer");
+      saveState();
+      if (state.top === 2 && state.right === 3 && state.left === 4 && state.bottom === 2) {
+        f.unlockMainChestSecondDrawer = true;
+        markProgress?.("unlock_main_chest_second_drawer");
         playSE?.("se-gacha");
         closeModal();
         renderCanvasRoom?.();
-        updateMessage("テレビ台の左の引き出しのロックが外れた。");
+        updateMessage("二段目の引き出しのロックが外れた。");
         return;
       }
 
       playSE?.("se-error");
-      state.fill(0);
-      f.mainTvLeftDrawerDigits = state.slice();
-      repaint();
       hintEl.textContent = "違うようだ";
       screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
     });
-
-    repaint();
   }, 0);
 }
 
-function showMainTvRightDrawerPuzzle() {
+function showMainChestThirdDrawerPuzzle() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockMainTvRightDrawer) {
-    acquireItemOnce("foundMainTvRightDrawerMemoSafe", "memoSafe", "テレビ台の右の引き出しにメモがある", IMAGES.items.memoSafe, "メモを手に入れた");
+  if (f.unlockMainChestThirdDrawer) {
+    openMainChestThirdDrawer();
     return;
   }
 
   const squareStyle = [
-    "width:min(17vw, 66px)",
-    "height:min(17vw, 66px)",
-    "min-width:42px",
-    "min-height:42px",
+    "position:relative",
+    "width:min(22vw, 72px)",
+    "height:min(22vw, 72px)",
+    "min-width:56px",
+    "min-height:56px",
+    "border:2px solid #555",
     "border-radius:4px",
-    "border:2px solid #568da3",
-    "background:#c9f1ff",
-    "color:#12313d",
-    "font-size:clamp(24px, 8vw, 34px)",
-    "font-weight:800",
-    "padding:0",
+    "background:#fff",
+    "color:#111",
+    "font-size:30px",
+    "font-weight:900",
+    "text-align:center",
     "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.45), 0 2px 0 rgba(40,80,95,0.18)",
-  ].join("; ");
-
-  const content = `
-    <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
-        ${[0, 1, 2, 3]
-          .map(
-            (idx) => `
-              <button id="mainTvRightDrawerLetter${idx}" class="notranslate" translate="no" lang="en" type="button" aria-label="${idx + 1}文字目" style="${squareStyle}">A</button>
-            `,
-          )
-          .join("")}
-      </div>
-      <button id="mainTvRightDrawerOk" class="ok-btn" type="button">OK</button>
-      <div id="mainTvRightDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
-    </div>
-  `;
-
-  showModal("テレビ台の右の引き出し", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("テレビ台の右の引き出しがロックされている。");
-
-  setTimeout(() => {
-    const letters = ["A", "E", "G", "R", "S", "T", "V", "W"];
-    const saved = Array.isArray(f.mainTvRightDrawerLetters) ? f.mainTvRightDrawerLetters : [0, 0, 0, 0];
-    const state = [0, 1, 2, 3].map((idx) => {
-      const value = Number(saved[idx]);
-      return Number.isInteger(value) && value >= 0 && value < letters.length ? value : 0;
-    });
-    const letterBtns = [0, 1, 2, 3].map((idx) => document.getElementById(`mainTvRightDrawerLetter${idx}`));
-    const okBtn = document.getElementById("mainTvRightDrawerOk");
-    const hintEl = document.getElementById("mainTvRightDrawerHint");
-    if (letterBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
-
-    const repaint = () => {
-      letterBtns.forEach((btn, idx) => {
-        btn.textContent = letters[state[idx]];
-      });
-      hintEl.textContent = "";
-    };
-
-    letterBtns.forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        state[idx] = (state[idx] + 1) % letters.length;
-        f.mainTvRightDrawerLetters = state.slice();
-        playSE?.("se-pi");
-        repaint();
-      });
-    });
-
-    okBtn.addEventListener("click", () => {
-      f.mainTvRightDrawerLetters = state.slice();
-      const answer = state.map((index) => letters[index]).join("");
-      if (answer === "WAVE") {
-        f.unlockMainTvRightDrawer = true;
-        markProgress?.("unlock_main_tv_right_drawer");
-        playSE?.("se-gacha");
-        closeModal();
-        renderCanvasRoom?.();
-        updateMessage("テレビ台の右の引き出しのロックが外れた。");
-        return;
-      }
-
-      playSE?.("se-error");
-      hintEl.textContent = "違うようだ";
-      screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
-    });
-
-    repaint();
-  }, 0);
-}
-
-function showMainDoorBoxPuzzle() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockBox) {
-    updateMessage("箱は開いている。");
-    return;
-  }
-
-  const digitStyle = [
-    "width:min(24vw, 84px)",
-    "height:min(24vw, 84px)",
-    "max-width:84px",
-    "max-height:84px",
-    "border:2px solid #6e4f1f",
-    "border-radius:4px",
-    "background:#BA8B37",
-    "color:#3b1f0f",
-    "font-size:42px",
-    "font-weight:800",
-    "line-height:1",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "cursor:pointer",
-    "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.16), 0 2px 5px rgba(0,0,0,0.22)",
+    "box-shadow:0 2px 5px rgba(0,0,0,0.2)",
   ].join(";");
+  const cornerLineStyle = "position:absolute;display:block;background:#ffd84d;pointer-events:none;border-radius:999px;";
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <p style="margin:0; line-height:1.8; text-align:center;">箱がロックされている。</p>
-      <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 84px)); gap:10px; justify-content:center; align-items:center;">
-        <button id="mainDoorBoxDigit0" type="button" aria-label="左上の数字" style="${digitStyle};">0</button>
-        <button id="mainDoorBoxDigit1" type="button" aria-label="右上の数字" style="${digitStyle};">0</button>
-        <button id="mainDoorBoxDigit2" type="button" aria-label="左下の数字" style="${digitStyle};">0</button>
-        <button id="mainDoorBoxDigit3" type="button" aria-label="右下の数字" style="${digitStyle};">0</button>
+      <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
+        <button id="mainChestThirdDrawerDigit0" type="button" aria-label="1桁目" style="${squareStyle}">
+          <span style="${cornerLineStyle}left:-3px;top:-3px;width:30px;height:6px;"></span>
+          <span style="${cornerLineStyle}left:-3px;top:-3px;width:6px;height:30px;"></span>
+          <span id="mainChestThirdDrawerDigitText0">0</span>
+        </button>
+        <button id="mainChestThirdDrawerDigit1" type="button" aria-label="2桁目" style="${squareStyle}">
+          <span id="mainChestThirdDrawerDigitText1">0</span>
+        </button>
+        <button id="mainChestThirdDrawerDigit2" type="button" aria-label="3桁目" style="${squareStyle}">
+          <span id="mainChestThirdDrawerDigitText2">0</span>
+        </button>
       </div>
-      <button id="mainDoorBoxOk" class="ok-btn" type="button">OK</button>
-      <div id="mainDoorBoxHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
+      <button id="mainChestThirdDrawerOk" class="ok-btn" type="button">OK</button>
+      <div id="mainChestThirdDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
     </div>
   `;
 
-  showModal("閉じた箱", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("箱がロックされている。");
+  showModal("三段目の引き出し", content, [{ text: "閉じる", action: "close" }]);
+  updateMessage("三段目の引き出しがロックされている。");
 
   setTimeout(() => {
-    const digitBtns = [0, 1, 2, 3].map((i) => document.getElementById(`mainDoorBoxDigit${i}`));
-    const okBtn = document.getElementById("mainDoorBoxOk");
-    const hintEl = document.getElementById("mainDoorBoxHint");
-    if (digitBtns.some((btn) => !btn) || !okBtn || !hintEl) return;
+    const digitBtns = [0, 1, 2].map((idx) => document.getElementById(`mainChestThirdDrawerDigit${idx}`));
+    const digitTexts = [0, 1, 2].map((idx) => document.getElementById(`mainChestThirdDrawerDigitText${idx}`));
+    const okBtn = document.getElementById("mainChestThirdDrawerOk");
+    const hintEl = document.getElementById("mainChestThirdDrawerHint");
+    if (digitBtns.some((btn) => !btn) || digitTexts.some((el) => !el) || !okBtn || !hintEl) return;
 
-    const saved = Array.isArray(f.mainDoorBoxDigits) ? f.mainDoorBoxDigits : [0, 0, 0, 0];
-    const state = [0, 1, 2, 3].map((idx) => {
+    const saved = Array.isArray(f.mainChestThirdDrawerDigits) ? f.mainChestThirdDrawerDigits : [0, 0, 0];
+    const state = [0, 1, 2].map((idx) => {
       const value = Number(saved[idx]);
       return Number.isInteger(value) && value >= 0 && value <= 9 ? value : 0;
     });
-    const repaint = (idx) => {
-      digitBtns[idx].textContent = String(state[idx]);
+    const render = () => {
+      digitTexts.forEach((el, idx) => (el.textContent = String(state[idx])));
       hintEl.textContent = "";
     };
 
-    digitBtns.forEach((btn, i) => {
+    digitBtns.forEach((btn, idx) => {
       btn.addEventListener("click", () => {
-        state[i] = (state[i] + 1) % 10;
-        f.mainDoorBoxDigits = state.slice();
+        state[idx] = (state[idx] + 1) % 10;
+        f.mainChestThirdDrawerDigits = state.slice();
         playSE?.("se-pi");
-        repaint(i);
+        render();
       });
-      repaint(i);
     });
+    render();
 
     okBtn.addEventListener("click", () => {
-      f.mainDoorBoxDigits = state.slice();
-      if (state.join("") === "7264") {
-        f.unlockBox = true;
-        markProgress?.("unlock_main_door_box");
+      f.mainChestThirdDrawerDigits = state.slice();
+      if (state.join("") === "365") {
+        f.unlockMainChestThirdDrawer = true;
+        markProgress?.("unlock_main_chest_third_drawer");
         playSE?.("se-gacha");
         closeModal();
         renderCanvasRoom?.();
-        updateMessage("箱のロックが外れた。");
+        updateMessage("三段目の引き出しのロックが外れた。");
         return;
       }
 
@@ -5235,6 +5487,24 @@ function showObj(flagKey, title, imgSrc, msg, altImgSrc, msgEn) {
 
   showModal(title, content, buttons, null, { contentClass: "showobj-modal" });
   updateMessage(isEn ? msgEn || msg : msg);
+}
+
+function showMainDoorSignModal({ zoom = false } = {}) {
+  const src = zoom ? IMAGES.modals.signZoom : IMAGES.modals.sign;
+  const title = zoom ? "看板をよく見る" : "看板が置かれている";
+  const content = `<img src="${src}" class="showobj-image" alt="${title}">`;
+  const buttons = [];
+
+  if (!zoom) {
+    buttons.push({
+      text: "よく見る",
+      action: () => showMainDoorSignModal({ zoom: true }),
+    });
+  }
+
+  buttons.push({ text: "閉じる", action: "close" });
+  showModal(title, content, buttons, null, { contentClass: "showobj-modal" });
+  updateMessage(zoom ? "看板をよく見た" : "看板が置かれている。点字も併記されているようだ");
 }
 
 function showLighthouseModal() {
@@ -5595,20 +5865,20 @@ function getItemName(itemId) {
     bear: "クマ妖精",
     key: "カギ",
     match: "マッチ",
-    powerCode: "延長コード",
-    cleanser: "クレンザー",
-    burntFlypan: "焦げたフライパン",
-    mop: "掃除用のほこり取り",
-    stick: "箸",
-    fertilizer: "肥料",
-    jug: "水差し",
-    jugWater: "水の入った水差し",
-    teruteru: "てるてる坊主",
+    card: "魔法のカード（少し重さを感じる）",
+    bag: "魔法の配達かばん",
+    hat: "魔法の制帽",
+    paper: "穴が開いた紙切れ",
+    magicalPotion: "マジカルポーション",
+    manjuBox: "溶岩まんじゅうの箱",
+
     driver: "ドライバー",
 
-    raincoat: "レインコート",
-    sweet: "七夕ゼリー",
     memo: "メモ",
+    fanClosed: "扇子",
+    fanOpened: "開いた扇子",
+    envelopeNostamp: "切手が貼られていない封筒",
+    envelopeStamp: "切手が貼られた封筒",
   };
   return names[itemId] || itemId;
 }
@@ -5705,6 +5975,21 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
           closeModal();
           removeItem("milk");
           updateMessage("牛乳は持ち去られてしまった");
+        },
+      },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  if (itemId === "fanClosed") {
+    buttons = [
+      {
+        text: "開く",
+        action: () => {
+          removeItem("fanClosed");
+          addItem("fanOpened");
+          updateMessage("扇子を開いた");
+          closeModal();
         },
       },
       { text: "閉じる", action: "close" },
@@ -6444,12 +6729,14 @@ function deepMerge(target, source) {
 function showToast(text, ms = 2600) {
   const el = document.getElementById("toast");
   if (!el) return;
+  if (showToast.hideTimer) clearTimeout(showToast.hideTimer);
   el.textContent = text;
   el.style.opacity = "1";
   el.style.transform = "translateX(-50%) translateY(0)";
-  setTimeout(() => {
+  showToast.hideTimer = setTimeout(() => {
     el.style.opacity = "0";
     el.style.transform = "translateX(-50%) translateY(-8px)";
+    showToast.hideTimer = null;
   }, ms);
 }
 
