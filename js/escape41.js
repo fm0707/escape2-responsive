@@ -3935,9 +3935,7 @@ function pressBoardAdminButton(index) {
   }
 
   f.boardAdminButtonStep = 0;
-  playSE?.("se-error");
   renderCanvasRoom();
-  updateMessage("違うようだ");
 }
 
 function normalizeBoardDoorAnswer(value) {
@@ -4715,27 +4713,29 @@ function showMainChestSecondDrawerPuzzle() {
   }
 
   const tileStyle = [
-    "width:min(20vw, 68px)",
-    "height:min(20vw, 68px)",
-    "min-width:52px",
-    "min-height:52px",
+    "width:min(23vw, 84px)",
+    "height:min(23vw, 84px)",
+    "min-width:64px",
+    "min-height:64px",
     "border:2px solid rgba(255,255,255,0.72)",
     "border-radius:4px",
     "color:#fff",
-    "font-size:30px",
-    "font-weight:900",
-    "line-height:1",
-    "text-align:center",
+    "display:flex",
+    "flex-direction:column",
+    "align-items:center",
+    "justify-content:center",
+    "gap:5px",
+    "padding:10px",
     "cursor:pointer",
     "box-shadow:inset 0 0 0 2px rgba(255,255,255,0.12), 0 2px 5px rgba(0,0,0,0.22)",
   ].join(";");
   const content = `
     <div style="margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:14px;">
-      <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 68px)); grid-template-rows:repeat(3, minmax(0, 68px)); gap:8px; justify-content:center; align-items:center;">
-        <button id="mainChestSecondDrawerDigitTop" type="button" aria-label="上の数字" style="${tileStyle}; grid-column:2; grid-row:1; background:#EEAB48; color:#111;">1</button>
-        <button id="mainChestSecondDrawerDigitLeft" type="button" aria-label="左の数字" style="${tileStyle}; grid-column:1; grid-row:2; background:#01320E;">1</button>
-        <button id="mainChestSecondDrawerDigitRight" type="button" aria-label="右の数字" style="${tileStyle}; grid-column:3; grid-row:2; background:#01320E;">1</button>
-        <button id="mainChestSecondDrawerDigitBottom" type="button" aria-label="下の数字" style="${tileStyle}; grid-column:2; grid-row:3; background:#01320E;">1</button>
+      <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 84px)); grid-template-rows:repeat(3, minmax(0, 84px)); gap:10px; justify-content:center; align-items:center;">
+        <button id="mainChestSecondDrawerDigitTop" type="button" aria-label="上の線" style="${tileStyle}; grid-column:2; grid-row:1; background:#EEAB48; color:#111;"></button>
+        <button id="mainChestSecondDrawerDigitLeft" type="button" aria-label="左の線" style="${tileStyle}; grid-column:1; grid-row:2; background:#01320E;"></button>
+        <button id="mainChestSecondDrawerDigitRight" type="button" aria-label="右の線" style="${tileStyle}; grid-column:3; grid-row:2; background:#01320E;"></button>
+        <button id="mainChestSecondDrawerDigitBottom" type="button" aria-label="下の線" style="${tileStyle}; grid-column:2; grid-row:3; background:#01320E;"></button>
       </div>
       <button id="mainChestSecondDrawerOk" class="ok-btn" type="button">OK</button>
       <div id="mainChestSecondDrawerHint" style="min-height:1.2em; font-size:0.92em; text-align:center;"></div>
@@ -4768,9 +4768,12 @@ function showMainChestSecondDrawerPuzzle() {
     const saveState = () => {
       f.mainChestSecondDrawerDigits = { top: state.top, right: state.right, left: state.left, bottom: state.bottom };
     };
+    const buildLines = (count, color) =>
+      Array.from({ length: count }, () => `<span aria-hidden="true" style="display:block; width:78%; height:5px; border-radius:999px; background:${color}; box-shadow:0 1px 2px rgba(0,0,0,0.28);"></span>`).join("");
     const render = () => {
       positions.forEach((pos, idx) => {
-        digitBtns[idx].textContent = String(state[pos]);
+        const lineColor = pos === "top" ? "#111" : "#fff";
+        digitBtns[idx].innerHTML = buildLines(state[pos], lineColor);
       });
       hintEl.textContent = "";
     };
