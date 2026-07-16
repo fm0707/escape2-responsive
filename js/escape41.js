@@ -4123,6 +4123,7 @@ function handleMainAdminDoorWallSwitchClick() {
   }
 
   showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた");
+  playSE("se-kachi");
 }
 
 function showMainAdminDoorWallSwitchModal(title, afterClose) {
