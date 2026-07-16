@@ -80,7 +80,7 @@ const BASE_COMMON = USE_LOCAL_ASSETS ? "images" : "https://pub-40dbb77d211c4285a
 const I41 = (file) => `${BASE_41}/${file}`;
 const ICM = (file) => `${BASE_COMMON}/${file}`;
 const S41 = (file) => `${BASE_SOUND_41}/${file}`;
-const DEFAULT_BGM = S41("furukimachi_no_yugure.mp3");
+const DEFAULT_BGM = S41("amayadori.mp3");
 
 // ゲーム設定 - 画像パスをここで管理
 IMAGES = {
