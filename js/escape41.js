@@ -171,7 +171,8 @@ IMAGES = {
     deliver: I41("modal_deliver.webp"),
     kabuki: I41("modal_kabuki.webp"),
     hat: I41("modal_hat.webp"),
-
+    letterStamping: I41("modal_letter_stamping.webp"),
+    letterStamped: I41("modal_letter_stamped.webp"),
     badend: I41("badend.webp"),
   },
 };
@@ -4441,14 +4442,24 @@ function showMainDeskStampPuzzle() {
       if (answer === ["sun", "triangle"].sort().join(",")) {
         f.clearMainDeskStampPuzzle = true;
         markProgress?.("clear_main_desk_stamp_puzzle");
-        playSE?.("se-clear");
+        playSE?.("se-hanko");
         removeItem("envelopeNostamp");
         if (!hasItem("envelopeStamp")) {
           gameState.inventory.push("envelopeStamp");
           updateInventoryDisplay();
         }
         closeModal();
-        showModal("封筒に切手を貼った", `<img src="${IMAGES.items.envelopeStamp}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }]);
+        showModal(
+          "封筒に切手を貼った",
+          `
+            <div class="modal-anim frames" style="aspect-ratio:1 / 1;">
+              <img src="${IMAGES.items.envelopeStamp}" alt="">
+              <img src="${IMAGES.modals.letterStamping}" alt="">
+              <img src="${IMAGES.modals.letterStamped}" alt="">
+            </div>
+          `,
+          [{ text: "閉じる", action: "close" }],
+        );
         updateMessage("封筒に切手を貼った。");
         return;
       }
