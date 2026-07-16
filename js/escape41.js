@@ -4119,6 +4119,7 @@ function handleMainAdminDoorWallSwitchClick() {
   if (f.putCardOnSwitch && !f.openBlueShutter) {
     showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた", startBlueShutterOpenEvent);
     playSE("se-kachi");
+    if (document.getElementById("se-shutter-open")) playSE("se-shutter-open");
     return;
   }
 
@@ -4138,7 +4139,7 @@ function startBlueShutterOpenEvent() {
 
   f.openBlueShutter = true;
   f.deliveryRecordDropped = false;
-  if (document.getElementById("se-shutter-open")) playSE("se-shutter-open");
+
   renderCanvasRoom?.();
   playDeliveryRecordFallFx();
 }
