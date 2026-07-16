@@ -867,7 +867,7 @@ let rooms = {
         onClick: clickWrap(handleMainChestFloorSwitchClick),
         description: "床のスイッチ",
         zIndex: 5,
-        usable: () => true,
+        usable: () => !(gameState.main.flags.deliveryRecordDropped && !gameState.main.flags.putCardOnSwitch),
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -1346,7 +1346,7 @@ let rooms = {
         onClick: clickWrap(handleMainAdminDoorWallSwitchClick),
         description: "壁のスイッチ",
         zIndex: 5,
-        usable: () => true,
+        usable: () => !gameState.main.flags.deliveryRecordDropped,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
@@ -4101,7 +4101,7 @@ function handleMainChestFloorSwitchClick() {
   }
 
   if (gameState.selectedItem !== "card") {
-    showObj(null, "床のスイッチを踏んでみた", IMAGES.modals.pressSwitchFloor, "床のスイッチを踏んでみた");
+    showObj(null, "床のスイッチを踏んでみた", IMAGES.modals.pressSwitchFloor, "床のスイッチを踏んでみた。足を離すと元に戻った。");
     playSE("se-kachi");
     return;
   }
@@ -4173,7 +4173,7 @@ function playDeliveryRecordFallFx() {
     gameState.fx.lockInput = false;
     gameState.main.flags.deliveryRecordDropped = true;
     renderCanvasRoom?.();
-    updateMessage("配達記録が落ちてきた");
+    updateMessage("なにかが落ちてきた");
   };
 
   requestAnimationFrame(tick);
