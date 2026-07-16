@@ -177,6 +177,7 @@ IMAGES = {
     letterStamped: I41("modal_letter_stamped.webp"),
     pressSwitchFloor: I41("modal_press_switch_floor.webp"),
     pressSwitchWall: I41("modal_press_switch_wall.webp"),
+    bearCard: I41("modal_bear_card.webp"),
     badend: I41("badend.webp"),
   },
 };
@@ -1233,6 +1234,10 @@ let rooms = {
         width: 20.6,
         height: 20.6,
         onClick: clickWrap(function () {
+          if (gameState.selectedItem === "card") {
+            showObj(null, "「うわあー」", IMAGES.modals.bearCard, "「うわあー」");
+            return;
+          }
           if (gameState.selectedItem == "manjuBox") {
             updateMessage("「わあ、美味しそうー。ボクのおやつ？」");
             return;
