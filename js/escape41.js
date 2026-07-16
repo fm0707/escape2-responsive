@@ -160,7 +160,6 @@ IMAGES = {
     paperOnFailure: I41("modal_paper_on_failure.webp"),
     paperOnSuccess: I41("modal_paper_on_success.webp"),
     tankFill: I41("modal_tank_fill.webp"),
-    adminImage: I41("modal_admin_image.webp"),
     shelf: I41("modal_shelf.webp"),
     boxOpen1: I41("modal_box_open_1.webp"),
     boxOpen2: I41("modal_box_open_2.webp"),
@@ -170,6 +169,7 @@ IMAGES = {
     flyer: I41("modal_flyer.webp"),
     deliver: I41("modal_deliver.webp"),
     kabuki: I41("modal_kabuki.webp"),
+    hat: I41("modal_hat.webp"),
     badend: I41("badend.webp"),
   },
 };
@@ -237,7 +237,7 @@ function getDefaultGameState() {
         boardChestRewritten: false,
         boardAdminRewritten: false,
         boardDoorAnswers: {},
-        boardAdminLetters: [0, 0, 0, 0],
+        boardAdminButtonStep: 0,
         mainDoorCabinetInputs: [],
         mainDeskStampSelection: [],
         mainDeskBoxLetters: [0, 0, 0, 0, 0],
@@ -442,6 +442,11 @@ function tryShowLettersShineModal() {
 }
 
 function showSelectedShiwakeEnvelope() {
+  if (gameState.main.flags.lettersShineEventDone) {
+    updateMessage("封筒はもう確認できない");
+    return;
+  }
+
   const selected = getShiwakeState().flags.selectedEnvelope;
   if (!selected) {
     updateMessage("拡大する封筒を選んでください");
@@ -503,7 +508,7 @@ let rooms = {
         onClick: clickWrap(showSelectedShiwakeEnvelope),
         description: "虫眼鏡ボタン",
         zIndex: 6,
-        usable: () => true,
+        usable: () => !gameState.main.flags.lettersShineEventDone,
       },
       {
         x: () => getShiwakeOkArea().x,
@@ -617,17 +622,7 @@ let rooms = {
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
       },
-      {
-        x: 6.8,
-        y: 68.8,
-        width: 35.8,
-        height: 28.1,
-        onClick: clickWrap(showMainDoorSignModal),
-        description: "看板",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
+
       {
         x: 0,
         y: 50.6,
@@ -1417,26 +1412,16 @@ let rooms = {
         usable: () => true,
         item: { img: "wifi2Black", visible: () => true },
       },
-      ...[0, 1, 2, 3].map((idx) => ({
-        x: () => getBoardAdminLetterArea(idx).x,
-        y: () => getBoardAdminLetterArea(idx).y,
-        width: () => getBoardAdminLetterArea(idx).width,
-        height: () => getBoardAdminLetterArea(idx).height,
-        onClick: clickWrap(() => cycleBoardAdminLetter(idx)),
-        description: `管理制御盤 ${idx + 1}文字目`,
+      ...[0, 1, 2, 3, 4, 5].map((idx) => ({
+        x: () => getBoardAdminButtonArea(idx).x,
+        y: () => getBoardAdminButtonArea(idx).y,
+        width: () => getBoardAdminButtonArea(idx).width,
+        height: () => getBoardAdminButtonArea(idx).height,
+        onClick: clickWrap(() => pressBoardAdminButton(idx)),
+        description: `管理制御盤 ${idx + 1}番ボタン`,
         zIndex: 7,
         usable: () => !((gameState.main.flags || {}).boardAdminRewritten || (gameState.main.flags || {}).unlockAdminDoor),
       })),
-      {
-        x: () => getBoardAdminOkArea().x,
-        y: () => getBoardAdminOkArea().y,
-        width: () => getBoardAdminOkArea().width,
-        height: () => getBoardAdminOkArea().height,
-        onClick: clickWrap(checkBoardAdminAnswer),
-        description: "管理制御盤 OK",
-        zIndex: 7,
-        usable: () => !((gameState.main.flags || {}).boardAdminRewritten || (gameState.main.flags || {}).unlockAdminDoor),
-      },
     ],
   },
 
@@ -2046,13 +2031,15 @@ function drawShiwakePuzzle(ctx, canvas, roomId) {
     }
   }
 
+  const zoomDisabled = !!gameState.main.flags.lettersShineEventDone;
   const zoomRect = getAreaDrawRect(getShiwakeZoomArea(), canvas);
-  ctx.fillStyle = "#f7f2e8";
-  ctx.strokeStyle = "#4d3425";
+  ctx.fillStyle = zoomDisabled ? "#b8b1a8" : "#f7f2e8";
+  ctx.strokeStyle = zoomDisabled ? "#766f68" : "#4d3425";
   ctx.lineWidth = 3;
   roundRect(ctx, zoomRect.x, zoomRect.y, zoomRect.w, zoomRect.h, 7, true, true);
-  ctx.strokeStyle = "#3d281e";
+  ctx.strokeStyle = zoomDisabled ? "#6a645e" : "#3d281e";
   ctx.lineWidth = Math.max(3, canvas.width * 0.004);
+  if (zoomDisabled) ctx.globalAlpha = 0.45;
   ctx.beginPath();
   ctx.arc(zoomRect.x + zoomRect.w * 0.43, zoomRect.y + zoomRect.h * 0.42, Math.min(zoomRect.w, zoomRect.h) * 0.22, 0, Math.PI * 2);
   ctx.stroke();
@@ -2060,6 +2047,7 @@ function drawShiwakePuzzle(ctx, canvas, roomId) {
   ctx.moveTo(zoomRect.x + zoomRect.w * 0.58, zoomRect.y + zoomRect.h * 0.58);
   ctx.lineTo(zoomRect.x + zoomRect.w * 0.75, zoomRect.y + zoomRect.h * 0.75);
   ctx.stroke();
+  if (zoomDisabled) ctx.globalAlpha = 1;
 
   const okRect = getAreaDrawRect(getShiwakeOkArea(), canvas);
   ctx.fillStyle = state.flags.solved ? "#009E73" : "#f7f2e8";
@@ -2085,7 +2073,7 @@ const BOARD_DOOR_ROWS = [
 
 const BOARD_DOOR_BLANKS = {
   seasideAddress: { row: 2, col: "address", answer: "307", label: "ADDRESS" },
-  solisArea: { row: 4, col: "area", answer: "GOLDEN", label: "AREA" },
+  solisArea: { row: 4, col: "area", answer: "GOLDEN", displayAnswer: "GOLDEN AREA", label: "AREA" },
 };
 const BOARD_DOOR_AREA_OPTIONS = ["WATER", "GOLDEN", "MOON", "FIRE", "WOOD"];
 
@@ -2099,7 +2087,7 @@ function getBoardDoorDisplayRows() {
   const answers = getBoardDoorAnswersFlag();
   return BOARD_DOOR_ROWS.map((row) => ({ ...row })).map((row, idx) => {
     Object.entries(BOARD_DOOR_BLANKS).forEach(([key, blank]) => {
-      if (blank.row === idx && answers[key]) row[blank.col] = blank.answer;
+      if (blank.row === idx && answers[key]) row[blank.col] = blank.displayAnswer || blank.answer;
     });
     return row;
   });
@@ -2178,6 +2166,19 @@ function drawBoardDoor(ctx, canvas, roomId) {
     ctx.stroke();
   }
 
+  Object.keys(BOARD_DOOR_BLANKS).forEach((key) => {
+    if (!isBoardDoorBlankClickable(key)) return;
+    const area = getBoardDoorCellArea(key);
+    const rect = {
+      x: canvas.width * (area.x / 100),
+      y: canvas.height * (area.y / 100),
+      w: canvas.width * (area.width / 100),
+      h: canvas.height * (area.height / 100),
+    };
+    ctx.fillStyle = "rgba(255, 216, 77, 0.08)";
+    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+  });
+
   drawBoardDeskText(ctx, "ADDRESS", col1X, y + rowH / 2, fontSize, "#eef7e8", "left", 800);
   drawBoardDeskText(ctx, "AREA", col2X, y + rowH / 2, fontSize, "#eef7e8", "left", 800);
   drawBoardDeskText(ctx, "NAME", col3X, y + rowH / 2, fontSize, "#eef7e8", "left", 800);
@@ -2189,6 +2190,27 @@ function drawBoardDoor(ctx, canvas, roomId) {
     drawBoardDeskText(ctx, row.address, col1X, cy, fontSize, "#eef7e8", "left", 800);
     drawBoardDeskText(ctx, row.area, col2X, cy, fontSize, "#eef7e8", "left", 800);
     drawBoardDoorNameText(ctx, row.name, col3X, cy, fontSize, highlightNameSecondLetter);
+  });
+
+  Object.keys(BOARD_DOOR_BLANKS).forEach((key) => {
+    if (!isBoardDoorBlankClickable(key)) return;
+    const area = getBoardDoorCellArea(key);
+    const rect = {
+      x: canvas.width * (area.x / 100),
+      y: canvas.height * (area.y / 100),
+      w: canvas.width * (area.width / 100),
+      h: canvas.height * (area.height / 100),
+    };
+    const pad = Math.max(4, canvas.width * 0.006);
+    ctx.strokeStyle = "#ffd84d";
+    ctx.lineWidth = Math.max(2, canvas.width * 0.003);
+    ctx.strokeRect(rect.x + pad, rect.y + pad, rect.w - pad * 2, rect.h - pad * 2);
+    ctx.strokeStyle = "rgba(255, 216, 77, 0.85)";
+    ctx.lineWidth = Math.max(2, canvas.width * 0.0025);
+    ctx.beginPath();
+    ctx.moveTo(rect.x + pad * 2, rect.y + rect.h - pad * 1.7);
+    ctx.lineTo(rect.x + rect.w - pad * 2, rect.y + rect.h - pad * 1.7);
+    ctx.stroke();
   });
 
   ctx.strokeStyle = "#ffd84d";
@@ -2300,24 +2322,19 @@ function drawBoardDesk(ctx, canvas, roomId) {
   ctx.restore();
 }
 
-const BOARD_ADMIN_LETTERS = ["A", "B", "C", "E", "K", "P", "S", "T"];
+const BOARD_ADMIN_BUTTON_SEQUENCE = [5, 3, 0, 4];
 
-function getBoardAdminLetterArea(index) {
-  return { x: 22 + index * 14.5, y: 55, width: 12, height: 12 };
+function getBoardAdminButtonArea(index) {
+  const col = index % 2;
+  const row = Math.floor(index / 2);
+  return { x: 35 + col * 17, y: 28 + row * 17, width: 13, height: 13 };
 }
 
-function getBoardAdminOkArea() {
-  return { x: 44, y: 68.5, width: 12, height: 7.5 };
-}
-
-function getBoardAdminLetterState() {
+function getBoardAdminButtonStep() {
   const f = gameState.main.flags || (gameState.main.flags = {});
-  if (!Array.isArray(f.boardAdminLetters)) f.boardAdminLetters = [0, 0, 0, 0];
-  f.boardAdminLetters = [0, 1, 2, 3].map((idx) => {
-    const value = Number(f.boardAdminLetters[idx]);
-    return Number.isInteger(value) && value >= 0 && value < BOARD_ADMIN_LETTERS.length ? value : 0;
-  });
-  return f.boardAdminLetters;
+  const value = Number(f.boardAdminButtonStep);
+  f.boardAdminButtonStep = Number.isInteger(value) && value >= 0 && value <= BOARD_ADMIN_BUTTON_SEQUENCE.length ? value : 0;
+  return f.boardAdminButtonStep;
 }
 
 function drawBoardAdmin(ctx, canvas, roomId) {
@@ -2345,45 +2362,25 @@ function drawBoardAdmin(ctx, canvas, roomId) {
     return;
   }
 
-  const img = loadedImages[IMAGES.modals.adminImage];
-  if (img && img.complete && img.naturalWidth > 0) {
-    const maxW = canvas.width * 0.72;
-    const maxH = canvas.height * 0.38;
-    const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
-    const w = img.naturalWidth * scale;
-    const h = img.naturalHeight * scale;
-    ctx.drawImage(img, (canvas.width - w) / 2, canvas.height * 0.09, w, h);
-  }
-
-  const state = getBoardAdminLetterState();
-  const fontSize = Math.round(canvas.width * 0.045);
-  [0, 1, 2, 3].forEach((idx) => {
-    const area = getBoardAdminLetterArea(idx);
+  const step = getBoardAdminButtonStep();
+  [0, 1, 2, 3, 4, 5].forEach((idx) => {
+    const area = getBoardAdminButtonArea(idx);
     const rect = {
       x: canvas.width * (area.x / 100),
       y: canvas.height * (area.y / 100),
       w: canvas.width * (area.width / 100),
       h: canvas.height * (area.height / 100),
     };
+    const size = Math.min(rect.w, rect.h);
+    const x = rect.x + (rect.w - size) / 2;
+    const y = rect.y + (rect.h - size) / 2;
+    const pressedIndex = BOARD_ADMIN_BUTTON_SEQUENCE.slice(0, step).indexOf(idx);
     ctx.fillStyle = "#fff";
-    ctx.strokeStyle = "#555";
-    ctx.lineWidth = Math.max(2, canvas.width * 0.002);
-    roundRect(ctx, rect.x, rect.y, rect.w, rect.h, 4, true, true);
-    drawBoardDeskText(ctx, BOARD_ADMIN_LETTERS[state[idx]], rect.x + rect.w / 2, rect.y + rect.h / 2, fontSize, "#111", "center", 900);
+    ctx.strokeStyle = pressedIndex >= 0 ? "#1f4d35" : "#555";
+    ctx.lineWidth = Math.max(2, canvas.width * (pressedIndex >= 0 ? 0.004 : 0.002));
+    ctx.fillRect(x, y, size, size);
+    ctx.strokeRect(x, y, size, size);
   });
-
-  const okArea = getBoardAdminOkArea();
-  const okRect = {
-    x: canvas.width * (okArea.x / 100),
-    y: canvas.height * (okArea.y / 100),
-    w: canvas.width * (okArea.width / 100),
-    h: canvas.height * (okArea.height / 100),
-  };
-  ctx.fillStyle = "#1f4d35";
-  ctx.strokeStyle = "#163826";
-  ctx.lineWidth = Math.max(2, canvas.width * 0.002);
-  roundRect(ctx, okRect.x, okRect.y, okRect.w, okRect.h, 6, true, true);
-  drawBoardDeskText(ctx, "OK", okRect.x + okRect.w / 2, okRect.y + okRect.h / 2, Math.round(canvas.width * 0.026), "#fff", "center", 900);
 
   ctx.restore();
 }
@@ -3912,38 +3909,34 @@ function handleBoardAdminWifiClick() {
   updateMessage(f.boardAdminRewritten ? "カードの力で制御盤の画面が切り替わった" : "カードの力で制御盤の画面が元に戻った");
 }
 
-function cycleBoardAdminLetter(index) {
+function pressBoardAdminButton(index) {
+  const f = gameState.main.flags || (gameState.main.flags = {});
   if ((gameState.main.flags || {}).unlockAdminDoor) {
     updateMessage("ロックは解除されている");
     return;
   }
 
-  const state = getBoardAdminLetterState();
-  state[index] = (state[index] + 1) % BOARD_ADMIN_LETTERS.length;
-  playSE?.("se-pi");
-  renderCanvasRoom();
-}
+  const step = getBoardAdminButtonStep();
+  if (index === BOARD_ADMIN_BUTTON_SEQUENCE[step]) {
+    f.boardAdminButtonStep = step + 1;
+    if (f.boardAdminButtonStep >= BOARD_ADMIN_BUTTON_SEQUENCE.length) {
+      f.unlockAdminDoor = true;
+      f.boardAdminButtonStep = 0;
+      markProgress?.("unlock_admin_door");
+      playSE?.("se-gacha");
+      renderCanvasRoom();
+      updateMessage("近くのドアから音がした");
+      return;
+    }
 
-function checkBoardAdminAnswer() {
-  const f = gameState.main.flags || (gameState.main.flags = {});
-  if (f.unlockAdminDoor) {
-    updateMessage("ロックは解除されている");
-    return;
-  }
-
-  const answer = getBoardAdminLetterState()
-    .map((idx) => BOARD_ADMIN_LETTERS[idx])
-    .join("");
-  if (answer === "PACK") {
-    f.unlockAdminDoor = true;
-    markProgress?.("unlock_admin_door");
-    playSE?.("se-gacha");
+    playSE?.("se-pi");
     renderCanvasRoom();
-    updateMessage("近くのドアから音がした");
     return;
   }
 
+  f.boardAdminButtonStep = 0;
   playSE?.("se-error");
+  renderCanvasRoom();
   updateMessage("違うようだ");
 }
 
@@ -4947,196 +4940,6 @@ function showObj(flagKey, title, imgSrc, msg, altImgSrc, msgEn) {
   updateMessage(isEn ? msgEn || msg : msg);
 }
 
-function showMainDoorSignModal({ zoom = false } = {}) {
-  const src = zoom ? IMAGES.modals.signZoom : IMAGES.modals.sign;
-  const title = zoom ? "看板をよく見る" : "看板が置かれている";
-  const content = `<img src="${src}" class="showobj-image" alt="${title}">`;
-  const buttons = [];
-
-  if (!zoom) {
-    buttons.push({
-      text: "よく見る",
-      action: () => showMainDoorSignModal({ zoom: true }),
-    });
-  }
-
-  buttons.push({ text: "閉じる", action: "close" });
-  showModal(title, content, buttons, null, { contentClass: "showobj-modal" });
-  updateMessage(zoom ? "看板をよく見た" : "看板が置かれている。点字も併記されているようだ");
-}
-
-function showLighthouseModal() {
-  const content = `
-    <style>
-      #lighthouseModalView {
-        position: relative;
-        width: min(92vw, 560px);
-        margin: 0 auto 18px;
-        overflow: hidden;
-        border-radius: 4px;
-      }
-
-      #lighthouseModalView img {
-        display: block;
-        width: 100%;
-        height: auto;
-      }
-
-      #lighthouseModalView .lighthouse-glow,
-      #lighthouseModalView .lighthouse-beam {
-        position: absolute;
-        pointer-events: none;
-        opacity: 0;
-        animation: lighthousePulse 4s ease-in-out infinite;
-      }
-
-      #lighthouseModalView .lighthouse-glow {
-        left: 58.6%;
-        top: 16.5%;
-        width: 9.2%;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255, 255, 235, 0.98) 0%, rgba(255, 236, 132, 0.82) 34%, rgba(255, 230, 105, 0) 72%);
-        transform: translate(-50%, -50%);
-        filter: blur(1px);
-        mix-blend-mode: screen;
-      }
-
-      #lighthouseModalView .lighthouse-beam {
-        left: 0;
-        top: 11.5%;
-        width: 100%;
-        height: 13%;
-        background:
-          linear-gradient(90deg, rgba(255, 244, 170, 0) 0%, rgba(255, 244, 170, 0.16) 36%, rgba(255, 252, 220, 0.58) 58%, rgba(255, 244, 170, 0.16) 80%, rgba(255, 244, 170, 0) 100%);
-        filter: blur(5px);
-        mix-blend-mode: screen;
-      }
-
-      @keyframes lighthousePulse {
-        0%, 52%, 100% { opacity: 0; }
-        62%, 82% { opacity: 1; }
-      }
-    </style>
-    <div id="lighthouseModalView" aria-label="灯台">
-      <img src="${IMAGES.modals.lighthouse}" alt="灯台">
-      <div class="lighthouse-beam" aria-hidden="true"></div>
-      <div class="lighthouse-glow" aria-hidden="true"></div>
-    </div>
-  `;
-
-  showModal("灯台", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("灯台が見える。");
-}
-
-function buildTvGuideNewspaperContent(title, summary, dateText = "203X/6/1") {
-  const body = escapeHtml(summary).replace(/\n/g, "<br>");
-  return `
-    <div style="
-      width:min(88vw, 520px);
-      margin:0 auto 18px;
-      padding:18px 18px 20px;
-      color:#1f1b15;
-      background:#f3eddd;
-      border:2px solid #2b2720;
-      box-shadow:0 0 0 4px #d6ccb6 inset;
-      font-family:'Yu Mincho','Hiragino Mincho ProN','MS Mincho',serif;
-      text-align:left;
-      line-height:1.65;
-    ">
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:12px;
-        padding-bottom:6px;
-        margin-bottom:10px;
-        border-bottom:3px double #2b2720;
-        font-size:14px;
-        font-weight:bold;
-      ">
-        <span>${escapeHtml(dateText)} テレビ欄</span>
-        <span>10:00</span>
-      </div>
-      <div style="
-        display:grid;
-        grid-template-columns:64px 1fr;
-        gap:12px;
-        align-items:start;
-      ">
-        <div style="
-          padding:6px 4px;
-          border:1px solid #2b2720;
-          text-align:center;
-          font-size:24px;
-          font-weight:bold;
-          line-height:1.05;
-          background:rgba(255,255,255,0.32);
-        ">時<br>代<br>劇</div>
-        <div>
-          <div style="
-            margin-bottom:8px;
-            padding-bottom:6px;
-            border-bottom:1px solid #575044;
-            font-size:24px;
-            font-weight:bold;
-            letter-spacing:0;
-          ">${escapeHtml(title)}</div>
-          <div style="font-size:16px;">${body}</div>
-        </div>
-      </div>
-    </div>`;
-}
-
-function showTvGuideNewspaper() {
-  const title = "天命　第29回　交差する刃";
-  const summary = "それぞれが信じる正義のため、刃を向け合う三人。もはや言葉は届かない。戦乱の世が生んだ悲劇は、やがて国の行く末をも左右する大きなうねりとなっていく。";
-  const content = buildTvGuideNewspaperContent(title, summary);
-
-  showModal("新聞（テレビ欄）", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("新聞のテレビ欄に時代劇の紹介が載っている。");
-}
-
-function showCanInnerNewspaperClipping() {
-  const title = "天命　第30話「刃を休める日」";
-  const summary = `復讐だけを見据えて歩み続ける三ツ星紋の若者。
-旅の老人は茶を差し出しながら、
-「人は足元を見失うと転ぶものだ」
-と静かに語る。
-束の間の語らいの中で、若者は気づく。
-足元にこそ、見落としていた真実が隠れていることを――。`;
-  const content = buildTvGuideNewspaperContent(title, summary, "203X/6/2");
-
-  showModal("新聞の切り抜き", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("新聞の切り抜きに時代劇の紹介が載っている。");
-}
-
-function showRecordingNotice() {
-  const content = `
-    <div style="
-      width:min(84vw, 440px);
-      margin:0 auto 18px;
-      padding:22px 24px;
-      background:#ffe8ef;
-      color:#3a2430;
-      border:2px solid #d99aaa;
-      border-radius:6px;
-      box-shadow:0 0 0 4px rgba(255,255,255,0.55) inset;
-      text-align:left;
-      line-height:1.85;
-      font-size:16px;
-    ">
-      <div style="margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #d99aaa; font-size:22px; font-weight:bold; text-align:center;">録画時のお願い</div>
-      <div>
-        共用のビデオデッキを使うときは、<br>
-        他の方のテープに上書き録画しないようご注意ください。<br>
-        録画前に、ラベルをよく確認しましょう。
-      </div>
-    </div>`;
-
-  showModal("録画に関する注意", content, [{ text: "閉じる", action: "close" }]);
-  updateMessage("録画に関する注意書きがある。");
-}
 
 function escapeHtml(str) {
   if (typeof str !== "string") return str;
@@ -5447,6 +5250,23 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
           removeItem("fanClosed");
           addItem("fanOpened");
           updateMessage("扇子を開いた");
+          closeModal();
+        },
+      },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  if (itemId === "hat") {
+    buttons = [
+      {
+        text: "調べる",
+        action: () => {
+          window._nextModal = {
+            title: getItemName(itemId),
+            content: `<img src="${IMAGES.modals.hat}" style="max-width:380px;max-height:80vh;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
           closeModal();
         },
       },
