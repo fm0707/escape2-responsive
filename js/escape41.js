@@ -144,12 +144,14 @@ IMAGES = {
     cargoTag: I41("cargo_tag.webp"),
     manjuBox: I41("manju_box.webp"),
     map: I41("map.webp"),
+    shutterClose: I41("shutter_close.webp"),
+    shutterOpen: I41("shutter_open.webp"),
+    deliveryRecord: I41("modal_delivery_record.webp"),
 
     // key: I41("key.webp"),
     magicalPotion: I41("magical_potion.webp"),
   },
   modals: {
-    deliveryRecord: I41("modal_delivery_record.webp"),
     sign: I41("modal_sign.webp"),
     signZoom: I41("modal_sign_zoom.webp"),
     baggage1: I41("modal_baggage_1.webp"),
@@ -173,6 +175,8 @@ IMAGES = {
     hat: I41("modal_hat.webp"),
     letterStamping: I41("modal_letter_stamping.webp"),
     letterStamped: I41("modal_letter_stamped.webp"),
+    pressSwitchFloor: I41("modal_press_switch_floor.webp"),
+    pressSwitchWall: I41("modal_press_switch_wall.webp"),
     badend: I41("badend.webp"),
   },
 };
@@ -247,6 +251,9 @@ function getDefaultGameState() {
         mainChestTopDrawerColors: [0, 0, 0, 0],
         mainChestSecondDrawerDigits: { top: 1, right: 1, left: 1, bottom: 1 },
         mainChestThirdDrawerDigits: [0, 0, 0],
+        putCardOnSwitch: false,
+        openBlueShutter: false,
+        deliveryRecordDropped: false,
         transferPanel: {
           started: false,
           mode: "receive",
@@ -847,10 +854,47 @@ let rooms = {
         onClick: clickWrap(function () {
           acquireItemOnce("foundPaper", "paper", "紙が落ちている", IMAGES.items.paper, "穴が開いた紙を手に入れた");
         }),
-        description: "かばんを取った後に落ちている神",
+        description: "かばんを取った後に落ちている紙",
         zIndex: 5,
         usable: () => gameState.main.flags.foundBag && !gameState.main.flags.foundPaper,
         item: { img: "paper", visible: () => gameState.main.flags.foundBag && !gameState.main.flags.foundPaper },
+      },
+      {
+        x: 1.1,
+        y: 77.1,
+        width: 19.1,
+        height: 8.9,
+        onClick: clickWrap(handleMainChestFloorSwitchClick),
+        description: "床のスイッチ",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 4.1,
+        y: 78.8,
+        width: 12.5,
+        height: 2.5,
+        onClick: clickWrap(function () {}),
+        description: "床のスイッチ発光部分",
+        zIndex: 5,
+        usable: () => false,
+        glowWhen: () => gameState.main.flags.putCardOnSwitch,
+        glowColor: "80, 210, 255",
+        glowCheck: false,
+        pressedWhen: () => gameState.main.flags.putCardOnSwitch,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 7.5,
+        y: 77.3,
+        width: 5.7,
+        height: 6.2,
+        onClick: clickWrap(function () {}),
+        description: "床のスイッチの上に置かれたカード",
+        zIndex: 5,
+        usable: () => false,
+        item: { img: "card", visible: () => gameState.main.flags.putCardOnSwitch },
       },
       {
         x: 0,
@@ -1020,19 +1064,6 @@ let rooms = {
           showMainDeskBaggageModal(1);
         }),
         description: "置かれた荷物",
-        zIndex: 5,
-        usable: () => true,
-        item: { img: "IMAGE_KEY", visible: () => true },
-      },
-      {
-        x: 57.5,
-        y: 39.4,
-        width: 19.9,
-        height: 13.4,
-        onClick: clickWrap(function () {
-          showObj(null, "皮袋の中に配達記録がある", IMAGES.modals.deliveryRecord, "配達記録がある");
-        }),
-        description: "デスク上の袋",
         zIndex: 5,
         usable: () => true,
         item: { img: "IMAGE_KEY", visible: () => true },
@@ -1308,6 +1339,30 @@ let rooms = {
         item: { img: "IMAGE_KEY", visible: () => true },
       },
       {
+        x: 57.8,
+        y: 62.9,
+        width: 5.3,
+        height: 4.8,
+        onClick: clickWrap(handleMainAdminDoorWallSwitchClick),
+        description: "壁のスイッチ",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
+        x: 47.7,
+        y: 93.1,
+        width: 12.1,
+        height: 5.5,
+        onClick: clickWrap(function () {
+          showObj(null, "", IMAGES.items.deliveryRecord, "配達記録のようだ");
+        }),
+        description: "落ちてきた配達記録",
+        zIndex: 5,
+        usable: () => gameState.main.flags.deliveryRecordDropped,
+        item: { img: "deliveryRecord", visible: () => gameState.main.flags.deliveryRecordDropped },
+      },
+      {
         x: 41.3,
         y: 39.6,
         width: 15.8,
@@ -1376,6 +1431,28 @@ let rooms = {
         zIndex: 5,
         usable: () => true,
         item: { img: "map", visible: () => true },
+      },
+      {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        onClick: clickWrap(function () {}),
+        description: "天井の閉じた青いシャッター",
+        zIndex: 5,
+        usable: () => false,
+        item: { img: "shutterClose", visible: () => !gameState.main.flags.openBlueShutter },
+      },
+      {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        onClick: clickWrap(function () {}),
+        description: "天井の開いた青いシャッター",
+        zIndex: 5,
+        usable: () => false,
+        item: { img: "shutterOpen", visible: () => gameState.main.flags.openBlueShutter },
       },
       {
         x: 0,
@@ -1878,6 +1955,7 @@ function renderCanvasRoom() {
   drawMainDoorLetterStatusFlash(ctx, canvas, roomId);
   drawShiwakeEnvelopeSelection(ctx, canvas, roomId);
   drawClickableAreaGlows(ctx, canvas, roomId);
+  drawDeliveryRecordFallFx(ctx, canvas, roomId);
   drawDeskDrawerOpenFx(ctx, canvas, roomId);
 
   // ★ ここから重なり優先のhover枠線を描画
@@ -1979,6 +2057,11 @@ function drawClickableAreaGlows(ctx, canvas, roomId) {
     ctx.lineWidth = Math.max(1, Math.min(w, h) * 0.07);
     ctx.strokeRect(x + insetX, y + insetY, Math.max(1, w - insetX * 2), Math.max(1, h - insetY * 2));
 
+    const shouldPress = typeof area.pressedWhen === "function" ? area.pressedWhen() : !!area.pressedWhen;
+    if (shouldPress) {
+      drawPressedSwitchInset(ctx, x + insetX, y + insetY, Math.max(1, w - insetX * 2), Math.max(1, h - insetY * 2), color);
+    }
+
     if (area.glowCheck !== false) {
       const checkSize = Math.max(18, Math.min(58, Math.min(w * 0.9, h * 0.55)));
       ctx.shadowColor = "rgba(0, 225, 255, 1)";
@@ -1994,6 +2077,84 @@ function drawClickableAreaGlows(ctx, canvas, roomId) {
     }
     ctx.restore();
   });
+}
+
+function drawPressedSwitchInset(ctx, x, y, w, h, color) {
+  const lip = Math.max(1, h * 0.22);
+  const side = Math.max(1, w * 0.035);
+
+  ctx.save();
+  ctx.globalCompositeOperation = "source-over";
+  ctx.shadowBlur = 0;
+
+  const innerShade = ctx.createLinearGradient(x, y, x, y + h);
+  innerShade.addColorStop(0, "rgba(0, 0, 0, 0.54)");
+  innerShade.addColorStop(0.42, "rgba(0, 0, 0, 0.22)");
+  innerShade.addColorStop(1, "rgba(255, 255, 255, 0.08)");
+  ctx.fillStyle = innerShade;
+  ctx.fillRect(x, y, w, h);
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.46)";
+  ctx.fillRect(x, y, w, lip);
+  ctx.fillRect(x, y, side, h);
+
+  ctx.fillStyle = `rgba(${color}, 0.42)`;
+  ctx.fillRect(x + side, y + h - lip, Math.max(1, w - side * 2), lip);
+
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.64)";
+  ctx.lineWidth = Math.max(1, Math.min(w, h) * 0.08);
+  ctx.strokeRect(x, y, w, h);
+
+  ctx.restore();
+}
+
+function drawDeliveryRecordFallFx(ctx, canvas, roomId) {
+  const fx = gameState.fx?.deliveryRecordFall;
+  if (!fx || fx.roomId !== roomId) return;
+
+  const t = Math.max(0, Math.min(1, Number(fx.progress) || 0));
+  const ease = 1 - Math.pow(1 - t, 2.2);
+  const fade = t < 0.82 ? 1 : Math.max(0, 1 - (t - 0.82) / 0.18);
+  const baseX = canvas.width * 0.53;
+  const startY = canvas.height * 0.08;
+  const endY = canvas.height * 0.88;
+  const flutter = Math.sin(t * Math.PI * 9) * canvas.width * 0.035;
+  const x = baseX + flutter;
+  const y = startY + (endY - startY) * ease;
+  const angle = Math.sin(t * Math.PI * 7) * 0.42 + t * Math.PI * 0.85;
+  const paperW = canvas.width * 0.075;
+  const paperH = canvas.height * 0.035;
+
+  ctx.save();
+  ctx.globalAlpha = fade;
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.94)";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.28)";
+  ctx.shadowBlur = Math.max(4, canvas.width * 0.006);
+  ctx.fillRect(-paperW / 2, -paperH / 2, paperW, paperH);
+  ctx.strokeStyle = "rgba(190, 205, 220, 0.78)";
+  ctx.lineWidth = Math.max(1, canvas.width * 0.0015);
+  ctx.strokeRect(-paperW / 2, -paperH / 2, paperW, paperH);
+  ctx.restore();
+
+  const shardCount = 4;
+  for (let i = 0; i < shardCount; i++) {
+    const phase = t + i * 0.14;
+    const localT = Math.max(0, Math.min(1, phase));
+    const sx = baseX + (i - 1.5) * canvas.width * 0.035 + Math.sin(localT * Math.PI * (5 + i)) * canvas.width * 0.018;
+    const sy = startY + (endY - startY) * Math.pow(localT, 1.45) * (0.58 + i * 0.09);
+    const sw = paperW * (0.22 + i * 0.025);
+    const sh = paperH * 0.46;
+
+    ctx.save();
+    ctx.globalAlpha = fade * (0.52 - i * 0.06);
+    ctx.translate(sx, sy);
+    ctx.rotate(Math.sin(localT * Math.PI * 8 + i) * 0.55);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+    ctx.fillRect(-sw / 2, -sh / 2, sw, sh);
+    ctx.restore();
+  }
 }
 
 function drawShiwakePuzzle(ctx, canvas, roomId) {
@@ -3923,6 +4084,99 @@ function retrieveReturnShelfItem(itemId) {
   updateMessage(`${RETURN_SHELF_ITEMS[itemId]}を備品棚から取り戻した`);
 }
 
+function handleMainChestFloorSwitchClick() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+
+  if (f.putCardOnSwitch) {
+    if (gameState.inventory.length >= 14) {
+      updateMessage("アイテム欄がいっぱいだ。");
+      return;
+    }
+
+    f.putCardOnSwitch = false;
+    addItem("card");
+    renderCanvasRoom?.();
+    updateMessage("床のスイッチからカードを取り戻した");
+    return;
+  }
+
+  if (gameState.selectedItem !== "card") {
+    showObj(null, "床のスイッチを踏んでみた", IMAGES.modals.pressSwitchFloor, "床のスイッチを踏んでみた");
+    playSE("se-kachi");
+    return;
+  }
+
+  removeItem("card");
+  f.putCardOnSwitch = true;
+  playSE("se-kachi");
+  renderCanvasRoom?.();
+  updateMessage("カードを床のスイッチに置いた");
+}
+
+function handleMainAdminDoorWallSwitchClick() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+
+  if (f.putCardOnSwitch && !f.openBlueShutter) {
+    showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた", startBlueShutterOpenEvent);
+    playSE("se-kachi");
+    return;
+  }
+
+  showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた");
+}
+
+function showMainAdminDoorWallSwitchModal(title, afterClose) {
+  const content = `<img class="showobj-image" src="${IMAGES.modals.pressSwitchWall}">`;
+  showModal(title, content, [{ text: "閉じる", action: "close" }], afterClose, { contentClass: "showobj-modal" });
+  updateMessage(title);
+}
+
+function startBlueShutterOpenEvent() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.openBlueShutter) return;
+
+  f.openBlueShutter = true;
+  f.deliveryRecordDropped = false;
+  if (document.getElementById("se-shutter-open")) playSE("se-shutter-open");
+  renderCanvasRoom?.();
+  playDeliveryRecordFallFx();
+}
+
+function playDeliveryRecordFallFx() {
+  const fx = gameState.fx || (gameState.fx = {});
+  const id = Date.now();
+  fx.lockInput = true;
+  fx.deliveryRecordFall = {
+    id,
+    roomId: "mainAdminDoor",
+    progress: 0,
+  };
+
+  const duration = 1500;
+  const start = performance.now();
+  const tick = (now) => {
+    const currentFx = gameState.fx?.deliveryRecordFall;
+    if (!currentFx || currentFx.id !== id) return;
+
+    const t = Math.min(1, (now - start) / duration);
+    currentFx.progress = t;
+    renderCanvasRoom?.();
+
+    if (t < 1) {
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    delete gameState.fx.deliveryRecordFall;
+    gameState.fx.lockInput = false;
+    gameState.main.flags.deliveryRecordDropped = true;
+    renderCanvasRoom?.();
+    updateMessage("配達記録が落ちてきた");
+  };
+
+  requestAnimationFrame(tick);
+}
+
 function handleBoardAdminWifiClick() {
   const f = gameState.main.flags || (gameState.main.flags = {});
 
@@ -5167,15 +5421,12 @@ function getItemName(itemId) {
     bear: "クマ妖精",
     key: "カギ",
     match: "マッチ",
-    card: "魔法のカード（少し重さを感じる）",
+    card: "魔法のカード（ずっしりとした重さを感じる）",
     bag: "魔法の配達かばん",
     hat: "魔法の制帽",
     paper: "穴が開いた紙切れ",
     magicalPotion: "テラパワーエナジー",
     manjuBox: "溶岩まんじゅうの箱",
-
-    driver: "ドライバー",
-
     memo: "メモ",
     fanClosed: "扇子",
     fanOpened: "開いた扇子",
