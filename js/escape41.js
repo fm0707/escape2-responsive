@@ -1244,6 +1244,19 @@ let rooms = {
         item: { img: "cargoTag", visible: () => gameState.main.flags.bearAppear },
       },
       {
+        x: 1.2,
+        y: 33.4,
+        width: 19.3,
+        height: 7.1,
+        onClick: clickWrap(function () {
+          updateMessage("『新規配達員受入計画』というファイルだ");
+        }),
+        description: "棚のファイル",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "IMAGE_KEY", visible: () => true },
+      },
+      {
         x: 90,
         y: 90,
         width: 10,
