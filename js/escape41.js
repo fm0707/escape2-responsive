@@ -143,6 +143,7 @@ IMAGES = {
     insideShutter: I41("inside_shutter.webp"),
     cargoTag: I41("cargo_tag.webp"),
     manjuBox: I41("manju_box.webp"),
+    map: I41("map.webp"),
 
     // key: I41("key.webp"),
     magicalPotion: I41("magical_potion.webp"),
@@ -170,6 +171,7 @@ IMAGES = {
     deliver: I41("modal_deliver.webp"),
     kabuki: I41("modal_kabuki.webp"),
     hat: I41("modal_hat.webp"),
+
     badend: I41("badend.webp"),
   },
 };
@@ -1348,7 +1350,19 @@ let rooms = {
         usable: () => false,
         item: { img: "potionBack", visible: () => gameState.main.flags.chargeEnergy },
       },
-
+      {
+        x: 34.5,
+        y: 75.5,
+        width: 15.2,
+        height: 15.3,
+        onClick: clickWrap(function () {
+          showObj(null, "見取り図のようだ", IMAGES.items.map, "部屋の見取り図のようだ");
+        }),
+        description: "map",
+        zIndex: 5,
+        usable: () => true,
+        item: { img: "map", visible: () => true },
+      },
       {
         x: 0,
         y: 50.6,
