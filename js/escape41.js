@@ -1604,7 +1604,7 @@ let rooms = {
         width: 20.5,
         height: 24.3,
         onClick: clickWrap(function () {
-          updateMessage("もうすぐ着くね");
+          updateMessage("「もうすぐ着くね」");
         }),
         description: "宇宙のクマ妖精",
         zIndex: 5,
@@ -3692,6 +3692,7 @@ function getTransferPanelStatusLabel(status, mode = "receive") {
     "CARGO RECEIVED": "荷物受信 / CARGO RECEIVED",
     "CARGO READY": "荷物待機 / CARGO READY",
     "RECEIVE FAILED": "何も受信できなかった / RECEIVE FAILED",
+    "SEND FAILED": "送出失敗 / SEND FAILED",
     "ENERGY LOW": "エネルギー不足 / ENERGY LOW",
     "OVER WEIGHT": "負荷超過 / LOAD OVER",
     "TRANSFER COMPLETE": "転送完了 / TRANSFER COMPLETE",
@@ -3951,7 +3952,7 @@ function showTransferPanelModal() {
         return;
       }
       if (state.destination !== "3.65") {
-        state.status = "OVER WEIGHT";
+        state.status = "SEND FAILED";
         playSE?.("se-error");
         showToast("送出に失敗しました");
         screenShake?.(document.getElementById("modalContent"), 120, "fx-shake");
