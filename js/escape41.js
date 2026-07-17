@@ -1287,7 +1287,7 @@ let rooms = {
         width: 19.3,
         height: 7.1,
         onClick: clickWrap(function () {
-          updateMessage("『新規配達員受入計画』というファイルだ");
+          updateMessage("『人材調達および定着化計画書』というファイルが置かれている");
         }),
         description: "棚のファイル",
         zIndex: 5,
@@ -5473,95 +5473,6 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
   let content = `<img src="${itemBaseSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
   let buttons = [{ text: "閉じる", action: "close" }];
 
-  if (itemId === "message") {
-    buttons = [
-      {
-        text: "読む",
-        action: () => {
-          window._nextModal = {
-            title: "斥候のメッセージ",
-            content: `
-              <div style="max-width:420px; margin:0 auto; padding:24px 28px; background:#fff8dc; color:#2a2116; border:1px solid #d9c58d; box-shadow:inset 0 0 28px rgba(130,95,35,0.14), 0 6px 18px rgba(60,40,20,0.18); text-align:left; line-height:1.85;">
-                敵陣は鷲の刻に歩哨を交代した。砦から敵陣までは30分かかる
-              </div>
-            `,
-            buttons: [{ text: "閉じる", action: "close" }],
-          };
-          closeModal();
-        },
-      },
-      { text: "閉じる", action: "close" },
-    ];
-  }
-
-  if (itemId === "messageFortune") {
-    buttons = [
-      {
-        text: "読む",
-        action: () => {
-          window._nextModal = {
-            title: "占い師の紙",
-            content: `
-              <div style="max-width:420px; margin:0 auto; padding:24px 28px; background:#fff8dc; color:#2a2116; border:1px solid #d9c58d; box-shadow:inset 0 0 28px rgba(130,95,35,0.14), 0 6px 18px rgba(60,40,20,0.18); text-align:left; line-height:1.85;">
-                次の敵陣の交代時刻に敵を攻めよ。敵は3時間ごとに歩哨を交代する
-              </div>
-            `,
-            buttons: [{ text: "閉じる", action: "close" }],
-          };
-          closeModal();
-        },
-      },
-      { text: "閉じる", action: "close" },
-    ];
-  }
-
-  if (itemId === "glassWithWine" || itemId === "glassWithWater") {
-    const drinkName = itemId === "glassWithWine" ? "ワイン" : "水";
-    buttons = [
-      {
-        text: "飲む",
-        action: () => {
-          const f = gameState.main.flags || (gameState.main.flags = {});
-          if (itemId === "glassWithWine") {
-            f.glassWithWineDrinkCount = (Number(f.glassWithWineDrinkCount) || 0) + 1;
-          }
-          removeItem(itemId);
-          addItem("glass");
-          updateMessage(`${drinkName}を飲んだ。`);
-          const showBadEndAfterDrink = itemId === "glassWithWine" && f.glassWithWineDrinkCount >= 2;
-          closeModal();
-          if (itemId === "glassWithWine") {
-            showDrinkModal(IMAGES.modals.drinkWine, "ワインを飲む", showBadEndAfterDrink);
-          } else {
-            showDrinkModal(IMAGES.modals.drinkWater, "水を飲む");
-          }
-        },
-      },
-      { text: "閉じる", action: "close" },
-    ];
-  }
-
-  if (itemId === "milk" && gameState.currentRoom === "restaurant") {
-    buttons = [
-      {
-        text: "飲む",
-        action: () => {
-          window._nextModal = {
-            title: "「飲食物の持ち込みはご遠慮ください」",
-            content: `
-              <img src="${IMAGES.modals.restaurant}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">
-              「お預かりいたしますね」
-            `,
-            buttons: [{ text: "閉じる", action: "close" }],
-          };
-          closeModal();
-          removeItem("milk");
-          updateMessage("牛乳は持ち去られてしまった");
-        },
-      },
-      { text: "閉じる", action: "close" },
-    ];
-  }
 
   if (itemId === "fanClosed") {
     buttons = [
@@ -5593,73 +5504,6 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
       },
       { text: "閉じる", action: "close" },
     ];
-  }
-
-  if (hasEnVariant && itemId !== "sheet" && itemId !== "sheetComplete3") {
-    const zoomImgId = `invZoom_${Date.now()}_${typeof slotIndex === "number" ? slotIndex : "selected"}`;
-    let isEn = uiLang === "en";
-    content = `<img id="${zoomImgId}" src="${isEn ? itemEnSrc : itemBaseSrc}" style="max-width:380px;max-height:380px;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`;
-    buttons = [
-      {
-        text: "🌐 EN/JP",
-        action: () => {
-          const target = document.getElementById(zoomImgId);
-          if (!target) return;
-          uiLang = uiLang === "en" ? "jp" : "en";
-          isEn = uiLang === "en";
-          target.src = isEn ? itemEnSrc : itemBaseSrc;
-        },
-      },
-    ];
-    if (itemId === "interviewNote") {
-      buttons.push({
-        text: "裏を見る",
-        action: () => {
-          window._nextModal = {
-            title: "インタビューノート",
-            content: `<img src="${IMAGES.modals.interviewNoteBack}" style="max-width:380px;max-height:80vh;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">付箋が貼られている`,
-            buttons: [{ text: "閉じる", action: "close" }],
-          };
-          closeModal();
-        },
-      });
-    }
-
-    if (itemId === "fileFresh") {
-      buttons.push({
-        text: "中を読む",
-        action: () => {
-          window._nextModal = {
-            title: "新人研修ファイル",
-            content: `
-                    <div style="max-width:560px; margin:0 auto; padding:24px 26px; background:#fffdf2; color:#2b2116; border:1px solid #d8c99c; box-shadow:inset 0 0 24px rgba(120,90,40,0.12); text-align:left; line-height:1.75; font-size:0.96em; white-space:pre-line;">
-■ 木造（Wooden Structure）
-軽くてコストが安い、施工が早い
-断熱性が高く、住み心地が良い
-耐火性・耐久性は他構造より劣る
-シロアリ・湿気対策が重要
-
-■ 鉄骨造（Steel Structure）
-強度が高く、間取りの自由度が高い
-品質が安定しやすい（工場製作）
-木造より耐久性が高い
-断熱性・防音性はやや弱め
-
-■ 鉄筋コンクリート造（RC）
-耐火性・耐久性・遮音性が高い
-重量があり地震時の安定性が高い
-気密性が高く、断熱設計が重要
-コストが高く、工期が長い
-                    </div>
-                  `,
-            buttons: [{ text: "閉じる", action: "close" }],
-          };
-          closeModal();
-        },
-      });
-    }
-
-    buttons.push({ text: "閉じる", action: "close" });
   }
 
   showModal(getItemName(itemId), content, buttons);
