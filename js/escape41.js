@@ -385,7 +385,7 @@ function moveSelectedShiwakeEnvelope(slot) {
     return;
   }
   state.envelopes[selected] = slot;
-  updateMessage(`${selected.replace("envelope", "封筒")}を${slot}番の箱に入れた`);
+  updateMessage("封筒を箱に仕分けた");
   renderCanvasRoom();
 }
 
