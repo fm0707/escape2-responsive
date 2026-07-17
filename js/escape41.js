@@ -164,6 +164,7 @@ IMAGES = {
     paperOnSuccess: I41("modal_paper_on_success.webp"),
     tankFill: I41("modal_tank_fill.webp"),
     shelf: I41("modal_shelf.webp"),
+    boxOpenBefore: I41("modal_box_open_before.webp"),
     boxOpen1: I41("modal_box_open_1.webp"),
     boxOpen2: I41("modal_box_open_2.webp"),
     boxOpenf: I41("modal_box_open.webp"),
@@ -378,7 +379,7 @@ function moveSelectedShiwakeEnvelope(slot) {
   const selected = state.flags.selectedEnvelope;
   if (!selected) {
     if (state.flags.solved || gameState.main.flags.clearShiwake) {
-      updateMessage("仕分けは完了している");
+      updateMessage("箱に封筒が仕分けられている");
       return;
     }
     updateMessage("移動する封筒を選んでください");
@@ -4027,13 +4028,14 @@ function showReceivedCargoBoxModal() {
     {
       text: "開ける",
       action: () => {
-        playSE?.("se-piko");
+        if (document.getElementById("se-box-open")) playSE("se-box-open");
         f.bearAppear = true;
         f.receiveCargo = false;
         closeModal();
         renderCanvasRoom?.();
         const content = `
           <div class="modal-anim">
+            <img src="${IMAGES.modals.boxOpenBefore}" alt="箱を開ける前">
             <img src="${IMAGES.modals.boxOpen1}" alt="箱を開ける">
             <img src="${IMAGES.modals.boxOpen2}" alt="箱を開けた">
           </div>
@@ -4052,6 +4054,7 @@ function handleTransferBearFanOpenedUse() {
 
   if (f.transferBearFanOpenedCount >= 3) {
     playSE?.("se-gogogo");
+    pauseBGM();
     const content = `
       <img src="${IMAGES.modals.badend}" class="showobj-image" alt="クマの眼光">
       <p style="text-align:center; font-weight:800; line-height:1.8; margin-top:14px;">
@@ -4293,7 +4296,7 @@ function submitBoardAdminButtons() {
     markProgress?.("unlock_admin_door");
     playSE?.("se-gacha");
     renderCanvasRoom();
-    showModal("近くのドアから音がした", "<p>近くのドアから音がした</p>", [{ text: "閉じる", action: "close" }]);
+    showModal("近くのドアから音がした", "<p>ガチャ…</p>", [{ text: "閉じる", action: "close" }]);
     updateMessage("近くのドアから音がした");
     return;
   }
