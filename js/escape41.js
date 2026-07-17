@@ -167,7 +167,6 @@ IMAGES = {
     boxOpenBefore: I41("modal_box_open_before.webp"),
     boxOpen1: I41("modal_box_open_1.webp"),
     boxOpen2: I41("modal_box_open_2.webp"),
-    boxOpenf: I41("modal_box_open.webp"),
     bearUpset: I41("modal_bear_upset.webp"),
     bearGeton: I41("modal_bear_geton.webp"),
     flyer: I41("modal_flyer.webp"),
@@ -378,6 +377,10 @@ function moveSelectedShiwakeEnvelope(slot) {
   const state = getShiwakeState();
   const selected = state.flags.selectedEnvelope;
   if (!selected) {
+    if (gameState.main.flags.lettersShineEventDone) {
+      updateMessage("仕分け用の箱だ");
+      return true;
+    }
     if (state.flags.solved || gameState.main.flags.clearShiwake) {
       updateMessage("箱に封筒が仕分けられている");
       return;
