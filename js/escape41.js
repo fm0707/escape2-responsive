@@ -3969,7 +3969,7 @@ function startTransferTrueEndSequence() {
 }
 
 function showTransferCountdownModal() {
-  showModal("転送受付", `<div style="text-align:center; font-size:1.2em; font-weight:800; line-height:1.8;">転送を受け付けました。<br>カウントダウン。<br><span class="notranslate" translate="no" lang="en" style="font-size:1.5em; letter-spacing:0.08em;">5, 4, 3, 2, 1...</span></div>`, [
+  showModal("転送を受け付けました。", `<div style="text-align:center; font-size:1.2em; font-weight:800; line-height:1.8;">カウントダウン。<br><span class="notranslate" translate="no" lang="en" style="font-size:1.5em; letter-spacing:0.08em;">5, 4, 3, 2, 1...</span></div>`, [
     {
       text: "次へ",
       action: () => {
@@ -5534,8 +5534,8 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
         action: () => {
           removeItem("fanClosed");
           addItem("fanOpened");
-          updateMessage("扇子を開いた");
           closeModal();
+          showObj(null, "扇子を開いた", IMAGES.items.fanOpened, "扇子を開いた");
         },
       },
       { text: "閉じる", action: "close" },
