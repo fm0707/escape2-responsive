@@ -764,7 +764,7 @@ let rooms = {
         width: 13.2,
         height: 7.5,
         onClick: clickWrap(function () {
-          acquireItemOnce("foundCard", "card", "魔力を放つカードがある", IMAGES.items.card, "魔法のカードを手に入れた");
+          acquireItemOnce("foundCard", "card", "ずっしりと重く、魔力を放つカードがある", IMAGES.items.card, "魔法のカードを手に入れた");
         }),
         description: "壁の隠し収納",
         zIndex: 5,
@@ -3713,6 +3713,9 @@ function showTransferPanelModal() {
   const hasCargo = !!f.receiveCargo;
   const carrierItemsTooHeavy = hasItem("hat") || hasItem("bag") || hasItem("card");
   const weightOver = st.mode === "send" && (carrierItemsTooHeavy || (hasCargo && st.destination !== "3.65"));
+  if (st.status === "OVER WEIGHT" && !weightOver) {
+    st.status = st.mode === "send" ? `DEST ${st.destination}` : "PANEL READY";
+  }
   const weightValue = weightOver ? 126 : !hasCargo ? 28 : 72;
   const energyValue = energyOk ? 88 : 24;
   const disabledAttr = unlocked ? "" : " disabled";
