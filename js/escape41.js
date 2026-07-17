@@ -3986,9 +3986,9 @@ function showTransferBearBoardingModal() {
       <img src="${IMAGES.modals.bearUpset}" alt="慌てるクマ妖精">
       <img src="${IMAGES.modals.bearGeton}" alt="転送に乗り込むクマ妖精">
     </div>
-    <div style="text-align:center; font-size:1.15em; font-weight:800; margin-top:10px;">えー！待ってー</div>
+    <div style="text-align:center; font-size:1.15em; font-weight:800; margin-top:10px;">クマ妖精が飛びついてきた。</div>
   `;
-  showModal("転送開始", content, [
+  showModal("「えー！待ってー」", content, [
     {
       text: "次へ",
       action: () => {
@@ -4293,6 +4293,7 @@ function submitBoardAdminButtons() {
     markProgress?.("unlock_admin_door");
     playSE?.("se-gacha");
     renderCanvasRoom();
+    showModal("近くのドアから音がした", "<p>近くのドアから音がした</p>", [{ text: "閉じる", action: "close" }]);
     updateMessage("近くのドアから音がした");
     return;
   }
