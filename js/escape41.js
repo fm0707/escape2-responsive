@@ -176,7 +176,9 @@ IMAGES = {
     letterStamping: I41("modal_letter_stamping.webp"),
     letterStamped: I41("modal_letter_stamped.webp"),
     pressSwitchFloor: I41("modal_press_switch_floor.webp"),
+    pressSwitchFloorAfter: I41("modal_press_switch_floor_after.webp"),
     pressSwitchWall: I41("modal_press_switch_wall.webp"),
+    pressSwitchWallAfter: I41("modal_press_switch_wall_after.webp"),
     bearCard: I41("modal_bear_card.webp"),
     badend: I41("badend.webp"),
   },
@@ -4106,7 +4108,7 @@ function handleMainChestFloorSwitchClick() {
   }
 
   if (gameState.selectedItem !== "card") {
-    showObj(null, "床のスイッチを踏んでみた", IMAGES.modals.pressSwitchFloor, "床のスイッチを踏んでみた。足を離すと元に戻った。");
+    showMainChestFloorSwitchModal();
     playSE("se-kachi");
     return;
   }
@@ -4116,6 +4118,19 @@ function handleMainChestFloorSwitchClick() {
   playSE("se-kachi");
   renderCanvasRoom?.();
   updateMessage("カードを床のスイッチに置いた");
+}
+
+function showMainChestFloorSwitchModal() {
+  const title = "床のスイッチを踏んでみた";
+  const content = `
+    <div class="modal-anim">
+      <img src="${IMAGES.modals.pressSwitchFloor}" alt="">
+      <img src="${IMAGES.modals.pressSwitchFloorAfter}" alt="">
+    </div>
+  `;
+  const message = "床のスイッチを踏んでみた。足を離すと元に戻った。";
+  showModal(title, content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+  updateMessage(message);
 }
 
 function handleMainAdminDoorWallSwitchClick() {
@@ -4128,12 +4143,19 @@ function handleMainAdminDoorWallSwitchClick() {
     return;
   }
 
-  showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた。手を離すと元に戻った");
+  showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた。手を離すと元に戻った", null, true);
   playSE("se-kachi");
 }
 
-function showMainAdminDoorWallSwitchModal(title, afterClose) {
-  const content = `<img class="showobj-image" src="${IMAGES.modals.pressSwitchWall}">`;
+function showMainAdminDoorWallSwitchModal(title, afterClose, useAfterFrame = false) {
+  const content = useAfterFrame
+    ? `
+      <div class="modal-anim">
+        <img src="${IMAGES.modals.pressSwitchWall}" alt="">
+        <img src="${IMAGES.modals.pressSwitchWallAfter}" alt="">
+      </div>
+    `
+    : `<img class="showobj-image" src="${IMAGES.modals.pressSwitchWall}">`;
   showModal(title, content, [{ text: "閉じる", action: "close" }], afterClose, { contentClass: "showobj-modal" });
   updateMessage(title);
 }
