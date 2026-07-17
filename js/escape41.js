@@ -3877,7 +3877,11 @@ function showTransferPanelModal() {
 
       btn.addEventListener("pointerup", () => {
         clearLongPress();
-        if (longPressHandled) return;
+        if (longPressHandled) {
+          closeModal();
+          reopen();
+          return;
+        }
         moveDestination(delta);
       });
       btn.addEventListener("pointerleave", clearLongPress);
