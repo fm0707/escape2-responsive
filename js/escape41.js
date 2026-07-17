@@ -1534,6 +1534,16 @@ let rooms = {
         zIndex: 7,
         usable: () => !((gameState.main.flags || {}).boardAdminRewritten || (gameState.main.flags || {}).unlockAdminDoor),
       })),
+      {
+        x: () => getBoardAdminOkArea().x,
+        y: () => getBoardAdminOkArea().y,
+        width: () => getBoardAdminOkArea().width,
+        height: () => getBoardAdminOkArea().height,
+        onClick: clickWrap(submitBoardAdminButtons),
+        description: "管理制御盤 OKボタン",
+        zIndex: 7,
+        usable: () => !((gameState.main.flags || {}).boardAdminRewritten || (gameState.main.flags || {}).unlockAdminDoor),
+      },
     ],
   },
 
@@ -2526,6 +2536,10 @@ function getBoardAdminButtonArea(index) {
   return { x: 35 + col * 17, y: 28 + row * 17, width: 13, height: 13 };
 }
 
+function getBoardAdminOkArea() {
+  return { x: 63.5, y: 76.5, width: 13, height: 10 };
+}
+
 function getBoardAdminButtonStep() {
   const f = gameState.main.flags || (gameState.main.flags = {});
   const value = Number(f.boardAdminButtonStep);
@@ -2577,6 +2591,23 @@ function drawBoardAdmin(ctx, canvas, roomId) {
     ctx.fillRect(x, y, size, size);
     ctx.strokeRect(x, y, size, size);
   });
+
+  const okArea = getBoardAdminOkArea();
+  const okRect = {
+    x: canvas.width * (okArea.x / 100),
+    y: canvas.height * (okArea.y / 100),
+    w: canvas.width * (okArea.width / 100),
+    h: canvas.height * (okArea.height / 100),
+  };
+  ctx.fillStyle = "#fff";
+  ctx.strokeStyle = "#555";
+  ctx.lineWidth = Math.max(2, canvas.width * 0.0025);
+  roundRect(ctx, okRect.x, okRect.y, okRect.w, okRect.h, 5, true, true);
+  ctx.fillStyle = "#222";
+  ctx.font = `bold ${Math.round(canvas.height * 0.035)}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("OK", okRect.x + okRect.w / 2, okRect.y + okRect.h / 2);
 
   ctx.restore();
 }
@@ -4228,25 +4259,45 @@ function pressBoardAdminButton(index) {
   }
 
   const step = getBoardAdminButtonStep();
+  if (step >= BOARD_ADMIN_BUTTON_SEQUENCE.length) {
+    updateMessage("OKボタンで確認できそうだ");
+    return;
+  }
+
   if (index === BOARD_ADMIN_BUTTON_SEQUENCE[step]) {
     f.boardAdminButtonStep = step + 1;
-    if (f.boardAdminButtonStep >= BOARD_ADMIN_BUTTON_SEQUENCE.length) {
-      f.unlockAdminDoor = true;
-      f.boardAdminButtonStep = 0;
-      markProgress?.("unlock_admin_door");
-      playSE?.("se-gacha");
-      renderCanvasRoom();
-      updateMessage("近くのドアから音がした");
-      return;
+    if (f.boardAdminButtonStep < BOARD_ADMIN_BUTTON_SEQUENCE.length) {
+      // playSE?.("se-pi");
     }
-
-    playSE?.("se-pi");
     renderCanvasRoom();
     return;
   }
 
   f.boardAdminButtonStep = 0;
   renderCanvasRoom();
+}
+
+function submitBoardAdminButtons() {
+  const f = gameState.main.flags || (gameState.main.flags = {});
+  if (f.unlockAdminDoor) {
+    updateMessage("ロックは解除されている");
+    return;
+  }
+
+  if (getBoardAdminButtonStep() >= BOARD_ADMIN_BUTTON_SEQUENCE.length) {
+    f.unlockAdminDoor = true;
+    f.boardAdminButtonStep = 0;
+    markProgress?.("unlock_admin_door");
+    playSE?.("se-gacha");
+    renderCanvasRoom();
+    updateMessage("近くのドアから音がした");
+    return;
+  }
+
+  f.boardAdminButtonStep = 0;
+  playSE?.("se-error");
+  renderCanvasRoom();
+  updateMessage("違うようだ");
 }
 
 function normalizeBoardDoorAnswer(value) {
