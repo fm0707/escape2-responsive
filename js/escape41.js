@@ -4034,7 +4034,7 @@ function showReceivedCargoBoxModal() {
         closeModal();
         renderCanvasRoom?.();
         const content = `
-          <div class="modal-anim">
+          <div class="modal-anim frames" style="aspect-ratio:1 / 1;">
             <img src="${IMAGES.modals.boxOpenBefore}" alt="箱を開ける前">
             <img src="${IMAGES.modals.boxOpen1}" alt="箱を開ける">
             <img src="${IMAGES.modals.boxOpen2}" alt="箱を開けた">
