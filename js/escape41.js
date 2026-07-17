@@ -4799,8 +4799,7 @@ function showMainDeskStampPuzzle() {
         showModal(
           "封筒に切手を貼った",
           `
-            <div class="modal-anim frames" style="aspect-ratio:1 / 1;">
-              <img src="${IMAGES.items.envelopeStamp}" alt="">
+            <div class="modal-anim" style="aspect-ratio:1 / 1;">
               <img src="${IMAGES.modals.letterStamping}" alt="">
               <img src="${IMAGES.modals.letterStamped}" alt="">
             </div>
