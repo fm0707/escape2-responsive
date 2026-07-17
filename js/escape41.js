@@ -4128,7 +4128,7 @@ function handleMainAdminDoorWallSwitchClick() {
     return;
   }
 
-  showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた");
+  showMainAdminDoorWallSwitchModal("壁のスイッチを押してみた。手を離すと元に戻った");
   playSE("se-kachi");
 }
 
