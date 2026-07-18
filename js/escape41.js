@@ -3693,25 +3693,26 @@ function getTransferPanelState() {
 }
 
 function getTransferPanelStatusLabel(status, mode = "receive") {
+  const noTranslate = (text) => `<span class="notranslate" translate="no" lang="en">${escapeHtml(String(text))}</span>`;
   const labels = {
-    "RECEIVE READY": "受信待機 / RECEIVE READY",
-    "PANEL READY": "操作可能 / PANEL READY",
-    "SEND MODE": "送信モード / SEND MODE",
-    "RECEIVE MODE": "受信モード / RECEIVE MODE",
-    "CARGO RECEIVED": "荷物受信 / CARGO RECEIVED",
-    "CARGO READY": "荷物待機 / CARGO READY",
-    "RECEIVE FAILED": "何も受信できなかった / RECEIVE FAILED",
-    "SEND FAILED": "送出失敗 / SEND FAILED",
-    "ENERGY LOW": "エネルギー不足 / ENERGY LOW",
-    "OVER WEIGHT": "負荷超過 / LOAD OVER",
-    "TRANSFER COMPLETE": "転送完了 / TRANSFER COMPLETE",
+    "RECEIVE READY": `受信待機 / ${noTranslate("RECEIVE READY")}`,
+    "PANEL READY": `操作可能 / ${noTranslate("PANEL READY")}`,
+    "SEND MODE": `送信モード / ${noTranslate("SEND MODE")}`,
+    "RECEIVE MODE": `受信モード / ${noTranslate("RECEIVE MODE")}`,
+    "CARGO RECEIVED": `荷物受信 / ${noTranslate("CARGO RECEIVED")}`,
+    "CARGO READY": `荷物待機 / ${noTranslate("CARGO READY")}`,
+    "RECEIVE FAILED": `何も受信できなかった / ${noTranslate("RECEIVE FAILED")}`,
+    "SEND FAILED": `送出失敗 / ${noTranslate("SEND FAILED")}`,
+    "ENERGY LOW": `エネルギー不足 / ${noTranslate("ENERGY LOW")}`,
+    "OVER WEIGHT": `負荷超過 / ${noTranslate("LOAD OVER")}`,
+    "TRANSFER COMPLETE": `転送完了 / ${noTranslate("TRANSFER COMPLETE")}`,
   };
   if (labels[status]) return labels[status];
   if (String(status || "").startsWith("DEST ")) {
     const value = String(status).slice(5);
-    return mode === "send" ? `送信先 ${value} / DEST ${value}` : `受信元 ${value} / SOURCE ${value}`;
+    return mode === "send" ? `送信先 ${escapeHtml(value)} / ${noTranslate(`DEST ${value}`)}` : `受信元 ${escapeHtml(value)} / ${noTranslate(`SOURCE ${value}`)}`;
   }
-  return status || "受信待機 / RECEIVE READY";
+  return status ? noTranslate(status) : `受信待機 / ${noTranslate("RECEIVE READY")}`;
 }
 
 function showTransferPanelModal() {
@@ -3753,17 +3754,17 @@ function showTransferPanelModal() {
   ].join(";");
   const knobLeft = st.mode === "send" ? "calc(100% - 51px)" : "5px";
   const displayText = getTransferPanelStatusLabel(st.status || (unlocked ? "PANEL READY" : "RECEIVE READY"), st.mode);
-  const routeLabel = st.mode === "send" ? "送信先 / DEST" : "受信元 / SOURCE";
-  const meter = (id, value, over, ok) => {
+  const routeLabel = st.mode === "send" ? '送信先 / <span class="notranslate" translate="no" lang="en">DEST</span>' : '受信元 / <span class="notranslate" translate="no" lang="en">SOURCE</span>';
+  const meter = (jpLabel, enLabel, value, over, ok) => {
     const needleDeg = -132 + Math.min(1.15, Math.max(0, value / 100)) * 264;
     const accent = over ? "#ff334d" : ok ? "#38d274" : "#ffd25a";
     return `
       <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-        <div style="font-size:0.9em; font-weight:900; letter-spacing:0.04em; text-align:center;">${id}</div>
+        <div style="font-size:0.9em; font-weight:900; letter-spacing:0.04em; text-align:center;">${jpLabel} / <span class="notranslate" translate="no" lang="en">${enLabel}</span></div>
         <div style="position:relative; width:82px; height:82px; border-radius:50%; background:radial-gradient(circle at 45% 42%,#34454f 0,#162127 62%,#080c0f 100%); border:5px solid #c9d5dc; box-shadow:inset 0 0 10px rgba(0,0,0,0.7),0 2px 8px rgba(0,0,0,0.35);">
           <div style="position:absolute; left:50%; top:50%; width:4px; height:31px; background:${accent}; border-radius:4px; transform-origin:50% 92%; transform:translate(-50%,-92%) rotate(${needleDeg}deg); box-shadow:0 0 8px ${accent};"></div>
           <div style="position:absolute; left:50%; top:50%; width:12px; height:12px; border-radius:50%; background:#e8f0f3; transform:translate(-50%,-50%);"></div>
-          <div style="position:absolute; left:50%; bottom:9px; transform:translateX(-50%); font-size:11px; font-weight:900; color:${accent};">${over ? "超過/OVER" : ok ? "OK" : "低/LOW"}</div>
+          <div style="position:absolute; left:50%; bottom:9px; transform:translateX(-50%); font-size:11px; font-weight:900; color:${accent};">${over ? '超過/<span class="notranslate" translate="no" lang="en">OVER</span>' : ok ? '<span class="notranslate" translate="no" lang="en">OK</span>' : '低/<span class="notranslate" translate="no" lang="en">LOW</span>'}</div>
         </div>
       </div>`;
   };
@@ -3776,22 +3777,22 @@ function showTransferPanelModal() {
         }
       </style>
       <div style="display:flex; justify-content:center; gap:44px; font-size:1.02em; font-weight:900; letter-spacing:0.08em; margin-bottom:8px;">
-        <span style="color:${st.mode === "receive" ? "#8be8ff" : "#75858c"};">受信 / RECEIVE</span>
-        <span style="color:${st.mode === "send" ? "#8be8ff" : "#75858c"};">送信 / SEND</span>
+        <span style="color:${st.mode === "receive" ? "#8be8ff" : "#75858c"};">受信 / <span class="notranslate" translate="no" lang="en">RECEIVE</span></span>
+        <span style="color:${st.mode === "send" ? "#8be8ff" : "#75858c"};">送信 / <span class="notranslate" translate="no" lang="en">SEND</span></span>
       </div>
       <div style="display:flex; justify-content:center; margin-bottom:16px;">
         <button id="transferModeLever" type="button"${disabledAttr} style="${leverStyle}" aria-label="送受信モード切替">
-          <span>受信<br>RECEIVE</span><span>送信<br>SEND</span>
+          <span>受信<br><span class="notranslate" translate="no" lang="en">RECEIVE</span></span><span>送信<br><span class="notranslate" translate="no" lang="en">SEND</span></span>
           <span style="position:absolute; left:${knobLeft}; top:5px; width:46px; height:34px; border-radius:4px; background:linear-gradient(180deg,#e9f2f7,#8296a1); box-shadow:0 2px 6px rgba(0,0,0,0.45); transition:left 160ms ease;"></span>
         </button>
       </div>
       <div id="transferMagicDisplay" style="margin:0 auto 18px; width:min(82vw,380px); min-height:70px; border-radius:999px; background:radial-gradient(circle at 50% 45%,#1577d9 0,#073f83 62%,#041d3f 100%); color:#fff; display:flex; align-items:center; justify-content:center; text-align:center; padding:10px 22px; font-size:1.12em; font-weight:900; letter-spacing:0.02em; box-shadow:inset 0 0 22px rgba(255,255,255,0.34),0 0 18px rgba(64,165,255,0.55);">${displayText}</div>
       <div style="display:flex; justify-content:center; gap:min(12vw,84px); margin-bottom:18px;">
-        ${meter("負荷 / LOAD", weightValue, weightOver, hasCargo)}
-        ${meter("エネルギー / ENERGY", energyValue, false, energyOk)}
+        ${meter("負荷", "LOAD", weightValue, weightOver, hasCargo)}
+        ${meter("エネルギー", "ENERGY", energyValue, false, energyOk)}
       </div>
       <div style="display:flex; flex-direction:column; align-items:center; gap:5px; margin-bottom:18px;">
-        <div style="font-size:0.9em; font-weight:900; letter-spacing:0.04em; color:#cfe8ef;">${unlocked ? routeLabel : "受信元 / SOURCE"}</div>
+        <div style="font-size:0.9em; font-weight:900; letter-spacing:0.04em; color:#cfe8ef;">${unlocked ? routeLabel : '受信元 / <span class="notranslate" translate="no" lang="en">SOURCE</span>'}</div>
         <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
           <button id="transferDestPrev" type="button"${disabledAttr} style="${buttonBase}; width:42px; height:38px; font-size:20px; ${unlocked ? "" : inactiveButton}" aria-label="転送先を戻す">◀</button>
           <div style="min-width:120px; height:42px; display:flex; align-items:center; justify-content:center; border-radius:4px; background:#0a1519; border:1px solid #6c838f; color:#dff9ff; font-size:1.42em; font-weight:900; letter-spacing:0.08em;">
@@ -3801,16 +3802,16 @@ function showTransferPanelModal() {
         </div>
       </div>
       <div style="display:flex; flex-direction:column; gap:5px; margin:0 auto 14px; width:min(82vw,380px);">
-        <label for="transferMessageInput" style="font-size:0.9em; font-weight:900; letter-spacing:0.04em;">メッセージ / MESSAGE</label>
-        <input id="transferMessageInput" type="text" maxlength="80"${disabledAttr} value="${escapeHtml(st.message)}" placeholder="${unlocked ? "MESSAGE" : "入力不可 / LOCKED"}" style="width:100%; box-sizing:border-box; padding:9px 10px; border-radius:4px; border:1px solid #6c838f; background:${unlocked ? "#081217" : "#20282d"}; color:${unlocked ? "#dff9ff" : "#87949b"}; font-size:1em; font-weight:800;">
+        <label for="transferMessageInput" style="font-size:0.9em; font-weight:900; letter-spacing:0.04em;">メッセージ / <span class="notranslate" translate="no" lang="en">MESSAGE</span></label>
+        <input id="transferMessageInput" class="notranslate" translate="no" lang="en" type="text" maxlength="80"${disabledAttr} value="${escapeHtml(st.message)}" placeholder="${unlocked ? "MESSAGE" : "入力不可 / LOCKED"}" style="width:100%; box-sizing:border-box; padding:9px 10px; border-radius:4px; border:1px solid #6c838f; background:${unlocked ? "#081217" : "#20282d"}; color:${unlocked ? "#dff9ff" : "#87949b"}; font-size:1em; font-weight:800;">
       </div>
       <div style="display:flex; justify-content:center;">
-        <button id="transferExecute" class="ok-btn" type="button" style="min-width:190px; ${unlocked ? "" : "animation:transferButtonPulse 950ms ease-in-out infinite;"}">転送 / TRANSFER</button>
+        <button id="transferExecute" class="ok-btn" type="button" style="min-width:190px; ${unlocked ? "" : "animation:transferButtonPulse 950ms ease-in-out infinite;"}">転送 / <span class="notranslate" translate="no" lang="en">TRANSFER</span></button>
       </div>
     </div>
   `;
 
-  showModal("転送操作パネル / Transfer Panel", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
+  showModal('転送操作パネル / <span class="notranslate" translate="no" lang="en">Transfer Panel</span>', content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
 
   setTimeout(() => {
     const leverBtn = document.getElementById("transferModeLever");
@@ -3880,7 +3881,7 @@ function showTransferPanelModal() {
             const valueEl = document.getElementById("transferDestinationValue");
             const displayEl = document.getElementById("transferMagicDisplay");
             if (valueEl) valueEl.textContent = state.destination;
-            if (displayEl) displayEl.textContent = getTransferPanelStatusLabel(state.status, state.mode);
+            if (displayEl) displayEl.innerHTML = getTransferPanelStatusLabel(state.status, state.mode);
           }, LONG_PRESS_MS);
         }
       });
