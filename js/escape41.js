@@ -1877,6 +1877,10 @@ canvas.addEventListener("click", function (e) {
 function changeRoom(roomId) {
   const prevRoom = gameState.currentRoom;
 
+  if (roomId === "end" || roomId === "trueEnd") {
+    removeItemsOnEndingArrival(["paper"]);
+  }
+
   gameState.currentRoom = roomId;
   const room = rooms[roomId];
   const f = gameState.main.flags || (gameState.main.flags = {});
