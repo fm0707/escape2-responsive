@@ -180,6 +180,7 @@ IMAGES = {
     pressSwitchWall: I41("modal_press_switch_wall.webp"),
     pressSwitchWallAfter: I41("modal_press_switch_wall_after.webp"),
     bearCard: I41("modal_bear_card.webp"),
+    bearFan: I41("modal_bear_fan.webp"),
     badend: I41("badend.webp"),
   },
 };
@@ -1648,6 +1649,10 @@ let rooms = {
         width: 70.9,
         height: 51.9,
         onClick: clickWrap(function () {
+          if (gameState.selectedItem === "fanOpened") {
+            showObj(null, "「・・・」", IMAGES.modals.bearFan, "クマ妖精は、何かを空想しているようだ");
+            return;
+          }
           updateMessage("美味しいと良いね");
         }),
         description: "まんじゅうを食べるクマとプレイヤー",
