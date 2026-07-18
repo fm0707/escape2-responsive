@@ -4019,6 +4019,7 @@ function startTrueEndManjuBoxTransition() {
   flashScreen("black", 3200);
   setTimeout(() => {
     gameState.trueEnd.flags.backgroundState = 1;
+    changeBGM(S41("otenba_jenifer.mp3"));
     removeItem("manjuBox");
     renderCanvasRoom();
     updateMessage("いつの間にか涼しい和室に着いていた");
