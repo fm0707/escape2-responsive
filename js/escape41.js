@@ -4525,7 +4525,7 @@ function showEndingReport(endingId = "end") {
     trueEnd: {
       title: "🌎 TRUE END",
       label: "TRUE END",
-      desc: "何とか地球に帰れそうです、おめでとうございます！",
+      desc: "地球に帰還、おめでとうございます！",
     },
 
     end: {
