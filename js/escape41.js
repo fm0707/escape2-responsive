@@ -482,6 +482,7 @@ function checkShiwakeAnswer() {
     state.flags.solved = true;
     state.flags.selectedEnvelope = null;
     gameState.main.flags.clearShiwake = true;
+    markProgress?.("clear_shiwake");
     playSE?.("se-clear");
     showModal("仕分け完了", "<p>正しく仕分けできた。近くで物音がしたようだ</p>", [{ text: "閉じる", action: "close" }], tryShowLettersShineModal);
     updateMessage("正しく仕分けできた。近くで物音がしたようだ");
@@ -4018,6 +4019,7 @@ function startBlueShutterOpenEvent() {
 
   f.openBlueShutter = true;
   f.deliveryRecordDropped = false;
+  markProgress?.("open_blue_shutter");
 
   renderCanvasRoom?.();
   playDeliveryRecordFallFx();
