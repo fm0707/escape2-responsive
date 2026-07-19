@@ -495,7 +495,7 @@ function checkShiwakeAnswer() {
 // 部屋データ
 let rooms = {
   shiwake: {
-    name: "郵便仕分け室",
+    name: "郵便仕分け箱",
     description: "",
     clickableAreas: [
       ...SHIWAKE_BOXES.map((box) => ({
