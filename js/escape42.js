@@ -1007,7 +1007,16 @@ let rooms = {
     name: "トゥルーエンド",
     description: "クマ妖精と一緒に花火を楽しみます。脱出おめでとうございます。",
     clickableAreas: [
-
+      {
+        x: 37.3, y: 30.9, width: 31.0, height: 24.4,
+        onClick: clickWrap(function () {
+          updateMessage("「わーい」");
+        }),
+        description: '花火をするクマ妖精',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
       {
         x: 0,
         y: 0,
