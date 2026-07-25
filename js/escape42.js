@@ -1341,7 +1341,7 @@ function changeRoom(roomId) {
 
   // BGM切替はそのまま
   if (roomId === "trueEnd") {
-    changeBGM("I_Need_Only_You.mp3");
+    changeBGM(S42("I_Need_Only_You.mp3"));
   } else if (roomId === "end") {
     const endBgState = gameState.end?.flags?.backgroundState ?? 0;
     changeBGM(endBgState === 0 ? S42("Playing_in_the_river.mp3") : S42("Playing_in_the_river.mp3"));
