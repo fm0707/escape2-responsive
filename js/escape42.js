@@ -150,9 +150,6 @@ IMAGES = {
     bucket: I42("bucket.webp"),
     bucketWithWater: I42("bucket_with_water.webp"),
     stick: I42("stick.webp"),
-
-
-
     picPanelNotCompleted: I42("pic_panel_not_completed.webp"),
     picPanelCompleted: I42("pic_panel_completed.webp"),
   },
@@ -198,6 +195,7 @@ IMAGES = {
     memo: I42("modal_memo.webp"),
     hikidoHole: I42("modal_hikido_hole.webp"),
     hikidoHoleStick: I42("modal_hikido_hole_stick.webp"),
+    bearEating: I42("modal_bear_eating.webp"),
     // badend: I42("badend.webp"),
   },
 };
@@ -1064,7 +1062,7 @@ let rooms = {
       {
         x: 33.7, y: 34.6, width: 33.2, height: 25.5,
         onClick: clickWrap(function () {
-          updateMessage("「ひんやり美味しい！」");
+          showObj(null, "「ひんやり美味しい！」", IMAGES.modals.bearEating, "クマ妖精は満足しているようだ");
         }),
         description: 'アイスを食べるクマ妖精',
         zIndex: 5,
