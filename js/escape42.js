@@ -196,6 +196,7 @@ IMAGES = {
     hikidoHole: I42("modal_hikido_hole.webp"),
     hikidoHoleStick: I42("modal_hikido_hole_stick.webp"),
     bearEating: I42("modal_bear_eating.webp"),
+    bearHanabi: I42("modal_bear_hanabi.webp"),
     // badend: I42("badend.webp"),
   },
 };
@@ -1008,7 +1009,7 @@ let rooms = {
       {
         x: 37.3, y: 30.9, width: 31.0, height: 24.4,
         onClick: clickWrap(function () {
-          updateMessage("「わーい」");
+          showObj(null, "「ぶんぶん！」", IMAGES.modals.bearHanabi, "クマ妖精は花火を振り回して楽しんでいる");
         }),
         description: '花火をするクマ妖精',
         zIndex: 5,
