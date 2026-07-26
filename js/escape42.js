@@ -1031,7 +1031,7 @@ let rooms = {
     ],
   },
   modernEnd: {
-    name: "灼熱エンド",
+    name: "灼熱の現代エンド",
     description: "どこかに転移しました。脱出おめでとうございます！",
     clickableAreas: [
       {
