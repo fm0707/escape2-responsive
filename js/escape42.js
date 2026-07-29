@@ -3126,7 +3126,7 @@ function openLivingLeftTopDrawer() {
         setTimeout(closeDrawer, 350);
         return;
       }
-      acquireItemOnce("foundJellyRed", "jellyRed", "引き出しの中からカブトムシ用ゼリーが出てきた", IMAGES.items.jellyRed, "赤いゼリーを手に入れた。", closeDrawer);
+      acquireItemOnce("foundJellyRed", "jellyRed", "引き出しの中から昆虫用ゼリーが出てきた", IMAGES.items.jellyRed, "赤いゼリーを手に入れた。", closeDrawer);
     },
   });
 }
@@ -4626,10 +4626,10 @@ function showKitchenFridgePuzzle() {
     renderCanvasRoom?.();
     const content = `
       <img src="${IMAGES.modals.innerRefrigerator}" alt="冷蔵庫の中" style="width:400px;max-width:100%;max-height:65vh;object-fit:contain;display:block;margin:0 auto 18px;">
-      <p style="text-align:center; line-height:1.8;">冷蔵庫にカブトムシ用ゼリー（黄色）がある</p>
+      <p style="text-align:center; line-height:1.8;">冷蔵庫に昆虫用ゼリー（黄色）がある</p>
     `;
     showModal("冷蔵庫の中", content, [{ text: "閉じる", action: "close" }], null, { contentClass: "showobj-modal" });
-    updateMessage("カブトムシ用ゼリー（黄色）を手に入れた。");
+    updateMessage("昆虫用ゼリー（黄色）を手に入れた。");
     return;
   }
 
@@ -4741,7 +4741,7 @@ function showStorageFutonModal() {
     event.currentTarget.src = IMAGES.modals.futon2;
     event.currentTarget.alt = "めくった布団";
     event.currentTarget.style.cursor = "default";
-    updateMessage("布団の中からカブトムシ用ゼリー（白）を手に入れた。");
+    updateMessage("布団の中から昆虫用ゼリー（白）を手に入れた。");
     renderCanvasRoom?.();
   }, { once: true });
 }
@@ -5399,11 +5399,11 @@ function getItemName(itemId) {
     hammer: "ハンマー",
     horn: "クマ妖精のツノ",
     handheldFireworksSet: "手持ち花火セット",
-    jellyRed: "カブトムシ用ゼリー（赤）",
-    jellyYellow: "カブトムシ用ゼリー（黄色）",
-    jellyWhite: "カブトムシ用ゼリー（白）",
-    jellyBlue: "カブトムシ用ゼリー（青）",
-    frozenJellyBlue: "凍ったカブトムシ用ゼリー（青）",
+    jellyRed: "昆虫用ゼリー（赤）",
+    jellyYellow: "昆虫用ゼリー（黄色）",
+    jellyWhite: "昆虫用ゼリー（白）",
+    jellyBlue: "昆虫用ゼリー（青）",
+    frozenJellyBlue: "凍った昆虫用ゼリー（青）",
     part1: "パーツ1",
     part2: "パーツ2",
     part3: "パーツ3",
