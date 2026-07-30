@@ -1330,6 +1330,10 @@ function changeRoom(roomId) {
     livingLeftTopDrawerClicks = [];
   }
 
+  if (roomId === "end" || roomId === "trueEnd" || roomId === "modernEnd") {
+    removeItemsOnEndingArrival(["hammer"]);
+  }
+
   if (roomId === "end" || roomId === "trueEnd") {
     removeItemsOnEndingArrival(["paper"]);
   }
