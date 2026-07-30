@@ -198,6 +198,7 @@ IMAGES = {
     hikidoHoleStick: I42("modal_hikido_hole_stick.webp"),
     bearEating: I42("modal_bear_eating.webp"),
     bearHanabi: I42("modal_bear_hanabi.webp"),
+    drawer: I42("modal_drawer.webp"),
     // badend: I42("badend.webp"),
   },
 };
@@ -448,7 +449,7 @@ let rooms = {
   },
   livingRight: {
     name: "居間・右の棚",
-    description: "居間の右側にある棚だ。",
+    description: "",
     clickableAreas: [
       {
         x: 7.6, y: 5.7, width: 20.1, height: 24.6,
@@ -551,7 +552,7 @@ let rooms = {
   },
   livingLeft: {
     name: "居間・左の棚",
-    description: "居間の左側にある棚だ。",
+    description: "",
     clickableAreas: [
       {
         x: 47.1, y: 26.8, width: 19.8, height: 18.6,
@@ -671,7 +672,7 @@ let rooms = {
   },
   entrance: {
     name: "玄関",
-    description: "家の玄関だ。",
+    description: "靴箱がある",
     clickableAreas: [
       {
         x: 39.2, y: 9.5, width: 49.4, height: 68.9,
@@ -4825,7 +4826,7 @@ function showKitchenMiddleDrawerPuzzle() {
   }
 
   const content = `
-    <img src="${IMAGES.items.flowerSeal}" alt="花のシール" style="display:block;width:min(28vw,140px);height:auto;object-fit:contain;margin:0 auto 8px;">
+    <img src="${IMAGES.modals.drawer}" alt="引き出し" style="display:block;width:min(60vw,280px);height:auto;object-fit:contain;margin:0 auto 8px;">
     <div aria-hidden="true" style="margin:0 auto 8px;text-align:center;font-size:4rem;font-weight:900;line-height:1;">&lt;</div>
     <div style="display:grid;grid-template-columns:repeat(3,minmax(64px,96px));gap:12px;justify-content:center;align-items:center;margin:4px auto 14px;">
       ${[0, 1, 2]
