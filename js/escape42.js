@@ -1117,6 +1117,11 @@ function playModernEndCafeTransition(nextBackgroundState) {
 
   setTimeout(() => {
     gameState.modernEnd.flags.backgroundState = nextBackgroundState;
+    if (nextBackgroundState === 1) {
+      markProgress?.("arrive_cafe");
+    } else if (nextBackgroundState === 3) {
+      markProgress?.("arrive_cafe_with_kuma");
+    }
     if (nextBackgroundState === 1 || nextBackgroundState === 3) {
       if (hasItem("fukinWet")) removeItem("fukinWet");
       changeBGM(S42("remoncake_and_hachimitsukoucha.mp3"));
@@ -3109,6 +3114,7 @@ function handleLivingLeftTopDrawerClick(side) {
   if (!solved) return;
 
   livingLeftTopDrawerClicks = [];
+  markProgress?.("unlock_living_left_top_drawer");
   openLivingLeftTopDrawer();
 }
 
