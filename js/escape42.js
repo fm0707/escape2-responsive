@@ -145,6 +145,7 @@ IMAGES = {
     tvChannel3En: I42("tv_channel_3.webp"),
     tvChannel4En: I42("tv_channel_4_en.webp"),
     fukinInBasket: I42("fukin_in_basket.webp"),
+    fukinDartInBasket: I42("fukin_dart_in_basket.webp"),
     gate: I42("gate.webp"),
     handheldFireworksSet: I42("handheld_fireworks_set.webp"),
     bucket: I42("bucket.webp"),
@@ -826,6 +827,16 @@ let rooms = {
         zIndex: 5,
         usable: () => false,
         item: { img: 'fukinInBasket', visible: () => gameState.main.flags.fukinInBasket }
+      },
+      {
+        x: 0, y: 0, width: 100, height: 100,
+        onClick: clickWrap(function () {
+
+        }),
+        description: '洗濯籠に入った汚れたタオル',
+        zIndex: 5,
+        usable: () => false,
+        item: { img: 'fukinDartInBasket', visible: () => gameState.main.flags.fukinDirtInBasket }
       },
       {
         x: 0, y: 0, width: 100, height: 100,
@@ -3669,6 +3680,7 @@ function getDefaultGameState() {
         foundBirdSeal: false,
         foundFukin: false,
         fukinInBasket: false,
+        fukinDirtInBasket: false,
         cleanFlower: false,
         entranceDoorUnlocked: false,
         talkTo: { bear: 0, wizard: 0 },
@@ -4749,23 +4761,31 @@ function showStorageFutonModal() {
 function handleStorageLaundryBasketClick() {
   const flags = getMainFlags();
 
-  if (flags.fukinInBasket) {
+  if (flags.fukinInBasket || flags.fukinDirtInBasket) {
     if (gameState.inventory.length >= 14) {
       updateMessage("アイテム欄がいっぱいだ。どこかで減らしてこよう");
       return;
     }
 
+    const itemInBasket = flags.fukinDirtInBasket ? "fukinDirt" : "fukinWet";
     flags.fukinInBasket = false;
-    addItem("fukinWet");
-    updateMessage("洗濯籠から濡れたタオルを取り戻した。");
+    flags.fukinDirtInBasket = false;
+    addItem(itemInBasket);
+    updateMessage(itemInBasket === "fukinDirt"
+      ? "洗濯籠から汚れたタオルを取り戻した。"
+      : "洗濯籠から濡れたタオルを取り戻した。");
     renderCanvasRoom();
     return;
   }
 
-  if (gameState.selectedItem === "fukinWet") {
-    removeItem("fukinWet");
-    flags.fukinInBasket = true;
-    updateMessage("濡れたタオルを洗濯籠に入れた。");
+  if (gameState.selectedItem === "fukinWet" || gameState.selectedItem === "fukinDirt") {
+    const selectedFukin = gameState.selectedItem;
+    removeItem(selectedFukin);
+    flags.fukinInBasket = selectedFukin === "fukinWet";
+    flags.fukinDirtInBasket = selectedFukin === "fukinDirt";
+    updateMessage(selectedFukin === "fukinDirt"
+      ? "汚れたタオルを洗濯籠に入れた。"
+      : "濡れたタオルを洗濯籠に入れた。");
     renderCanvasRoom();
     return;
   }
