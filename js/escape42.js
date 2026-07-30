@@ -3846,6 +3846,7 @@ function handleLivingBearBeetleClick() {
 
   flags.foundHorn = true;
   addItem("horn");
+  markProgress?.("find_horn");
   removeItem("hammer");
   playSE?.("se-punch");
   showObj(null, "「あっ・・・」", IMAGES.modals.hornCut, "クマ妖精のツノを手に入れた。");
