@@ -171,6 +171,7 @@ IMAGES = {
     attackTv: I42("modal_attack_tv.webp"),
     attackTvWithHammer: I42("modal_attack_tv_with_hammer.webp"),
     calendar: I42("modal_calendar.webp"),
+    calendar2: I42("modal_calendar_2.webp"),
     innerRefrigerator: I42("modal_inner_refrigerator.webp"),
     innerFleezer: I42("modal_inner_fleezer.webp"),
     futon: I42("modal_futon.webp"),
@@ -685,7 +686,7 @@ let rooms = {
       {
         x: 17.0, y: 17.4, width: 14.4, height: 14.4,
         onClick: clickWrap(function () {
-          showObj(null, "カレンダーがかかっている", IMAGES.modals.calendar, "カレンダーを確認した");
+          showObj(null, "カレンダーがかかっている", IMAGES.modals.calendar2, "カレンダーを確認した");
         }),
         description: 'カレンダー',
         zIndex: 5,
