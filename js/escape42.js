@@ -4321,6 +4321,7 @@ function handleEntranceMainStorageClick() {
 
     removeItem("stick");
     flags.entranceMainStorageUnlocked = true;
+    markProgress?.("unlock_entrance_main_storage");
     playSE?.("se-kachi");
     showObj(
       null,
@@ -4972,6 +4973,7 @@ function showEntranceRightDrawerPuzzle() {
     }
 
     flags.entranceRightDrawerUnlocked = true;
+    markProgress?.("unlock_entrance_right_drawer");
     playSE?.("se-gacha");
     closeModal();
     updateMessage("右の引き出しをアンロックした！");
