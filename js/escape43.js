@@ -1320,6 +1320,28 @@ function handleMainDoorExit() {
   const flags = getMainFlags();
 
   if (flags.mainDoorUnlocked) {
+    if (gameState.fx?.ghostJelly) {
+      const message = "なぜかドアを開ける手に力が入らない・・・";
+      showModal(
+        "視線を感じる。",
+        `<p style="margin:0;text-align:center;font-weight:800;line-height:1.8;">${message}</p>`,
+        [{ text: "閉じる", action: "close" }],
+      );
+      updateMessage(message);
+      return;
+    }
+
+    if (hasItem("jelly")) {
+      const message = "ドアを開ける手に力が入らない・・・";
+      showModal(
+        "ひんやりとした冷気を感じる。",
+        `<p style="margin:0;text-align:center;font-weight:800;line-height:1.8;">${message}</p>`,
+        [{ text: "閉じる", action: "close" }],
+      );
+      updateMessage(message);
+      return;
+    }
+
     travelWithSteps(flags.ghostTookJelly ? "trueEnd" : "end");
     return;
   }
@@ -1481,12 +1503,11 @@ function showOldNikumanBadEnd() {
       <img src="${IMAGES.modals.badend}" alt="ぶち模様の肉まんを召喚">
     </div>
     <p style="text-align:center;font-weight:800;line-height:1.8;margin-top:14px;">
-      「恐ろしい顔の肉まんが飛び出してきた…！」<br>
       あなたは気が遠くなり意識を失った。
     </p>
   `;
   showModal(
-    "【BAD END】古びた肉まんの悪夢",
+    "【BAD END】古びた肉まんの悪夢<br>恐ろしい顔の肉まんが飛び出してきた…！",
     content,
     [{ text: "最初から", action: "restart" }],
     null,
@@ -4667,7 +4688,7 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
     ];
   }
 
-  if (itemId === "nikuman") {
+  if (itemId === "nikuman" && getMainFlags().bearDeparted) {
     buttons = [
       {
         text: "食べる",
