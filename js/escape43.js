@@ -4040,11 +4040,10 @@ function showEndingReport(endingId = "end") {
     },
   ]);
 }
-
 // クリアログ生成（既存のがあればそのまま流用でOK）
 // アンケート
 function openFeedbackForm(endingId) {
-  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeOmF5kBiDKwJVQ9XHnf54XKRWnDhYPQh4eA6_xehDvoH6YXA/viewform";
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfytm8hSJ9w6YYj14YKvI_6DnYnrsIFIpcPOiV6GeAYqtMaHA/viewform";
   const endingLabel =
     {
       trueEnd: "トゥルーエンド",
