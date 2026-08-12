@@ -735,7 +735,7 @@ let rooms = {
       {
         x: 32.7, y: 34.9, width: 42.1, height: 43.5,
         onClick: clickWrap(function () {
-          updateMessage("クマ妖精は、肉まんをかじられてしまった");
+          updateMessage("クマ妖精に、肉まんをかじられてしまった");
 
         }),
         description: '人の肉まんをかじるクマ妖精',
