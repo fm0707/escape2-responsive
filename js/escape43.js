@@ -185,7 +185,7 @@ IMAGES = {
     machineInner: I43("modal_machine_inner.webp"),
     oldNikumanInto: I43("modal_old_nikuman_into.webp"),
     nikumanInto: I43("modal_nikuman_into.webp"),
-    jellyInto: I43("modal_jelly_into.webp"),
+    jellyInto: I43("modal_jelly_into2.webp"),
     badendBefore: I43("badend_before.webp"),
     badend: I43("badend.webp"),
     bearNikuman1: I43("modal_bear_nikuman_1.webp"),
