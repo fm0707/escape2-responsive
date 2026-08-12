@@ -128,7 +128,7 @@ IMAGES = {
     watageSet: I43("watage_set.webp"),
     watageBlown: I43("watage_blown.webp"),
 
-    uchiwa: I43("uchiwa2.webp"),
+    uchiwa: I43("uchiwa3.webp"),
     gomi: I43("gomi.webp"),
     dollBear: I43("doll_bear.webp"),
     door: I43("door.webp"),
