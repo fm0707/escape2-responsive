@@ -3879,7 +3879,7 @@ function showEndingReport(endingId = "end") {
     trueEnd: {
       title: "👋🌕 TRUE END",
       label: "TRUE END",
-      desc: "ハウスに居たおばけも成仏しました。おめでとうございます！",
+      desc: "ハウスにいたおばけも、ゼリーに満足したことでしょう。おめでとうございます！",
     },
 
     end: {
