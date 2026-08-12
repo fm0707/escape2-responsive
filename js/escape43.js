@@ -87,7 +87,6 @@ IMAGES = {
     mainWindow: [I43("main_window.webp")],
     end: [I43("end.webp"), I43("end2.webp")],
     trueEnd: [I43("true_end.webp")],
-    modernEnd: [I43("modern_end.webp"), I43("modern_end2.webp"), I43("modern_end3.webp"), I43("modern_end4.webp")],
   },
   items: {
     coin: ICM("bear_coin.png"),
@@ -116,7 +115,6 @@ IMAGES = {
     picNikuman: I43("pic_nikuman.webp"),
     picJelly: I43("pic_jelly.webp"),
     picNikumanOld: I43("pic_nikuman_old.webp"),
-    picJellyOld: I43("pic_jelly_old.webp"),
     nikuman: I43("nikuman.webp"),
     nikumanPut: I43("nikuman_put.webp"),
     jelly: I43("jelly.webp"),
@@ -798,59 +796,6 @@ let rooms = {
       },
     ],
   },
-  modernEnd: {
-    name: "灼熱の現代エンド",
-    description: "どこかに転移しました。脱出おめでとうございます！",
-    clickableAreas: [
-      {
-        x: 4.7, y: 35.9, width: 8.2, height: 8.2,
-        onClick: clickWrap(function () {
-          updateMessage("「あつい・・・」");
-        }),
-        description: '暑さにぐったりしたクマ妖精',
-        zIndex: 5,
-        usable: () => gameState.modernEnd.flags.backgroundState == 2,
-        item: { img: 'IMAGE_KEY', visible: () => true }
-      },
-      {
-        x: 74.7, y: 37.5, width: 24.2, height: 24.6,
-        onClick: clickWrap(function () {
-          if (hasItem("fukinWet")) {
-            playModernEndCafeTransition(gameState.modernEnd.flags.backgroundState + 1);
-            return;
-          } else {
-            updateMessage("カフェに入れば涼しそうだけど・・・もう歩く気力がない。暑さ対策が必要だったな");
-          }
-
-        }),
-        description: 'カフェ',
-        zIndex: 5,
-        usable: () => gameState.modernEnd.flags.backgroundState == 2 || gameState.modernEnd.flags.backgroundState == 0,
-        item: { img: 'IMAGE_KEY', visible: () => true }
-      },
-      {
-        x: 33.7, y: 34.6, width: 33.2, height: 25.5,
-        onClick: clickWrap(function () {
-          showObj(null, "「ひんやり美味しい！」", IMAGES.modals.bearEating, "クマ妖精は満足しているようだ");
-        }),
-        description: 'アイスを食べるクマ妖精',
-        zIndex: 5,
-        usable: () => gameState.modernEnd.flags.backgroundState == 3,
-        item: { img: 'IMAGE_KEY', visible: () => true }
-      },
-      {
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 100,
-        onClick: clickWrap(function () {
-          showEndingReport("modernEnd");
-        }),
-        description: "モダンエンド",
-        usable: () => true,
-      },
-    ],
-  },
 };
 
 const hintMessages = {
@@ -866,43 +811,6 @@ const hintCharacters = {
     bear2: { name: "クマ妖精", image: IMAGES.items.bearLion },
   },
 };
-
-function playModernEndCafeTransition(nextBackgroundState) {
-  const overlay = document.getElementById("roomEffectOverlay");
-  const fx = gameState.fx || (gameState.fx = {});
-  fx.lockInput = true;
-  playSE?.("se-ashioto");
-
-  if (overlay) {
-    overlay.style.background = "#000";
-    overlay.style.opacity = 1;
-  }
-
-  setTimeout(() => {
-    gameState.modernEnd.flags.backgroundState = nextBackgroundState;
-    if (nextBackgroundState === 1) {
-      markProgress?.("arrive_cafe");
-    } else if (nextBackgroundState === 3) {
-      markProgress?.("arrive_cafe_with_kuma");
-    }
-    if (nextBackgroundState === 1 || nextBackgroundState === 3) {
-      if (hasItem("fukinWet")) removeItem("fukinWet");
-      changeBGM(S43("remoncake_and_hachimitsukoucha.mp3"));
-    }
-    renderCanvasRoom();
-    updateMessage("濡れタオルを頭にかぶせて、カフェに移動した。");
-
-    setTimeout(() => {
-      if (overlay) {
-        overlay.style.opacity = 0;
-      }
-      setTimeout(() => {
-        if (overlay) overlay.style.background = "";
-        fx.lockInput = false;
-      }, 520);
-    }, 120);
-  }, 480);
-}
 
 function travelWithSteps(destRoom, { useWarp = false, soundId = "se-ashioto" } = {}) {
   const overlay = document.getElementById("roomEffectOverlay");
@@ -1085,10 +993,6 @@ function showSketchbookDrawingChoices() {
       },
     });
   }
-  if (hasItem("picJellyOld")) {
-    buttons.push({ text: "ゼリーの絵に挑戦する", action: () => drawSketchbookPicture("picJelly") });
-  }
-
   buttons.push({ text: "閉じる", action: "close" });
   showModal("何を描きますか？", "", buttons, null, { columnButtons: true });
 }
@@ -2343,8 +2247,6 @@ function changeRoom(roomId) {
 
   if (roomId === "end" || roomId === "trueEnd") {
     keepOnlyItemsOnEndingArrival(["operaGlass"]);
-  } else if (roomId === "modernEnd") {
-    removeItemsOnEndingArrival(["hammer"]);
   }
 
   gameState.currentRoom = roomId;
@@ -2376,7 +2278,7 @@ function changeRoom(roomId) {
 
   // nav
 
-  if (roomId === "trueEnd" || roomId === "end" || roomId === "modernEnd") {
+  if (roomId === "trueEnd" || roomId === "end") {
     gameState.openRooms = [];
     // renderNavigation();
   }
@@ -4048,7 +3950,6 @@ function openFeedbackForm(endingId) {
     {
       trueEnd: "トゥルーエンド",
       end: "ノーマルエンド",
-      modernEnd: "灼熱エンド",
     }[endingId] || "エンド";
 
   const params = new URLSearchParams({
@@ -4213,10 +4114,6 @@ function getDefaultGameState() {
     trueEnd: {
       flags: { backgroundState: 0 },
     },
-    modernEnd: {
-      flags: { backgroundState: 0 },
-    },
-
     selectedItem: null,
     selectedItemSlot: null,
     usingItem: null,
@@ -4618,7 +4515,6 @@ function getItemName(itemId) {
     picNikuman: "肉まんの絵",
     picJelly: "ゼリーの絵",
     picNikumanOld: "古びた肉まんの絵",
-    picJellyOld: "ゼリーの見本の絵",
     nikuman: "肉まん",
     jelly: "5月のそよ風ゼリー",
     dish: "お皿",
@@ -5324,7 +5220,6 @@ function deepMerge(target, source) {
 function migrateLegacyJellyItemIds(state) {
   const replacements = {
     picJerry: "picJelly",
-    picJerryOld: "picJellyOld",
     jerry: "jelly",
   };
   const replace = (itemId) => replacements[itemId] || itemId;
