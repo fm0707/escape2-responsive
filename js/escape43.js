@@ -1882,19 +1882,30 @@ function showMainDeskFlowerSetModal() {
         0%, 100% { opacity:0; transform:translate(-50%,-50%) scale(.82); }
         35%, 65% { opacity:1; transform:translate(-50%,-50%) scale(1.12); }
       }
+      @keyframes flowerSetGlowReduced {
+        0%, 100% { opacity:0; }
+        20%, 80% { opacity:1; }
+      }
       .flower-set-glow {
         position:absolute;
         aspect-ratio:1;
         border-radius:50%;
         pointer-events:none;
         opacity:0;
+        transform:translate(-50%,-50%);
         background:radial-gradient(circle, rgba(255,255,205,.96) 0%, rgba(255,226,55,.62) 38%, rgba(255,190,0,.18) 62%, transparent 74%);
         box-shadow:0 0 18px 8px rgba(255,226,70,.8), 0 0 36px 14px rgba(255,177,0,.42);
         mix-blend-mode:screen;
         animation:flowerSetGlow 1s ease-in-out 1 both;
       }
       @media (prefers-reduced-motion: reduce) {
-        .flower-set-glow { animation:none; opacity:0; }
+        .flower-set-glow {
+          animation-name:flowerSetGlowReduced;
+          animation-duration:1s;
+          animation-timing-function:linear;
+          animation-iteration-count:1;
+          animation-fill-mode:both;
+        }
       }
     </style>
     <div style="position:relative;width:min(82vw,520px);margin:0 auto 12px;overflow:hidden;">
