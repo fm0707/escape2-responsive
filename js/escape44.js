@@ -106,7 +106,7 @@ IMAGES = {
     emaki3: [I44("emaki_3.webp")],
     emaki4: [I44("emaki_4.webp")],
     end: [I44("end.webp")],
-    escapeEnd: [I44("end2.webp")],
+    escapeEnd: [I44("end2.webp"), I44("escape_end2.webp")],
     trueEnd: [I44("true_end.webp"), I44("true_end2.webp")],
   },
   items: {
@@ -1581,6 +1581,9 @@ function travelToEscapeEnd() {
           action: () => {
             closeModal();
             if (modal) modal.style.zIndex = "";
+            const escapeEndFlags = gameState.escapeEnd?.flags
+              || (gameState.escapeEnd = { flags: {} }).flags;
+            escapeEndFlags.backgroundState = getMainFlags().zokuMoved ? 1 : 0;
             changeRoom("escapeEnd");
 
             setTimeout(() => {
@@ -4151,7 +4154,7 @@ function getDefaultGameState() {
     },
 
     end: { flags: {} },
-    escapeEnd: { flags: {} },
+    escapeEnd: { flags: { backgroundState: 0 } },
     trueEnd: {
       flags: { backgroundState: 0 },
     },
