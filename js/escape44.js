@@ -401,7 +401,7 @@ let rooms = {
             acquireItemOnce("foundKakejikuKey", "key", "カギを見つけた", IMAGES.items.key, "カギを手に入れた。");
             return;
           }
-          showObj(null, "掛け軸だ。", IMAGES.modals.kakejiku, "掛け軸を眺めた。");
+          showObj(null, "掛け軸だ。「月見酒」と書かれている。", IMAGES.modals.kakejiku, "掛け軸を眺めた。");
         }),
         description: '掛け軸',
         zIndex: 5,
