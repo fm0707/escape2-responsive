@@ -152,6 +152,7 @@ IMAGES = {
     spaceShip: I44("space_ship.webp"),
     zokuRemove: I44("zoku_remove.webp"),
     master: I44("master.webp"),
+    suiteki: I44("suiteki.webp"),
 
 
 
@@ -186,6 +187,11 @@ IMAGES = {
     drawerUpper: I44("modal_drawer_upper.webp"),
     drawerBottom: I44("modal_drawer_bottom.webp"),
     drawerLong: I44("modal_drawer_long.webp"),
+    suitekiWater: I44("modal_suiteki_water.webp"),
+    suzuri: I44("modal_suzuri.webp"),
+    suzuriSuiteki: I44("modal_suzuri_suiteki.webp"),
+    suzuriWater: I44("modal_suzuri_after.webp"),
+    suitekiNoWater: I44("modal_suiteki_nowater.webp"),
     iconFish: I44("icon_fish.webp"),
     iconTake: I44("icon_take.webp"),
     iconApple: I44("icon_apple.webp"),
@@ -195,7 +201,6 @@ IMAGES = {
     iconFlower: I44("icon_flower.webp"),
     iconIdo: I44("icon_ido.webp"),
     iconBridge: I44("icon_bridge.webp"),
-    string: I44("modal_string.webp"),
     kaguyaMaster: I44("modal_kaguya_master.webp"),
 
     // badend: I44("badend.webp"),
@@ -650,16 +655,7 @@ let rooms = {
         usable: () => !getMainFlags().foundBranch,
         item: { img: 'branch', visible: () => !getMainFlags().foundBranch }
       },
-      {
-        x: 85.4, y: 39.7, width: 14.6, height: 22.8,
-        onClick: clickWrap(function () {
-          showObj(null, "紙が貼られている", IMAGES.modals.string, "紙が貼られている");
-        }),
-        description: '右の壁に貼られた紙',
-        zIndex: 5,
-        usable: () => true,
-        item: { img: 'IMAGE_KEY', visible: () => true }
-      },
+
       {
         x: 91, y: 91, width: 9, height: 9,
         onClick: clickWrap(() => changeRoom("mainOshiire"), { allowAtNight: true }),
@@ -828,7 +824,7 @@ let rooms = {
       {
         x: 37.6, y: 89.7, width: 24.9, height: 10.1,
         onClick: clickWrap(function () {
-          showObj(null, "床に落ちた扉だ。", IMAGES.modals.ceilBoard, "床に落ちた扉を眺めた。");
+          showObj(null, "筆で書かれたような文字だ", IMAGES.modals.ceilBoard, "筆で書かれたような文字だ");
         }),
         description: '床に落ちた扉',
         zIndex: 5,
@@ -846,6 +842,18 @@ let rooms = {
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
+        x: 38.0, y: 68.5, width: 2.4, height: 2.3,
+        onClick: clickWrap(function () {
+          if (getMainFlags().suzuriHasWater) {
+            showObj(null, "水入れは空になっている", IMAGES.modals.suitekiNoWater, "水入れは空になっている");
+          }
+        }),
+        description: '水滴',
+        zIndex: 5,
+        usable: () => getMainFlags().suzuriHasWater,
+        item: { img: 'suiteki', visible: () => !getMainFlags().foundSuiteki || getMainFlags().suzuriHasWater }
+      },
+      {
         x: 91, y: 91, width: 9, height: 9,
         onClick: clickWrap(() => changeRoom("chibukuroInner"), { allowAtNight: true }),
         description: "地袋の中へ戻る",
@@ -861,7 +869,7 @@ let rooms = {
       {
         x: 5.9, y: 19.1, width: 20.6, height: 14.6,
         onClick: clickWrap(function () {
-          showObj(null, "月に関する本のようだ。", IMAGES.modals.bookMoon, "月に関する本のようだ。");
+          updateMessage("本がある");
         }),
         description: '机の上の本',
         zIndex: 5,
@@ -922,9 +930,36 @@ let rooms = {
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
+        x: 72.9, y: 20.8, width: 8.1, height: 6.3,
+        onClick: clickWrap(function () {
+          if (getMainFlags().suzuriHasWater) {
+            showObj(null, "水入れは空になっている", IMAGES.modals.suitekiNoWater, "水入れは空になっている");
+            return;
+          }
+          acquireItemOnce("foundSuiteki", "suiteki", "水入れがある", IMAGES.items.suiteki, "水入れを手に入れた");
+        }),
+        description: '水滴',
+        zIndex: 5,
+        usable: () => !getMainFlags().foundSuiteki || getMainFlags().suzuriHasWater,
+        item: { img: 'suiteki', visible: () => !getMainFlags().foundSuiteki || getMainFlags().suzuriHasWater }
+      },
+      {
         x: 81.4, y: 20.4, width: 13.6, height: 11.2,
         onClick: clickWrap(function () {
-          updateMessage("すずりがある。")
+          const flags = getMainFlags();
+          if (flags.suzuriHasWater) {
+            showObj(null, "すずりに水が入っている", IMAGES.modals.suzuriWater, "すずりに水が入っている");
+            return;
+          }
+          if (gameState.selectedItem === "suiteki") {
+            removeItem("suiteki");
+            flags.suzuriHasWater = true;
+            playSE?.("se-tea");
+            renderCanvasRoom?.();
+            showObj(null, "すずりに水を入れた", IMAGES.modals.suzuriSuiteki, "すずりに水を入れた");
+            return;
+          }
+          showObj(null, "すずりの墨は乾いている", IMAGES.modals.suzuri, "すずりの墨は乾いている");
         }),
         description: '机の上のすずり',
         zIndex: 5,
@@ -4131,6 +4166,8 @@ function getDefaultGameState() {
         ceilDoorOpen: false,
         shlfUpperCabinetOpen: false,
         foundOrigamiBluePink: false,
+        foundSuiteki: false,
+        suzuriHasWater: false,
         madeCraneBluePink: false,
         craneBluePinkSet: false,
         tokonomaLeftStorageUnlocked: false,
@@ -4678,6 +4715,7 @@ function getItemName(itemId) {
     wetPaper: "ウェットティッシュ",
     remocon: "リモコン",
     remoconSetBattery: "電池を入れたリモコン",
+    suiteki: "水入れ",
 
   };
   return names[itemId] || itemId;
@@ -4709,6 +4747,23 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
   if (itemId === "kaguyahime") {
     buttons = [
       { text: "話す", action: showKaguyahimeDialogue },
+      { text: "閉じる", action: "close" },
+    ];
+  }
+
+  if (itemId === "suiteki") {
+    buttons = [
+      {
+        text: "調べる",
+        action: () => {
+          window._nextModal = {
+            title: getItemName(itemId),
+            content: `<img src="${IMAGES.modals.suitekiWater}" style="max-width:380px;max-height:80vh;width:auto;height:auto;object-fit:contain;display:block;margin:0 auto 16px;">`,
+            buttons: [{ text: "閉じる", action: "close" }],
+          };
+          closeModal();
+        },
+      },
       { text: "閉じる", action: "close" },
     ];
   }
