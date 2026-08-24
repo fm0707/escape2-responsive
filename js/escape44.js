@@ -2393,6 +2393,11 @@ function startShlfLowerRightStorageOpenFx() {
 function handleRabbitDirection(direction) {
   const flags = getMainFlags();
   flags.rabbitDirection = direction;
+  if (!flags.emaki1Reached) {
+    updateMessage("ウサギがそちらへ頭を向けた。");
+    renderCanvasRoom?.();
+    return;
+  }
   const wasSolved = !!flags.rabbitPuzzleSolved;
   const sequence = Array.isArray(flags.rabbitSequence) ? flags.rabbitSequence : [];
   if (sequence.length >= RABBIT_PUZZLE_ANSWER.length) sequence.length = 0;
@@ -2592,6 +2597,9 @@ function changeRoom(roomId) {
   }
   if (roomId === "rooftop") {
     addNaviItem("rooftop");
+  }
+  if (roomId === "emaki1") {
+    getMainFlags().emaki1Reached = true;
   }
   gameState.currentRoom = roomId;
   const room = rooms[roomId];
@@ -4094,6 +4102,7 @@ function getDefaultGameState() {
     main: {
       flags: {
         himoCut: false,
+        emaki1Reached: false,
         foundHimo: false,
         oshiireRightOpen: false,
         oshiireRightColors: [0, 0, 0],
