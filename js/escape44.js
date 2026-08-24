@@ -930,6 +930,16 @@ let rooms = {
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
+        x: 64.1, y: 22.8, width: 6.7, height: 16.0,
+        onClick: clickWrap(function () {
+          updateMessage("筆がある")
+        }),
+        description: '筆',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
+      {
         x: 72.9, y: 20.8, width: 8.1, height: 6.3,
         onClick: clickWrap(function () {
           if (getMainFlags().suzuriHasWater) {
@@ -1473,7 +1483,7 @@ let rooms = {
       {
         x: 37.0, y: 22.6, width: 25.1, height: 29.7,
         onClick: clickWrap(function () {
-          updateMessage("早く走るのじゃー");
+          updateMessage("「早く走るのじゃー」");
         }),
         description: '背負われるかぐや姫',
         zIndex: 5,
