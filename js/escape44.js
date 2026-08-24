@@ -202,6 +202,7 @@ IMAGES = {
     iconIdo: I44("icon_ido.webp"),
     iconBridge: I44("icon_bridge.webp"),
     kaguyaMaster: I44("modal_kaguya_master.webp"),
+    crane: I44("modal_crane.webp"),
 
     // badend: I44("badend.webp"),
   },
@@ -2146,7 +2147,7 @@ function handleShlfCraneShelfClick() {
   const flags = getMainFlags();
 
   if (flags.craneBluePinkSet) {
-    updateMessage("棚の上には、4羽の折り鶴が置かれている。色は左から、白、赤、青、ピンクだ。");
+    showObj(null, "4羽の折り鶴が置かれている。色は左から、白、赤、青、ピンクだ。", IMAGES.modals.crane, "棚の上には、4羽の折り鶴が置かれている。色は左から、白、赤、青、ピンクだ。");
     return;
   }
 
