@@ -2273,7 +2273,7 @@ function showDeskTopDrawerPuzzle() {
   );
   flags.deskTopDrawerLetters = letters.slice();
 
-  const letterStyle = "box-sizing:border-box;width:min(19vw,88px);aspect-ratio:1;min-width:0;margin:0;padding:0;border:2px solid #777;border-radius:5px;background:#FFF3B0;color:#111;font-size:2.3rem;font-weight:900;cursor:pointer;";
+  const letterStyle = "box-sizing:border-box;width:min(19vw,88px);aspect-ratio:1;min-width:0;margin:0;padding:0;border:2px solid #777;border-radius:5px;background:#fff;color:#111;font-size:2.3rem;font-weight:900;cursor:pointer;";
   const content = `
     <div class="notranslate" translate="no" style="display:grid;grid-template-columns:repeat(4,minmax(50px,88px));gap:8px;justify-content:center;margin:8px auto 16px;">
       ${letters.map((letter, index) => `<button type="button" data-desk-top-drawer-letter="${index}" aria-label="${index + 1}文字目" style="${letterStyle}">${letter}</button>`).join("")}
