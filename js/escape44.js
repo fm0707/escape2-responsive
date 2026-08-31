@@ -4106,7 +4106,7 @@ function showEndingReport(endingId = "end") {
       action: "restart",
     },
     {
-      text: "プレイ後アンケート",
+      text: "ご感想はこちら",
       action: () => openFeedbackForm(endingId),
     },
     {
