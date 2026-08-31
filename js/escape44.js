@@ -167,7 +167,7 @@ IMAGES = {
     boxOpen: I44("modal_box_open.webp"),
     zabuton: I44("modal_zabuton.webp"),
     hishigataNum: I44("modal_hishigata_num.webp"),
-    kakejiku: I44("modal_kakejiku.webp"),
+    kakejiku: I44("modal_kakejiku2.webp"),
     tatami: I44("modal_tatami.webp"),
     bookMoon: I44("modal_book_moon.webp"),
     ceilBoard: I44("modal_ceil_board.webp"),
