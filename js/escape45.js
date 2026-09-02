@@ -340,6 +340,7 @@ function showBearEatingDessert() {
     markProgress?.("bear_eats_dessert", { dessert: state.orderedDessert });
     updateMessage("クマ妖精はデザートをきれいに食べ終えた。");
     flashInventoryItem("ticket");
+    showToast("手持ちのランチご招待券が光った");
     renderCanvasRoom?.();
   };
   showModal(
@@ -507,7 +508,7 @@ function showSoupPot(soup) {
         if (soup === "broc") cup.broccoliServed = true;
         gameState.selectedItem = "cup";
         gameState.selectedItemSlot = gameState.inventory.indexOf("cup");
-        playSE?.("se-tea");
+        playSE?.("se-soup");
         updateInventoryDisplay();
         closeModal();
         showObj(null, `${soupInfo.label}入りのカップ`, getInventoryItemImage("cup"), `${soupInfo.label}をカップに注いだ。`);
@@ -1163,7 +1164,7 @@ let rooms = {
             return;
           }
           if (getMainFlags().tabletUnlocked) {
-            changeRoom("tabletLunch");
+            changeRoom(getTabletLunchState().pastaEaten ? "tabletDessert" : "tabletLunch");
             return;
           }
           showTabletUnlockPuzzle();
@@ -1234,7 +1235,7 @@ let rooms = {
           img: () => {
             const state = getTabletLunchState();
             if (state.dessertEaten) return "bearSeated3";
-            return state.orderedDessert ? "bearSeated2" : "bearSeated1";
+            return state.pastaEaten ? "bearSeated2" : "bearSeated1";
           },
           visible: () => getMainFlags().bearGotCoffee,
         }
@@ -1665,7 +1666,7 @@ let rooms = {
       {
         x: 73.5, y: 57.1, width: 26.1, height: 34.5,
         onClick: clickWrap(function () {
-
+          updateMessage("ケーキのショーケースだ。美味しそうなケーキが並んでいる。");
         }),
         description: 'ケーキのショーケース',
         zIndex: 5,
@@ -1762,6 +1763,16 @@ let rooms = {
     description: "パスタハウスから無事に脱出できました。おめでとうございます！",
     clickableAreas: [
       {
+        x: 57.9, y: 29.8, width: 31.3, height: 27.4,
+        onClick: clickWrap(function () {
+          updateMessage("「プレイありがとう・・・ぐう。zzz...」");
+        }),
+        description: '寝るクマ妖精',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
+      {
         x: 0,
         y: 0,
         width: 100,
@@ -1778,6 +1789,16 @@ let rooms = {
     name: "テイクアウトエンド",
     description: "デザートを持ち帰り、お家に帰りました。おめでとうございます！",
     clickableAreas: [
+      {
+        x: 43.3, y: 39.1, width: 35.8, height: 38.9,
+        onClick: clickWrap(function () {
+          updateMessage("「これも美味しそう」");
+        }),
+        description: 'スプーンを持つクマ妖精',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
       {
         x: 0,
         y: 0,
@@ -2652,21 +2673,15 @@ function showEndingReport(endingId = "end") {
     },
 
     end: {
-      title: "🥷 NORMAL END ",
+      title: "🍝 NORMAL END ",
       label: "NORMAL",
-      desc: "賊に襲われた屋敷から脱出できました。おめでとうございます！",
+      desc: "パスタハウスから脱出できました。おめでとうございます！",
     },
 
     takeoutEnd: {
       title: "🥡 TAKEOUT END",
       label: "TAKEOUT END",
       desc: "テイクアウトボックスを受け取り、店を後にしました。おめでとうございます！",
-    },
-
-    escapeEnd: {
-      title: "🎋 ESCAPE END",
-      label: "ESCAPE END",
-      desc: "かぐや姫を連れ、賊の追跡をかわして屋敷から脱出しました！",
     },
 
   };
