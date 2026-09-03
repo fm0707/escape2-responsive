@@ -638,7 +638,7 @@ function showJuiceDispenser() {
     return;
   }
   if (glass.juice) {
-    updateMessage("グラスにはすでにジュースが入っている。");
+    updateMessage("グラスにはすでに飲み物が入っている。");
     return;
   }
 
