@@ -1104,6 +1104,7 @@ function showRegisterButtonsPuzzle() {
 }
 
 function useTicketAtRegisterSlit() {
+  if (gameState.selectedItem === "ticket" && !getTabletLunchState().dessertEaten) return;
   const flags = getMainFlags();
   if (!flags.unlockRegister) {
     updateMessage("スリットはカバーで塞がれている。");
@@ -3240,7 +3241,13 @@ function drinkJuiceFromGlass() {
     coffee: "アイスコーヒー",
   };
   const juiceName = juiceNames[glass.juice] || "ジュース";
-  const message = `${juiceName}を飲んだ。おいしい。`;
+  const juiceMessages = {
+    orange: "オレンジの甘酸っぱさが口に広がる。",
+    grape: "ぶどうの濃い甘みが楽しめる。",
+    melon: "メロンの甘い香りが広がる。",
+    coffee: "冷たいコーヒーのほろ苦さが心地よい。",
+  };
+  const message = `${juiceName}を飲んだ。${juiceMessages[glass.juice] || "おいしい。"}`;
 
   playSE?.("se-gokuri");
   removeItem("glass");
