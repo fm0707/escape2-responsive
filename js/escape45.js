@@ -146,6 +146,7 @@ IMAGES = {
     takeoutBox: I45("takeout_box.webp"),
     slitCover: I45("slit_cover.webp"),
     registerDisp: I45("register_disp.webp"),
+    mirrorAfter: I45("mirror_after.webp"),
 
 
     take: I45("take.webp"),
@@ -177,7 +178,7 @@ IMAGES = {
     brocSoup1: I45("modal_broc_soup1.webp"),
     brocSoup2: I45("modal_broc_soup2.webp"),
     wantToilet: I45("modal_want_toilet.webp"),
-    sink: I45("modal_sink.webp"),
+    soapBottle: I45("modal_soap_bottle.webp"),
     coffeeMachine: I45("modal_coffee_machine.webp"),
     coffeeMachineLever: I45("modal_coffee_machine_lever.webp"),
     coffeeMachineLeverSet: I45("modal_coffee_machine_lever_set.webp"),
@@ -526,21 +527,10 @@ function showSoupPot(soup) {
   updateMessage(canPour ? `${soupInfo.label}をカップに注げそうだ。` : cup.soup ? "カップにはすでにスープが入っている。" : "スープを入れるカップを選択しよう。");
 }
 
-function showRestRoomSink() {
-  const imageId = `restRoomSink_${Date.now()}`;
-  showModal(
-    "シンク",
-    `<img id="${imageId}" class="showobj-image" src="${IMAGES.modals.sink}" alt="トイレのシンク" style="cursor:pointer;">`,
-    [{ text: "閉じる", action: "close" }],
-    null,
-    { contentClass: "showobj-modal" },
-  );
-
-  const image = document.getElementById(imageId);
-  if (!image) return;
-  image.addEventListener("click", () => {
-    const flags = getMainFlags();
-    if (flags.foundRestRoomKey) {
+function showRestRoomMirror() {
+  const flags = getMainFlags();
+  if (flags.unlockMirror) {
+    if (flags.foundMirrorKey) {
       updateMessage("もう何もない。");
       return;
     }
@@ -548,13 +538,50 @@ function showRestRoomSink() {
       updateMessage("アイテム欄がいっぱいだ。どこかで減らしてこよう");
       return;
     }
-
-    flags.foundRestRoomKey = true;
+    flags.foundMirrorKey = true;
     addItem("key");
-    showObj(null, "カギを手に入れた", IMAGES.items.key, "シンクからカギを手に入れた。");
-    markProgress?.("get_key_from_rest_room_sink");
+    renderCanvasRoom();
+    showObj(null, "カギを手に入れた", IMAGES.items.key, "鏡の中からカギを手に入れた。");
+    markProgress?.("get_key_from_rest_room_mirror");
+    return;
+  }
+
+  const digits = [0, 0, 0];
+  const content = `
+    <div style="background:#704b32;padding:24px 12px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:center;gap:12px;">
+        ${digits.map((digit, index) => `<button type="button" data-mirror-digit="${index}" aria-label="${index + 1}桁目：${digit}" style="box-sizing:border-box;width:64px;height:64px;flex:0 1 64px;padding:0;margin:0;border:1px solid #d3d3d3;border-radius:0;background:transparent;box-shadow:none;color:#d3d3d3;font-size:32px;cursor:pointer;">${digit}</button>`).join("")}
+      </div>
+      <p id="mirrorPuzzleGuide" aria-live="polite" style="min-height:1.5em;margin:12px 0 0;text-align:center;color:#d3d3d3;"></p>
+    </div>`;
+  showModal("鏡のロック", content, [
+    {
+      text: "OK", action: () => {
+        if (digits.join("") !== "925") {
+          document.getElementById("mirrorPuzzleGuide").textContent = "番号が違うようだ。";
+          playSE?.("se-error");
+          return;
+        }
+        flags.unlockMirror = true;
+        closeModal();
+        renderCanvasRoom();
+        playSE?.("se-kettei");
+        updateMessage("鏡のロックが外れた。");
+        markProgress?.("unlock_rest_room_mirror");
+      }
+    },
+    { text: "閉じる", action: "close" },
+  ]);
+  document.querySelectorAll("[data-mirror-digit]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.mirrorDigit);
+      digits[index] = (digits[index] + 1) % 10;
+      button.textContent = digits[index];
+      button.setAttribute("aria-label", `${index + 1}桁目：${digits[index]}`);
+      document.getElementById("mirrorPuzzleGuide").textContent = "";
+      playSE?.("se-click");
+    });
   });
-  updateMessage("シンクがある。画像を調べてみよう。");
 }
 
 function takeEmptyGlass() {
@@ -658,8 +685,8 @@ function showJuiceDispenser() {
     `<img src="${IMAGES.modals.juiceDispenser}" alt="ジュースマシン" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
     [
       { text: "オレンジジュース", action: () => fillGlass("orange", "オレンジジュース") },
-      { text: "メロンジュース", action: () => fillGlass("melon", "メロンジュース") },
       { text: "グレープジュース", action: () => fillGlass("grape", "グレープジュース") },
+      { text: "メロンジュース", action: () => fillGlass("melon", "メロンジュース") },
       { text: "閉じる", action: "close" },
     ],
     null,
@@ -1584,9 +1611,49 @@ let rooms = {
       {
         x: 34.3, y: 60.8, width: 34.8, height: 15.4,
         onClick: clickWrap(function () {
-          showRestRoomSink();
+          updateMessage("シンクがある。");
         }),
         description: 'シンク',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
+      {
+        x: 35.0, y: 8.0, width: 30.3, height: 37.4,
+        onClick: clickWrap(function () {
+          showRestRoomMirror();
+        }),
+        description: '鏡',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
+      {
+        x: 0, y: 0, width: 100, height: 100,
+        onClick: clickWrap(function () {
+
+        }),
+        description: '鏡開いた後',
+        zIndex: 5,
+        usable: () => false,
+        item: { img: 'mirrorAfter', visible: () => getMainFlags().unlockMirror },
+      },
+      {
+        x: 47.9, y: 21.2, width: 3.7, height: 5.0,
+        onClick: clickWrap(function () {
+
+        }),
+        description: '鍵',
+        zIndex: 6,
+        usable: () => false,
+        item: { img: 'key', visible: () => getMainFlags().unlockMirror && !getMainFlags().foundMirrorKey }
+      },
+      {
+        x: 70.1, y: 51.8, width: 9.3, height: 15.5,
+        onClick: clickWrap(function () {
+          showObj(null, "ハンドソープのボトル", IMAGES.modals.soapBottle, "ハンドソープのボトルだ。");
+        }),
+        description: 'ハンドソープのボトル',
         zIndex: 5,
         usable: () => true,
         item: { img: 'IMAGE_KEY', visible: () => true }
@@ -2805,7 +2872,8 @@ function getDefaultGameState() {
         bearGotCoffee: false,
         wantToilet: false,
         restRoomUsed: false,
-        foundRestRoomKey: false,
+        unlockMirror: false,
+        foundMirrorKey: false,
         drinkBarMiddleCabinetUnlocked: false,
         drinkBarMiddleCabinetOpen: false,
         foundLever: false,
