@@ -124,6 +124,7 @@ IMAGES = {
     cupCorn: I45("cup_corn.webp"),
     cupTomato: I45("cup_tomato.webp"),
     cupBroc: I45("cup_broc.webp"),
+    cupRooibos: I45("cup_rooibos.webp"),
     ticketTakeout: I45("ticket_takeout.webp"),
     leverCover: I45("lever_cover.webp"),
     lever: I45("lever.webp"),
@@ -490,6 +491,7 @@ function showSoupPot(soup) {
       label: "ブロッコリースープ",
       image: cup.broccoliServed ? IMAGES.modals.brocSoup2 : IMAGES.modals.brocSoup1,
     },
+    rooibos: { label: "ルイボスティー", image: IMAGES.items.cupRooibos },
   }[soup];
   if (!soupInfo) return;
 
@@ -507,7 +509,7 @@ function showSoupPot(soup) {
         updateInventoryDisplay();
         closeModal();
         showObj(null, `${soupInfo.label}入りのカップ`, getInventoryItemImage("cup"), `${soupInfo.label}をカップに注いだ。`);
-        markProgress?.(`fill_cup_with_${soup}_soup`);
+        markProgress?.(soup === "rooibos" ? "fill_cup_with_rooibos_tea" : `fill_cup_with_${soup}_soup`);
       },
     });
   }
@@ -518,7 +520,7 @@ function showSoupPot(soup) {
     `<img src="${soupInfo.image}" alt="${soupInfo.label}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`,
     buttons,
   );
-  updateMessage(canPour ? `${soupInfo.label}をカップに注げそうだ。` : cup.soup ? "カップにはすでにスープが入っている。" : "スープを入れるカップを選択しよう。");
+  updateMessage(canPour ? `${soupInfo.label}をカップに注げそうだ。` : cup.soup ? "カップにはすでに中身が入っている。" : `${soupInfo.label}を入れるカップを選択しよう。`);
 }
 
 function showRestRoomMirror() {
@@ -1460,7 +1462,7 @@ let rooms = {
       {
         x: 76.9, y: 41.7, width: 15.6, height: 24.8,
         onClick: clickWrap(function () {
-          updateMessage("ルイボスティーのようだ");
+          showSoupPot("rooibos");
         }),
         description: 'ルイボスティーマシン',
         zIndex: 5,
@@ -3275,8 +3277,10 @@ function drinkSoupFromCup() {
     corn: "甘みがある美味しいコーンスープだ。",
     tomato: "コクがあり、さっぱりしていて美味しいスープだ。",
     broc: "クリーミーで美味しいスープだ",
+    rooibos: "香りがよく、すっきりした味わいのルイボスティーだ。",
   };
   const message = soupMessages[cup.soup] || "美味しいスープだ。";
+  const isRooibos = cup.soup === "rooibos";
 
   playSE?.("se-gokuri");
   removeItem("cup");
@@ -3286,13 +3290,13 @@ function drinkSoupFromCup() {
   const toiletPromptShown = countDrinkAndShowToiletPrompt();
   if (!toiletPromptShown) {
     showModal(
-      "スープを飲んだ",
+      isRooibos ? "ルイボスティーを飲んだ" : "スープを飲んだ",
       `<p style="margin:0;text-align:center;font-weight:700;">${message}</p>`,
       [{ text: "閉じる", action: "close" }],
     );
     updateMessage(message);
   }
-  markProgress?.("drink_soup");
+  markProgress?.(isRooibos ? "drink_rooibos_tea" : "drink_soup");
 }
 
 function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
@@ -3318,7 +3322,10 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
   }
 
 
-  showModal(getItemName(itemId), content, buttons);
+  const title = itemId === "cup" && getSoupCupState().soup === "rooibos"
+    ? "ルイボスティー入りのカップ"
+    : getItemName(itemId);
+  showModal(title, content, buttons);
 }
 
 function renderNavigation() {
