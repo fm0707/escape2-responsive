@@ -90,8 +90,7 @@ IMAGES = {
     tabletDessert: [I45("tablet_dessert.webp")],
     end: [I45("end.webp")],
     takeoutEnd: [I45("takeout_end.webp")],
-    escapeEnd: [I45("end2.webp"), I45("escape_end2.webp")],
-    trueEnd: [I45("true_end.webp"), I45("true_end2.webp")],
+    // trueEnd: [I45("true_end.webp"), I45("true_end2.webp")],
   },
   items: {
     bear: ICM("bear.png"),
@@ -149,10 +148,6 @@ IMAGES = {
     mirrorAfter: I45("mirror_after.webp"),
 
 
-    take: I45("take.webp"),
-    master: I45("master.webp"),
-
-
 
   },
   modals: {
@@ -204,11 +199,10 @@ IMAGES = {
 
 
 
-    kaguyahimeEating: I45("modal_kaguyahime_eating.webp"),
     iconTomato: I45("icon_tomato.webp"),
     iconCorn: I45("icon_corn.webp"),
     iconBroc: I45("icon_broc.webp"),
-    kaguyaMaster: I45("modal_kaguya_master.webp"),
+
 
     // badend: I45("badend.webp"),
   },
@@ -565,7 +559,7 @@ function showRestRoomMirror() {
         flags.unlockMirror = true;
         closeModal();
         renderCanvasRoom();
-        playSE?.("se-kettei");
+        playSE?.("se-gogogo");
         updateMessage("鏡のロックが外れた。");
         markProgress?.("unlock_rest_room_mirror");
       }
@@ -1307,7 +1301,7 @@ let rooms = {
         x: 38.9, y: 76.8, width: 15.9, height: 14.4,
         onClick: clickWrap(function () {
           const dessert = TABLET_DESSERT_CODES[getTabletLunchState().orderedDessert];
-          if (dessert) updateMessage(`${dessert[uiLang]}が届いている。`);
+          if (dessert) updateMessage(`${dessert.jp}が届いている。`);
         }),
         description: '届いたデザート',
         zIndex: 5,
@@ -2820,7 +2814,6 @@ function openFeedbackForm(endingId) {
   const endingLabel =
     {
       trueEnd: "トゥルーエンド",
-      escapeEnd: "逃走エンド",
       takeoutEnd: "テイクアウトエンド",
       end: "ノーマルエンド",
     }[endingId] || "エンド";
