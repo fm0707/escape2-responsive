@@ -1633,7 +1633,7 @@ let rooms = {
         item: { img: 'mirrorAfter', visible: () => getMainFlags().unlockMirror },
       },
       {
-        x: 47.9, y: 21.2, width: 3.7, height: 5.0,
+        x: 48.9, y: 19.3, width: 4.8, height: 2.7,
         onClick: clickWrap(function () {
 
         }),
