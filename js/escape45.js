@@ -196,6 +196,7 @@ IMAGES = {
     tabletLock: I45("modal_tablet_lock.webp"),
     keyStorageLeft: I45("key_storage_left.webp"),
     keyStorageRight: I45("key_storage_right.webp"),
+    rooibosMachine: I45("modal_rooibos_machine.webp"),
 
 
 
@@ -491,7 +492,7 @@ function showSoupPot(soup) {
       label: "ブロッコリースープ",
       image: cup.broccoliServed ? IMAGES.modals.brocSoup2 : IMAGES.modals.brocSoup1,
     },
-    rooibos: { label: "ルイボスティー", image: IMAGES.items.cupRooibos },
+    rooibos: { label: "ルイボスティー", image: IMAGES.modals.rooibosMachine },
   }[soup];
   if (!soupInfo) return;
 
