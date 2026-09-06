@@ -927,7 +927,7 @@ function showCutleryBoxPuzzle() {
   const directions = ["up", "right", "down", "left"];
   const directionLabels = { up: "上", right: "右", down: "下", left: "左" };
   const directionAngles = { up: 0, right: 90, down: 180, left: 270 };
-  const values = ["up", "up", "up"];
+  const values = ["right", "right", "right"];
   const answer = ["left", "up", "down"];
   const icons = [
     { src: IMAGES.modals.iconTomato, name: "トマト" },
