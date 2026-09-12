@@ -3252,7 +3252,7 @@ function drinkJuiceFromGlass() {
   };
   const message = `${juiceName}を飲んだ。${juiceMessages[glass.juice] || "おいしい。"}`;
 
-  playSE?.("se-gokuri");
+  playSE?.("se-pa");
   removeItem("glass");
   glass.owned = false;
   glass.hasIce = false;
@@ -3283,7 +3283,7 @@ function drinkSoupFromCup() {
   const message = soupMessages[cup.soup] || "美味しいスープだ。";
   const isRooibos = cup.soup === "rooibos";
 
-  playSE?.("se-gokuri");
+  playSE?.("se-pa");
   removeItem("cup");
   cup.owned = false;
   cup.soup = null;
