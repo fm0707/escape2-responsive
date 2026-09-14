@@ -255,7 +255,6 @@ const TABLET_DESSERT_CODES = {
   cha: { image: "macchaIce", bearEating: "bearEatingMacchaIce", jp: "抹茶アイス", en: "Matcha Ice Cream" },
   nuts: { image: "zuccotto", bearEating: "bearEatingZuccotto", jp: "ズコット", en: "Zuccotto" },
   cocoa: { image: "tiramisu", bearEating: "bearEatingTiramisu", jp: "ティラミス", en: "Tiramisu" },
-  purin: { image: "pudding", bearEating: "bearEatingPudding", jp: "プリン", en: "Pudding" },
 };
 
 const TABLET_LUNCH_TEXT = {
