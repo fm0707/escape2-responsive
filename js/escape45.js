@@ -1305,7 +1305,14 @@ let rooms = {
         x: 38.9, y: 76.8, width: 15.9, height: 14.4,
         onClick: clickWrap(function () {
           const dessert = TABLET_DESSERT_CODES[getTabletLunchState().orderedDessert];
-          if (dessert) updateMessage(`${dessert.jp}が届いている。`);
+          if (dessert) {
+            showObj(
+              null,
+              dessert.jp,
+              IMAGES.items[dessert.image],
+              `${dessert.jp}が届いている。`,
+            );
+          }
         }),
         description: '届いたデザート',
         zIndex: 5,
@@ -1400,7 +1407,7 @@ let rooms = {
           }
           showObj(
             null,
-            "アイスコーヒーマシン",
+            "アイスコーヒーマシンだ。レバーが無い",
             IMAGES.modals.coffeeMachine,
             "アイスコーヒーマシンのレバーが無いようだ",
           );
