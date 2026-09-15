@@ -2820,7 +2820,7 @@ function showEndingReport(endingId = "end") {
 // クリアログ生成（既存のがあればそのまま流用でOK）
 // アンケート
 function openFeedbackForm(endingId) {
-  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc84xGM9s9azMcZ8J0_5jMxBNlzFLTk-8APJpjwC1NuBbef-A/viewfor";
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc84xGM9s9azMcZ8J0_5jMxBNlzFLTk-8APJpjwC1NuBbef-A/viewform";
   const endingLabel =
     {
       trueEnd: "トゥルーエンド",
