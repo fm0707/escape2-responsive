@@ -2820,11 +2820,11 @@ function showEndingReport(endingId = "end") {
 // クリアログ生成（既存のがあればそのまま流用でOK）
 // アンケート
 function openFeedbackForm(endingId) {
-  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSePA5SWP6jmv8k1NfEZ998pS_l6BBeA7MV1ZA7YHRqo7iTv0Q/viewform";
+  const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc84xGM9s9azMcZ8J0_5jMxBNlzFLTk-8APJpjwC1NuBbef-A/viewfor";
   const endingLabel =
     {
       trueEnd: "トゥルーエンド",
-      takeoutEnd: "テイクアウトエンド",
+      takeoutEnd: "持ち帰りエンド",
       end: "ノーマルエンド",
     }[endingId] || "エンド";
 
