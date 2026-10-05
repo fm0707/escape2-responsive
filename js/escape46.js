@@ -519,6 +519,7 @@ let rooms = {
             return;
           }
           if (gameState.selectedItem === "bearWithCap") {
+            if (getMainFlags().bonfireExtinguished) return;
             showObj(null, "「ポカポカ…」", IMAGES.modals.bearFire, "クマ妖精は、焚火で温まっている。");
             return;
           }
@@ -971,7 +972,7 @@ rooms.shrineLeft = {
   ],
 };
 rooms.shrineTablet = {
-  name: "謎の石板", description: "なにか嵌め込めそうなくぼみがある。",
+  name: "謎の石板", description: "文様とくぼみがある。",
   clickableAreas: [
     {
       x: 91, y: 91, width: 9, height: 9, zIndex: 10,
@@ -1567,7 +1568,7 @@ function showBearWaterGunEvent(roomId) {
         <img src="${IMAGES.modals.bearGun3}" alt="強い水鉄砲を浴びたクマ妖精">
         <img src="${IMAGES.modals.badend}" alt="クマ妖精の怒りによるバッドエンド">
       </div>
-      <p style="text-align:center;font-weight:800;line-height:1.8;margin-top:14px;">あなたは気が遠くなり意識を失った。</p>
+      <p style="text-align:center;font-weight:800;line-height:1.8;margin-top:14px;">あなたは怒ったクマ妖精に襲われ、意識を失った。</p>
     `, [{ text: "最初から", action: "restart" }], null, { contentClass: "showobj-modal" });
     const firstFrame = document.querySelector("#modalContent .modal-anim img:first-child");
     firstFrame.addEventListener("animationend", () => {
