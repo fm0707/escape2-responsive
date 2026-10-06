@@ -1111,7 +1111,7 @@ function showCalcBoxPuzzle() {
 }
 
 function showStringTablet() {
-  const letters = ["火", "8", "K", "十", "2", "8", "月", "X", "F", "山", "8", "R"];
+  const letters = ["火", "8", "K", "十", "5", "8", "月", "X", "F", "山", "8", "R"];
   const rotated = letters.map(() => false);
   showModal("文字が書かれた石板", `
     <div class="string-tablet-scroll" translate="no">
