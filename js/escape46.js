@@ -204,7 +204,7 @@ let rooms = {
       {
         x: 8.2, y: 43.8, width: 38.7, height: 38.7,
         onClick: clickWrap(function () {
-
+          updateMessage("わらの家がある。");
         }),
         description: 'わらの家',
         zIndex: 5,
@@ -276,7 +276,7 @@ let rooms = {
       {
         x: 8.2, y: 43.8, width: 38.7, height: 38.7,
         onClick: clickWrap(function () {
-
+          updateMessage("木の家がある。");
         }),
         description: '木の家',
         zIndex: 5,
@@ -1111,7 +1111,7 @@ function showCalcBoxPuzzle() {
 }
 
 function showStringTablet() {
-  const letters = ["火", "8", "K", "十", "3", "8", "月", "X", "F", "山", "8", "R"];
+  const letters = ["火", "8", "K", "十", "2", "8", "月", "X", "F", "山", "8", "R"];
   const rotated = letters.map(() => false);
   showModal("文字が書かれた石板", `
     <div class="string-tablet-scroll" translate="no">
