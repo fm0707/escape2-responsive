@@ -1620,6 +1620,10 @@ function takeBearFromStep(flagKey) {
 function showBearButterEvent(flagKey) {
   const flags = getMainFlags();
   if (!flags[flagKey] || flags.bearSearchingButter || gameState.selectedItem !== "bakedPotato" || !hasItem("bakedPotato")) return false;
+  if (!flags.houseWaraBroken || !flags.houseWoodBroken) {
+    updateMessage("おいしそうだね！");
+    return true;
+  }
   flags.bearSearchingButter = true;
   ["putBearOnStepWara", "putBearOnStepWood", "putBearOnStepBrick"].forEach(key => flags[key] = false);
   removeItem("bearWithCap");
