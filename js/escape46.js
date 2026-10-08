@@ -141,6 +141,7 @@ const IMAGES = {
   },
   modals: {
     birdZoom: I46("bird_zoom.webp"),
+    birdZoomAfter: I46("bird_zoom_after.webp"),
     bearSneeze: I46("modal_bear_sneeze.webp"),
     bearReceiveCap: I46("modal_bear_receive_cap.webp"),
     bearWalking: I46("modal_bear_walking.webp"),
@@ -297,7 +298,8 @@ let rooms = {
         x: 79.4, y: 8.4, width: 11.3, height: 9.1,
         onClick: clickWrap(function () {
           if (gameState.selectedItem === "operaGlass") {
-            showObj(null, "鳥を双眼鏡で見た。", IMAGES.modals.birdZoom, "鳥を双眼鏡で見た。");
+            const birdImage = getMainFlags().houseWoodBroken ? IMAGES.modals.birdZoomAfter : IMAGES.modals.birdZoom;
+            showObj(null, "鳥を双眼鏡で見た。", birdImage, "鳥を双眼鏡で見た。");
           } else {
             updateMessage("空に鳥が飛んでいる。");
           }
@@ -2059,7 +2061,7 @@ function getDefaultGameState() {
     windPower: 1, // 祠の宝珠で強化する風パワー（1〜3）
     shrineTablet: { flags: {} },
     shrineLeft: { flags: {} },
-    end: { flags: {} }, trueEnd: { flags: {} },
+    end: { flags: {} }, trueEnd: { flags: { backgroundState: 0 } },
     selectedItem: null, selectedItemSlot: null, usingItem: null, inventoryPage: 0,
   };
 }
