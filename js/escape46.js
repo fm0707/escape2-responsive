@@ -2066,7 +2066,7 @@ function getDefaultGameState() {
   };
 }
 
-function markProgress(step, extra = {}) { ANA.once("progress", step, extra); }
+function markProgress(step, extra = {}) { ANA.once("progress", step, { step, ...extra }); }
 
 function getMainFlags() {
   if (!gameState.main) gameState.main = {};
