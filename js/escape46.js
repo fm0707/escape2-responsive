@@ -1518,9 +1518,7 @@ function startHumanWindFlight() {
       return;
     }
     pauseBGM();
-    isBGMPlaying = false;
-    const bgmButton = document.getElementById("bgm-toggle");
-    if (bgmButton) bgmButton.textContent = "🔇 BGM";
+    // 再開時に復元できるよう、ユーザーのBGMオン／オフ設定は保持する。
     playSE("se-explosion");
     showModal("【BAD END】煙突にはまった", `
       <img src="${IMAGES.modals.badendWInd}" alt="煙突にはまってしまった" style="display:block;width:400px;max-width:100%;margin:0 auto;">
@@ -1561,9 +1559,7 @@ function showBearWaterGunEvent(roomId) {
   if (power === 3) {
     bearWaterBadEndActive = true;
     pauseBGM();
-    isBGMPlaying = false;
-    const bgmButton = document.getElementById("bgm-toggle");
-    if (bgmButton) bgmButton.textContent = "🔇 BGM";
+    // 再開時に復元できるよう、ユーザーのBGMオン／オフ設定は保持する。
     playSE("se-gya");
     showModal("【BAD END】クマ妖精の怒り", `
       <div class="modal-anim">
