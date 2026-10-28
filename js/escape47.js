@@ -1131,6 +1131,7 @@ function openCabinetBalloonLock() {
   }
   const heights = [1, 1, 1, 1];
   showModal("引き出しのロック", `
+    ${gameState.main.flags.ateMalonet ? '<p>4132という数字が頭に響いてきた…</p>' : ''}
     <div class="balloon-lock-panel">
       ${heights.map((_, index) => `
         <button type="button" id="balloonColumn${index}" class="balloon-lock-column" aria-label="${index + 1}列目：高さ1">
