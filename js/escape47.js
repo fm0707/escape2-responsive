@@ -223,6 +223,7 @@ let rooms = {
           if (gameState.selectedItem === "sodaCold" && hasItem("sodaCold")) {
             removeItem("sodaCold");
             addItem("sodaOpen");
+            markProgress("open_grape_soda");
             playSE("se-tansan");
             showObj(null, "グレープソーダの栓を開けた", IMAGES.modals.openSoda, "グレープソーダの栓を開けた");
             renderCanvasRoom();
@@ -278,6 +279,7 @@ let rooms = {
           if (gameState.selectedItem === "sodaOpen" && hasItem("sodaOpen")) {
             removeItem("sodaOpen");
             getMainFlags().bearDrankSoda = true;
+            markProgress("give_soda_to_bear");
             showObj(null, "ゴクゴク…", IMAGES.modals.bearDrinksSoda, "ゴクゴク…");
             renderCanvasRoom();
             return;
@@ -337,6 +339,7 @@ let rooms = {
         x: 54.9, y: 64.4, width: 10.2, height: 17.8,
         onClick: clickWrap(function () {
           gameState.main.flags.clickedSnowBear = true;
+          markProgress("meet_snow_bear");
           setWindowScene("snow", "changed");
           showModal("！", `<img src="${IMAGES.modals.bearClick}" style="width:400px;max-width:100%;display:block;margin:auto;" alt="クマ妖精">`, [{ text: "閉じる", action: "close" }]);
         }),
@@ -349,6 +352,7 @@ let rooms = {
         onClick: clickWrap(function () {
           if (gameState.selectedItem === "operaGlasses" && hasItem("operaGlasses")) {
             const image = IMAGES.modals.snowmanZoom;
+            markProgress("view_snowman_with_opera_glasses");
             showModal("双眼鏡で雪だるまを見た", `<img src="${image}" alt="双眼鏡で見た雪だるま" style="max-width:100%;max-height:380px;display:block;margin:auto;">`, [{ text: "閉じる", action: "close" }]);
             return;
           }
@@ -363,6 +367,7 @@ let rooms = {
         onClick: clickWrap(function () {
           if (gameState.selectedItem === "operaGlasses" && hasItem("operaGlasses")) {
             const image = getMainFlags().ateMalonet ? IMAGES.modals.starStationZoom2 : IMAGES.modals.starStationZoom;
+            markProgress(getMainFlags().ateMalonet ? "view_star_station_after_malonet" : "view_star_station_with_opera_glasses");
             showModal("双眼鏡で駅を見た", `<img src="${image}" alt="双眼鏡で見た星空の駅" style="max-width:100%;max-height:380px;display:block;margin:auto;">`, [{ text: "閉じる", action: "close" }]);
             return;
           }
@@ -406,6 +411,7 @@ let rooms = {
           if (!gameState.main.flags.putLeafOnPoster && gameState.selectedItem === "leaf" && hasItem("leaf")) {
             removeItem("leaf");
             gameState.main.flags.putLeafOnPoster = true;
+            markProgress("put_leaf_on_poster");
             showModal("ポスターの保護板に、葉っぱが静電気でくっついた", `<div class="modal-anim">
               <img src="${IMAGES.modals.bigMiso}" alt="葉っぱがくっつく前のBIG MISOのポスター">
               <img src="${IMAGES.modals.bigMisoLeaf}" alt="保護板に葉っぱがくっついたBIG MISOのポスター">
@@ -481,6 +487,7 @@ let rooms = {
           }
           removeItem("driver");
           gameState.main.flags.removedFanCover = true;
+          markProgress("remove_fan_cover");
           showModal("座席に上り、ねじを外した", `<div class="modal-anim">
             <img src="${IMAGES.modals.useDriver1}" alt="座席に上って換気扇のねじを外す">
             <img src="${IMAGES.modals.useDriver2}" alt="換気扇のカバーを外した">
@@ -796,6 +803,7 @@ function openStationTablet() {
       return;
     }
     getMainFlags().acceptedStation = station;
+    markProgress(`accept_station_${station.toLowerCase()}`, { station });
     showModal("停車駅を受け付けました", "", [{ text: "閉じる", action: "close" }]);
     playStationAnnouncement();
   };
@@ -915,6 +923,7 @@ function openDeskUpperDrawerLock() {
       action: () => {
         if (digits.join("") !== "3160") return;
         getMainFlags().unlockDeskUpperDrawer = true;
+        markProgress("unlock_desk_upper_drawer");
         playSE("se-gacha");
         closeModal();
         renderCanvasRoom();
@@ -963,6 +972,7 @@ function openDeskLowerDrawerLock() {
       action: () => {
         if (positions.map(position => letters[position]).join("") !== "BIAS") return;
         getMainFlags().unlockDeskLowerDrawer = true;
+        markProgress("unlock_desk_lower_drawer");
         playSE("se-gacha");
         closeModal();
         renderCanvasRoom();
@@ -1013,6 +1023,7 @@ function openCabinetRightStorageLock() {
         const code = `${letters[positions[0]]}${letters[positions[1]]}-${positions[2]}${positions[3]}`;
         if (code !== "TR-47") return;
         getMainFlags().unlockCabinetRightStorage = true;
+        markProgress("unlock_cabinet_right_storage");
         playSE("se-gacha");
         closeModal();
         renderCanvasRoom();
@@ -1062,6 +1073,7 @@ function openCabinetShapeLock() {
       action: () => {
         if (positions.map(position => shapes[position]).join("") !== "▽◎◇") return;
         getMainFlags().unlockCabinetLowerStorage = true;
+        markProgress("unlock_cabinet_lower_storage");
         playSE("se-gacha");
         closeModal();
         renderCanvasRoom();
@@ -1145,6 +1157,7 @@ function openCabinetBalloonLock() {
       action: () => {
         if (heights.join(",") !== "4,1,3,2") return;
         gameState.main.flags.unlockCabinetDrawer = true;
+        markProgress("unlock_cabinet_drawer");
         playSE("se-gacha");
         closeModal();
         renderCanvasRoom();
@@ -1168,6 +1181,7 @@ function openWindowSceneLevers() {
   if (!gameState.main.flags.installedStarLever && gameState.selectedItem === "lever" && hasItem("lever")) {
     removeItem("lever");
     gameState.main.flags.installedStarLever = true;
+    markProgress("install_star_lever");
     playSE("se-gacha");
     renderCanvasRoom();
     showModal("レバーをセットした", "", [{ text: "閉じる", action: "close" }]);
@@ -1216,6 +1230,7 @@ function openWindowSceneLevers() {
         if (selectedItem !== "lever" || !hasItem("lever")) return;
         removeItem("lever");
         gameState.main.flags.installedStarLever = true;
+        markProgress("install_star_lever");
         playSE("se-gacha");
         renderCanvasRoom();
         refresh();
@@ -1226,6 +1241,7 @@ function openWindowSceneLevers() {
       renderStatusIcons();
       if (gameState.windowScene.current === control.id) return;
       setWindowScene(control.id);
+      markProgress(`change_scene_${control.id}`, { scene: control.id, tool: "lever" });
       playSE("se-gacha");
       refresh();
     };
@@ -1250,10 +1266,11 @@ function openAdminDoorLock() {
     {
       text: "OK",
       action: () => {
-        const correct = sequence === "LLRR";
+        const correct = sequence === "LLRLRR";
         sequence = "";
         if (!correct) return;
         gameState.main.flags.unlockAdminDoor = true;
+        markProgress("unlock_admin_door");
         removeItem("memoInBag");
         playSE("se-gacha");
         closeModal();
@@ -1288,6 +1305,7 @@ function openWallStorageLock() {
       action: () => {
         if (positions.map(position => letters[position]).join("") !== "MALONET") return;
         gameState.main.flags.unlockWallStorage = true;
+        markProgress("unlock_wall_storage");
         playSE("se-gacha");
         closeModal();
         renderCanvasRoom();
@@ -1423,6 +1441,7 @@ function unfoldSeatTable() {
   setTimeout(() => {
     if (gameState === state) {
       state.seatWindow.flags.backgroundState = 1;
+      markProgress("unfold_seat_table");
       renderCanvasRoom();
     }
     if (overlay) overlay.style.opacity = 0;
@@ -1645,6 +1664,7 @@ async function handleOpenFanClick() {
     if (gameState.selectedItem === "grapeSoda" && hasItem("grapeSoda")) {
       removeItem("grapeSoda");
       addItem("sodaCold");
+      markProgress("cool_grape_soda");
       showModal("グレープソーダを冷気にあてた。", `<div class="modal-anim">
         <img src="${IMAGES.modals.sodaCooling1}" alt="グレープソーダを冷気にあてる">
         <img src="${IMAGES.modals.sodaCooling2}" alt="冷えたグレープソーダ">
@@ -1683,6 +1703,7 @@ async function handleOpenFanClick() {
     if (gameState !== state) return;
     addItem("leaf");
     flags.gotLeafFromFan = true;
+    markProgress("get_leaf_from_fan");
     updateMessage("換気扇から舞い落ちてきた葉っぱを手に入れた。");
   } finally {
     state.fx.lockInput = false;
@@ -1738,6 +1759,7 @@ function acquireItemOnce(flagKey, itemId, title, imgSrc, msg, onAfterClose) {
   }
   f[flagKey] = true;
   addItem(itemId);
+  markProgress(`acquire_${flagKey}`, { item: itemId });
   renderCanvasRoom();
 
   const afterClose = () => {
@@ -2050,6 +2072,7 @@ function openRemoconControls() {
       if (scene.id === "stars" && !getMainFlags().installedStarLever) return;
       if (gameState.windowScene.current !== scene.id) {
         setWindowScene(scene.id);
+        markProgress(`remote_change_scene_${scene.id}`, { scene: scene.id, tool: "remocon" });
         playSE("se-mouse");
       }
       scenes.forEach(option => {
@@ -2210,6 +2233,7 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
         removeItem("malonet");
         playSE("se-eat");
         getMainFlags().ateMalonet = true;
+        markProgress("eat_malonet");
         renderCanvasRoom();
         showObj(null, "マロネットを食べた。", IMAGES.modals.eatMalonet, "マロネットを食べた。", IMAGES.modals.eatMalonetEn, "You ate Malonet.");
       },
