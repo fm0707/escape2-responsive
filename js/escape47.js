@@ -111,7 +111,6 @@ const IMAGES = {
     bigMisoLeaf: I47("modal_big_miso_leaf.webp"),
     memoInBag: I47("memo_in_bag.webp"),
     iconBalloon: I47("icon_balloon.webp"),
-    starLever: "images/47/star_lever.svg",
     lever: I47("lever.webp"),
     fanCover: I47("fan_cover.webp"),
     leaf: I47("leaf.webp"),
