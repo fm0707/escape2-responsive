@@ -286,7 +286,7 @@ let rooms = {
             removeItem("sodaOpen");
             getMainFlags().bearDrankSoda = true;
             markProgress("give_soda_to_bear");
-            showObj(null, "ゴクゴク…", IMAGES.modals.bearDrinksSoda, "ゴクゴク…");
+            showObj(null, "ゴクゴク…", IMAGES.modals.bearDrinksSoda, "「ゴクゴク…」クマ妖精はグレープソーダを飲んだ。");
             renderCanvasRoom();
             return;
           }
