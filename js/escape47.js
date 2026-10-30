@@ -22,12 +22,18 @@ window.addEventListener("DOMContentLoaded", () => {
 window.ANA = Object.assign(window.ANA || {}, {
   sid: Math.random().toString(36).slice(2),
   sent: new Set(),
+  reset() {
+    this.start = Date.now();
+    this.hintCount = 0;
+    this.sid = Math.random().toString(36).slice(2);
+    this.sent.clear();
+  },
   baseParams() {
     return {
       elapsed_sec: Math.round((Date.now() - this.start) / 1000),
       hints: this.hintCount || 0,
       save_version: typeof SAVE_VERSION === "number" ? SAVE_VERSION : null,
-      room: (window.gameState && gameState.currentRoom) || null,
+      room: gameState.currentRoom || null,
       sid: this.sid,
     };
   },
@@ -2560,6 +2566,7 @@ function closeModal() {
 // ゲームリスタート
 function restartGame() {
   gameState = getDefaultGameState();
+  ANA.reset();
   closeModal();
   initGame();
   updateInventoryDisplay();
@@ -2753,7 +2760,13 @@ function preloadImages() {
 
 // save&load
 function saveGameToSlot(slotIndex) {
+  if (gameState.fx?.lockInput) {
+    updateMessage("演出が終わってからセーブしてください。");
+    return;
+  }
   const toSave = { ...gameState, __version: SAVE_VERSION };
+  // 演出中だけ使う状態は保存しない。
+  delete toSave.fx;
 
   const payload = {
     data: toSave,
@@ -2793,6 +2806,8 @@ function loadGameFromSlot(slotIndex) {
   }
   const def = getDefaultGameState();
   const merged = deepMerge(def, saved);
+  // 過去に演出中に保存されたデータも、操作可能な状態で復元する。
+  delete merged.fx;
 
   if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
   merged.openRooms = merged.openRooms.filter((roomId) => rooms[roomId]);
@@ -2852,6 +2867,10 @@ function openLoadMenu() {
 }
 
 function saveGame() {
+  if (gameState.fx?.lockInput) {
+    updateMessage("演出が終わってからセーブしてください。");
+    return;
+  }
   const buttons = [
     {
       text: getSaveSlotLabel(0) + " に上書き保存",
@@ -2906,7 +2925,10 @@ function showToast(text, ms = 2600) {
   }, ms);
 }
 
-window.addEventListener("resize", () => renderNavigation());
+window.addEventListener("resize", () => {
+  renderNavigation();
+  updateInventoryDisplay();
+});
 
 // ゲーム開始
 preloadImages();
