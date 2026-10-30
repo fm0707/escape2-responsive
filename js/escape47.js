@@ -967,7 +967,7 @@ function openDeskLowerDrawerLock() {
   showModal("机の引き出し下段のロック", `
     <div style="display:flex;justify-content:center;gap:8px;width:340px;max-width:100%;margin:24px auto;">
       ${positions.map((_, index) => `
-        <button type="button" id="deskLowerLetter${index}" aria-label="${index + 1}文字目：A"
+        <button type="button" id="deskLowerLetter${index}" translate="no" class="notranslate" aria-label="${index + 1}文字目：A"
           style="flex:1;min-width:0;aspect-ratio:1;padding:0;background:#fff;color:#111;border:2px solid #555;border-radius:0;font-size:clamp(28px,8vw,44px);cursor:pointer;">A</button>
       `).join("")}
     </div>
@@ -1017,7 +1017,7 @@ function openCabinetRightStorageLock() {
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:380px;max-width:100%;margin:24px auto;">
       ${positions.map((_, index) => `
         ${index === 2 ? '<span aria-hidden="true" style="font-size:28px;">-</span>' : ''}
-        <button type="button" id="cabinetRightCode${index}" aria-label="${index + 1}桁目：${index < 2 ? 'S' : '0'}"
+        <button type="button" id="cabinetRightCode${index}" translate="no" class="notranslate" aria-label="${index + 1}桁目：${index < 2 ? 'S' : '0'}"
           style="flex:1;min-width:0;aspect-ratio:1;padding:0;background:#eee;color:#111;border:2px solid #555;border-radius:0;font-size:clamp(24px,7vw,40px);cursor:pointer;">${index < 2 ? 'S' : '0'}</button>
       `).join("")}
     </div>
@@ -1299,7 +1299,7 @@ function openWallStorageLock() {
   const letters = ["A", "B", "E", "I", "L", "M", "N", "O", "S", "T"];
   const positions = Array(7).fill(0);
   const squares = positions.map((_, index) => `
-    <button type="button" id="wallStorageLetter${index}" aria-label="${index + 1}文字目"
+    <button type="button" id="wallStorageLetter${index}" translate="no" class="notranslate" aria-label="${index + 1}文字目"
       style="flex:1;min-width:0;aspect-ratio:1;padding:0;background:#fff;color:#111;border:2px solid #888;border-radius:0;font-size:clamp(20px,6vw,34px);font-weight:bold;cursor:pointer;">A</button>
   `).join("");
   showModal("壁収納のロック", `
