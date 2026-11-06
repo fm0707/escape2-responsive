@@ -181,6 +181,7 @@ const IMAGES = {
     roboStopped: I48("modal_robo_stopped.webp"),
     roboActivated: I48("modal_robo_activated.webp"),
     bearEatChicken: I48("modal_bear_eat_chicken.webp"),
+    chicken: I48("modal_chieken.webp"),
     catPaint: I48("modal_cat_paint.webp"),
     manWork: I48("modal_man_work.webp"),
     manWorkEn: I48("modal_man_work_en.webp"),
@@ -725,7 +726,7 @@ let rooms = {
         x: 15.9, y: 38.7, width: 21.3, height: 34.4,
         onClick: clickWrap(function () {
           if (gameState.roadFastfoodRight.flags.doorUnlocked) {
-            travelWithSteps("trueEnd", { soundId: "se-ashioto" });
+            openChickenOrder();
           } else {
             updateMessage("ドアはロックされているようだ。");
           }
@@ -926,7 +927,7 @@ function openFeedbackForm(endingId) {
 
 function openBearSageEvent() {
   const state = gameState;
-  state.inventory = [];
+  state.inventory = state.inventory.filter(itemId => itemId === "crown");
   state.money = 0;
   state.inventoryPage = 0;
   clearUsingItem();
@@ -1089,6 +1090,37 @@ function startBakeryLight(roomId = "roadBakery") {
   animate();
 }
 
+function openChickenOrder() {
+  const state = gameState;
+  const price = 1000;
+  const formatYen = amount => `${amount.toLocaleString("ja-JP")}円`;
+  const content = `
+    <img class="showobj-image" src="${IMAGES.modals.chicken}" alt="チキン" onerror="this.style.display = 'none'">
+    <p>チキン ${formatYen(price)}</p>
+    <p>所持金 ${formatYen(state.money || 0)}</p>
+    <p id="chickenOrderFeedback" role="status" aria-live="polite"></p>
+  `;
+  showModal("チキンの注文", content, [
+    {
+      text: "チキンを買う", action: () => {
+        if (gameState !== state || state.currentRoom !== "roadFastfoodRight" || endingTravelActive) return;
+        if ((state.money || 0) < price) {
+          document.getElementById("chickenOrderFeedback").textContent = "お金が足りない。";
+          return;
+        }
+        state.money -= price;
+        if (state.money === 0) removeItem("money");
+        else updateInventoryDisplay();
+        closeModal();
+        playSE("se-register");
+        updateMessage("1,000円でチキンを買った！");
+        travelWithSteps("trueEnd", { soundId: "se-ashioto" });
+      }
+    },
+    { text: "閉じる", action: "close" }
+  ], null, { contentClass: "showobj-modal" });
+}
+
 function openFastfoodDoorPuzzle() {
   const flags = gameState.roadFastfoodRight.flags;
   if (flags.doorUnlocked) {
@@ -1193,6 +1225,7 @@ function openManGetMatchSequence() {
         showModal("マッチが一箱売れた。", `<img class="showobj-image" src="${IMAGES.modals.manGetMatch2}">`, [
           { text: "閉じる", action: "close" }
         ], null, { contentClass: "showobj-modal" });
+        playSE("se-register");
         updateMessage("マッチが一箱売れた。中身はいらないようだ");
         window.addEventListener("modal:closed", () => {
           if (gameState !== state || state.roadToyShopLeft.flags.manReceivedMatch) return;
@@ -1226,6 +1259,7 @@ function openOldWomanSequence() {
           if (gameState !== state || state.roadBakery.flags.oldWomanExchanged) return;
           if (!addMoney(500)) return;
           state.roadBakery.flags.oldWomanExchanged = true;
+          playSE("se-register");
           updateMessage("老婦人から500円を受け取った。");
           renderCanvasRoom();
         }, { once: true });
