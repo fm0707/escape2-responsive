@@ -258,6 +258,7 @@ let rooms = {
             gameState.roadLeft.flags.bearReceivedBasket = true;
             removeItem("basket");
             addItem("bearMatch");
+            markProgress("return_basket_to_bear");
             renderCanvasRoom();
             showModal("わあ！ありがとう！", `<img class="showobj-image" src="${IMAGES.modals.bearHappyWithBasket}">`, [
               { text: "次へ", action: () => showObj(null, "さっそく、マッチを売りに行こう！", IMAGES.modals.bearMotivated, "さっそく、マッチを売りに行こう！", IMAGES.modals.bearMotivatedEn, "Let's go sell matches right away!") }
@@ -266,6 +267,7 @@ let rooms = {
             return;
           }
           gameState.roadLeft.flags.bearLostBasket = true;
+          markProgress("learn_bear_lost_basket");
           showObj(null, "かごを落としちゃった…", IMAGES.modals.bearLostBasket, "「かごを落としちゃった…」");
           renderCanvasRoom();
         }),
@@ -546,6 +548,7 @@ let rooms = {
           if (gameState.selectedItem === "ticket" && hasItem("ticket")) {
             removeItem("ticket");
             addItem("crown");
+            markProgress("exchange_ticket_for_crown", { item: "crown" });
             showObj(null, "交換チケットだね。はい、どうぞ", IMAGES.modals.manNotice, "おもちゃの王冠を手に入れた。");
             return;
           }
@@ -788,6 +791,7 @@ let rooms = {
           if (!hasItem("pocketTissue")) addItem("pocketTissue");
           if (!hasItem("pocketTissue")) return;
           flags.receivedPocketTissue = true;
+          markProgress("receive_pocket_tissue", { item: "pocketTissue" });
           showObj(null, "ポケットティッシュをもらった", IMAGES.modals.manTissue,
             "ポケットティッシュをもらった。", IMAGES.modals.manTissueEn);
         }),
@@ -940,6 +944,7 @@ function openBearSageEvent() {
   state.inventory = state.inventory.filter(itemId => itemId === "crown");
   state.money = 0;
   state.inventoryPage = 0;
+  markProgress("give_money_to_bear_sage");
   clearUsingItem();
   showModal("「おお！良い働きじゃ。」<br>お金を渡した。", `<img class="showobj-image" src="${IMAGES.modals.bearPassMoney}" alt="クマがお金を渡す">`, [
     {
@@ -993,6 +998,7 @@ function openToyShopWindow() {
     if (gameState.selectedItem === "remocon" && hasItem("remocon")) {
       flags.roboActivated = true;
       removeItem("remocon");
+      markProgress("activate_toy_shop_robots");
       playSE("se-cyber");
       showObj(null, "ロボットたちが反応した", IMAGES.modals.roboActivated, "リモコンにロボットたちが反応した。");
     } else {
@@ -1066,6 +1072,7 @@ function startBakeryLight(roomId = "roadBakery") {
   if (gameState[roomId].flags[flag]) return;
   gameState[roomId].flags[flag] = true;
   removeItem("bearMatch");
+  markProgress(`light_match_${roomId}`, { room: roomId });
   const bearArea = rooms[roomId].clickableAreas.find(area => area.id === (isFastfood ? "fastfoodBear" : isToyShop ? "toyShopBear" : "bakeryBear"));
   const bearX = resolveAreaMetric(bearArea, "x");
   const bearY = resolveAreaMetric(bearArea, "y");
@@ -1089,6 +1096,7 @@ function startBakeryLight(roomId = "roadBakery") {
       if (isFastfood) {
         fastfoodLightAnimation = null;
         gameState.roadFastfoodRight.flags.phoneIncoming = true;
+        markProgress("trigger_bear_phone_call");
         playSE("se-phone");
       }
       else if (isToyShop) toyShopLightAnimation = null;
@@ -1121,6 +1129,7 @@ function openChickenOrder() {
         state.money -= price;
         if (state.money === 0) removeItem("money");
         else updateInventoryDisplay();
+        markProgress("buy_chicken", { price });
         closeModal();
         playSE("se-register");
         updateMessage("1,000円でチキンを買った！");
@@ -1151,6 +1160,7 @@ function openFastfoodDoorPuzzle() {
         const [left, middle, right] = positions;
         if (icons[left] !== iconAngel || icons[middle] !== iconStar || icons[right] !== iconLeaf) return;
         flags.doorUnlocked = true;
+        markProgress("unlock_fastfood_door");
         playSE("se-clear");
         closeModal();
         updateMessage("ドアのロックを解除した。");
@@ -1193,6 +1203,7 @@ function openFastfoodPhoneEvent() {
             if (gameState !== state) return;
             flags.phoneIncoming = false;
             flags.phoneCompleted = true;
+            markProgress("complete_bear_phone_call");
             renderCanvasRoom();
           }, { once: true });
         }
@@ -1242,6 +1253,7 @@ function openManGetMatchSequence() {
           if (gameState !== state || state.roadToyShopLeft.flags.manReceivedMatch) return;
           if (!addMoney(500)) return;
           state.roadToyShopLeft.flags.manReceivedMatch = true;
+          markProgress("sell_match_to_man");
           updateMessage("男性から500円を受け取った。");
           renderCanvasRoom();
         }, { once: true });
@@ -1270,6 +1282,7 @@ function openOldWomanSequence() {
           if (gameState !== state || state.roadBakery.flags.oldWomanExchanged) return;
           if (!addMoney(500)) return;
           state.roadBakery.flags.oldWomanExchanged = true;
+          markProgress("sell_match_to_old_woman");
           playSE("se-register");
           updateMessage("老婦人から500円を受け取った。");
           renderCanvasRoom();
@@ -1292,6 +1305,7 @@ function getCatMoveProgress() {
 function startCatMoving() {
   if (gameState.roadBakery.flags.catGone) return;
   gameState.roadBakery.flags.catGone = true;
+  markProgress("move_bakery_cat");
   const animation = { state: gameState, startedAt: performance.now() };
   catMoveAnimation = animation;
   function animate() {
@@ -1324,6 +1338,7 @@ function openNoisePuzzle() {
           return;
         }
         state.roadBakery.flags.noiseUnlocked = true;
+        markProgress("unlock_noise_device");
         playSE("se-clear");
         showModal("猫はびっくりした！", `<img class="showobj-image" src="${IMAGES.modals.catShocked}">`, [
           { text: "閉じる", action: "close" }
@@ -1371,6 +1386,7 @@ function openRoboPanelPuzzle() {
           return;
         }
         flags.roboUnlocked = true;
+        markProgress("unlock_robot_panel");
         playSE("se-robo");
         closeModal();
         renderCanvasRoom();
@@ -1407,6 +1423,7 @@ function openDustBoxPuzzle() {
           return;
         }
         state.roadBakery.flags.dustBoxUnlocked = true;
+        markProgress("unlock_dust_box");
         playSE("se-clear");
         closeModal();
         renderCanvasRoom();
@@ -1476,6 +1493,7 @@ function getManMoveProgress() {
 function startManMoving() {
   if (getMainFlags().manMoved) return;
   getMainFlags().manMoved = true;
+  markProgress("switch_crossing_signal");
   const animation = { state: gameState, startedAt: performance.now() };
   manMoveAnimation = animation;
   function animate() {
@@ -1503,6 +1521,7 @@ function getManWithBagAlpha() {
 
 function startManWithBagFade() {
   gameState.roadFastfoodLeft.flags.manGone = true;
+  markProgress("move_man_with_bag");
   const animation = { state: gameState, startedAt: performance.now() };
   manWithBagFade = animation;
   function animate() {
@@ -1630,6 +1649,7 @@ function changeRoom(roomId) {
       addItem("bearMatch");
     }
     bakeryFlags.bearRejoined = true;
+    markProgress("rejoin_bear_at_bakery");
   }
   const toyShopFlags = gameState.roadToyShopRight.flags;
   if (gameState.currentRoom === "roadToyShopRight" && roomId !== "roadToyShopRight"
@@ -1642,6 +1662,7 @@ function changeRoom(roomId) {
       addItem("bearMatch");
     }
     toyShopFlags.bearRejoined = true;
+    markProgress("rejoin_bear_at_toy_shop");
   }
   addNaviItem(roomId);
   gameState.currentRoom = roomId;
