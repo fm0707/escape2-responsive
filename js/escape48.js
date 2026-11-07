@@ -299,7 +299,7 @@ let rooms = {
         zIndex: 5,
         usable: () => false,
 
-        item: { img: 'dustBoxLid', visible: () => !gameState.roadBakery.flags.dustBoxUnlocked }
+        item: { img: 'dustBoxLid', visible: () => !gameState.roadBakery.flags.dustBoxUnlocked && !!gameState.roadBakery.flags.bakeryLit }
       },
       {
         x: 68.8, y: 80.1, width: 11.4, height: 12.2,
@@ -312,7 +312,7 @@ let rooms = {
         }),
         description: 'ゴミ箱',
         zIndex: 5,
-        usable: () => true,
+        usable: () => !!gameState.roadBakery.flags.bakeryLit,
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
