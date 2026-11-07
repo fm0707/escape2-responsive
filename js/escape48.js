@@ -222,7 +222,7 @@ let gameState = getDefaultGameState();
 // 座標はキャンバスに対するパーセント。オブジェクトや謎解きはここに追加する。
 let rooms = {
   roadLeft: {
-    name: "道の左側", description: "",
+    name: "路上の左側", description: "",
     clickableAreas: [
       {
         x: 91, y: 91, width: 9, height: 9,
@@ -746,7 +746,7 @@ let rooms = {
     ],
   },
   roadRight: {
-    name: "道の右側", description: "",
+    name: "路上", description: "",
     clickableAreas: [
       {
         x: 0, y: 91, width: 9, height: 9,
@@ -916,7 +916,7 @@ function showEndingReport(endingId = "end") {
   ANA.once("ending", endingId, { ending: endingId, time_sec: elapsed });
   showModal("エンディング", `
     <div style="max-width:520px;text-align:center;">
-      <h2 style="margin-top:0;">${endingId === "trueEnd" ? "★ TRUE END" : "★ NORMAL END"}</h2>
+      <h2 style="margin-top:0;">${endingId === "trueEnd" ? "★ CHICKEN END" : "★ HEAVEN END"}</h2>
       <p style="margin:6px 0 12px;font-weight:bold;">${rooms[endingId].description}</p>
       <p style="margin:4px 0;">プレイ時間：<b>${playTime}</b></p>
       <p style="margin:4px 0;">ヒント利用：<b>${ANA.hintCount || 0} 回</b></p>
