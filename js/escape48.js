@@ -871,7 +871,7 @@ let rooms = {
     }],
   },
   trueEnd: {
-    name: "トゥルーエンド",
+    name: "チキンエンド",
     description: "路上から暖かい店内へ脱出しました！おめでとうございます！",
     clickableAreas: [
       {
@@ -917,10 +917,9 @@ function showEndingReport(endingId = "end") {
     { text: "閉じる", action: "close" },
   ]);
 }
-
 function openFeedbackForm(endingId) {
-  const feedbackUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeRRDE-ZukowuIDzbpgp4TkIYt177-plUIm2_7-mzZnxq2QxQ/viewform";
-  const endingLabel = endingId === "trueEnd" ? "トゥルーエンド" : "ノーマルエンド";
+  const feedbackUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdbmI7aP3LPMmX7YzU1SavRQYKyHrZf2a6XdYO_96vCzWgdpg/viewform";
+  const endingLabel = endingId === "trueEnd" ? "チキンエンド" : "天界エンド";
   const params = new URLSearchParams({ "entry.666725843": endingLabel });
   window.open(`${feedbackUrl}?${params.toString()}`, "_blank", "noopener");
 }
@@ -1032,7 +1031,7 @@ function openBakeryMatchSequence(roomId = "roadBakery") {
   if ((isToyShop || isFastfood) && (gameState.selectedItem !== "bearMatch" || !hasItem("bearMatch"))) return;
   const state = gameState;
   playSE("se-match");
-  showModal("マッチ売りのクマは、マッチを擦った", `<img class="showobj-image" src="${uiLang === "en" ? IMAGES.modals.bearStrikeMatchEn : IMAGES.modals.bearStrikeMatch}">`, [
+  showImageModal("マッチ売りのクマは、マッチを擦った", IMAGES.modals.bearStrikeMatch, IMAGES.modals.bearStrikeMatchEn, [
     {
       text: "次へ", action: () => {
         if (gameState !== state) return;
@@ -1046,7 +1045,7 @@ function openBakeryMatchSequence(roomId = "roadBakery") {
         }, { once: true });
       }
     }
-  ], null, { contentClass: "showobj-modal" });
+  ]);
 }
 
 function startBakeryLight(roomId = "roadBakery") {
@@ -1165,7 +1164,7 @@ function openFastfoodPhoneEvent() {
     return;
   }
   if (!flags.phoneIncoming || flags.phoneCompleted) return;
-  showObj(null, "マッチ売りのクマ妖精", IMAGES.modals.bearDreamFastfood2, "クマ妖精の電話が鳴っている。");
+  showObj(null, "マッチ売りのクマ妖精", IMAGES.modals.bearDreamFastfood2, "マッチ売りのクマ妖精だ。");
   const image = document.querySelector("#modalContent .showobj-image");
   image.style.cursor = "pointer";
   image.addEventListener("click", (event) => {
@@ -1173,7 +1172,8 @@ function openFastfoodPhoneEvent() {
     const x = (event.clientX - bounds.left) / bounds.width;
     const y = (event.clientY - bounds.top) / bounds.height;
     if (x < 0.4 || x > 0.94 || y < 0.5 || gameState !== state) return;
-    showModal("電話に出るクマ妖精", `<img class="showobj-image" src="${uiLang === "en" ? IMAGES.modals.bearPhoneEn : IMAGES.modals.bearPhone}">`, [
+    playSE("se-phone-receive");
+    showImageModal("電話に出るクマ妖精", IMAGES.modals.bearPhone, IMAGES.modals.bearPhoneEn, [
       {
         text: "次へ", action: () => {
           if (gameState !== state) return;
@@ -1186,7 +1186,7 @@ function openFastfoodPhoneEvent() {
           }, { once: true });
         }
       }
-    ], null, { contentClass: "showobj-modal" });
+    ]);
   });
 }
 
@@ -1248,7 +1248,7 @@ function openOldWomanSequence() {
     showObj(null, "「座りたいねえ…」", IMAGES.modals.oldWoman, "「座りたいねえ…」");
     return;
   }
-  showModal("老婦人", `<img class="showobj-image" src="${uiLang === "en" ? IMAGES.modals.oldWomanBuyEn : IMAGES.modals.oldWomenBuy}">`, [
+  showImageModal("老婦人", IMAGES.modals.oldWomenBuy, IMAGES.modals.oldWomanBuyEn, [
     {
       text: "次へ", action: () => {
         if (gameState !== state || state.roadBakery.flags.oldWomanExchanged) return;
@@ -1266,7 +1266,7 @@ function openOldWomanSequence() {
       }
     },
     { text: "閉じる", action: "close" }
-  ], null, { contentClass: "showobj-modal" });
+  ]);
 }
 
 let catMoveAnimation = null;
@@ -2023,39 +2023,29 @@ function showObj(flagKey, title, imgSrc, msg, altImgSrc, msgEn) {
     markProgress?.(`important_flag_${flagKey}`, { flagKey });
   }
 
+  showImageModal(title, imgSrc, altImgSrc, [{ text: "閉じる", action: "close" }]);
+  updateMessage(uiLang === "en" && altImgSrc ? msgEn || msg : msg);
+}
+
+function showImageModal(title, imgSrc, altImgSrc, buttons) {
   const imgId = "objImg_" + Date.now();
+  const src = uiLang === "en" && altImgSrc ? altImgSrc : imgSrc;
+  const content = `<img id="${imgId}" class="showobj-image" src="${src}">`;
 
-  // ★ uiLangに連動：enなら alt を初期表示（あれば）
-  const hasEn = !!altImgSrc;
-  let isEn = uiLang === "en" && hasEn;
-
-  const content = `<img id="${imgId}" class="showobj-image" src="${isEn ? altImgSrc : imgSrc}">`;
-
-  const buttons = [];
-
-  // ★ 「言語切替」ボタン：uiLangも一緒にトグルして全体と同期
-  if (hasEn) {
-    buttons.push({
+  if (altImgSrc) {
+    buttons = [{
       text: "🌐 EN/JP",
       action: () => {
         const el = document.getElementById(imgId);
         if (!el) return;
 
         uiLang = uiLang === "en" ? "jp" : "en";
-        isEn = uiLang === "en";
-
-        el.src = isEn ? altImgSrc : imgSrc;
-
-        // メッセージも切替（英語文が無いなら既存msgを使う）
-        // updateMessage(isEn ? (msgEn || 'Showing English version') : msg);
+        el.src = uiLang === "en" ? altImgSrc : imgSrc;
       },
-    });
+    }, ...buttons];
   }
 
-  buttons.push({ text: "閉じる", action: "close" });
-
   showModal(title, content, buttons, null, { contentClass: "showobj-modal" });
-  updateMessage(isEn ? msgEn || msg : msg);
 }
 
 
