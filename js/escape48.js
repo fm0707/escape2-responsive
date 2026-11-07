@@ -308,7 +308,7 @@ let rooms = {
             openDustBoxPuzzle();
             return;
           }
-          acquireItemOnce("foundTicket", "ticket", "紙を手に入れた", IMAGES.items.ticket, "ゴミ箱に引っかかっていた紙を手に入れた。");
+          acquireItemOnce("foundTicket", "ticket", "ゴミ箱に引っかかっていた紙を手に入れた", IMAGES.items.ticket, "ゴミ箱に引っかかっていた紙を手に入れた。");
         }),
         description: 'ゴミ箱',
         zIndex: 5,
@@ -849,6 +849,16 @@ let rooms = {
     name: "天界",
     description: "",
     clickableAreas: [
+      {
+        x: 9.6, y: 53.6, width: 25.9, height: 27.1,
+        onClick: clickWrap(function () {
+          updateMessage("このクマ妖精は、たくさんマッチを売ったのだろうか。");
+        }),
+        description: '左のクマ妖精',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
       {
         x: 36.2, y: 23.1, width: 27.2, height: 29.2,
         onClick: clickWrap(function () {
