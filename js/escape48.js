@@ -539,7 +539,7 @@ let rooms = {
         }),
         description: 'おもちゃ屋ドアの張り紙',
         zIndex: 5,
-        usable: () => true,
+        usable: () => !isManStandingAvailable(),
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
