@@ -457,7 +457,7 @@ let rooms = {
         description: 'テーブルの上のマッチ',
         zIndex: 5,
         usable: () => gameState.roadToyShopLeft.flags.manReceivedMatch,
-        item: { img: 'matchMen', visible: () => gameState.roadToyShopLeft.flags.manReceivedMatch }
+        item: { img: 'matchMen', visible: () => gameState.roadToyShopLeft.flags.manReceivedMatch, glow: true }
       },
       {
         x: 67.3, y: 78.3, width: 8.7, height: 7.0,
@@ -1796,6 +1796,15 @@ function drawRoomItems(ctx, canvas, roomId, behindBackground = false) {
           ctx.filter = "saturate(0.4) brightness(0.8)";
         } else {
           ctx.filter = "none";
+        }
+
+        // マッチの周囲に青い光を付けて、小さくても見つけやすくする。
+        if (area.item.glow) {
+          ctx.shadowColor = "rgba(80, 180, 255, 1)";
+          ctx.shadowBlur = Math.max(16, canvas.width * 0.035);
+          // 光を重ねて、明るい背景でも青い縁が見えるようにする。
+          ctx.drawImage(img, px, py, w, h);
+          ctx.drawImage(img, px, py, w, h);
         }
 
         // ★ drawRoomItems 内：ctx.drawImage(img, px, py, w, h); を置き換え
