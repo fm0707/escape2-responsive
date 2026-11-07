@@ -1372,7 +1372,7 @@ function openRoboPanelPuzzle() {
     updateMessage("ロボ操作パネルはアンロックされている。");
     return;
   }
-  const letters = ["A", "E", "L", "M", "O", "P", "R", "S", "T", "V"];
+  const letters = ["A", "E", "F", "L", "N", "P", "S", "T", "R"];
   const values = [0, 0, 0, 0];
   const content = `<div style="display:flex;justify-content:center;gap:8px;margin:20px 0;">${values.map((value, index) =>
     `<button type="button" class="robo-panel-letter notranslate" translate="no" aria-label="${index + 1}マス目：${letters[value]}" style="flex:0 1 64px;width:64px;min-width:0;aspect-ratio:1;padding:0;border:1px solid #aaa;border-radius:0;background:#ddd;color:#222;font-size:30px;font-weight:bold;cursor:pointer;">${letters[value]}</button>`
@@ -1381,7 +1381,7 @@ function openRoboPanelPuzzle() {
     {
       text: "OK", action: () => {
         if (gameState !== state || flags.roboUnlocked) return;
-        if (values.map(value => letters[value]).join("") !== "PASS") {
+        if (values.map(value => letters[value]).join("") !== "LEFT") {
           document.getElementById("roboPanelFeedback").textContent = "文字が違うようだ。";
           return;
         }
@@ -1390,7 +1390,7 @@ function openRoboPanelPuzzle() {
         playSE("se-robo");
         closeModal();
         renderCanvasRoom();
-        updateMessage("アンロックされ、ロボットが足を動かした。");
+        updateMessage("ロボットが動いた。");
       }
     },
     { text: "閉じる", action: "close" }
