@@ -1339,7 +1339,7 @@ function openNoisePuzzle() {
         }
         state.roadBakery.flags.noiseUnlocked = true;
         markProgress("unlock_noise_device");
-        playSE("se-clear");
+        playSE("se-android");
         showModal("猫はびっくりした！", `<img class="showobj-image" src="${IMAGES.modals.catShocked}">`, [
           { text: "閉じる", action: "close" }
         ], null, { contentClass: "showobj-modal" });
