@@ -2772,8 +2772,12 @@ function preloadImages() {
 }
 
 // save&load
+function isSaveBlocked() {
+  return gameState.fx?.lockInput || fastfoodLightAnimation?.state === gameState;
+}
+
 function saveGameToSlot(slotIndex) {
-  if (gameState.fx?.lockInput) {
+  if (isSaveBlocked()) {
     updateMessage("演出が終わってからセーブしてください。");
     return;
   }
@@ -2821,6 +2825,12 @@ function loadGameFromSlot(slotIndex) {
   const merged = deepMerge(def, saved);
   // 過去に演出中に保存されたデータも、操作可能な状態で復元する。
   delete merged.fx;
+
+  // マッチの演出中に保存されたデータでは、終了時に発生する着信を復元する。
+  const fastfoodFlags = merged.roadFastfoodRight.flags;
+  if (fastfoodFlags.fastfoodLit && !fastfoodFlags.phoneCompleted) {
+    fastfoodFlags.phoneIncoming = true;
+  }
 
   if (!Array.isArray(merged.openRooms)) merged.openRooms = def.openRooms.slice();
   merged.openRooms = merged.openRooms.filter((roomId) => rooms[roomId]);
@@ -2880,7 +2890,7 @@ function openLoadMenu() {
 }
 
 function saveGame() {
-  if (gameState.fx?.lockInput) {
+  if (isSaveBlocked()) {
     updateMessage("演出が終わってからセーブしてください。");
     return;
   }
