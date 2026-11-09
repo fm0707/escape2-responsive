@@ -182,7 +182,7 @@ const IMAGES = {
     roboActivated: I48("modal_robo_activated.webp"),
     bearEatChicken: I48("modal_bear_eat_chicken.webp"),
     bearEatChicken2: I48("modal_bear_eat_chicken2.webp"),
-    chicken: I48("modal_chieken.webp"),
+    chicken: I48("modal_chicken.webp"),
     catPaint: I48("modal_cat_paint.webp"),
     manWork: I48("modal_man_work.webp"),
     manWorkEn: I48("modal_man_work_en.webp"),
