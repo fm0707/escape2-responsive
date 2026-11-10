@@ -251,6 +251,16 @@ let rooms = {
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
+        x: 68.0, y: 70.9, width: 8.8, height: 11.4,
+        onClick: clickWrap(function () {
+          updateMessage("ピンク色の花が、綺麗に咲いている");
+        }),
+        description: 'ピンクの花',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'IMAGE_KEY', visible: () => true }
+      },
+      {
         x: 15.1, y: 66.9, width: 14.0, height: 13.3,
         onClick: clickWrap(function () {
           if (gameState.roadLeft.flags.bearReceivedBasket) return;
