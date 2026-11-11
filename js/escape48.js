@@ -733,7 +733,7 @@ let rooms = {
         }),
         description: 'ドア操作盤',
         zIndex: 5,
-        usable: () => true,
+        usable: () => getFastfoodLightProgress() >= 1,
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
@@ -747,7 +747,7 @@ let rooms = {
         }),
         description: 'ドア',
         zIndex: 5,
-        usable: () => true,
+        usable: () => getFastfoodLightProgress() >= 1,
         item: { img: 'IMAGE_KEY', visible: () => true }
       },
       {
