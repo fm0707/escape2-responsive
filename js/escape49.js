@@ -1691,6 +1691,11 @@ function showObj(flagKey, title, imgSrc, msg, altImgSrc, msgEn) {
 }
 
 function useFortuneKey() {
+  if (gameState.selectedItem === "key" && hasItem("key")) {
+    updateMessage("形があわない");
+    return;
+  }
+
   const flags = getMainFlags();
   if (flags.fortuneKeyUsed) {
     updateMessage("カギ穴だったようだ。カギはどこかへ消えてしまった");
