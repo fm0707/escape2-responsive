@@ -170,6 +170,7 @@ const IMAGES = {
     unlockRightStorage: I49("modal_unlock_right_storage.webp"),
     keyGetFailed: I49("modal_key_get_failed.webp"),
     bearFlying: I49("modal_bear_flying.webp"),
+    bearKey: I49("modal_bear_key.webp"),
     sekitou1: I49("modal_sekitou_1.webp"),
     sekitou2: I49("modal_sekitou_2.webp"),
     sekitou3: I49("modal_sekitou_3.webp"),
@@ -517,7 +518,8 @@ const rooms = {
         x: 53.5, y: 11.5, width: 7.4, height: 7.6,
         onClick: clickWrap(function () {
           if (gameState.selectedItem === "bearItem" && hasItem("bearItem")) {
-            acquireItemOnce("foundKey", "key", "カギを手に入れた！", IMAGES.modals.bearFlying, "クマ妖精が屋根のカギを取ってくれた！");
+            const { bearFlying, bearKey } = IMAGES.modals;
+            acquireItemOnce("foundKey", "key", "カギを手に入れた！", [bearFlying, bearKey], "クマ妖精が屋根のカギを取ってくれた！");
             return;
           }
           if (gameState.selectedItem === "broom" && hasItem("broom")) {
@@ -1617,7 +1619,13 @@ function acquireItemOnce(flagKey, itemId, title, imgSrc, msg, onAfterClose) {
     onAfterClose?.();
   };
 
-  showModal(title, `<img src="${imgSrc}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, [{ text: "閉じる", action: "close" }], afterClose);
+  const buttons = [{ text: "閉じる", action: "close" }];
+  if (Array.isArray(imgSrc)) {
+    const frames = imgSrc.map(src => `<img src="${src}" alt="">`).join("");
+    showModal(title, `<div class="modal-anim">${frames}</div>`, buttons, afterClose, { contentClass: "showobj-modal" });
+  } else {
+    showModal(title, `<img src="${imgSrc}" style="width:400px;max-width:100%;display:block;margin:0 auto 20px;">`, buttons, afterClose);
+  }
   updateMessage(msg);
 }
 
