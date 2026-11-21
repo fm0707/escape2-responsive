@@ -174,7 +174,7 @@ const IMAGES = {
     sekitou1: I49("modal_sekitou_1.webp"),
     sekitou2: I49("modal_sekitou_2.webp"),
     sekitou3: I49("modal_sekitou_3.webp"),
-    tape: I49("modal_tape.webp"),
+    tape: I49("modal_tape2.webp"),
     ground: I49("modal_ground.webp"),
     tourou: I49("modal_tourou.webp"),
     dustBox: I49("modal_dustbox.webp"),
