@@ -112,8 +112,19 @@ const IMAGES = {
     guidebook: I49("guidebook.webp"),
     smoke: I49("smoke.webp"),
     tourouLid: I49("tourou_lid.webp"),
+    ehon: I49("ehon.webp"),
   },
   modals: {
+    ehonMain: I49("ehon_main.webp"),
+    ehonMainEn: I49("ehon_main_en.webp"),
+    ehon1: I49("ehon1.webp"),
+    ehon1En: I49("ehon1_en.webp"),
+    ehon2: I49("ehon2.webp"),
+    ehon2En: I49("ehon2_en.webp"),
+    ehon3: I49("ehon3.webp"),
+    ehon3En: I49("ehon3_en.webp"),
+    ehon4: I49("ehon4.webp"),
+    ehon4En: I49("ehon4_en.webp"),
     guidePage: I49("modal_guide_page.webp"),
     guidePageEn: I49("modal_guide_page_en.webp"),
     bearSenbei: I49("modal_bear_senbei.webp"),
@@ -174,7 +185,7 @@ const IMAGES = {
     sekitou1: I49("modal_sekitou_1.webp"),
     sekitou2: I49("modal_sekitou_2.webp"),
     sekitou3: I49("modal_sekitou_3.webp"),
-    tape: I49("modal_tape2.webp"),
+    tape: I49("modal_tape.webp"),
     ground: I49("modal_ground.webp"),
     tourou: I49("modal_tourou.webp"),
     dustBox: I49("modal_dustbox.webp"),
@@ -410,6 +421,14 @@ const rooms = {
     name: "井戸の中",
     description: "",
     clickableAreas: [
+      {
+        x: 1.2, y: 87.1, width: 15.7, height: 11.1,
+        onClick: clickWrap(() => showPictureBook()),
+        description: '絵本',
+        zIndex: 5,
+        usable: () => true,
+        item: { img: 'ehon', visible: () => true }
+      },
       {
         x: 1.3, y: 24.6, width: 11.8, height: 22.1,
         onClick: clickWrap(function () {
@@ -2150,6 +2169,20 @@ function showGoshuinBook() {
     { src: bookEye, alt: "目のページ" },
     { src: bookApple, alt: "りんごのページ" },
   ]);
+}
+
+function showPictureBook(index = 0) {
+  const pageKeys = ["ehonMain", "ehon1", "ehon2", "ehon3", "ehon4"];
+  const key = pageKeys[index];
+  const buttons = [];
+  if (index > 0) {
+    buttons.push({ text: "←", action: () => showPictureBook(index - 1) });
+  }
+  if (index < pageKeys.length - 1) {
+    buttons.push({ text: "→", action: () => showPictureBook(index + 1) });
+  }
+  buttons.push({ text: "閉じる", action: "close" });
+  showImageModal("絵本", IMAGES.modals[key], IMAGES.modals[`${key}En`], buttons);
 }
 
 function showImagePages(title, pages, index = 0) {
