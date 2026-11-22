@@ -299,7 +299,7 @@ const rooms = {
     clickableAreas: [
       {
         x: 23.6, y: 43.2, width: 8.2, height: 18.8,
-        onClick: clickWrap(() => showBuddhaStatue(1)),
+        onClick: clickWrap(() => showBuddhaStatue(1, "一番奥の仏像")),
         description: '仏像1',
         zIndex: 5,
         usable: () => true,
@@ -307,7 +307,7 @@ const rooms = {
       },
       {
         x: 31.9, y: 41.8, width: 9.5, height: 19.8,
-        onClick: clickWrap(() => showBuddhaStatue(2)),
+        onClick: clickWrap(() => showBuddhaStatue(2, "奥から2番目の仏像")),
         description: '仏像2',
         zIndex: 5,
         usable: () => true,
@@ -315,7 +315,7 @@ const rooms = {
       },
       {
         x: 41.7, y: 40.8, width: 10.4, height: 21.4,
-        onClick: clickWrap(() => showBuddhaStatue(3)),
+        onClick: clickWrap(() => showBuddhaStatue(3, "奥から3番目の仏像")),
         description: '仏像3',
         zIndex: 5,
         usable: () => true,
@@ -323,7 +323,7 @@ const rooms = {
       },
       {
         x: 52.1, y: 39.8, width: 11.7, height: 23.2,
-        onClick: clickWrap(() => showBuddhaStatue(4)),
+        onClick: clickWrap(() => showBuddhaStatue(4, "奥から4番目の仏像")),
         description: '仏像4',
         zIndex: 5,
         usable: () => true,
@@ -331,7 +331,7 @@ const rooms = {
       },
       {
         x: 64.3, y: 39.2, width: 12.8, height: 25.1,
-        onClick: clickWrap(() => showBuddhaStatue(5)),
+        onClick: clickWrap(() => showBuddhaStatue(5, "奥から5番目の仏像")),
         description: '仏像5',
         zIndex: 5,
         usable: () => true,
@@ -339,7 +339,7 @@ const rooms = {
       },
       {
         x: 77.5, y: 37.9, width: 15.5, height: 28.6,
-        onClick: clickWrap(() => showBuddhaStatue(6)),
+        onClick: clickWrap(() => showBuddhaStatue(6, "奥から6番目の仏像")),
         description: '仏像6',
         zIndex: 5,
         usable: () => true,
@@ -2062,8 +2062,7 @@ function showDoorSymbolPuzzle(title, symbols, answer, onUnlock, sign, wrongAnswe
   });
 }
 
-function showBuddhaStatue(number) {
-  const title = `仏像${number}`;
+function showBuddhaStatue(number, title = `仏像${number}`) {
   const imageKey = `butsu${number}`;
   const clearedImage = getMainFlags().completeKurayami
     ? IMAGES.modals[`${imageKey}AfterKurayami`]
