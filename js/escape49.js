@@ -174,7 +174,7 @@ const IMAGES = {
     "1yen": I49("modal_1yen.webp"),
     blockGate: I49("modal_block_gate.webp"),
     noren: I49("modal_noren.webp"),
-    posterDaruma: I49("modal_poster_daruma.webp"),
+    posterDaruma: I49("modal_poster_daruma2.webp"),
     omamori: I49("modal_omamori.webp"),
     tatehuda: I49("modal_tatehuda.webp"),
     openStorage: I49("modal_open_storage.webp"),
