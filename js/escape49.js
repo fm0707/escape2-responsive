@@ -2417,7 +2417,7 @@ function getItemName(itemId) {
   const names = {
     roboTicket: "ロボチケット", ticket: "チケット", money: "お金", crown: "王冠", senko: "線香",
     senkoFire: "火のついた線香", broom: "ほうき", rope: "ロープ", bearItem: "クマ妖精", key: "カギ", keyFortune: "幸運のカギ",
-    guidebook: "闇の回廊の攻略本", takeout: "テイクアウト", memoStar: "紫の星のメモ"
+    guidebook: "闇の回廊の攻略本", takeout: "テイクアウト", memoStar: "紫の星のメモ", senbei: "煎餅"
   };
   return names[itemId] || itemId;
 }
