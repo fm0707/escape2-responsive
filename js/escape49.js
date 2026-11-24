@@ -84,7 +84,7 @@ const IMAGES = {
     key: ICM("common/key.webp"),
     roadArrow: I49("road_arrow.webp"),
     bear: I49("bear.webp"),
-    bearCrying: I49(USE_LOCAL_ASSETS ? "bear._cryingwebp.webp" : "bear_crying.webp"),
+    bearCrying: I49("bear_crying.webp"),
     bearItem: I49("bear_item.webp"),
     trash: I49("trash.webp"),
     arrowLeft: `${BASE_COMMON}/common/arrow_left.png`,
@@ -2892,7 +2892,7 @@ async function preloadModalImage(src, priority) {
   img.fetchPriority = priority;
   img.src = src;
   // 表示時の読み込みで再試行できるよう、先読みの失敗で進行を止めない。
-  await img.decode().catch(() => {});
+  await img.decode().catch(() => { });
 }
 
 async function preloadRemainingModalImages() {
