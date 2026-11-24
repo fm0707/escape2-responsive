@@ -2885,6 +2885,25 @@ function preloadImages() {
   }
 }
 
+const startupModalSources = [IMAGES.modals.blockGate];
+
+async function preloadModalImage(src, priority) {
+  const img = new Image();
+  img.fetchPriority = priority;
+  img.src = src;
+  // 表示時の読み込みで再試行できるよう、先読みの失敗で進行を止めない。
+  await img.decode().catch(() => {});
+}
+
+async function preloadRemainingModalImages() {
+  const sources = new Set(Object.values(IMAGES.modals));
+  for (const src of startupModalSources) sources.delete(src);
+
+  for (const src of sources) {
+    await preloadModalImage(src, "low");
+  }
+}
+
 // save&load
 function isSaveBlocked() {
   return gameState.fx?.lockInput;
@@ -3060,6 +3079,22 @@ window.addEventListener("resize", () => {
   updateInventoryDisplay();
 });
 
-// ゲーム開始
-preloadImages();
-initGame();
+async function startGame() {
+  canvas.inert = true;
+  updateMessage("画像を読み込んでいます…");
+  const startupImages = startupModalSources.map(src => preloadModalImage(src, "high"));
+  preloadImages();
+
+  let timeoutId;
+  await Promise.race([
+    Promise.all(startupImages),
+    new Promise(resolve => { timeoutId = setTimeout(resolve, 5000); }),
+  ]);
+  clearTimeout(timeoutId);
+
+  initGame();
+  canvas.inert = false;
+  void preloadRemainingModalImages();
+}
+
+startGame();
