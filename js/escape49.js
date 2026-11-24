@@ -1729,6 +1729,7 @@ function useFortuneKey() {
     return;
   }
   if (gameState.selectedItem !== "keyFortune" || !hasItem("keyFortune")) {
+    playSE("se-metal");
     updateMessage("？…金属のような冷たい感触がある。");
     return;
   }
@@ -2445,6 +2446,32 @@ function openInventoryItemDetail(itemId, slotIndex, fallbackSrc) {
 }
 
 function getBearDialogue() {
+  switch (gameState.currentRoom) {
+    case "kurayami1":
+      return ["まっくらだね……", "こわいよー"];
+    case "kurayami2":
+      return ["足音がひびくね", "プルプル…"];
+    case "kurayami3":
+      return ["まだ暗いね……", "壁が冷たいね"];
+    case "kurayami4":
+      if (gameState.main.flags.fortuneKeyUsed) {
+        return ["不思議な光だったね", "奥から風が吹いてくるよ"];
+      }
+      return ["ちょっと風が吹いてるね", "右の壁、さっきと手ざわりがちがうよ"];
+    case "kurayami5":
+      return ["あっ、明かりだ！", "外に出られるのかな"];
+  }
+
+  if (hasItem("takeout")) {
+    return ["なにをもらったの？", "たべもの？わくわく"];
+  }
+  if (gameState.main.flags.fortuneKeyUsed) {
+    return ["不思議な光だったね"];
+  }
+
+  if (hasItem("keyFortune")) {
+    return ["古そうなカギだね", "何のカギかな？"];
+  }
   if (gameState.main.flags.foundKey) {
     return ["わーい", "役に立つクマだよ"];
   }
