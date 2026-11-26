@@ -1505,6 +1505,11 @@ function examineDustBox() {
     return;
   }
 
+  if (gameState.selectedItem === "guidebook" && hasItem("guidebook")) {
+    updateMessage("役に立ちそうだ。捨てるのはやめておこう");
+    return;
+  }
+
   if (gameState.selectedItem !== "senkoFire" || !hasItem("senkoFire")) {
     updateMessage("ゴミ箱がある");
     return;
