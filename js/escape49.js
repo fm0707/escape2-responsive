@@ -1500,6 +1500,11 @@ function drawRoomItems(ctx, canvas, roomId, behindBackground = false) {
 }
 
 function examineDustBox() {
+  if (gameState.selectedItem === "bearItem" && hasItem("bearItem")) {
+    updateMessage("クマ妖精「捨てるなんてひどいよ！」");
+    return;
+  }
+
   if (gameState.selectedItem !== "senkoFire" || !hasItem("senkoFire")) {
     updateMessage("ゴミ箱がある");
     return;
